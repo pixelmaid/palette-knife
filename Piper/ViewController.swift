@@ -21,14 +21,15 @@ class ViewController: UIViewController {
     var penAgents = [PenAgent]();
     var agentCount = 1;
     var inputs = [String](arrayLiteral: "force","angle","x","y");
-    var outputs = [String](arrayLiteral: "x","y","diameter","r","g","b");
+    var outputs = [String](arrayLiteral: "x","y","diameter");
     var outputNode = Node(name:"output node");
+    var multiplierNode = Node(name:"multiplier node");
     var penNode = Node(name:"pen node");
 
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    
+    outputNode.valueChanged.addHandler(self,handler:ViewController.onOutputChanged)
     for index in 0...inputs.count-1{
         penNode.addTerminal(inputs[index]);
     }
@@ -36,8 +37,13 @@ class ViewController: UIViewController {
        outputNode.addTerminal(outputs[index]);
     }
     
+    multiplierNode.addTerminal("multiplier",type: "multiplier");
+    (multiplierNode.terminals["multiplier"]as! MultiplierTerminal).multiplier = 4;
+    
     penNode.terminals["x"]!.addOutput(outputNode.terminals["x"]!);
     penNode.terminals["y"]!.outputs.append(outputNode.terminals["y"]!);
+    penNode.terminals["force"]!.outputs.append(multiplierNode.terminals["multiplier"]!);
+    multiplierNode.terminals["multiplier"]!.outputs.append(outputNode.terminals["diameter"]!);
 
     
     var penInputView = NodeView(terminals: inputs, name:"pen input");
@@ -51,6 +57,16 @@ class ViewController: UIViewController {
 
     // Do any additional setup after loading the view, typically from a nib.
   }
+    
+    
+    func onOutputChanged(data:(NodeProperty,Node)){
+        print("output changed\(data.1.name)")
+        
+    let fromPoint = CGPoint(x:CGFloat(data.1.terminals["x"]!.oldValue),y:CGFloat(data.1.terminals["y"]!.oldValue));
+    let toPoint = CGPoint(x:CGFloat(data.1.terminals["x"]!.value),y:CGFloat(data.1.terminals["y"]!.value));
+        let diameter = CGFloat(data.1.terminals["diameter"]!.value)
+    drawLineFrom(fromPoint, toPoint: toPoint, force:diameter)
+    }
 
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
@@ -135,13 +151,13 @@ class ViewController: UIViewController {
                 let x = Float(x)+10*force*i;
                 let y = Float(y)+10*force*i;
                 let secondPoint = CGPoint(x:CGFloat(x),y:CGFloat(y));
-                drawLineFrom(penAgents[index].getLastPoint(), toPoint: secondPoint, force: touch.force)
+               // drawLineFrom(penAgents[index].getLastPoint(), toPoint: secondPoint, force: touch.force)
                 penAgents[index].addPoint(x,y:y);
                 var closePoints = penAgents[index].checkProximity(Point(x: x,y: y),threshold:60*Float(touch.force));
                 if(closePoints.count>0){
                 for j in 0...closePoints.count-1{
                     let sPoint = CGPoint(x:CGFloat(closePoints[j].x),y:CGFloat(closePoints[j].y));
-                    drawLineFrom(sPoint, toPoint: secondPoint, force: 0.15)
+                    //drawLineFrom(sPoint, toPoint: secondPoint, force: 0.15)
                 }
                 }
 

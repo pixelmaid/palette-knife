@@ -12,34 +12,57 @@ protocol PropertyObservable {
     typealias PropertyType
     typealias TargetType
     typealias DataType
-    var propertyChanged: Event<(PropertyType,TargetType,DataType)> { get }
+    var propertyChanged: Event<(PropertyType,TargetType,DataType,DataType)> { get }
+}
+
+protocol NodeObservable {
+    typealias PropertyType
+    typealias TargetType
+    var propertyChanged: Event<(PropertyType,TargetType)> { get }
 }
 enum NodeProperty {
     case Selected, Name, Linked, Value
 }
 
 
+class MultiplierTerminal: NodeTerminal{
+    var multiplier = Float(1);
+    
+    override dynamic var value: Float {
+        didSet {
+        valueChanged.raise((.Value,self,value, oldValue as Any))
+        self.oldValue = oldValue
+        for output in self.outputs {
+            output.setValue(self.value*self.multiplier)
+        }
+        }
+    }
+}
+
 class NodeTerminal: PropertyObservable {
     typealias PropertyType = NodeProperty
-    let propertyChanged = Event<(NodeProperty,NodeTerminal,Any)>()
+    let propertyChanged = Event<(NodeProperty,NodeTerminal,Any,Any)>()
+    let valueChanged = Event<(NodeProperty,NodeTerminal,Any,Any)>()
+    var oldValue = Float(0)
     var outputs = [NodeTerminal]();
 
     dynamic var selected: Bool = false {
         didSet {
-        propertyChanged.raise((.Selected,self,selected))
+        propertyChanged.raise((.Selected,self,selected, oldValue as Any))
         }
     }
     
     dynamic var name: String = "" {
         didSet {
-        propertyChanged.raise((.Name, self, name))
+        propertyChanged.raise((.Name, self, name, oldValue as Any))
         }
     }
     
     
     dynamic var value: Float = 0.0{
         didSet {
-       propertyChanged.raise((.Value,self,value))
+      valueChanged.raise((.Value,self,value, oldValue as Any))
+        self.oldValue = oldValue
         for output in self.outputs {
             output.setValue(self.value)
             }
@@ -57,20 +80,30 @@ class NodeTerminal: PropertyObservable {
     
 }
 
-class Node: PropertyObservable{
+class Node: NodeObservable{
     typealias PropertyType = NodeProperty
-    let propertyChanged = Event<((NodeProperty,Node,Any))>()
+    let propertyChanged = Event<((NodeProperty,Node))>()
+    let valueChanged = Event<((NodeProperty,Node))>()
     var terminals = [String:NodeTerminal]();
+    var locked = [String:Bool]();
     var name = "";
     init(name:String){
         self.name = name;
     }
     
-    func addTerminal(name: String){
-        let terminal = NodeTerminal();
+    func addTerminal(name: String, type:String = "standard"){
+        var terminal:NodeTerminal
+        
+        if(type == "multiplier"){
+            terminal = MultiplierTerminal()
+        }
+        else{
+            terminal = NodeTerminal()
+        }
         terminals[name] = terminal;
-        terminal.propertyChanged.addHandler(self, handler: Node.onPropertyChanged)
+        terminal.valueChanged.addHandler(self, handler: Node.onValueChanged)
         terminal.name = name
+        locked[name] = false;
     }
     
     
@@ -78,7 +111,27 @@ class Node: PropertyObservable{
         terminals[name]!.setValue(value);
     }
     
-    func onPropertyChanged(data: (NodeProperty,NodeTerminal, Any)) {
-        print("A terminal changed for \(self.name)!\(data.0, data.1.name, data.2)");
+    func onValueChanged(data: (NodeProperty,NodeTerminal,Any,Any)) {
+        if(self.name=="output node"){
+            print("A terminal changed for \(self.name)!\(data.0, data.1.name)");
+
+            locked[data.1.name] = true;
+            var allLocked = true
+            for (key,value) in locked {
+                print("\(key) = \(value)")
+                if(!value){
+                    allLocked = false;
+                }
+            }
+            if(allLocked){
+                print("All set");
+                valueChanged.raise((.Value,self));
+                for (key,_) in locked {
+                    locked[key] = false
+                }
+
+            }
+            
+        }
     }
 }

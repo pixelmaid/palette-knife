@@ -61,8 +61,9 @@ class NodeTerminal: PropertyObservable {
     
     dynamic var value: Float = 0.0{
         didSet {
-      valueChanged.raise((.Value,self,value, oldValue as Any))
         self.oldValue = oldValue
+
+      valueChanged.raise((.Value,self,value, oldValue as Any))
         for output in self.outputs {
             output.setValue(self.value)
             }
@@ -95,9 +96,12 @@ class Node: NodeObservable{
         var terminal:NodeTerminal
         
         if(type == "multiplier"){
+            print("creating multiplier terminal,\(name)")
+
             terminal = MultiplierTerminal()
         }
         else{
+            print("creating standard terminal,\(name)")
             terminal = NodeTerminal()
         }
         terminals[name] = terminal;
@@ -113,18 +117,19 @@ class Node: NodeObservable{
     
     func onValueChanged(data: (NodeProperty,NodeTerminal,Any,Any)) {
         if(self.name=="output node"){
-            print("A terminal changed for \(self.name)!\(data.0, data.1.name)");
+          //  print("A terminal changed for \(self.name)!\(data.0, data.1.name)");
 
             locked[data.1.name] = true;
+            print("unlocked \(data.1.name,data.1.value)");
             var allLocked = true
             for (key,value) in locked {
-                print("\(key) = \(value)")
+               // print("\(key) = \(value)")
                 if(!value){
                     allLocked = false;
                 }
             }
             if(allLocked){
-                print("All set");
+              //  print("All set");
                 valueChanged.raise((.Value,self));
                 for (key,_) in locked {
                     locked[key] = false

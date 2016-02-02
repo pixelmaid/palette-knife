@@ -25,6 +25,7 @@ class ViewController: UIViewController {
     var outputNode = Node(name:"output node");
     var multiplierNode = Node(name:"multiplier node");
     var penNode = Node(name:"pen node");
+    var lastPoint = CGPoint(x:0,y:0);
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -38,7 +39,7 @@ class ViewController: UIViewController {
     }
     
     multiplierNode.addTerminal("multiplier",type: "multiplier");
-    (multiplierNode.terminals["multiplier"]as! MultiplierTerminal).multiplier = 4;
+    (multiplierNode.terminals["multiplier"]as! MultiplierTerminal).multiplier = 2;
     
     penNode.terminals["x"]!.addOutput(outputNode.terminals["x"]!);
     penNode.terminals["y"]!.outputs.append(outputNode.terminals["y"]!);
@@ -60,12 +61,16 @@ class ViewController: UIViewController {
     
     
     func onOutputChanged(data:(NodeProperty,Node)){
-        print("output changed\(data.1.name)")
         
     let fromPoint = CGPoint(x:CGFloat(data.1.terminals["x"]!.oldValue),y:CGFloat(data.1.terminals["y"]!.oldValue));
     let toPoint = CGPoint(x:CGFloat(data.1.terminals["x"]!.value),y:CGFloat(data.1.terminals["y"]!.value));
-        let diameter = CGFloat(data.1.terminals["diameter"]!.value)
+        print("from point\(fromPoint.x,fromPoint.y) to point\(toPoint.x,toPoint.y)")
+
+    let diameter = CGFloat(data.1.terminals["diameter"]!.value)
     drawLineFrom(fromPoint, toPoint: toPoint, force:diameter)
+    lastPoint = toPoint;
+    data.1.terminals["y"]!.oldValue = data.1.terminals["y"]!.value;
+
     }
 
   override func didReceiveMemoryWarning() {

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 
 protocol PropertyObservable {
@@ -21,7 +22,7 @@ protocol NodeObservable {
     var propertyChanged: Event<(PropertyType,TargetType)> { get }
 }
 enum NodeProperty {
-    case Selected, Name, Linked, Value
+    case Selected, Name, Linked, Value, Color
 }
 
 
@@ -54,7 +55,10 @@ class NodeTerminal: PropertyObservable {
     typealias PropertyType = NodeProperty
     let propertyChanged = Event<(NodeProperty,NodeTerminal,Any,Any)>()
     let valueChanged = Event<(NodeProperty,NodeTerminal,Any,Any)>()
+    let colorChanged = Event<(NodeProperty, UIColor)>()
     var oldValue = Float(0)
+    var color = UIColor.blueColor();
+    
     var outputs = [NodeTerminal]();
 
     dynamic var selected: Bool = false {
@@ -87,8 +91,18 @@ class NodeTerminal: PropertyObservable {
     }
     
     func addOutput(output:NodeTerminal){
+        print(" adding output \(output.name,self.color)")
+        output.color = self.color;
+        output.colorChanged.raise((.Color, self.color));
         self.outputs.append(output);
+        
     }
+    
+    func setColor(color:UIColor){
+       self.color = color;
+       colorChanged.raise((.Color, self.color));
+    }
+    
     
 }
 

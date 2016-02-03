@@ -33,10 +33,7 @@ class ViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    
-    
-  
-  outputNode1.valueChanged.addHandler(self,handler:ViewController.onOutputChanged)
+   outputNode1.valueChanged.addHandler(self,handler:ViewController.onOutputChanged)
   outputNode2.valueChanged.addHandler(self,handler:ViewController.onOutputChanged)
 
     for index in 0...inputs.count-1{
@@ -53,12 +50,15 @@ class ViewController: UIViewController {
     (additionNodeX.terminals["addition"]as! AdderTerminal).modifier = 10;
     additionNodeY.addTerminal("addition",type: "addition");
     (additionNodeY.terminals["addition"]as! AdderTerminal).modifier = 100;
+    
 
     
     
     let penInputView = NodeView(node:penNode);
     self.view.addSubview(penInputView)
-    
+  
+
+
     let outputView1 = NodeView(node:outputNode1);
     self.view.addSubview(outputView1)
     outputView1.frame.origin.x = 500
@@ -82,6 +82,11 @@ class ViewController: UIViewController {
     multiplierNodeView.frame.origin.x = 300
    multiplierNodeView.frame.origin.y = 300;
 
+    
+    penNode.terminals["force"]!.setColor(UIColor.redColor());
+    penNode.terminals["angle"]!.setColor(UIColor.greenColor());
+    penNode.terminals["x"]!.setColor(UIColor.purpleColor());
+    penNode.terminals["y"]!.setColor(UIColor.orangeColor());
 
     
     

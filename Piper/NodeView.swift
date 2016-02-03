@@ -17,7 +17,7 @@ class NodeView: UIView {
     init(node:Node) {
         print("inputs=\(terminals)")
         self.node = node;
-        super.init(frame: CGRect(x: 100, y: 100, width: 150, height: node.terminals.count*30+20))
+        super.init(frame: CGRect(x: 100, y: 100, width: 150, height: node.terminals.count*20+50))
 
        self.backgroundColor=UIColor.grayColor()
         self.layer.cornerRadius=25
@@ -58,10 +58,12 @@ class NodeView: UIView {
 
 class NodeTerminalView: UIView {
     var terminal: NodeTerminal?
-    var label = UILabel(frame: CGRectMake(0, 0, 150, 20));
+    var label = UILabel(frame: CGRectMake(0, 0, 100, 20));
     var valueLabel = UITextField(frame: CGRectMake(0, 0, 50, 20));
     let valueChanged = Event<(NodeProperty,NodeTerminal,Any,Any)>()
-
+    let colorChanged = Event<(NodeProperty,UIColor)>()
+    var color = UIColor.blueColor();
+    
     var selected = false;
     // MARK: Initialization
     init(terminal:NodeTerminal) {
@@ -70,14 +72,16 @@ class NodeTerminalView: UIView {
         label.textColor = UIColor.whiteColor()
         label.center = CGPointMake(160, 284)
         label.textAlignment = NSTextAlignment.Center
-        super.init(frame: CGRect(x: 0, y: 0, width: 100, height: 20))
+        super.init(frame: CGRect(x: 0, y: 0, width: 150, height: 20))
         self.addSubview(label);
         self.addSubview(valueLabel);
         valueLabel.text = String(0)
-        self.label.frame.origin.x = -30;
+        self.label.frame.origin.x = 0;
         self.label.frame.origin.y = 0;
         valueLabel.frame.origin.x = 90;
         terminal.valueChanged.addHandler(self, handler: NodeTerminalView.onValueChanged)
+        terminal.colorChanged.addHandler(self, handler: NodeTerminalView.onColorChanged)
+
         
     }
     
@@ -86,18 +90,29 @@ class NodeTerminalView: UIView {
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        self.backgroundColor = UIColor.blueColor()
+       // self.backgroundColor = UIColor.blueColor()
         
     }
     
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        self.backgroundColor = UIColor.clearColor()
+        //self.backgroundColor = UIColor.clearColor()
         
+    }
+    
+    func updateBackgroundColor(color:UIColor){
+        self.color = color;
+        self.backgroundColor = color
     }
     
     func onValueChanged(data: (NodeProperty,NodeTerminal,Any,Any)) {
         self.valueLabel.text = String(data.2);
+    }
+    
+    func onColorChanged(data: (NodeProperty, UIColor)) {
+        print("updating color for terminal \(self.label.text)")
+
+        self.updateBackgroundColor(data.1);
     }
 
     

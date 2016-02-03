@@ -8,25 +8,30 @@
 import UIKit
 
 class NodeView: UIView {
-    var terminals = [String]()
+    var terminals =  [NodeTerminalView]();
     var name = ""
-    var label =  UILabel(frame: CGRectMake(0, 0, 100, 20));
-    private var kvoContext: UInt8 = 1
+    var node: Node?
+    var label =  UILabel(frame: CGRectMake(0, 0, 150, 20));
     
     // MARK: Initialization
-    init(terminals:[String], name:String) {
-       self.terminals = terminals
+    init(node:Node) {
         print("inputs=\(terminals)")
-        super.init(frame: CGRect(x: 100, y: 100, width: 100, height: 160))
+        self.node = node;
+        super.init(frame: CGRect(x: 100, y: 100, width: 150, height: node.terminals.count*30+20))
+
        self.backgroundColor=UIColor.grayColor()
         self.layer.cornerRadius=25
         self.layer.borderWidth=0
-        self.name = name;
-        for index in 0...terminals.count-1{
-            let terminal = NodeTerminalView(terminal: terminals[index]);
+        self.name = node.name
+        var index = 0;
+        for (key,_) in node.terminals{
+            print("key=\(key)");
+            let terminal = NodeTerminalView(terminal: node.terminals[key]!);
             self.addSubview(terminal);
+            terminals.append(terminal);
             terminal.frame.origin.x = 0;
             terminal.frame.origin.y =  CGFloat(index*20)+25;
+            index += 1;
         }
         self.addSubview(self.label);
         self.label.center = CGPointMake(160, 284)
@@ -52,21 +57,27 @@ class NodeView: UIView {
 
 
 class NodeTerminalView: UIView {
-    var terminal = ""
-    var label = UILabel(frame: CGRectMake(0, 0, 100, 20));
+    var terminal: NodeTerminal?
+    var label = UILabel(frame: CGRectMake(0, 0, 150, 20));
+    var valueLabel = UITextField(frame: CGRectMake(0, 0, 50, 20));
+    let valueChanged = Event<(NodeProperty,NodeTerminal,Any,Any)>()
+
     var selected = false;
     // MARK: Initialization
-    init(terminal:String) {
+    init(terminal:NodeTerminal) {
         self.terminal = terminal;
-        label.text = terminal;
+        label.text = terminal.name;
         label.textColor = UIColor.whiteColor()
         label.center = CGPointMake(160, 284)
         label.textAlignment = NSTextAlignment.Center
         super.init(frame: CGRect(x: 0, y: 0, width: 100, height: 20))
         self.addSubview(label);
-        self.label.frame.origin.x = 0;
+        self.addSubview(valueLabel);
+        valueLabel.text = String(0)
+        self.label.frame.origin.x = -30;
         self.label.frame.origin.y = 0;
-        
+        valueLabel.frame.origin.x = 90;
+        terminal.valueChanged.addHandler(self, handler: NodeTerminalView.onValueChanged)
         
     }
     
@@ -84,6 +95,11 @@ class NodeTerminalView: UIView {
         self.backgroundColor = UIColor.clearColor()
         
     }
+    
+    func onValueChanged(data: (NodeProperty,NodeTerminal,Any,Any)) {
+        self.valueLabel.text = String(data.2);
+    }
+
     
 }
 

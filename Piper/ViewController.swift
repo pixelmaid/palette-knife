@@ -22,36 +22,86 @@ class ViewController: UIViewController {
     var agentCount = 1;
     var inputs = [String](arrayLiteral: "force","angle","x","y");
     var outputs = [String](arrayLiteral: "x","y","diameter");
-    var outputNode = Node(name:"output node");
+    var outputNode1 = Node(name:"output node 1");
+    var outputNode2 = Node(name:"output node 2");
     var multiplierNode = Node(name:"multiplier node");
+    var additionNodeX = Node(name:"addition nodeX");
+    var additionNodeY = Node(name:"addition nodeY");
     var penNode = Node(name:"pen node");
     var lastPoint = CGPoint(x:0,y:0);
 
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    outputNode.valueChanged.addHandler(self,handler:ViewController.onOutputChanged)
+    
+    
+  
+  outputNode1.valueChanged.addHandler(self,handler:ViewController.onOutputChanged)
+  outputNode2.valueChanged.addHandler(self,handler:ViewController.onOutputChanged)
+
     for index in 0...inputs.count-1{
         penNode.addTerminal(inputs[index]);
     }
     for index in 0...outputs.count-1{
-       outputNode.addTerminal(outputs[index]);
+       outputNode1.addTerminal(outputs[index]);
+       outputNode2.addTerminal(outputs[index]);
     }
     
     multiplierNode.addTerminal("multiplier",type: "multiplier");
-    (multiplierNode.terminals["multiplier"]as! MultiplierTerminal).multiplier = 2;
-    
-    penNode.terminals["x"]!.addOutput(outputNode.terminals["x"]!);
-    penNode.terminals["y"]!.outputs.append(outputNode.terminals["y"]!);
-    penNode.terminals["force"]!.outputs.append(multiplierNode.terminals["multiplier"]!);
-    multiplierNode.terminals["multiplier"]!.outputs.append(outputNode.terminals["diameter"]!);
+    (multiplierNode.terminals["multiplier"]as! MultiplierTerminal).modifier = 2;
+    additionNodeX.addTerminal("addition",type: "addition");
+    (additionNodeX.terminals["addition"]as! AdderTerminal).modifier = 10;
+    additionNodeY.addTerminal("addition",type: "addition");
+    (additionNodeY.terminals["addition"]as! AdderTerminal).modifier = 100;
 
     
-    var penInputView = NodeView(terminals: inputs, name:"pen input");
+    
+    let penInputView = NodeView(node:penNode);
     self.view.addSubview(penInputView)
-    var outputView = NodeView(terminals: outputs, name: "output");
-    self.view.addSubview(outputView)
-    outputView.frame.origin.x = 400
+    
+    let outputView1 = NodeView(node:outputNode1);
+    self.view.addSubview(outputView1)
+    outputView1.frame.origin.x = 500
+    
+    let outputView2 = NodeView(node:outputNode2);
+    self.view.addSubview(outputView2)
+    outputView2.frame.origin.x = 500
+    outputView2.frame.origin.y = 300;
+    
+    let additionViewX = NodeView(node:additionNodeX);
+    self.view.addSubview(additionViewX)
+    additionViewX.frame.origin.x = 300
+    
+    let additionViewY = NodeView(node:additionNodeY);
+    self.view.addSubview(additionViewY)
+    additionViewY.frame.origin.x = 300
+    additionViewY.frame.origin.y = 200;
+    
+    let multiplierNodeView = NodeView(node:multiplierNode);
+    self.view.addSubview(multiplierNodeView)
+    multiplierNodeView.frame.origin.x = 300
+   multiplierNodeView.frame.origin.y = 300;
+
+
+    
+    
+   penNode.terminals["x"]!.addOutput(outputNode1.terminals["x"]!);
+   penNode.terminals["y"]!.addOutput(outputNode1.terminals["y"]!);
+    penNode.terminals["force"]!.addOutput(multiplierNode.terminals["multiplier"]!);
+  multiplierNode.terminals["multiplier"]!.addOutput(outputNode1.terminals["diameter"]!);
+    
+    
+    penNode.terminals["x"]!.addOutput(additionNodeX.terminals["addition"]!);
+  penNode.terminals["y"]!.addOutput(additionNodeY.terminals["addition"]!);
+    additionNodeX.terminals["addition"]!.addOutput(outputNode2.terminals["x"]!);
+    additionNodeY.terminals["addition"]!.addOutput(outputNode2.terminals["y"]!);
+ 
+    multiplierNode.terminals["multiplier"]!.addOutput(outputNode2.terminals["diameter"]!);
+    
+    
+    
+    
+    
     for _ in 0...agentCount-1 {
         penAgents.append(PenAgent());
     }
@@ -144,11 +194,14 @@ class ViewController: UIViewController {
             let x = Float(point.x)
             let y = Float(point.y)
             let force = Float(touch.force);
+            let angle = Float(touch.azimuthAngleInView(view))
+
+            
             
             penNode.updateTerminalValue("x",value:x);
             penNode.updateTerminalValue("y",value:y);
             penNode.updateTerminalValue("force",value:force);
-
+            penNode.updateTerminalValue("angle",value:angle);
             
             
             for index in 0...agentCount-1 {

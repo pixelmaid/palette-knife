@@ -26,15 +26,26 @@ enum NodeProperty {
 
 
 class MultiplierTerminal: NodeTerminal{
-    var multiplier = Float(1);
+    var modifier = Float(1);
     
-    override dynamic var value: Float {
-        didSet {
+    override func setValue(value:Float){
+        self.value = value;
         valueChanged.raise((.Value,self,value, oldValue as Any))
-        self.oldValue = oldValue
+        
         for output in self.outputs {
-            output.setValue(self.value*self.multiplier)
+            output.setValue(self.value*modifier)
         }
+    }}
+
+class AdderTerminal: NodeTerminal{
+    var modifier = Float(1);
+    
+   override func setValue(value:Float){
+        self.value = value;
+        valueChanged.raise((.Value,self,value, oldValue as Any))
+        
+        for output in self.outputs {
+            output.setValue(self.value+modifier)
         }
     }
 }
@@ -63,20 +74,20 @@ class NodeTerminal: PropertyObservable {
         didSet {
         self.oldValue = oldValue
 
-      valueChanged.raise((.Value,self,value, oldValue as Any))
-        for output in self.outputs {
-            output.setValue(self.value)
-            }
         }
     }
     
     func setValue(value:Float){
         self.value = value;
+        valueChanged.raise((.Value,self,value, oldValue as Any))
+        
+        for output in self.outputs {
+            output.setValue(self.value)
+        }
     }
     
     func addOutput(output:NodeTerminal){
         self.outputs.append(output);
-        print("added output",output.name);
     }
     
 }
@@ -100,6 +111,11 @@ class Node: NodeObservable{
 
             terminal = MultiplierTerminal()
         }
+        else if(type == "addition"){
+            print("creating addition terminal,\(name)")
+            
+            terminal = AdderTerminal();
+        }
         else{
             print("creating standard terminal,\(name)")
             terminal = NodeTerminal()
@@ -116,11 +132,11 @@ class Node: NodeObservable{
     }
     
     func onValueChanged(data: (NodeProperty,NodeTerminal,Any,Any)) {
-        if(self.name=="output node"){
+        
           //  print("A terminal changed for \(self.name)!\(data.0, data.1.name)");
 
             locked[data.1.name] = true;
-            print("unlocked \(data.1.name,data.1.value)");
+            print("unlocked \(self.name,data.1.name,data.1.value)");
             var allLocked = true
             for (key,value) in locked {
                // print("\(key) = \(value)")
@@ -138,5 +154,5 @@ class Node: NodeObservable{
             }
             
         }
-    }
+    
 }

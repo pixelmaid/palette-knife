@@ -105,12 +105,12 @@ class NodeTerminalView: UIView {
         self.backgroundColor = color
     }
     
-    func onValueChanged(data: (NodeProperty,NodeTerminal,Any,Any)) {
-        self.valueLabel.text = String(data.2);
+    func onValueChanged(data: (NodeProperty,ObservableNode)) {
+        self.valueLabel.text = String((data.1 as! NodeTerminal).value);
     }
     
     func onColorChanged(data: (NodeProperty, UIColor)) {
-        print("updating color for terminal \(self.label.text)")
+      //  print("updating color for terminal \(self.label.text)")
 
         self.updateBackgroundColor(data.1);
     }

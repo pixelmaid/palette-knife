@@ -20,8 +20,8 @@ class ViewController: UIViewController {
     var swiped = false
     var penAgents = [PenAgent]();
     var agentCount = 1;
-    var inputs = [String](arrayLiteral: "force","angle","x","y");
-    var outputs = [String](arrayLiteral: "x","y","diameter");
+    var inputs = [String](arrayLiteral: "force","angle","x","y","hue");
+    var outputs = [String](arrayLiteral: "x","y","diameter", "hue");
     var outputNode1 = Node(name:"output node 1");
     var outputNode2 = Node(name:"output node 2");
     var multiplierNode = Node(name:"multiplier node");
@@ -34,7 +34,7 @@ class ViewController: UIViewController {
     super.viewDidLoad()
     
    outputNode1.valueChanged.addHandler(self,handler:ViewController.onOutputChanged)
-  outputNode2.valueChanged.addHandler(self,handler:ViewController.onOutputChanged)
+  //outputNode2.valueChanged.addHandler(self,handler:ViewController.onOutputChanged)
 
     for index in 0...inputs.count-1{
         penNode.addTerminal(inputs[index]);
@@ -45,9 +45,9 @@ class ViewController: UIViewController {
     }
     
     multiplierNode.addTerminal("multiplier",type: "multiplier");
-    (multiplierNode.terminals["multiplier"]as! MultiplierTerminal).modifier = 2;
+    (multiplierNode.terminals["multiplier"]as! MultiplierTerminal).modifier = 10;
     additionNodeX.addTerminal("addition",type: "addition");
-    (additionNodeX.terminals["addition"]as! AdderTerminal).modifier = 10;
+    (additionNodeX.terminals["addition"]as! AdderTerminal).modifier = 200;
     additionNodeY.addTerminal("addition",type: "addition");
     (additionNodeY.terminals["addition"]as! AdderTerminal).modifier = 100;
     
@@ -102,8 +102,9 @@ class ViewController: UIViewController {
     additionNodeY.terminals["addition"]!.addOutput(outputNode2.terminals["y"]!);
  
     multiplierNode.terminals["multiplier"]!.addOutput(outputNode2.terminals["diameter"]!);
-    
-    
+    penNode.terminals["y"]!.addOutput(outputNode1.terminals["hue"]!);
+    penNode.terminals["x"]!.addOutput(outputNode2.terminals["hue"]!);
+
     
     
     
@@ -115,18 +116,21 @@ class ViewController: UIViewController {
   }
     
     
-    func onOutputChanged(data:(NodeProperty,Node)){
-        
-    let fromPoint = CGPoint(x:CGFloat(data.1.terminals["x"]!.oldValue),y:CGFloat(data.1.terminals["y"]!.oldValue));
-    let toPoint = CGPoint(x:CGFloat(data.1.terminals["x"]!.value),y:CGFloat(data.1.terminals["y"]!.value));
+func onOutputChanged(data:(NodeProperty,ObservableNode)){
+    print("on output changed");
+    let node = data.1 as! Node
+    let fromPoint = CGPoint(x:CGFloat(node.terminals["x"]!.oldValue),y:CGFloat(node.terminals["y"]!.oldValue));
+    let toPoint = CGPoint(x:CGFloat(node.terminals["x"]!.value),y:CGFloat(node.terminals["y"]!.value));
         print("from point\(fromPoint.x,fromPoint.y) to point\(toPoint.x,toPoint.y)")
 
-    let diameter = CGFloat(data.1.terminals["diameter"]!.value)
-    drawLineFrom(fromPoint, toPoint: toPoint, force:diameter)
+    let diameter = CGFloat(node.terminals["diameter"]!.value)
+    let h = CGFloat(node.terminals["hue"]!.value)
+    //drawLineFrom(fromPoint, toPoint: toPoint, force:diameter, hue: h);
+    drawLineFrom(fromPoint, toPoint: toPoint, force:diameter, hue: self.mapColor(h));
     lastPoint = toPoint;
-    data.1.terminals["y"]!.oldValue = data.1.terminals["y"]!.value;
+   node.terminals["y"]!.oldValue = node.terminals["y"]!.value;
 
-    }
+}
 
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
@@ -142,7 +146,7 @@ class ViewController: UIViewController {
             let point = touch.locationInView(view);
             let x = Float(point.x)
             let y = Float(point.y)
-            let force = Float(touch.force);
+            let force = Float(touch.force)/5;
             
            penNode.updateTerminalValue("x",value:x);
             penNode.updateTerminalValue("y",value:y);
@@ -156,15 +160,18 @@ class ViewController: UIViewController {
     
     
     func mapColor(val: CGFloat)->CGFloat{
-        let start1=CGFloat(0);
-        let end1 = view.frame.size.height;
+       // let start1=CGFloat(0-2*M_PI);
+       // let end1 = CGFloat(2*M_PI);
+      let start1=CGFloat(0);
+       let end1 = CGFloat(view.frame.size.height);
+
         let start2 = CGFloat(0);
         let end2 = CGFloat(1);
         return start2 + (end2 - start2) * (val - start1) / (end1 - start1);
     }
     
-    func drawLineFrom(fromPoint: CGPoint, toPoint: CGPoint, force:CGFloat) {
-        
+    func drawLineFrom(fromPoint: CGPoint, toPoint: CGPoint, force:CGFloat, hue:CGFloat) {
+        let color = UIColor.init(hue: hue,saturation:CGFloat(1),brightness:CGFloat(1), alpha:CGFloat(1))
         // 1
         UIGraphicsBeginImageContext(view.frame.size)
         let context = UIGraphicsGetCurrentContext()
@@ -177,7 +184,8 @@ class ViewController: UIViewController {
         // 3
         CGContextSetLineCap(context, CGLineCap.Round)
         CGContextSetLineWidth(context, brushWidth*force)
-        CGContextSetRGBStrokeColor(context, mapColor(toPoint.y), green, blue, 1.0)
+       CGContextSetStrokeColorWithColor(context, color.CGColor)
+        //CGContextSetRGBStrokeColor(context, CGFloat(1), CGFloat(0),  CGFloat(0),  CGFloat(1))
         CGContextSetBlendMode(context, CGBlendMode.Normal)
         
         // 4

@@ -15,7 +15,7 @@ class NodeView: UIView {
     
     // MARK: Initialization
     init(node:Node) {
-        print("inputs=\(terminals)")
+        //print("inputs=\(terminals)")
         self.node = node;
         super.init(frame: CGRect(x: 100, y: 100, width: 150, height: node.terminals.count*20+50))
 
@@ -25,7 +25,6 @@ class NodeView: UIView {
         self.name = node.name
         var index = 0;
         for (key,_) in node.terminals{
-            print("key=\(key)");
             let terminal = NodeTerminalView(terminal: node.terminals[key]!);
             self.addSubview(terminal);
             terminals.append(terminal);
@@ -49,7 +48,7 @@ class NodeView: UIView {
     }
     
     func terminalSelected(sender: NodeTerminalView){
-        print("selected terminal")
+        //print("selected terminal")
     }
     
     

@@ -16,10 +16,10 @@ protocol PropertyObservable {
 }
 
 /*protocol NodeObservable {
-    typealias PropertyType
-    typealias TargetType
-    var propertyChanged: Event<(PropertyType,TargetType)> { get }
-}*/
+ typealias PropertyType
+ typealias TargetType
+ var propertyChanged: Event<(PropertyType,TargetType)> { get }
+ }*/
 enum NodeProperty {
     case Selected, Name, Linked, Value, Color
 }
@@ -29,48 +29,18 @@ class ObservableNode: PropertyObservable {
     typealias PropertyType = NodeProperty
     let propertyChanged = Event<(NodeProperty,ObservableNode)>()
     let valueChanged = Event<(NodeProperty,ObservableNode)>()
-    
-}
-
-
-class MultiplierTerminal: NodeTerminal{
-    var modifier = Float(1);
-    
-    override func setValue(value:Float){
-        self.value = value;
-        valueChanged.raise((.Value,self))
-        
-        for output in self.outputs {
-            output.setValue(self.value*modifier)
-        }
-    }}
-
-class AdderTerminal: NodeTerminal{
-    var modifier = Float(1);
-    
-   override func setValue(value:Float){
-        self.value = value;
-        valueChanged.raise((.Value,self))
-        
-        for output in self.outputs {
-            output.setValue(self.value+modifier)
-        }
-    }
-}
-
-
-class NodeTerminal:ObservableNode {
-    typealias PropertyType = NodeProperty
     let colorChanged = Event<(NodeProperty, UIColor)>()
-    var oldValue = Float(0)
-    var color = UIColor.blueColor();
-    
-    var outputs = [NodeTerminal]();
 
-    dynamic var selected: Bool = false {
-        didSet {
-        propertyChanged.raise((.Selected,self))
-        }
+    var color = UIColor.blueColor();
+    var outputs = [ObservableNode]();
+    
+    
+    init(name:String){
+       self.name = name
+    }
+    
+    func setValue(value:Float){
+        
     }
     
     dynamic var name: String = "" {
@@ -78,26 +48,10 @@ class NodeTerminal:ObservableNode {
         propertyChanged.raise((.Name, self))
         }
     }
-    
-    
-    dynamic var value: Float = 0.0{
-        didSet {
-        self.oldValue = oldValue
 
-        }
-    }
     
-    func setValue(value:Float){
-        self.value = value;
-        valueChanged.raise((.Value,self))
-        
-        for output in self.outputs {
-            output.setValue(self.value)
-        }
-    }
-    
-    func addOutput(output:NodeTerminal){
-        print(" adding output \(output.name,self.color)")
+    func addOutput(output:ObservableNode){
+        //print(" adding output \(output.name,self.color)")
         output.color = self.color;
         output.colorChanged.raise((.Color, self.color));
         self.outputs.append(output);
@@ -105,60 +59,151 @@ class NodeTerminal:ObservableNode {
     }
     
     func setColor(color:UIColor){
-       self.color = color;
-       colorChanged.raise((.Color, self.color));
+        self.color = color;
+        colorChanged.raise((.Color, self.color));
     }
-    
     
 }
 
 
+
+
+class NodeTerminal:ObservableNode {
+    typealias PropertyType = NodeProperty
+    var oldValue = Float(0)
+
+    override init(name:String){
+        super.init(name:name);
+    }
+    
+    dynamic var selected: Bool = false {
+        didSet {
+        propertyChanged.raise((.Selected,self))
+        }
+    }
+    
+    
+    
+    dynamic var value: Float = 0.0{
+        didSet {
+        self.oldValue = oldValue
+        
+        }
+    }
+    
+    override func setValue(value:Float){
+        self.value = value;
+        valueChanged.raise((.Value,self))
+        //print("setting value for \(self.name,self.value)")
+
+        for output in self.outputs {
+            output.setValue(self.value)
+        }
+    }
+    
+    
+    
+}
+
+class AdditionNode: Node{
+    var value = NodeTerminal(name: "value");
+    var addition = NodeTerminal(name: "addition");
+    
+    override init(name:String){
+        super.init(name: name)
+        terminals["value"] = value;
+        terminals["addition"] = addition;
+        addition.value = 0;
+        value.value = 0;
+        value.valueChanged.addHandler(self, handler:AdditionNode.onValueChanged)
+        addition.valueChanged.addHandler(self, handler:AdditionNode.onValueChanged)
+        
+    }
+    
+    
+    override func onValueChanged(data: (NodeProperty,ObservableNode)){
+        valueChanged.raise((.Value,self))
+        
+        for output in (self as ObservableNode).outputs {
+            output.setValue(self.value.value+self.addition.value)
+        }
+    }
+}
+
+class MultiplierNode: Node{
+    var value = NodeTerminal(name:"value");
+    var multiplier = NodeTerminal(name:"multiplier");
+    
+    override init(name:String){
+        super.init(name: name)
+        terminals["value"] = value;
+        terminals["multiplier"] = multiplier;
+        multiplier.value = 1;
+        value.value = 0;
+        value.valueChanged.addHandler(self, handler:MultiplierNode.onValueChanged)
+        multiplier.valueChanged.addHandler(self, handler:MultiplierNode.onValueChanged)
+
+    }
+
+
+    override func onValueChanged(data: (NodeProperty,ObservableNode)){
+        valueChanged.raise((.Value,self))
+        
+        for output in (self as ObservableNode).outputs {
+            output.setValue(self.value.value*self.multiplier.value)
+        }
+    }
+}
+
 class RepeatNode: Node{
-    var count = NodeTerminal();
-    var limit = 1;
+    var count = NodeTerminal(name:"count");
+    var limit = NodeTerminal(name:"limit");
     override init(name:String){
         super.init(name: name)
         terminals["count"] = count;
+        terminals["limit"] = limit;
         count.value = 0;
-        count.valueChanged.addHandler(self, handler:RepeatNode.onCountChanged)
+        limit.value = 5;
+        //count.valueChanged.addHandler(self, handler:RepeatNode.onCountChanged)
     }
     
-     func onCountChanged(data: (NodeProperty,ObservableNode)) {
+    override func setValue(value:Float) {
+        
+           count.setValue(count.value+1)
+        //print("repeat node set value, count:\(self.count.value)");
+            if(count.value <= limit.value){
+                valueChanged.raise((.Value,self))
+                for output in (self as ObservableNode).outputs {
+                    output.setValue(count.value)
+                }
+            }
+            else{
+                count.setValue(0)
+            }
+        }
+   
+    
+    /*func onCountChanged(data: (NodeProperty,ObservableNode)) {
         print("count changed to \(count.value)")
-    }
+    }*/
 }
 
 class Node: ObservableNode{
     typealias PropertyType = NodeProperty
     var terminals = [String:NodeTerminal]();
     var locked = [String:Bool]();
-    var name = "";
-    var outputs = [ObservableNode]();
-
-    init(name:String){
-        self.name = name;
+    
+    
+    
+    override func setValue(value:Float){
+        
     }
     
     func addTerminal(name: String, type:String = "standard"){
-        var terminal:NodeTerminal
+        var terminal = NodeTerminal(name:name)
         
-        if(type == "multiplier"){
-            print("creating multiplier terminal,\(name)")
-
-            terminal = MultiplierTerminal()
-        }
-        else if(type == "addition"){
-            print("creating addition terminal,\(name)")
-            
-            terminal = AdderTerminal();
-        }
-        else{
-            print("creating standard terminal,\(name)")
-            terminal = NodeTerminal()
-        }
         terminals[name] = terminal;
         terminal.valueChanged.addHandler(self, handler: Node.onValueChanged)
-        terminal.name = name
         locked[name] = false;
     }
     
@@ -169,26 +214,32 @@ class Node: ObservableNode{
     
     func onValueChanged(data: (NodeProperty,ObservableNode)) {
         
-          //  print("A terminal changed for \(self.name)!\(data.0, data.1.name)");
-
-            locked[(data.1 as! NodeTerminal).name] = true;
-           // print("unlocked \(self.name,data.1.name,data.1.value)");
-            var allLocked = true
-            for (key,value) in locked {
-               // print("\(key) = \(value)")
-                if(!value){
-                    allLocked = false;
-                }
+        //  print("A terminal changed for \(self.name)!\(data.0, data.1.name)");
+        
+        locked[(data.1 as! NodeTerminal).name] = true;
+        // print("unlocked \(self.name,data.1.name,data.1.value)");
+        var allLocked = true
+        for (_,value) in locked {
+            // print("\(key) = \(value)")
+            if(!value){
+                allLocked = false;
             }
-            if(allLocked){
-              //  print("All set");
-                valueChanged.raise((.Value,self));
-                for (key,_) in locked {
-                    locked[key] = false
-                }
-
+        }
+        if(allLocked){
+            //  print("All set");
+            valueChanged.raise((.Value,self));
+            for (key,_) in locked {
+                locked[key] = false
+            }
+            
+            for output in (self as ObservableNode).outputs {
+                output.setValue(0)
             }
             
         }
+        
+        
+        
+    }
     
 }

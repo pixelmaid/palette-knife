@@ -20,13 +20,14 @@ class ViewController: UIViewController {
     var swiped = false
     var penAgents = [PenAgent]();
     var agentCount = 1;
-    var inputs = [String](arrayLiteral: "force","angle","x","y","hue");
+    var inputs = [String](arrayLiteral: "x","y","force", "angle");
     var outputs = [String](arrayLiteral: "x","y","diameter", "hue");
     var outputNode1 = Node(name:"output node 1");
+    var repeatNode =  RepeatNode(name:"repeat node");
     var outputNode2 = Node(name:"output node 2");
-    var multiplierNode = Node(name:"multiplier node");
-    var additionNodeX = Node(name:"addition nodeX");
-    var additionNodeY = Node(name:"addition nodeY");
+    var multiplierNode = MultiplierNode(name:"multiplier node");
+    var additionNodeX = AdditionNode(name:"addition nodeX");
+    var additionNodeY = AdditionNode(name:"addition nodeY");
     var penNode = Node(name:"pen node");
     var lastPoint = CGPoint(x:0,y:0);
 
@@ -44,13 +45,6 @@ class ViewController: UIViewController {
        outputNode2.addTerminal(outputs[index]);
     }
     
-    multiplierNode.addTerminal("multiplier",type: "multiplier");
-    (multiplierNode.terminals["multiplier"]as! MultiplierTerminal).modifier = 10;
-    additionNodeX.addTerminal("addition",type: "addition");
-    (additionNodeX.terminals["addition"]as! AdderTerminal).modifier = 200;
-    additionNodeY.addTerminal("addition",type: "addition");
-    (additionNodeY.terminals["addition"]as! AdderTerminal).modifier = 100;
-    
 
     
     
@@ -63,10 +57,11 @@ class ViewController: UIViewController {
     self.view.addSubview(outputView1)
     outputView1.frame.origin.x = 500
     
-    let outputView2 = NodeView(node:outputNode2);
+    /*let outputView2 = NodeView(node:outputNode2);
     self.view.addSubview(outputView2)
     outputView2.frame.origin.x = 500
     outputView2.frame.origin.y = 300;
+    */
     
     let additionViewX = NodeView(node:additionNodeX);
     self.view.addSubview(additionViewX)
@@ -81,29 +76,48 @@ class ViewController: UIViewController {
     self.view.addSubview(multiplierNodeView)
     multiplierNodeView.frame.origin.x = 300
    multiplierNodeView.frame.origin.y = 300;
+    
+    let repeatNodeView = NodeView(node:repeatNode);
+    self.view.addSubview(repeatNodeView)
+    repeatNodeView.frame.origin.x = 500
+    repeatNodeView.frame.origin.y = 300;
 
+    (multiplierNode.terminals["value"]!as NodeTerminal).setValue(10)
+    (repeatNode.terminals["limit"]!as NodeTerminal).setValue(3)
+    (repeatNode.terminals["count"]!as NodeTerminal).setValue(0)
+
+   (additionNodeX.terminals["addition"]!as NodeTerminal).setValue(0)
+    (additionNodeY.terminals["addition"]!as NodeTerminal).setValue(100)
+
+
+    
     
     penNode.terminals["force"]!.setColor(UIColor.redColor());
     penNode.terminals["angle"]!.setColor(UIColor.greenColor());
     penNode.terminals["x"]!.setColor(UIColor.purpleColor());
     penNode.terminals["y"]!.setColor(UIColor.orangeColor());
 
+    penNode.terminals["x"]!.addOutput(additionNodeX.terminals["value"]!);
+    penNode.terminals["y"]!.addOutput(additionNodeY.terminals["value"]!);
     
+    additionNodeX.addOutput(outputNode1.terminals["x"]!);
+    additionNodeY.addOutput(outputNode1.terminals["y"]!);
+
+    outputNode1.addOutput(repeatNode);
+    repeatNode.addOutput(multiplierNode.terminals["multiplier"]!)
+    multiplierNode.addOutput(additionNodeY.terminals["addition"]!)
+    penNode.terminals["force"]!.addOutput(outputNode1.terminals["diameter"]!);
+//  multiplierNode.addOutput(outputNode1.terminals["diameter"]!);
     
-   penNode.terminals["x"]!.addOutput(outputNode1.terminals["x"]!);
-   penNode.terminals["y"]!.addOutput(outputNode1.terminals["y"]!);
-    penNode.terminals["force"]!.addOutput(multiplierNode.terminals["multiplier"]!);
-  multiplierNode.terminals["multiplier"]!.addOutput(outputNode1.terminals["diameter"]!);
+
+  //  additionNodeX.addOutput(outputNode2.terminals["x"]!);
     
-    
-    penNode.terminals["x"]!.addOutput(additionNodeX.terminals["addition"]!);
-  penNode.terminals["y"]!.addOutput(additionNodeY.terminals["addition"]!);
-    additionNodeX.terminals["addition"]!.addOutput(outputNode2.terminals["x"]!);
-    additionNodeY.terminals["addition"]!.addOutput(outputNode2.terminals["y"]!);
+   // additionNodeY.addOutput(outputNode2.terminals["y"]!);
+  
  
-    multiplierNode.terminals["multiplier"]!.addOutput(outputNode2.terminals["diameter"]!);
+   // multiplierNode.addOutput(outputNode2.terminals["diameter"]!);
     penNode.terminals["y"]!.addOutput(outputNode1.terminals["hue"]!);
-    penNode.terminals["x"]!.addOutput(outputNode2.terminals["hue"]!);
+    //penNode.terminals["x"]!.addOutput(outputNode2.terminals["hue"]!);
 
     
     
@@ -117,16 +131,16 @@ class ViewController: UIViewController {
     
     
 func onOutputChanged(data:(NodeProperty,ObservableNode)){
-    print("on output changed");
+   // print("on output changed");
     let node = data.1 as! Node
     let fromPoint = CGPoint(x:CGFloat(node.terminals["x"]!.oldValue),y:CGFloat(node.terminals["y"]!.oldValue));
     let toPoint = CGPoint(x:CGFloat(node.terminals["x"]!.value),y:CGFloat(node.terminals["y"]!.value));
-        print("from point\(fromPoint.x,fromPoint.y) to point\(toPoint.x,toPoint.y)")
+        //print("from point\(fromPoint.x,fromPoint.y) to point\(toPoint.x,toPoint.y)")
 
     let diameter = CGFloat(node.terminals["diameter"]!.value)
     let h = CGFloat(node.terminals["hue"]!.value)
     //drawLineFrom(fromPoint, toPoint: toPoint, force:diameter, hue: h);
-    drawLineFrom(fromPoint, toPoint: toPoint, force:diameter, hue: self.mapColor(h));
+    drawLineFrom(lastPoint, toPoint: toPoint, force:diameter, hue: self.mapColor(h));
     lastPoint = toPoint;
    node.terminals["y"]!.oldValue = node.terminals["y"]!.value;
 

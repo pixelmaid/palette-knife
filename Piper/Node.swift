@@ -30,6 +30,7 @@ class ObservableNode: PropertyObservable {
     let propertyChanged = Event<(NodeProperty,ObservableNode)>()
     let valueChanged = Event<(NodeProperty,ObservableNode)>()
     let colorChanged = Event<(NodeProperty, UIColor)>()
+    let linkCreated = Event<(NodeProperty, Bool)>()
 
     var color = UIColor.blueColor();
     var outputs = [ObservableNode]();
@@ -54,6 +55,7 @@ class ObservableNode: PropertyObservable {
         //print(" adding output \(output.name,self.color)")
         output.color = self.color;
         output.colorChanged.raise((.Color, self.color));
+        output.linkCreated.raise((.Linked, true));
         self.outputs.append(output);
         
     }
@@ -192,8 +194,8 @@ class Node: ObservableNode{
     typealias PropertyType = NodeProperty
     var terminals = [String:NodeTerminal]();
     var locked = [String:Bool]();
-    
-    
+    var links = 0;
+    var linkCount = 0;
     
     override func setValue(value:Float){
         
@@ -204,37 +206,39 @@ class Node: ObservableNode{
         
         terminals[name] = terminal;
         terminal.valueChanged.addHandler(self, handler: Node.onValueChanged)
+        terminal.linkCreated.addHandler(self, handler: Node.onLinkCreated);
         locked[name] = false;
     }
     
     
-    func updateTerminalValue(name: String, value: Float){
-        terminals[name]!.setValue(value);
+    func updateValue(values:[String:Float]){
+        for (key,value) in values{
+           self.terminals[key]!.setValue(value);
+        }
+    }
+    
+    func onLinkCreated(data:(NodeProperty,Bool)){
+        links = links+1
+        print("======link count set to \(links)========")
+
     }
     
     func onValueChanged(data: (NodeProperty,ObservableNode)) {
-        
-        //  print("A terminal changed for \(self.name)!\(data.0, data.1.name)");
-        
-        locked[(data.1 as! NodeTerminal).name] = true;
-        // print("unlocked \(self.name,data.1.name,data.1.value)");
-        var allLocked = true
-        for (_,value) in locked {
-            // print("\(key) = \(value)")
-            if(!value){
-                allLocked = false;
-            }
+        if (self.name == "output node 1"){
+            print("node updated \(data.1.name)")
         }
-        if(allLocked){
-            //  print("All set");
-            valueChanged.raise((.Value,self));
-            for (key,_) in locked {
-                locked[key] = false
+        linkCount+=1;
+        if(linkCount==links){
+             if (self.name == "output node 1"){
+            print("======count reached \(linkCount)========")
             }
+
+            valueChanged.raise((.Value,self));
             
             for output in (self as ObservableNode).outputs {
                 output.setValue(0)
             }
+            linkCount = 0
             
         }
         

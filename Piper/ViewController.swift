@@ -30,6 +30,7 @@ class ViewController: UIViewController {
     var additionNodeY = AdditionNode(name:"addition nodeY");
     var penNode = Node(name:"pen node");
     var lastPoint = CGPoint(x:0,y:0);
+    var context: CGContext?
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -83,7 +84,7 @@ class ViewController: UIViewController {
     repeatNodeView.frame.origin.y = 300;
 
     (multiplierNode.terminals["value"]!as NodeTerminal).setValue(10)
-    (repeatNode.terminals["limit"]!as NodeTerminal).setValue(3)
+    (repeatNode.terminals["limit"]!as NodeTerminal).setValue(5)
     (repeatNode.terminals["count"]!as NodeTerminal).setValue(0)
 
    (additionNodeX.terminals["addition"]!as NodeTerminal).setValue(0)
@@ -99,6 +100,8 @@ class ViewController: UIViewController {
 
     penNode.terminals["x"]!.addOutput(additionNodeX.terminals["value"]!);
     penNode.terminals["y"]!.addOutput(additionNodeY.terminals["value"]!);
+    penNode.terminals["force"]!.addOutput(outputNode1.terminals["diameter"]!);
+
     
     additionNodeX.addOutput(outputNode1.terminals["x"]!);
     additionNodeY.addOutput(outputNode1.terminals["y"]!);
@@ -106,7 +109,6 @@ class ViewController: UIViewController {
     outputNode1.addOutput(repeatNode);
     repeatNode.addOutput(multiplierNode.terminals["multiplier"]!)
     multiplierNode.addOutput(additionNodeY.terminals["addition"]!)
-    penNode.terminals["force"]!.addOutput(outputNode1.terminals["diameter"]!);
 //  multiplierNode.addOutput(outputNode1.terminals["diameter"]!);
     
 
@@ -140,7 +142,7 @@ func onOutputChanged(data:(NodeProperty,ObservableNode)){
     let diameter = CGFloat(node.terminals["diameter"]!.value)
     let h = CGFloat(node.terminals["hue"]!.value)
     //drawLineFrom(fromPoint, toPoint: toPoint, force:diameter, hue: h);
-    drawLineFrom(lastPoint, toPoint: toPoint, force:diameter, hue: self.mapColor(h));
+    drawLineFrom(fromPoint, toPoint: toPoint, force:diameter, hue: self.mapColor(h));
     lastPoint = toPoint;
    node.terminals["y"]!.oldValue = node.terminals["y"]!.value;
 
@@ -162,16 +164,11 @@ func onOutputChanged(data:(NodeProperty,ObservableNode)){
             let y = Float(point.y)
             let force = Float(touch.force)/5;
             
-           penNode.updateTerminalValue("x",value:x);
-            penNode.updateTerminalValue("y",value:y);
-            penNode.updateTerminalValue("force",value:force);
-            
-            for index in 0...agentCount-1 {
-                penAgents[index].setLastPoint(Float(point.x),y: Float(point.y));
-            }
+          
         }
     }
     
+   
     
     func mapColor(val: CGFloat)->CGFloat{
        // let start1=CGFloat(0-2*M_PI);
@@ -186,29 +183,35 @@ func onOutputChanged(data:(NodeProperty,ObservableNode)){
     
     func drawLineFrom(fromPoint: CGPoint, toPoint: CGPoint, force:CGFloat, hue:CGFloat) {
         let color = UIColor.init(hue: hue,saturation:CGFloat(1),brightness:CGFloat(1), alpha:CGFloat(1))
-        // 1
-        UIGraphicsBeginImageContext(view.frame.size)
-        let context = UIGraphicsGetCurrentContext()
-        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
+
         
-        // 2
+        CGContextSetLineCap(context, CGLineCap.Round)
+        CGContextSetLineWidth(context, brushWidth*force)
+        CGContextSetStrokeColorWithColor(context, color.CGColor)
+        CGContextSetBlendMode(context, CGBlendMode.Normal)
+        
         CGContextMoveToPoint(context, fromPoint.x, fromPoint.y)
         CGContextAddLineToPoint(context, toPoint.x, toPoint.y)
         
-        // 3
-        CGContextSetLineCap(context, CGLineCap.Round)
-        CGContextSetLineWidth(context, brushWidth*force)
-       CGContextSetStrokeColorWithColor(context, color.CGColor)
-        //CGContextSetRGBStrokeColor(context, CGFloat(1), CGFloat(0),  CGFloat(0),  CGFloat(1))
-        CGContextSetBlendMode(context, CGBlendMode.Normal)
-        
-        // 4
         CGContextStrokePath(context)
         
-        // 5
-        tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
-        tempImageView.alpha = opacity
-        UIGraphicsEndImageContext()
+       
+       /* for index in 0...100{
+            
+
+            CGContextSetLineCap(context, CGLineCap.Round)
+            CGContextSetLineWidth(context, brushWidth*force)
+            CGContextSetStrokeColorWithColor(context, color.CGColor)
+            CGContextSetBlendMode(context, CGBlendMode.Normal)
+
+        CGContextMoveToPoint(context, fromPoint.x, fromPoint.y+CGFloat(10*index))
+        CGContextAddLineToPoint(context, toPoint.x, toPoint.y+CGFloat(10*index))
+        
+            CGContextStrokePath(context)
+        }*/
+        
+        
+      
         
     }
 
@@ -216,6 +219,11 @@ func onOutputChanged(data:(NodeProperty,ObservableNode)){
         // 6
         swiped = true
         if let touch = touches.first  {
+            
+            UIGraphicsBeginImageContext(view.frame.size)
+            context = UIGraphicsGetCurrentContext()!
+            tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
+
             
             let point = touch.locationInView(view);
             let x = Float(point.x)
@@ -225,29 +233,13 @@ func onOutputChanged(data:(NodeProperty,ObservableNode)){
 
             
             
-            penNode.updateTerminalValue("x",value:x);
-            penNode.updateTerminalValue("y",value:y);
-            penNode.updateTerminalValue("force",value:force);
-            penNode.updateTerminalValue("angle",value:angle);
+            penNode.updateValue(["x":x,"y":y,"force":force,"angle":angle]);
+          
             
+            tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+            tempImageView.alpha = opacity
+            UIGraphicsEndImageContext()
             
-            for index in 0...agentCount-1 {
-                let i = Float(index);
-                let x = Float(x)+10*force*i;
-                let y = Float(y)+10*force*i;
-                let secondPoint = CGPoint(x:CGFloat(x),y:CGFloat(y));
-               // drawLineFrom(penAgents[index].getLastPoint(), toPoint: secondPoint, force: touch.force)
-                penAgents[index].addPoint(x,y:y);
-                var closePoints = penAgents[index].checkProximity(Point(x: x,y: y),threshold:60*Float(touch.force));
-                if(closePoints.count>0){
-                for j in 0...closePoints.count-1{
-                    let sPoint = CGPoint(x:CGFloat(closePoints[j].x),y:CGFloat(closePoints[j].y));
-                    //drawLineFrom(sPoint, toPoint: secondPoint, force: 0.15)
-                }
-                }
-
-            }
-           
         }
     }
     

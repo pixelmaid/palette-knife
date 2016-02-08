@@ -105,7 +105,14 @@ class NodeTerminalView: UIView {
     }
     
     func onValueChanged(data: (NodeProperty,ObservableNode)) {
+        var nt = data.1 as! NodeTerminal;
+        if(nt.rangeValue.count>0){
+            self.valueLabel.text = String((data.1 as! NodeTerminal).rangeValue[0]);
+        }
+        else{
         self.valueLabel.text = String((data.1 as! NodeTerminal).value);
+        }
+
     }
     
     func onColorChanged(data: (NodeProperty, UIColor)) {

@@ -10,6 +10,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var mainImageView: UIImageView!
     @IBOutlet weak var tempImageView: UIImageView!
+   
     
     
     var red: CGFloat = 1
@@ -27,18 +28,18 @@ class ViewController: UIViewController {
     var rangeNodeY = RangeNode(name:"rangeY");
     var rangeNodeX = RangeNode(name:"rangeX");
     
-    // var repeatNode =  RepeatNode(name:"repeat node");
-    // var outputNode2 = Node(name:"output node 2");
     var multiplierNode = MultiplierNode(name:"multiplier node");
     var additionNodeX = AdditionNode(name:"addition nodeX");
     var additionNodeY = AdditionNode(name:"addition nodeY");
     var penNode = Node(name:"pen node");
     var lastPoint = CGPoint(x:0,y:0);
     var context: CGContext?
+    var nodeViewContainer: NodeViewContainer!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        nodeViewContainer = NodeViewContainer()
+        self.view.addSubview(nodeViewContainer)
         outputNode1.valueChanged.addHandler(self,handler:ViewController.onOutputChanged)
         
         cloneNode.valueChanged.addHandler(self,handler:ViewController.onOutputChanged)
@@ -53,55 +54,39 @@ class ViewController: UIViewController {
         cloneNode.setTarget(outputNode1);
         
         
-        let penInputView = NodeView(node:penNode);
-        self.view.addSubview(penInputView)
+        let penInputView = self.addView(penNode);
         
-        let cloneView = NodeView(node:cloneNode);
-        self.view.addSubview(cloneView)
+        let cloneView = self.addView(cloneNode);
         cloneView.frame.origin.x = 700
         cloneView.frame.origin.y = 100;
         
         
-        let outputView1 = NodeView(node:outputNode1);
-        self.view.addSubview(outputView1)
+        let outputView1 = self.addView(outputNode1)
         outputView1.frame.origin.x = 500
         
-        /*let outputView2 = NodeView(node:outputNode2);
-         self.view.addSubview(outputView2)
-         outputView2.frame.origin.x = 500
-         outputView2.frame.origin.y = 300;
-         */
-        
-        let additionViewX = NodeView(node:additionNodeX);
-        self.view.addSubview(additionViewX)
+        let additionViewX = self.addView(additionNodeX);
         additionViewX.frame.origin.x = 300
         
-        let additionViewY = NodeView(node:additionNodeY);
-        self.view.addSubview(additionViewY)
+        let additionViewY = self.addView(additionNodeY);
         additionViewY.frame.origin.x = 300
         additionViewY.frame.origin.y = 200;
         
-        let multiplierNodeView = NodeView(node:multiplierNode);
-        self.view.addSubview(multiplierNodeView)
+        let multiplierNodeView = self.addView(multiplierNode);
         multiplierNodeView.frame.origin.x = 300
         multiplierNodeView.frame.origin.y = 300;
         
         
-        let rangeViewY = NodeView(node:rangeNodeY);
-        self.view.addSubview(rangeViewY)
+        let rangeViewY = self.addView(rangeNodeY);
         rangeViewY.frame.origin.x = 500
         rangeViewY.frame.origin.y = 300;
-        let rangeViewX = NodeView(node:rangeNodeX);
-        self.view.addSubview(rangeViewX)
+        
+        let rangeViewX = self.addView(rangeNodeX);
         rangeViewX.frame.origin.x = 700
         rangeViewX.frame.origin.y = 300;
         
-        /*  let repeatNodeView = NodeView(node:repeatNode);
-         self.view.addSubview(repeatNodeView)
-         repeatNodeView.frame.origin.x = 500
-         repeatNodeView.frame.origin.y = 300;*/
+    
         
-        (multiplierNode.terminals["multiplier"]!as NodeTerminal).setValue(40)
+        (multiplierNode.terminals["multiplier"]!as NodeTerminal).setValue(100)
         //(repeatNode.terminals["limit"]!as NodeTerminal).setValue(5)
         //(repeatNode.terminals["count"]!as NodeTerminal).setValue(0)
         
@@ -155,15 +140,22 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
     }
     
+    func addView(targetNode:Node) ->NodeView{
+       let nv = NodeView(node:targetNode);
+        nodeViewContainer.addNodeView(nv)
+              return nv
+    }
+    
+    
     
     func onOutputChanged(data:(NodeProperty,ObservableNode)){
-        print("on output changed");
+       // print("on output changed");
         let node = data.1 as! Node
         let diameter = CGFloat(node.terminals["diameter"]!.value)
         let h = CGFloat(node.terminals["hue"]!.value)
-        let count = node.terminals["y"]!.rangeValue.count-1;
+        let count = Int(node.terminals["num"]!.value);
         //print("num of y values\(count,node.terminals["y"]!.rangeValue)")
-        if(count>1){
+        if(count>0){
             for index in 0...count-1{
                 let y = node.terminals["y"]?.rangeValue[index]
                 let oldY = node.terminals["y"]?.oldRangeValue[index]
@@ -202,6 +194,10 @@ class ViewController: UIViewController {
         }
 
     }
+    
+    
+    
+    
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first  {
 
@@ -217,6 +213,8 @@ class ViewController: UIViewController {
 
         }
     }
+    
+    
     
     
     
@@ -266,7 +264,7 @@ class ViewController: UIViewController {
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        // 6
+
         swiped = true
         if let touch = touches.first  {
             
@@ -276,6 +274,7 @@ class ViewController: UIViewController {
             
             
             let point = touch.locationInView(view);
+
             let x = Float(point.x)
             let y = Float(point.y)
             let force = Float(touch.force);

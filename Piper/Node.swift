@@ -15,11 +15,7 @@ protocol PropertyObservable {
     var propertyChanged: Event<(PropertyType,TargetType)> { get }
 }
 
-/*protocol NodeObservable {
- typealias PropertyType
- typealias TargetType
- var propertyChanged: Event<(PropertyType,TargetType)> { get }
- }*/
+
 enum NodeProperty {
     case Selected, Name, Linked, Value, Color
 }
@@ -58,7 +54,7 @@ class ObservableNode: PropertyObservable {
     
     
     func addOutput(output:ObservableNode){
-        //print(" adding output \(output.name,self.color)")
+        print(" adding output \(output.name,self.color)")
         output.color = self.color;
         output.colorChanged.raise((.Color, self.color));
         output.linkCreated.raise((.Linked, true));
@@ -124,7 +120,7 @@ class NodeTerminal:ObservableNode {
     override func setValue(value:[Float]){
         self.rangeValue = value;
         valueChanged.raise((.Value,self))
-      print("setting value for \(self.name,self.value)")
+      //print("setting value for \(self.name,self.value)")
         
         for output in self.outputs {
             output.setValue(self.rangeValue)
@@ -197,9 +193,12 @@ class RangeNode: Node{
         terminals["inputValue"] = inputValue;
         
         inputValue.value = 0;
-        range.value = 10;
+        range.value = 10	;
         limit.value = 100;
         inputValue.valueChanged.addHandler(self, handler:RangeNode.onValueChanged)
+        limit.linkCreated.addHandler(self, handler: Node.onLinkCreated);
+        range.linkCreated.addHandler(self, handler: Node.onLinkCreated);
+
         self.color = UIColor(red: CGFloat(0.5), green: CGFloat(0), blue: CGFloat(1), alpha: CGFloat(1))
     }
     
@@ -233,7 +232,8 @@ class CloneNode: Node{
         super.init(name: name)
         terminals["num"] = num
         terminals["target"] = target
-        num.value = 5
+        num.value = 10
+        
         
     }
     
@@ -242,32 +242,41 @@ class CloneNode: Node{
        self.target.setValue(10);
         for (key,_)in target.terminals{
             let name = target.terminals[key]!.name;
-           let terminal =  self.addTerminal(name)
-            terminal.valueChanged.addHandler(self, handler: CloneNode.onValueChanged)
+            self.addTerminal(name)
 
         }
         
     }
+    override func addTerminal(name: String, type:String = "standard")->NodeTerminal{
+        let terminal = NodeTerminal(name:name)
+        //print("adding terminal for\(self.name,name)")
+        terminals[name] = terminal;
+        terminal.valueChanged.addHandler(self, handler: CloneNode.onValueChanged)
+        terminal.linkCreated.addHandler(self, handler: Node.onLinkCreated);
+        locked[name] = false;
+        return terminal
+    }
+
     
     override func onValueChanged(data: (NodeProperty,ObservableNode)) {
-        linkCount+=1;
-       
-           // print("node updated \(data.1.name, linkCount)")
-        
-        
-        if(linkCount==links){
-                        //print("======count reached \(linkCount)========")
-            
-            
-            valueChanged.raise((.Value,self));
-            
-            for output in (self as ObservableNode).outputs {
-                output.setValue(0)
+        locked[data.1.name] = true;
+        print("unlocked \(data.1.name)")
+        var allLocked = true
+        for (key,value) in locked {
+            //print("\(key) = \(value)")
+            if(!value){
+                allLocked = false;
             }
-            linkCount = 0
+        }
+        if(allLocked){
+             print("=====All set======");
+            valueChanged.raise((.Value,self));
+            for (key,_) in locked {
+                locked[key] = false
+            }
             
         }
-        
+
         
         
     }
@@ -347,10 +356,10 @@ class Node: ObservableNode{
         }
     }
     
-       
+    
     func onLinkCreated(data:(NodeProperty,Bool)){
         links = links+1
-        //print("======link count set to \(links, self.name)========")
+        print("======link count set to \(links, self.name)========")
         
     }
     
@@ -358,18 +367,20 @@ class Node: ObservableNode{
         if (self.name == "output node 1"){
           //  print("node updated \(data.1.name)")
         }
-        linkCount+=1;
-        if(linkCount==links){
-            if (self.name == "output node 1"){
-               // print("======count reached \(linkCount)========")
+        locked[data.1.name] = true;
+        var allLocked = true
+        for (key,value) in locked {
+            // print("\(key) = \(value)")
+            if(!value){
+                allLocked = false;
             }
-            
+        }
+        if(allLocked){
+            //  print("All set");
             valueChanged.raise((.Value,self));
-            
-            for output in (self as ObservableNode).outputs {
-                output.setValue(1)
+            for (key,_) in locked {
+                locked[key] = false
             }
-            linkCount = 0
             
         }
         

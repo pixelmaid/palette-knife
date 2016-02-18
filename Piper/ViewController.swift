@@ -10,7 +10,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var mainImageView: UIImageView!
     @IBOutlet weak var tempImageView: UIImageView!
-   
+    
     
     
     var red: CGFloat = 1
@@ -24,7 +24,7 @@ class ViewController: UIViewController {
     var inputs = [String](arrayLiteral: "x","y","force", "angle");
     var outputs = [String](arrayLiteral: "x","y","diameter", "hue");
     var cloneNode = CloneNode(name:"clone");
-    var outputNode1 = Node(name:"output node 1");
+    var outputNode1 = OutputNode(name:"output node 1");
     var rangeNodeY = RangeNode(name:"rangeY");
     var rangeNodeX = RangeNode(name:"rangeX");
     
@@ -51,7 +51,7 @@ class ViewController: UIViewController {
             outputNode1.addTerminal(outputs[index]);
             //outputNode2.addTerminal(outputs[index]);
         }
-        cloneNode.setTarget(outputNode1);
+        //cloneNode.setTarget(outputNode1);
         
         
         let penInputView = self.addView(penNode);
@@ -59,7 +59,8 @@ class ViewController: UIViewController {
         let cloneView = self.addView(cloneNode);
         cloneView.frame.origin.x = 700
         cloneView.frame.origin.y = 100;
-        
+        cloneNode.terminals["num"]!.setValue(Float(10))
+
         
         let outputView1 = self.addView(outputNode1)
         outputView1.frame.origin.x = 500
@@ -84,7 +85,7 @@ class ViewController: UIViewController {
         rangeViewX.frame.origin.x = 700
         rangeViewX.frame.origin.y = 300;
         
-    
+        
         
         (multiplierNode.terminals["multiplier"]!as NodeTerminal).setValue(100)
         //(repeatNode.terminals["limit"]!as NodeTerminal).setValue(5)
@@ -101,75 +102,65 @@ class ViewController: UIViewController {
         penNode.terminals["x"]!.setColor(UIColor.purpleColor());
         penNode.terminals["y"]!.setColor(UIColor.orangeColor());
         
-        penNode.terminals["x"]!.addOutput(rangeNodeX.terminals["inputValue"]!);
-        penNode.terminals["force"]!.addOutput(multiplierNode.terminals["value"]!);
-
-        penNode.terminals["y"]!.addOutput(rangeNodeY.terminals["inputValue"]!);
-        penNode.terminals["force"]!.addOutput(cloneNode.terminals["diameter"]!);
-        penNode.terminals["y"]!.addOutput(cloneNode.terminals["hue"]!);
-        rangeNodeY.addOutput(cloneNode.terminals["y"]!);
-        rangeNodeX.addOutput(cloneNode.terminals["x"]!);
-        multiplierNode.addOutput(rangeNodeX.limit);
-        multiplierNode.addOutput(rangeNodeY.limit);
+        /*penNode.terminals["x"]!.addOutput(rangeNodeX.terminals["inputValue"]!);
+         penNode.terminals["force"]!.addOutput(multiplierNode.terminals["value"]!);
+         
+         penNode.terminals["y"]!.addOutput(rangeNodeY.terminals["inputValue"]!);
+         penNode.terminals["force"]!.addOutput(cloneNode.terminals["diameter"]!);
+         penNode.terminals["y"]!.addOutput(cloneNode.terminals["hue"]!);
+         rangeNodeY.addOutput(cloneNode.terminals["y"]!);
+         rangeNodeX.addOutput(cloneNode.terminals["x"]!);
+         multiplierNode.addOutput(rangeNodeX.limit);
+         multiplierNode.addOutput(rangeNodeY.limit);*/
         
         
-        //additionNodeX.addOutput(outputNode1.terminals["x"]!);
-        //additionNodeY.addOutput(outputNode1.terminals["y"]!);
-        
-        //outputNode1.addOutput(repeatNode);
-        // repeatNode.addOutput(multiplierNode.terminals["multiplier"]!)
-        //  multiplierNode.addOutput(additionNodeY.terminals["addition"]!)
-        //  multiplierNode.addOutput(outputNode1.terminals["diameter"]!);
-        
-        
-        //  additionNodeX.addOutput(outputNode2.terminals["x"]!);
-        
-        // additionNodeY.addOutput(outputNode2.terminals["y"]!);
-        
-        
-        // multiplierNode.addOutput(outputNode2.terminals["diameter"]!);
-        //penNode.terminals["x"]!.addOutput(outputNode2.terminals["hue"]!);
-        
-        
-        
-        
-        for _ in 0...agentCount-1 {
-            penAgents.append(PenAgent());
-        }
-        
-        // Do any additional setup after loading the view, typically from a nib.
     }
     
     func addView(targetNode:Node) ->NodeView{
-       let nv = NodeView(node:targetNode);
+        let nv = NodeView(node:targetNode);
         nodeViewContainer.addNodeView(nv)
-              return nv
+        return nv
     }
     
     
     
     func onOutputChanged(data:(NodeProperty,ObservableNode)){
-       // print("on output changed");
         let node = data.1 as! Node
-        let diameter = CGFloat(node.terminals["diameter"]!.value)
-        let h = CGFloat(node.terminals["hue"]!.value)
-        let count = Int(node.terminals["num"]!.value);
-        //print("num of y values\(count,node.terminals["y"]!.rangeValue)")
-        if(count>0){
-            for index in 0...count-1{
-                let y = node.terminals["y"]?.rangeValue[index]
-                let oldY = node.terminals["y"]?.oldRangeValue[index]
-                let x = node.terminals["x"]?.rangeValue[index]
-                let oldX = node.terminals["x"]?.oldRangeValue[index]
-
-                let fromPoint = CGPoint(x:CGFloat(oldX!),y:CGFloat(oldY!));
-                let toPoint = CGPoint(x:CGFloat(x!),y:CGFloat(y!));
-                //print("from point\(fromPoint.x,fromPoint.y) to point\(toPoint.x,toPoint.y)")
-                
-                //drawLineFrom(fromPoint, toPoint: toPoint, force:diameter, hue: h);
-                drawLineFrom(fromPoint, toPoint: toPoint, force:diameter, hue: self.mapColor(h));
-                lastPoint = toPoint;
+        
+        if(node is CloneNode){
+            // print("on output changed");
+            let diameter = CGFloat(node.terminals["diameter"]!.value)
+            let h = CGFloat(node.terminals["hue"]!.value)
+            let count = Int(node.terminals["num"]!.value);
+            //print("num of y values\(count,node.terminals["y"]!.rangeValue)")
+            if(count>0){
+                for index in 0...count-1{
+                    let y = node.terminals["y"]?.rangeValue[index]
+                    let oldY = node.terminals["y"]?.oldRangeValue[index]
+                    let x = node.terminals["x"]?.rangeValue[index]
+                    let oldX = node.terminals["x"]?.oldRangeValue[index]
+                    
+                    let fromPoint = CGPoint(x:CGFloat(oldX!),y:CGFloat(oldY!));
+                    let toPoint = CGPoint(x:CGFloat(x!),y:CGFloat(y!));
+                    
+                    drawLineFrom(fromPoint, toPoint: toPoint, force:diameter, hue: self.mapColor(h));
+                    lastPoint = toPoint;
+                }
             }
+        }
+        else if( node is Node){
+            let diameter = CGFloat(node.terminals["diameter"]!.value)
+            let h = CGFloat(node.terminals["hue"]!.value)
+            let y = node.terminals["y"]!.value
+             let oldY = node.terminals["y"]!.oldValue
+            let x = node.terminals["x"]!.value
+            let oldX = node.terminals["x"]!.oldValue
+
+            let fromPoint = CGPoint(x:CGFloat(oldX),y:CGFloat(oldY));
+            let toPoint = CGPoint(x:CGFloat(x),y:CGFloat(y));
+
+            drawLineFrom(fromPoint, toPoint: toPoint, force:diameter, hue: self.mapColor(h));
+
         }
         
     }
@@ -182,17 +173,17 @@ class ViewController: UIViewController {
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first  {
-
-        let point = touch.locationInView(view);
-        let x = Float(point.x)
-        let y = Float(point.y)
-        let force = Float(touch.force);
-        let angle = Float(touch.azimuthAngleInView(view))
-        
-        //penNode.updateValue(["x":x,"y":y,"force":force,"angle":angle]);
-    
+            
+            let point = touch.locationInView(view);
+            let x = Float(point.x)
+            let y = Float(point.y)
+            let force = Float(touch.force);
+            let angle = Float(touch.azimuthAngleInView(view))
+            
+            //penNode.updateValue(["x":x,"y":y,"force":force,"angle":angle]);
+            
         }
-
+        
     }
     
     
@@ -200,17 +191,17 @@ class ViewController: UIViewController {
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first  {
-
-        let point = touch.locationInView(view);
-        let x = Float(point.x)
-        let y = Float(point.y)
-        let force = Float(touch.force);
-        let angle = Float(touch.azimuthAngleInView(view))
-        
-
-        penNode.updateValue(["x":x,"y":y,"force":force,"angle":angle]);
-        penNode.updateValue(["x":x,"y":y,"force":force,"angle":angle]);
-
+            
+            let point = touch.locationInView(view);
+            let x = Float(point.x)
+            let y = Float(point.y)
+            let force = Float(touch.force);
+            let angle = Float(touch.azimuthAngleInView(view))
+            
+            
+            penNode.updateValue(["x":x,"y":y,"force":force,"angle":angle]);
+            penNode.updateValue(["x":x,"y":y,"force":force,"angle":angle]);
+            
         }
     }
     
@@ -244,27 +235,10 @@ class ViewController: UIViewController {
         CGContextStrokePath(context)
         
         
-        /* for index in 0...100{
-         
-         
-         CGContextSetLineCap(context, CGLineCap.Round)
-         CGContextSetLineWidth(context, brushWidth*force)
-         CGContextSetStrokeColorWithColor(context, color.CGColor)
-         CGContextSetBlendMode(context, CGBlendMode.Normal)
-         
-         CGContextMoveToPoint(context, fromPoint.x, fromPoint.y+CGFloat(10*index))
-         CGContextAddLineToPoint(context, toPoint.x, toPoint.y+CGFloat(10*index))
-         
-         CGContextStrokePath(context)
-         }*/
-        
-        
-        
-        
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-
+        
         swiped = true
         if let touch = touches.first  {
             
@@ -274,7 +248,7 @@ class ViewController: UIViewController {
             
             
             let point = touch.locationInView(view);
-
+            
             let x = Float(point.x)
             let y = Float(point.y)
             let force = Float(touch.force);

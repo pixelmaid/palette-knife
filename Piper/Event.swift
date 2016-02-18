@@ -37,6 +37,7 @@ public class Event<T> {
         eventHandlers.append(wrapper)
         return wrapper
     }
+    
 }
 
 // MARK:- Private

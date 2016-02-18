@@ -17,7 +17,7 @@ protocol PropertyObservable {
 
 
 enum NodeProperty {
-    case Selected, Name, Linked, Value, Color
+    case Selected, Name, Linked, Value, Color, Terminal
 }
 
 
@@ -26,8 +26,10 @@ class ObservableNode: PropertyObservable {
     let propertyChanged = Event<(NodeProperty,ObservableNode)>()
     let valueChanged = Event<(NodeProperty,ObservableNode)>()
     let colorChanged = Event<(NodeProperty, UIColor)>()
-    let linkCreated = Event<(NodeProperty, Bool)>()
-    
+    let linkCreated = Event<(NodeProperty, ObservableNode, ObservableNode)>()
+    let terminalAdded = Event<(NodeProperty, ObservableNode)>()
+
+    var parent: ObservableNode?
     var color = UIColor.blueColor();
     var outputs = [ObservableNode]();
     
@@ -57,14 +59,23 @@ class ObservableNode: PropertyObservable {
         print(" adding output \(output.name,self.color)")
         output.color = self.color;
         output.colorChanged.raise((.Color, self.color));
-        output.linkCreated.raise((.Linked, true));
+        output.linkCreated.raise((.Linked, self,output));
         self.outputs.append(output);
+        output.linkCreated.addHandler(self, handler: ObservableNode.outputLinked)
         
     }
     
     func setColor(color:UIColor){
         self.color = color;
         colorChanged.raise((.Color, self.color));
+    }
+    
+    func outputLinked(data: (NodeProperty,ObservableNode, ObservableNode)){
+        if(data.1 !== self){
+            let output = data.2
+            outputs = outputs.filter({$0 !== output})
+        }
+        
     }
     
 }
@@ -159,13 +170,13 @@ class AdditionNode: Node{
 class MultiplierNode: Node{
     var value = NodeTerminal(name:"value");
     var multiplier = NodeTerminal(name:"multiplier");
-    
     override init(name:String){
         super.init(name: name)
         terminals["value"] = value;
         terminals["multiplier"] = multiplier;
         multiplier.value = 1;
         value.value = 0;
+        
         value.valueChanged.addHandler(self, handler:MultiplierNode.onValueChanged)
         multiplier.valueChanged.addHandler(self, handler:MultiplierNode.onValueChanged)
         
@@ -174,9 +185,11 @@ class MultiplierNode: Node{
     
     override func onValueChanged(data: (NodeProperty,ObservableNode)){
         valueChanged.raise((.Value,self))
-        
+        let o = self.value.value*self.multiplier.value
+       terminals["output"]!.setValue(o)
         for output in (self as ObservableNode).outputs {
-            output.setValue(self.value.value*self.multiplier.value)
+            output.setValue(o)
+        
         }
     }
 }
@@ -193,7 +206,7 @@ class RangeNode: Node{
         terminals["inputValue"] = inputValue;
         
         inputValue.value = 0;
-        range.value = 10	;
+        range.value = 10;
         limit.value = 100;
         inputValue.valueChanged.addHandler(self, handler:RangeNode.onValueChanged)
         limit.linkCreated.addHandler(self, handler: Node.onLinkCreated);
@@ -233,11 +246,18 @@ class CloneNode: Node{
         terminals["num"] = num
         terminals["target"] = target
         num.value = 10
-        
+        target.linkCreated.addHandler(self, handler:CloneNode.targetConnected);
         
     }
     
+     func targetConnected(data:(NodeProperty,ObservableNode,ObservableNode)) {
+        if(data.1.parent is OutputNode ){
+            self.setTarget(data.1.parent as! OutputNode)
+        }
+    }
+    
     func setTarget(target:Node){
+        print("setting target")
         target.addOutput(self.target)
        self.target.setValue(10);
         for (key,_)in target.terminals{
@@ -253,6 +273,8 @@ class CloneNode: Node{
         terminals[name] = terminal;
         terminal.valueChanged.addHandler(self, handler: CloneNode.onValueChanged)
         terminal.linkCreated.addHandler(self, handler: Node.onLinkCreated);
+        terminal.parent = self
+        terminalCreated.raise(.Terminal,(.Value,self))
         locked[name] = false;
         return terminal
     }
@@ -320,17 +342,23 @@ class RepeatNode: Node{
      }*/
 }
 
+class OutputNode: Node{
+    
+}
+
 class Node: ObservableNode{
     typealias PropertyType = NodeProperty
     var terminals = [String:NodeTerminal]();
     var locked = [String:Bool]();
-    var links = 0;
     var linkCount = 0;
+    var output = NodeTerminal(name: "output")
     
     
     override init(name: String) {
         super.init(name:name)
         self.color = UIColor.redColor()
+        terminals["output"] = output
+        output.parent = self
     }
 
     
@@ -346,6 +374,7 @@ class Node: ObservableNode{
         terminal.valueChanged.addHandler(self, handler: Node.onValueChanged)
         terminal.linkCreated.addHandler(self, handler: Node.onLinkCreated);
         locked[name] = false;
+        terminal.parent = self
         return terminal
     }
     
@@ -357,9 +386,7 @@ class Node: ObservableNode{
     }
     
     
-    func onLinkCreated(data:(NodeProperty,Bool)){
-        links = links+1
-        print("======link count set to \(links, self.name)========")
+    func onLinkCreated(data:(NodeProperty,ObservableNode,ObservableNode)){
         
     }
     

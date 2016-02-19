@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5F0DEC851C76578900B49CE0 /* blockly.html in Resources */ = {isa = PBXBuildFile; fileRef = 5F0DEC841C76578900B49CE0 /* blockly.html */; };
+		5F0DEC871C767ACC00B49CE0 /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 5F0DEC861C767ACC00B49CE0 /* main.js */; };
+		5F0DEC8B1C76815300B49CE0 /* blockly_compressed.js in Resources */ = {isa = PBXBuildFile; fileRef = 5F0DEC881C76815300B49CE0 /* blockly_compressed.js */; };
+		5F0DEC8C1C76815300B49CE0 /* blocks_compressed.js in Resources */ = {isa = PBXBuildFile; fileRef = 5F0DEC891C76815300B49CE0 /* blocks_compressed.js */; };
+		5F0DEC8D1C76815300B49CE0 /* en.js in Resources */ = {isa = PBXBuildFile; fileRef = 5F0DEC8A1C76815300B49CE0 /* en.js */; };
+		5F0DEC8F1C76857A00B49CE0 /* javascript in Resources */ = {isa = PBXBuildFile; fileRef = 5F0DEC8E1C76857A00B49CE0 /* javascript */; };
 		5F74F3401C60143400734B75 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F74F3391C60143400734B75 /* AppDelegate.swift */; };
 		5F74F3411C60143400734B75 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F74F33A1C60143400734B75 /* Event.swift */; };
 		5F74F3421C60143400734B75 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F74F33B1C60143400734B75 /* Node.swift */; };
@@ -32,6 +38,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5F0DEC841C76578900B49CE0 /* blockly.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = blockly.html; path = Piper/html/blockly.html; sourceTree = SOURCE_ROOT; };
+		5F0DEC861C767ACC00B49CE0 /* main.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = main.js; path = Piper/html/main.js; sourceTree = SOURCE_ROOT; };
+		5F0DEC881C76815300B49CE0 /* blockly_compressed.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = blockly_compressed.js; path = Piper/html/blockly_compressed.js; sourceTree = SOURCE_ROOT; };
+		5F0DEC891C76815300B49CE0 /* blocks_compressed.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = blocks_compressed.js; path = Piper/html/blocks_compressed.js; sourceTree = SOURCE_ROOT; };
+		5F0DEC8A1C76815300B49CE0 /* en.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = en.js; path = Piper/html/en.js; sourceTree = SOURCE_ROOT; };
+		5F0DEC8E1C76857A00B49CE0 /* javascript */ = {isa = PBXFileReference; lastKnownFileType = folder; name = javascript; path = Piper/html/generators/javascript; sourceTree = SOURCE_ROOT; };
 		5F74F3391C60143400734B75 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Piper/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
 		5F74F33A1C60143400734B75 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Event.swift; path = Piper/Event.swift; sourceTree = SOURCE_ROOT; };
 		5F74F33B1C60143400734B75 /* Node.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Node.swift; path = Piper/Node.swift; sourceTree = SOURCE_ROOT; };
@@ -93,7 +105,13 @@
 				5F74F33C1C60143400734B75 /* NodeView.swift */,
 				5F74F33D1C60143400734B75 /* PenAgent.swift */,
 				5F74F33E1C60143400734B75 /* SettingsViewController.swift */,
+				5F0DEC841C76578900B49CE0 /* blockly.html */,
+				5F0DEC8E1C76857A00B49CE0 /* javascript */,
+				5F0DEC861C767ACC00B49CE0 /* main.js */,
 				5F74F33F1C60143400734B75 /* ViewController.swift */,
+				5F0DEC881C76815300B49CE0 /* blockly_compressed.js */,
+				5F0DEC891C76815300B49CE0 /* blocks_compressed.js */,
+				5F0DEC8A1C76815300B49CE0 /* en.js */,
 				5F74F34B1C6014B700734B75 /* Main.storyboard */,
 				5F74F3471C60146000734B75 /* Images.xcassets */,
 				5F74F3541C60182B00734B75 /* PiperTests */,
@@ -194,8 +212,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F74F3531C60150C00734B75 /* Info.plist in Resources */,
+				5F0DEC8D1C76815300B49CE0 /* en.js in Resources */,
+				5F0DEC851C76578900B49CE0 /* blockly.html in Resources */,
 				5F74F3511C6014EA00734B75 /* LaunchScreen.xib in Resources */,
 				5F74F3551C60182B00734B75 /* PiperTests in Resources */,
+				5F0DEC8B1C76815300B49CE0 /* blockly_compressed.js in Resources */,
+				5F0DEC8C1C76815300B49CE0 /* blocks_compressed.js in Resources */,
+				5F0DEC871C767ACC00B49CE0 /* main.js in Resources */,
+				5F0DEC8F1C76857A00B49CE0 /* javascript in Resources */,
 				5F74F3481C60146000734B75 /* Images.xcassets in Resources */,
 				5F74F34D1C6014B700734B75 /* Main.storyboard in Resources */,
 			);

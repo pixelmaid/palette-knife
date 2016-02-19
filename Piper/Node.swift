@@ -274,7 +274,7 @@ class CloneNode: Node{
         terminal.valueChanged.addHandler(self, handler: CloneNode.onValueChanged)
         terminal.linkCreated.addHandler(self, handler: Node.onLinkCreated);
         terminal.parent = self
-        terminalCreated.raise(.Terminal,(.Value,self))
+      //  terminalCreated.raise(.Terminal,(.Value,self))
         locked[name] = false;
         return terminal
     }

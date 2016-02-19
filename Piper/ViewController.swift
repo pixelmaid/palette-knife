@@ -5,8 +5,9 @@
 
 
 import UIKit
+import WebKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, WKScriptMessageHandler {
     
     @IBOutlet weak var mainImageView: UIImageView!
     @IBOutlet weak var tempImageView: UIImageView!
@@ -35,9 +36,29 @@ class ViewController: UIViewController {
     var lastPoint = CGPoint(x:0,y:0);
     var context: CGContext?
     var nodeViewContainer: NodeViewContainer!
+    var webView: WKWebView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let contentController = WKUserContentController();
+        contentController.addScriptMessageHandler(
+            self,
+            name: "callbackHandler"
+        )
+        let config = WKWebViewConfiguration()
+        config.userContentController = contentController
+        
+        self.webView = WKWebView(
+            frame: CGRectMake(20, 20,480,600),
+            configuration: config
+        )
+        
+        let localfilePath = NSBundle.mainBundle().URLForResource("blockly", withExtension: "html");
+        let myRequest = NSURLRequest(URL: localfilePath!);
+  
+        self.view.addSubview(webView)
+        webView.loadRequest(myRequest);
+        
         nodeViewContainer = NodeViewContainer()
         self.view.addSubview(nodeViewContainer)
         outputNode1.valueChanged.addHandler(self,handler:ViewController.onOutputChanged)
@@ -54,7 +75,7 @@ class ViewController: UIViewController {
         //cloneNode.setTarget(outputNode1);
         
         
-        let penInputView = self.addView(penNode);
+       /* let penInputView = self.addView(penNode);
         
         let cloneView = self.addView(cloneNode);
         cloneView.frame.origin.x = 700
@@ -83,7 +104,7 @@ class ViewController: UIViewController {
         
         let rangeViewX = self.addView(rangeNodeX);
         rangeViewX.frame.origin.x = 700
-        rangeViewX.frame.origin.y = 300;
+        rangeViewX.frame.origin.y = 300;*/
         
         
         
@@ -114,6 +135,14 @@ class ViewController: UIViewController {
          multiplierNode.addOutput(rangeNodeY.limit);*/
         
         
+    }
+    
+    
+    
+    func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
+        if(message.name == "callbackHandler") {
+            print("JavaScript is sending a message \(message.body)")
+        }
     }
     
     func addView(targetNode:Node) ->NodeView{

@@ -49,11 +49,13 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         config.userContentController = contentController
         
         self.webView = WKWebView(
-            frame: CGRectMake(20, 20,480,600),
+            frame: CGRectMake(20, 20,800,500),
             configuration: config
         )
-        
-        let localfilePath = NSBundle.mainBundle().URLForResource("blockly", withExtension: "html");
+        self.webView.layer.cornerRadius=1
+        self.webView.layer.borderWidth=1
+        self.webView.layer.borderColor = UIColor.blackColor().CGColor
+        let localfilePath = NSBundle.mainBundle().URLForResource("web/blockly", withExtension: "html");
         let myRequest = NSURLRequest(URL: localfilePath!);
   
         self.view.addSubview(webView)
@@ -140,10 +142,14 @@ class ViewController: UIViewController, WKScriptMessageHandler {
     
     
     func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
-        if(message.name == "callbackHandler") {
-            print("JavaScript is sending a message \(message.body)")
+       if(message.name == "callbackHandler") {
+            let sentData = message.body as! NSDictionary
+            print("JavaScript is sending a message \(sentData)")
         }
     }
+
+    
+    
     
     func addView(targetNode:Node) ->NodeView{
         let nv = NodeView(node:targetNode);

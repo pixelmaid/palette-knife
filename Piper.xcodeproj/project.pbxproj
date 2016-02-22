@@ -25,6 +25,7 @@
 		5F74F3511C6014EA00734B75 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5F74F34F1C6014EA00734B75 /* LaunchScreen.xib */; };
 		5F74F3531C60150C00734B75 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5F74F3521C60150C00734B75 /* Info.plist */; };
 		5F74F3551C60182B00734B75 /* PiperTests in Resources */ = {isa = PBXBuildFile; fileRef = 5F74F3541C60182B00734B75 /* PiperTests */; };
+		5FE42CDB1C7B9BEC0095698E /* web in Resources */ = {isa = PBXBuildFile; fileRef = 5FE42CDA1C7B9BEC0095698E /* web */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		5F74F3501C6014EA00734B75 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Piper/Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		5F74F3521C60150C00734B75 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Piper/Info.plist; sourceTree = SOURCE_ROOT; };
 		5F74F3541C60182B00734B75 /* PiperTests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = PiperTests; sourceTree = SOURCE_ROOT; };
+		5FE42CDA1C7B9BEC0095698E /* web */ = {isa = PBXFileReference; lastKnownFileType = folder; name = web; path = Piper/web; sourceTree = SOURCE_ROOT; };
 		EE43D46D1A14A6F200311C06 /* Piper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Piper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE43D4821A14A6F200311C06 /* Piper.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Piper.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -109,6 +111,7 @@
 				5F0DEC8E1C76857A00B49CE0 /* javascript */,
 				5F0DEC861C767ACC00B49CE0 /* main.js */,
 				5F74F33F1C60143400734B75 /* ViewController.swift */,
+				5FE42CDA1C7B9BEC0095698E /* web */,
 				5F0DEC881C76815300B49CE0 /* blockly_compressed.js */,
 				5F0DEC891C76815300B49CE0 /* blocks_compressed.js */,
 				5F0DEC8A1C76815300B49CE0 /* en.js */,
@@ -220,6 +223,7 @@
 				5F0DEC8C1C76815300B49CE0 /* blocks_compressed.js in Resources */,
 				5F0DEC871C767ACC00B49CE0 /* main.js in Resources */,
 				5F0DEC8F1C76857A00B49CE0 /* javascript in Resources */,
+				5FE42CDB1C7B9BEC0095698E /* web in Resources */,
 				5F74F3481C60146000734B75 /* Images.xcassets in Resources */,
 				5F74F34D1C6014B700734B75 /* Main.storyboard in Resources */,
 			);

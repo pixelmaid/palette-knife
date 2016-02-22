@@ -1,107 +1,61 @@
 
-Blockly.Blocks['page_settings'] = {
+Blockly.Blocks['pen_x'] = {
   init: function() {
-    this.setHelpUrl('http://www.example.com/');
-    this.setColour(120);
-    this.appendStatementInput("page_header")
-        .appendField("Header:");
-    this.appendValueInput("page_color")
-        .setCheck("color")
-        .appendField("Text Color:");
-    this.appendValueInput("page_background")
-        .setCheck("color")
-        .appendField("Background Color:");
-    this.appendValueInput("page_paragraph")
-        .setCheck("String")
-        .appendField("Paragraph:");
-    this.setTooltip('');
-  }
-};
-
-Blockly.Blocks['page_header'] = {
-  init: function() {
-    this.setHelpUrl('http://www.example.com/');
-    this.setColour(240);
-    this.appendValueInput("header_text")
-        .setCheck("String")
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("Header Text:");
-    this.appendValueInput("page_color")
-        .setCheck("color")
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("Color:");
-    this.setPreviousStatement(true, "page_settings");
-    this.setTooltip('');
-  }
-};
-
-Blockly.Blocks['page_text'] = {
-  init: function() {
-    this.setHelpUrl('http://www.example.com/');
-    this.setColour(300);
     this.appendDummyInput()
-        .appendField(new Blockly.FieldTextInput("Your text."), "page_text");
-    this.setOutput(true, "String");
+        .appendField("pen x");
+    this.setOutput(true, "Number");
+    this.setColour(260);
     this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
   }
 };
 
-Blockly.Blocks['color_blue'] = {
+
+Blockly.Blocks['pen_y'] = {
   init: function() {
-    this.setHelpUrl('http://www.example.com/');
-    this.setColour(60);
     this.appendDummyInput()
-        .appendField("Blue:")
-        .appendField(new Blockly.FieldColour("#3333ff"), "blue");
-    this.setOutput(true, "color");
+        .appendField("pen y");
+    this.setOutput(true, "Number");
+    this.setColour(260);
     this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
   }
 };
 
-Blockly.Blocks['color_red'] = {
+Blockly.Blocks['pen_force'] = {
   init: function() {
-    this.setHelpUrl('http://www.example.com/');
-    this.setColour(60);
     this.appendDummyInput()
-        .appendField("Red:")
-        .appendField(new Blockly.FieldColour("#ff3333"), "red");
-    this.setOutput(true, "color");
+        .appendField("force");
+    this.setOutput(true, "Number");
+    this.setColour(260);
     this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
   }
 };
 
-Blockly.Blocks['color_green'] = {
+Blockly.Blocks['line'] = {
   init: function() {
-    this.setHelpUrl('http://www.example.com/');
-    this.setColour(60);
     this.appendDummyInput()
-        .appendField("Green:")
-        .appendField(new Blockly.FieldColour("#33ff33"), "green");
-    this.setOutput(true, "color");
+        .appendField("line");
+    this.appendValueInput("x")
+        .setCheck("Number")
+        .appendField("x");
+    this.appendValueInput("y")
+        .setCheck("Number")
+        .appendField("y");
+    this.appendValueInput("diameter")
+        .setCheck("Number")
+        .appendField("diameter");
+    this.appendDummyInput()
+        .appendField("color")
+        .appendField(new Blockly.FieldColour("#ff9900"), "line_color");
+    this.setInputsInline(false);
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setColour(210);
     this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
   }
+
 };
 
-Blockly.Blocks['color_black'] = {
-  init: function() {
-    this.setHelpUrl('http://www.example.com/');
-    this.setColour(60);
-    this.appendDummyInput()
-        .appendField("Black:")
-        .appendField(new Blockly.FieldColour("#000000"), "black");
-    this.setOutput(true, "color");
-    this.setTooltip('');
-  }
-};
-
-Blockly.Blocks['color_white'] = {
-  init: function() {
-    this.setHelpUrl('http://www.example.com/');
-    this.setColour(60);
-    this.appendDummyInput()
-        .appendField("White:")
-        .appendField(new Blockly.FieldColour("#ffffff"), "white");
-    this.setOutput(true, "color");
-    this.setTooltip('');
-  }
-};

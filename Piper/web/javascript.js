@@ -11,31 +11,41 @@
   return code;
 };*/
 
-var penX = 10
-var penY = 10
+var penX = null
+var penY = null
+var lastPenX = 10
+var lastPenY = 10
 var penForce = 1
-
+var lines = []
 function callNativeApp () {
+  console.log("lines=",lines);
     try {
-         var aMessage = {'command':'hello', data:[5,6,7,8,9]}
-          //window.webkit.messageHandlers.callbackHandlerpostMessage(aMessage);
-        //webkit.messageHandlers.callbackHandler.postMessage(aMessage);
-      var messageToPost = {'ButtonId':'clickMeButton'};
-      window.webkit.messageHandlers.callbackHandler.postMessage(aMessage,false);
-      // webkit.messageHandlers.callbackHandler.postMessage(String(penX));
+         var aMessage = {data:lines}
+        window.webkit.messageHandlers.callbackHandler.postMessage(aMessage,false);
     } catch(err) {
         console.log('The native context does not exist yet');
     }
 }
 
 
-function addLine(x,y,diameter){
-  console.log('drawing line at ',x,y,diameter)
+function addLine(x1,y1,x2,y2,diameter){
+  console.log('drawing line at ',x1,y1,x2,y2,diameter)
+  lines.push({"x1":x1,"y1":y1,"x2":x2,"y2":y2,"diameter":diameter})
 }
 
 function setPenData(pX,pY,pF){
+  lines = [];
+  if(penX){
+  lastPenX = penX
+  lastPenY = penY
+  }
+  else{
+   lastPenX = pX
+  lastPenY = pY 
+  }
   penX = pX;
   penY = pY;
+ 
   penForce = pF;
   code = window.Blockly.JavaScript.workspaceToCode();
   console.log('code',code);
@@ -45,13 +55,15 @@ function setPenData(pX,pY,pF){
 
 
 Blockly.JavaScript['line'] = function(block) {
-  var value_x = Blockly.JavaScript.valueToCode(block, 'x', Blockly.JavaScript.ORDER_ATOMIC);
-  var value_y = Blockly.JavaScript.valueToCode(block, 'y', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_x1 = Blockly.JavaScript.valueToCode(block, 'x1', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y1 = Blockly.JavaScript.valueToCode(block, 'y1', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_x2 = Blockly.JavaScript.valueToCode(block, 'x2', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_y2 = Blockly.JavaScript.valueToCode(block, 'y2', Blockly.JavaScript.ORDER_ATOMIC);
   var value_diameter = Blockly.JavaScript.valueToCode(block, 'diameter', Blockly.JavaScript.ORDER_ATOMIC);
   var colour_line_color = block.getFieldValue('line_color');
 
   // TODO: Assemble JavaScript into code variable.
-  var code = 'addLine('+value_x+','+value_y+','+value_diameter+')';
+  var code = 'addLine('+value_x1+','+value_y1+','+value_x2+','+value_y2+','+value_diameter+')';
   return code;
 };
 
@@ -60,10 +72,28 @@ Blockly.JavaScript['pen_x'] = function(block) {
   return [pen_x, Blockly.JavaScript.ORDER_NONE];
 };
 
+Blockly.JavaScript['last_pen_x'] = function(block) {
+  var lpen_x = lastPenX;
+  return [lpen_x, Blockly.JavaScript.ORDER_NONE];
+};
+/*Blockly.JavaScript['pen_x'] = function(block) {
+  var text_value = block.getFieldValue('value');
+  // TODO: Assemble JavaScript into code variable.
+  var code = '...';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_NONE];
+};*/
+
 Blockly.JavaScript['pen_y'] = function(block) {
   var pen_y = penY;
   return [pen_y, Blockly.JavaScript.ORDER_NONE];
 };
+
+Blockly.JavaScript['last_pen_y'] = function(block) {
+  var lpen_y = lastPenY;
+  return [lpen_y, Blockly.JavaScript.ORDER_NONE];
+};
+
 
 Blockly.JavaScript['pen_force'] = function(block) {
   var force = penForce;

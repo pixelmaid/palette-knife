@@ -22,6 +22,29 @@ Blockly.Blocks['pen_y'] = {
   }
 };
 
+Blockly.Blocks['last_pen_x'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("last pen x");
+    this.setOutput(true, "Number");
+    this.setColour(260);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
+
+Blockly.Blocks['last_pen_y'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("last pen y");
+    this.setOutput(true, "Number");
+    this.setColour(260);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
 Blockly.Blocks['pen_force'] = {
   init: function() {
     this.appendDummyInput()
@@ -37,12 +60,18 @@ Blockly.Blocks['line'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("line");
-    this.appendValueInput("x")
+    this.appendValueInput("x1")
         .setCheck("Number")
-        .appendField("x");
-    this.appendValueInput("y")
+        .appendField("x1");
+    this.appendValueInput("y1")
         .setCheck("Number")
-        .appendField("y");
+        .appendField("y1");
+         this.appendValueInput("x2")
+        .setCheck("Number")
+        .appendField("x2");
+    this.appendValueInput("y2")
+        .setCheck("Number")
+        .appendField("y2");
     this.appendValueInput("diameter")
         .setCheck("Number")
         .appendField("diameter");

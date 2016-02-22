@@ -139,12 +139,37 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         
     }
     
+    func sendDataToWebView(x:Float,y:Float,force:Float){
+        //let source = "setPenData(" + (NSString(format: "%.2f", x) as String) + "," + (NSString(format: "%.2f", y) as String) + "," + (NSString(format: "%.2f", force) as String)+")"
+       self.webView.evaluateJavaScript("setPenData( \(x),\(y),\(force) )", completionHandler: nil)
+    }
     
     
     func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
        if(message.name == "callbackHandler") {
+        
+        UIGraphicsBeginImageContext(view.frame.size)
+        context = UIGraphicsGetCurrentContext()!
+        tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
+        
             let sentData = message.body as! NSDictionary
-            print("JavaScript is sending a message \(sentData)")
+            let arr = sentData["data"] as! NSArray
+        for d in arr{
+            print("data passed\(d["x1"],d["y1"],d["diameter"])")
+            let x1 = d["x1"] as! Float
+            let y1 = d["y1"] as! Float
+            let x2 = d["x2"] as! Float
+            let y2 = d["y2"] as! Float
+            let diameter = d["diameter"] as! Float
+            let h = CGFloat(1.0)
+            let fromPoint = CGPoint(x:CGFloat(x1),y:CGFloat(y1));
+            let toPoint = CGPoint(x:CGFloat(x2),y:CGFloat(y2));
+            drawLineFrom(fromPoint, toPoint: toPoint, force:CGFloat(diameter), hue: h);
+        }
+        
+        tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+        tempImageView.alpha = opacity
+        UIGraphicsEndImageContext()
         }
     }
 
@@ -256,9 +281,10 @@ class ViewController: UIViewController, WKScriptMessageHandler {
     }
     
     func drawLineFrom(fromPoint: CGPoint, toPoint: CGPoint, force:CGFloat, hue:CGFloat) {
-        let color = UIColor.init(hue: hue,saturation:CGFloat(1),brightness:CGFloat(1), alpha:CGFloat(1))
+        //let color = UIColor.init(hue: hue,saturation:CGFloat(1),brightness:CGFloat(1), alpha:CGFloat(1))
+        let color = UIColor.redColor()
         
-        
+        print("points\(fromPoint,toPoint,color,force)")
         CGContextSetLineCap(context, CGLineCap.Round)
         CGContextSetLineWidth(context, brushWidth*force)
         CGContextSetStrokeColorWithColor(context, color.CGColor)
@@ -276,7 +302,6 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         
         swiped = true
         if let touch = touches.first  {
-            
             UIGraphicsBeginImageContext(view.frame.size)
             context = UIGraphicsGetCurrentContext()!
             tempImageView.image?.drawInRect(CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height))
@@ -289,10 +314,10 @@ class ViewController: UIViewController, WKScriptMessageHandler {
             let force = Float(touch.force);
             let angle = Float(touch.azimuthAngleInView(view))
             
+            sendDataToWebView(x,y:y,force:force)
             
-            
-            penNode.updateValue(["x":x,"y":y,"force":force,"angle":angle]);
-            
+            //penNode.updateValue(["x":x,"y":y,"force":force,"angle":angle]);
+           // drawLineFrom(CGPoint(x: 0,y: 0), toPoint: CGPoint(x: 500,y: 500), force: CGFloat(10), hue: CGFloat(1))
             
             tempImageView.image = UIGraphicsGetImageFromCurrentImageContext()
             tempImageView.alpha = opacity

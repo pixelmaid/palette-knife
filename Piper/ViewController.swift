@@ -37,9 +37,16 @@ class ViewController: UIViewController, WKScriptMessageHandler {
     var context: CGContext?
     var nodeViewContainer: NodeViewContainer!
     var webView: WKWebView!
+    let tap = UITapGestureRecognizer()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // DOUBLE TAP
+        tap.numberOfTapsRequired = 2
+        tap.addTarget(self, action: "clearDrawing")
+        view.userInteractionEnabled = true
+        
+        view.addGestureRecognizer(tap)
         let contentController = WKUserContentController();
         contentController.addScriptMessageHandler(
             self,
@@ -139,6 +146,11 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         
     }
     
+    func clearDrawing(){
+        print("double tap performed")
+        tempImageView.image = nil
+    }
+    
     func sendDataToWebView(x:Float,y:Float,force:Float){
         //let source = "setPenData(" + (NSString(format: "%.2f", x) as String) + "," + (NSString(format: "%.2f", y) as String) + "," + (NSString(format: "%.2f", force) as String)+")"
        self.webView.evaluateJavaScript("setPenData( \(x),\(y),\(force) )", completionHandler: nil)
@@ -229,6 +241,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
     
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {

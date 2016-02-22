@@ -99,3 +99,25 @@ Blockly.JavaScript['pen_force'] = function(block) {
   var force = penForce;
   return [force, Blockly.JavaScript.ORDER_NONE];
 };
+
+Blockly.JavaScript['one_block'] = function(block) {
+  return [1, Blockly.JavaScript.ORDER_NONE];
+};
+
+Blockly.JavaScript['two_block'] = function(block) {
+  return [2, Blockly.JavaScript.ORDER_NONE];
+};
+
+Blockly.JavaScript['five_block'] = function(block) {
+  return [5, Blockly.JavaScript.ORDER_NONE];
+};
+
+Blockly.JavaScript['ten_block'] = function(block) {
+  return [10, Blockly.JavaScript.ORDER_NONE];
+};
+
+Blockly.JavaScript['twenty_block'] = function(block) {
+  return [20, Blockly.JavaScript.ORDER_NONE];
+};
+
+

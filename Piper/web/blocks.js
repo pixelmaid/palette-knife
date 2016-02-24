@@ -48,7 +48,7 @@ Blockly.Blocks['ten_block'] = {
 Blockly.Blocks['twenty_block'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("5");
+        .appendField("20");
     this.setOutput(true, "Number");
     this.setColour(260);
     this.setTooltip('');
@@ -85,6 +85,24 @@ Blockly.Blocks['last_pen_x'] = {
         .appendField("last pen x");
     this.setOutput(true, "Number");
     this.setColour(260);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
+Blockly.Blocks['random'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Random");
+    this.appendValueInput("from")
+        .setCheck("Number")
+        .appendField("from");
+    this.appendValueInput("to")
+        .setCheck("Number")
+        .appendField("to");
+    this.setInputsInline(true);
+    this.setOutput(true);
+    this.setColour(20);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
   }

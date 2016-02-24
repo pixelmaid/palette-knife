@@ -121,3 +121,12 @@ Blockly.JavaScript['twenty_block'] = function(block) {
 };
 
 
+Blockly.JavaScript['random'] = function(block) {
+  var value_from = Blockly.JavaScript.valueToCode(block, 'from', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_to = Blockly.JavaScript.valueToCode(block, 'to', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = Math.random() * value_to + value_from 
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_NONE];
+};
+

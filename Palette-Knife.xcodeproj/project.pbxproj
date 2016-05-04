@@ -1,0 +1,505 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */; };
+		5FA4C7261CDA7B5B004A728C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7251CDA7B5B004A728C /* ViewController.swift */; };
+		5FA4C7291CDA7B5B004A728C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FA4C7271CDA7B5B004A728C /* Main.storyboard */; };
+		5FA4C72B1CDA7B5B004A728C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5FA4C72A1CDA7B5B004A728C /* Assets.xcassets */; };
+		5FA4C72E1CDA7B5B004A728C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FA4C72C1CDA7B5B004A728C /* LaunchScreen.storyboard */; };
+		5FA4C7391CDA7B5B004A728C /* Palette_KnifeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7381CDA7B5B004A728C /* Palette_KnifeTests.swift */; };
+		5FA4C7441CDA7B5B004A728C /* Palette_KnifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5FA4C7351CDA7B5B004A728C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FA4C7181CDA7B5B004A728C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5FA4C71F1CDA7B5B004A728C;
+			remoteInfo = "Palette-Knife";
+		};
+		5FA4C7401CDA7B5B004A728C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FA4C7181CDA7B5B004A728C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5FA4C71F1CDA7B5B004A728C;
+			remoteInfo = "Palette-Knife";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		5FA4C7201CDA7B5B004A728C /* Palette-Knife.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Palette-Knife.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		5FA4C7251CDA7B5B004A728C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		5FA4C7281CDA7B5B004A728C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		5FA4C72A1CDA7B5B004A728C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5FA4C72D1CDA7B5B004A728C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		5FA4C72F1CDA7B5B004A728C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5FA4C7341CDA7B5B004A728C /* Palette-KnifeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Palette-KnifeTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FA4C7381CDA7B5B004A728C /* Palette_KnifeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette_KnifeTests.swift; sourceTree = "<group>"; };
+		5FA4C73A1CDA7B5B004A728C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5FA4C73F1CDA7B5B004A728C /* Palette-KnifeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Palette-KnifeUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette_KnifeUITests.swift; sourceTree = "<group>"; };
+		5FA4C7451CDA7B5B004A728C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5FA4C71D1CDA7B5B004A728C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5FA4C7311CDA7B5B004A728C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5FA4C73C1CDA7B5B004A728C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5FA4C7171CDA7B5B004A728C = {
+			isa = PBXGroup;
+			children = (
+				5FA4C7221CDA7B5B004A728C /* Palette-Knife */,
+				5FA4C7371CDA7B5B004A728C /* Palette-KnifeTests */,
+				5FA4C7421CDA7B5B004A728C /* Palette-KnifeUITests */,
+				5FA4C7211CDA7B5B004A728C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5FA4C7211CDA7B5B004A728C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5FA4C7201CDA7B5B004A728C /* Palette-Knife.app */,
+				5FA4C7341CDA7B5B004A728C /* Palette-KnifeTests.xctest */,
+				5FA4C73F1CDA7B5B004A728C /* Palette-KnifeUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5FA4C7221CDA7B5B004A728C /* Palette-Knife */ = {
+			isa = PBXGroup;
+			children = (
+				5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */,
+				5FA4C7251CDA7B5B004A728C /* ViewController.swift */,
+				5FA4C7271CDA7B5B004A728C /* Main.storyboard */,
+				5FA4C72A1CDA7B5B004A728C /* Assets.xcassets */,
+				5FA4C72C1CDA7B5B004A728C /* LaunchScreen.storyboard */,
+				5FA4C72F1CDA7B5B004A728C /* Info.plist */,
+			);
+			path = "Palette-Knife";
+			sourceTree = "<group>";
+		};
+		5FA4C7371CDA7B5B004A728C /* Palette-KnifeTests */ = {
+			isa = PBXGroup;
+			children = (
+				5FA4C7381CDA7B5B004A728C /* Palette_KnifeTests.swift */,
+				5FA4C73A1CDA7B5B004A728C /* Info.plist */,
+			);
+			path = "Palette-KnifeTests";
+			sourceTree = "<group>";
+		};
+		5FA4C7421CDA7B5B004A728C /* Palette-KnifeUITests */ = {
+			isa = PBXGroup;
+			children = (
+				5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */,
+				5FA4C7451CDA7B5B004A728C /* Info.plist */,
+			);
+			path = "Palette-KnifeUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5FA4C71F1CDA7B5B004A728C /* Palette-Knife */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5FA4C7481CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "Palette-Knife" */;
+			buildPhases = (
+				5FA4C71C1CDA7B5B004A728C /* Sources */,
+				5FA4C71D1CDA7B5B004A728C /* Frameworks */,
+				5FA4C71E1CDA7B5B004A728C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Palette-Knife";
+			productName = "Palette-Knife";
+			productReference = 5FA4C7201CDA7B5B004A728C /* Palette-Knife.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5FA4C7331CDA7B5B004A728C /* Palette-KnifeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5FA4C74B1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "Palette-KnifeTests" */;
+			buildPhases = (
+				5FA4C7301CDA7B5B004A728C /* Sources */,
+				5FA4C7311CDA7B5B004A728C /* Frameworks */,
+				5FA4C7321CDA7B5B004A728C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5FA4C7361CDA7B5B004A728C /* PBXTargetDependency */,
+			);
+			name = "Palette-KnifeTests";
+			productName = "Palette-KnifeTests";
+			productReference = 5FA4C7341CDA7B5B004A728C /* Palette-KnifeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		5FA4C73E1CDA7B5B004A728C /* Palette-KnifeUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5FA4C74E1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "Palette-KnifeUITests" */;
+			buildPhases = (
+				5FA4C73B1CDA7B5B004A728C /* Sources */,
+				5FA4C73C1CDA7B5B004A728C /* Frameworks */,
+				5FA4C73D1CDA7B5B004A728C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5FA4C7411CDA7B5B004A728C /* PBXTargetDependency */,
+			);
+			name = "Palette-KnifeUITests";
+			productName = "Palette-KnifeUITests";
+			productReference = 5FA4C73F1CDA7B5B004A728C /* Palette-KnifeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5FA4C7181CDA7B5B004A728C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = pixelmaid;
+				TargetAttributes = {
+					5FA4C71F1CDA7B5B004A728C = {
+						CreatedOnToolsVersion = 7.3;
+					};
+					5FA4C7331CDA7B5B004A728C = {
+						CreatedOnToolsVersion = 7.3;
+						TestTargetID = 5FA4C71F1CDA7B5B004A728C;
+					};
+					5FA4C73E1CDA7B5B004A728C = {
+						CreatedOnToolsVersion = 7.3;
+						TestTargetID = 5FA4C71F1CDA7B5B004A728C;
+					};
+				};
+			};
+			buildConfigurationList = 5FA4C71B1CDA7B5B004A728C /* Build configuration list for PBXProject "Palette-Knife" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5FA4C7171CDA7B5B004A728C;
+			productRefGroup = 5FA4C7211CDA7B5B004A728C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5FA4C71F1CDA7B5B004A728C /* Palette-Knife */,
+				5FA4C7331CDA7B5B004A728C /* Palette-KnifeTests */,
+				5FA4C73E1CDA7B5B004A728C /* Palette-KnifeUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5FA4C71E1CDA7B5B004A728C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5FA4C72E1CDA7B5B004A728C /* LaunchScreen.storyboard in Resources */,
+				5FA4C72B1CDA7B5B004A728C /* Assets.xcassets in Resources */,
+				5FA4C7291CDA7B5B004A728C /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5FA4C7321CDA7B5B004A728C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5FA4C73D1CDA7B5B004A728C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5FA4C71C1CDA7B5B004A728C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5FA4C7261CDA7B5B004A728C /* ViewController.swift in Sources */,
+				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5FA4C7301CDA7B5B004A728C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5FA4C7391CDA7B5B004A728C /* Palette_KnifeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5FA4C73B1CDA7B5B004A728C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5FA4C7441CDA7B5B004A728C /* Palette_KnifeUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5FA4C7361CDA7B5B004A728C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5FA4C71F1CDA7B5B004A728C /* Palette-Knife */;
+			targetProxy = 5FA4C7351CDA7B5B004A728C /* PBXContainerItemProxy */;
+		};
+		5FA4C7411CDA7B5B004A728C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5FA4C71F1CDA7B5B004A728C /* Palette-Knife */;
+			targetProxy = 5FA4C7401CDA7B5B004A728C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		5FA4C7271CDA7B5B004A728C /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5FA4C7281CDA7B5B004A728C /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		5FA4C72C1CDA7B5B004A728C /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5FA4C72D1CDA7B5B004A728C /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		5FA4C7461CDA7B5B004A728C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		5FA4C7471CDA7B5B004A728C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5FA4C7491CDA7B5B004A728C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Palette-Knife/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-Knife";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5FA4C74A1CDA7B5B004A728C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Palette-Knife/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-Knife";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5FA4C74C1CDA7B5B004A728C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = "Palette-KnifeTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-KnifeTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Palette-Knife.app/Palette-Knife";
+			};
+			name = Debug;
+		};
+		5FA4C74D1CDA7B5B004A728C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = "Palette-KnifeTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-KnifeTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Palette-Knife.app/Palette-Knife";
+			};
+			name = Release;
+		};
+		5FA4C74F1CDA7B5B004A728C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "Palette-KnifeUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-KnifeUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = "Palette-Knife";
+			};
+			name = Debug;
+		};
+		5FA4C7501CDA7B5B004A728C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "Palette-KnifeUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-KnifeUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = "Palette-Knife";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5FA4C71B1CDA7B5B004A728C /* Build configuration list for PBXProject "Palette-Knife" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5FA4C7461CDA7B5B004A728C /* Debug */,
+				5FA4C7471CDA7B5B004A728C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5FA4C7481CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "Palette-Knife" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5FA4C7491CDA7B5B004A728C /* Debug */,
+				5FA4C74A1CDA7B5B004A728C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		5FA4C74B1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "Palette-KnifeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5FA4C74C1CDA7B5B004A728C /* Debug */,
+				5FA4C74D1CDA7B5B004A728C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		5FA4C74E1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "Palette-KnifeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5FA4C74F1CDA7B5B004A728C /* Debug */,
+				5FA4C7501CDA7B5B004A728C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5FA4C7181CDA7B5B004A728C /* Project object */;
+}

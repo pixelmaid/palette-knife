@@ -9,9 +9,37 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
+    // MARK: Properties
+    
+    @IBOutlet weak var canvasView: CanvasView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        var bP = BrushProperties();
+        bP.reflect = false;
+        bP.position = Point(x:100,y:200);
+        
+        
+        let pathBrush = PathBrush();
+        print(pathBrush);
+        var pB = NSClassFromString("PaletteKnife.PathBrush")
+        print(pB);
+        if let f = Brush.create("PathBrush")
+              {
+                            print(f.position);
+                
+                     }
+                else
+                 {
+                            print("No class")
+                     }
+
+       /* let brush = Brush.create("PathBrush");
+       brush!.setValue(bP);
+        brush!.setPosition(Point(x:50,y:50));
+        print("position \(brush!.position.x)\(brush!.position.y)")*/
+
         // Do any additional setup after loading the view, typically from a nib.
     }
 

@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5FA4C71F1CDA7B5B004A728C"
-               BuildableName = "Palette-Knife.app"
-               BlueprintName = "Palette-Knife"
-               ReferencedContainer = "container:Palette-Knife.xcodeproj">
+               BuildableName = "PaletteKnife.app"
+               BlueprintName = "PaletteKnife"
+               ReferencedContainer = "container:PaletteKnife.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -34,9 +34,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5FA4C7331CDA7B5B004A728C"
-               BuildableName = "Palette-KnifeTests.xctest"
-               BlueprintName = "Palette-KnifeTests"
-               ReferencedContainer = "container:Palette-Knife.xcodeproj">
+               BuildableName = "PaletteKnife.xctest"
+               BlueprintName = "PaletteKnifeTests"
+               ReferencedContainer = "container:PaletteKnife.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -44,9 +44,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5FA4C73E1CDA7B5B004A728C"
-               BuildableName = "Palette-KnifeUITests.xctest"
-               BlueprintName = "Palette-KnifeUITests"
-               ReferencedContainer = "container:Palette-Knife.xcodeproj">
+               BuildableName = "PaletteKnife.xctest"
+               BlueprintName = "PaletteKnifeUITests"
+               ReferencedContainer = "container:PaletteKnife.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -54,9 +54,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5FA4C71F1CDA7B5B004A728C"
-            BuildableName = "Palette-Knife.app"
-            BlueprintName = "Palette-Knife"
-            ReferencedContainer = "container:Palette-Knife.xcodeproj">
+            BuildableName = "PaletteKnife.app"
+            BlueprintName = "PaletteKnife"
+            ReferencedContainer = "container:PaletteKnife.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -77,9 +77,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5FA4C71F1CDA7B5B004A728C"
-            BuildableName = "Palette-Knife.app"
-            BlueprintName = "Palette-Knife"
-            ReferencedContainer = "container:Palette-Knife.xcodeproj">
+            BuildableName = "PaletteKnife.app"
+            BlueprintName = "PaletteKnife"
+            ReferencedContainer = "container:PaletteKnife.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -96,9 +96,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5FA4C71F1CDA7B5B004A728C"
-            BuildableName = "Palette-Knife.app"
-            BlueprintName = "Palette-Knife"
-            ReferencedContainer = "container:Palette-Knife.xcodeproj">
+            BuildableName = "PaletteKnife.app"
+            BlueprintName = "PaletteKnife"
+            ReferencedContainer = "container:PaletteKnife.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

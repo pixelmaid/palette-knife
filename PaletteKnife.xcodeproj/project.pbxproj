@@ -14,6 +14,14 @@
 		5FA4C72E1CDA7B5B004A728C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FA4C72C1CDA7B5B004A728C /* LaunchScreen.storyboard */; };
 		5FA4C7391CDA7B5B004A728C /* Palette_KnifeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7381CDA7B5B004A728C /* Palette_KnifeTests.swift */; };
 		5FA4C7441CDA7B5B004A728C /* Palette_KnifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */; };
+		5FA4C7521CDA7C1B004A728C /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7511CDA7C1B004A728C /* CanvasView.swift */; };
+		5FA4C7581CDB9EF8004A728C /* Brush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7571CDB9EF8004A728C /* Brush.swift */; };
+		5FA4C75A1CDBA1FA004A728C /* Stroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7591CDBA1FA004A728C /* Stroke.swift */; };
+		5FA4C75C1CDBA47D004A728C /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75B1CDBA47D004A728C /* Point.swift */; };
+		5FA4C75E1CDBA530004A728C /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75D1CDBA530004A728C /* Color.swift */; };
+		5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75F1CDBC5F7004A728C /* Behavior.swift */; };
+		5FA4C7621CDBC6C2004A728C /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7611CDBC6C2004A728C /* Event.swift */; };
+		5FA4C7641CDC04B4004A728C /* Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7631CDC04B4004A728C /* Factory.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,19 +42,27 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5FA4C7201CDA7B5B004A728C /* Palette-Knife.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Palette-Knife.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FA4C7201CDA7B5B004A728C /* PaletteKnife.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaletteKnife.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5FA4C7251CDA7B5B004A728C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5FA4C7281CDA7B5B004A728C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5FA4C72A1CDA7B5B004A728C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5FA4C72D1CDA7B5B004A728C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5FA4C72F1CDA7B5B004A728C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5FA4C7341CDA7B5B004A728C /* Palette-KnifeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Palette-KnifeTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FA4C7341CDA7B5B004A728C /* PaletteKnife.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PaletteKnife.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA4C7381CDA7B5B004A728C /* Palette_KnifeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette_KnifeTests.swift; sourceTree = "<group>"; };
 		5FA4C73A1CDA7B5B004A728C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5FA4C73F1CDA7B5B004A728C /* Palette-KnifeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Palette-KnifeUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FA4C73F1CDA7B5B004A728C /* PaletteKnife.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PaletteKnife.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette_KnifeUITests.swift; sourceTree = "<group>"; };
 		5FA4C7451CDA7B5B004A728C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5FA4C7511CDA7C1B004A728C /* CanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CanvasView.swift; path = ../CanvasView.swift; sourceTree = "<group>"; };
+		5FA4C7571CDB9EF8004A728C /* Brush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Brush.swift; sourceTree = "<group>"; };
+		5FA4C7591CDBA1FA004A728C /* Stroke.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stroke.swift; sourceTree = "<group>"; };
+		5FA4C75B1CDBA47D004A728C /* Point.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
+		5FA4C75D1CDBA530004A728C /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		5FA4C75F1CDBC5F7004A728C /* Behavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Behavior.swift; sourceTree = "<group>"; };
+		5FA4C7611CDBC6C2004A728C /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		5FA4C7631CDC04B4004A728C /* Factory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Factory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,9 +103,9 @@
 		5FA4C7211CDA7B5B004A728C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5FA4C7201CDA7B5B004A728C /* Palette-Knife.app */,
-				5FA4C7341CDA7B5B004A728C /* Palette-KnifeTests.xctest */,
-				5FA4C73F1CDA7B5B004A728C /* Palette-KnifeUITests.xctest */,
+				5FA4C7201CDA7B5B004A728C /* PaletteKnife.app */,
+				5FA4C7341CDA7B5B004A728C /* PaletteKnife.xctest */,
+				5FA4C73F1CDA7B5B004A728C /* PaletteKnife.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -97,6 +113,8 @@
 		5FA4C7221CDA7B5B004A728C /* Palette-Knife */ = {
 			isa = PBXGroup;
 			children = (
+				5FA4C7561CDB9EAF004A728C /* views */,
+				5FA4C7551CDB9E9A004A728C /* models */,
 				5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */,
 				5FA4C7251CDA7B5B004A728C /* ViewController.swift */,
 				5FA4C7271CDA7B5B004A728C /* Main.storyboard */,
@@ -125,12 +143,34 @@
 			path = "Palette-KnifeUITests";
 			sourceTree = "<group>";
 		};
+		5FA4C7551CDB9E9A004A728C /* models */ = {
+			isa = PBXGroup;
+			children = (
+				5FA4C7571CDB9EF8004A728C /* Brush.swift */,
+				5FA4C7631CDC04B4004A728C /* Factory.swift */,
+				5FA4C75F1CDBC5F7004A728C /* Behavior.swift */,
+				5FA4C7611CDBC6C2004A728C /* Event.swift */,
+				5FA4C75B1CDBA47D004A728C /* Point.swift */,
+				5FA4C75D1CDBA530004A728C /* Color.swift */,
+				5FA4C7591CDBA1FA004A728C /* Stroke.swift */,
+			);
+			name = models;
+			sourceTree = "<group>";
+		};
+		5FA4C7561CDB9EAF004A728C /* views */ = {
+			isa = PBXGroup;
+			children = (
+				5FA4C7511CDA7C1B004A728C /* CanvasView.swift */,
+			);
+			name = views;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5FA4C71F1CDA7B5B004A728C /* Palette-Knife */ = {
+		5FA4C71F1CDA7B5B004A728C /* PaletteKnife */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5FA4C7481CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "Palette-Knife" */;
+			buildConfigurationList = 5FA4C7481CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "PaletteKnife" */;
 			buildPhases = (
 				5FA4C71C1CDA7B5B004A728C /* Sources */,
 				5FA4C71D1CDA7B5B004A728C /* Frameworks */,
@@ -140,14 +180,14 @@
 			);
 			dependencies = (
 			);
-			name = "Palette-Knife";
+			name = PaletteKnife;
 			productName = "Palette-Knife";
-			productReference = 5FA4C7201CDA7B5B004A728C /* Palette-Knife.app */;
+			productReference = 5FA4C7201CDA7B5B004A728C /* PaletteKnife.app */;
 			productType = "com.apple.product-type.application";
 		};
-		5FA4C7331CDA7B5B004A728C /* Palette-KnifeTests */ = {
+		5FA4C7331CDA7B5B004A728C /* PaletteKnifeTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5FA4C74B1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "Palette-KnifeTests" */;
+			buildConfigurationList = 5FA4C74B1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "PaletteKnifeTests" */;
 			buildPhases = (
 				5FA4C7301CDA7B5B004A728C /* Sources */,
 				5FA4C7311CDA7B5B004A728C /* Frameworks */,
@@ -158,14 +198,14 @@
 			dependencies = (
 				5FA4C7361CDA7B5B004A728C /* PBXTargetDependency */,
 			);
-			name = "Palette-KnifeTests";
+			name = PaletteKnifeTests;
 			productName = "Palette-KnifeTests";
-			productReference = 5FA4C7341CDA7B5B004A728C /* Palette-KnifeTests.xctest */;
+			productReference = 5FA4C7341CDA7B5B004A728C /* PaletteKnife.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		5FA4C73E1CDA7B5B004A728C /* Palette-KnifeUITests */ = {
+		5FA4C73E1CDA7B5B004A728C /* PaletteKnifeUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5FA4C74E1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "Palette-KnifeUITests" */;
+			buildConfigurationList = 5FA4C74E1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "PaletteKnifeUITests" */;
 			buildPhases = (
 				5FA4C73B1CDA7B5B004A728C /* Sources */,
 				5FA4C73C1CDA7B5B004A728C /* Frameworks */,
@@ -176,9 +216,9 @@
 			dependencies = (
 				5FA4C7411CDA7B5B004A728C /* PBXTargetDependency */,
 			);
-			name = "Palette-KnifeUITests";
+			name = PaletteKnifeUITests;
 			productName = "Palette-KnifeUITests";
-			productReference = 5FA4C73F1CDA7B5B004A728C /* Palette-KnifeUITests.xctest */;
+			productReference = 5FA4C73F1CDA7B5B004A728C /* PaletteKnife.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -193,6 +233,7 @@
 				TargetAttributes = {
 					5FA4C71F1CDA7B5B004A728C = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = GGBE93LPTY;
 					};
 					5FA4C7331CDA7B5B004A728C = {
 						CreatedOnToolsVersion = 7.3;
@@ -204,7 +245,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 5FA4C71B1CDA7B5B004A728C /* Build configuration list for PBXProject "Palette-Knife" */;
+			buildConfigurationList = 5FA4C71B1CDA7B5B004A728C /* Build configuration list for PBXProject "PaletteKnife" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -217,9 +258,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5FA4C71F1CDA7B5B004A728C /* Palette-Knife */,
-				5FA4C7331CDA7B5B004A728C /* Palette-KnifeTests */,
-				5FA4C73E1CDA7B5B004A728C /* Palette-KnifeUITests */,
+				5FA4C71F1CDA7B5B004A728C /* PaletteKnife */,
+				5FA4C7331CDA7B5B004A728C /* PaletteKnifeTests */,
+				5FA4C73E1CDA7B5B004A728C /* PaletteKnifeUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -256,8 +297,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FA4C75A1CDBA1FA004A728C /* Stroke.swift in Sources */,
+				5FA4C7621CDBC6C2004A728C /* Event.swift in Sources */,
+				5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */,
 				5FA4C7261CDA7B5B004A728C /* ViewController.swift in Sources */,
+				5FA4C7641CDC04B4004A728C /* Factory.swift in Sources */,
+				5FA4C75E1CDBA530004A728C /* Color.swift in Sources */,
+				5FA4C75C1CDBA47D004A728C /* Point.swift in Sources */,
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
+				5FA4C7581CDB9EF8004A728C /* Brush.swift in Sources */,
+				5FA4C7521CDA7C1B004A728C /* CanvasView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,12 +331,12 @@
 /* Begin PBXTargetDependency section */
 		5FA4C7361CDA7B5B004A728C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5FA4C71F1CDA7B5B004A728C /* Palette-Knife */;
+			target = 5FA4C71F1CDA7B5B004A728C /* PaletteKnife */;
 			targetProxy = 5FA4C7351CDA7B5B004A728C /* PBXContainerItemProxy */;
 		};
 		5FA4C7411CDA7B5B004A728C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5FA4C71F1CDA7B5B004A728C /* Palette-Knife */;
+			target = 5FA4C71F1CDA7B5B004A728C /* PaletteKnife */;
 			targetProxy = 5FA4C7401CDA7B5B004A728C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -351,6 +400,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-ObjC";
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 2;
@@ -389,6 +439,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
@@ -399,10 +450,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "Palette-Knife/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-Knife";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PaletteKnife;
+				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -410,10 +465,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "Palette-Knife/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-Knife";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PaletteKnife;
+				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};
@@ -424,8 +483,8 @@
 				INFOPLIST_FILE = "Palette-KnifeTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-KnifeTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Palette-Knife.app/Palette-Knife";
+				PRODUCT_NAME = PaletteKnife;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PaletteKnife.app/PaletteKnife";
 			};
 			name = Debug;
 		};
@@ -436,8 +495,8 @@
 				INFOPLIST_FILE = "Palette-KnifeTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-KnifeTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Palette-Knife.app/Palette-Knife";
+				PRODUCT_NAME = PaletteKnife;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PaletteKnife.app/PaletteKnife";
 			};
 			name = Release;
 		};
@@ -447,7 +506,7 @@
 				INFOPLIST_FILE = "Palette-KnifeUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-KnifeUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PaletteKnife;
 				TEST_TARGET_NAME = "Palette-Knife";
 			};
 			name = Debug;
@@ -458,7 +517,7 @@
 				INFOPLIST_FILE = "Palette-KnifeUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-KnifeUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PaletteKnife;
 				TEST_TARGET_NAME = "Palette-Knife";
 			};
 			name = Release;
@@ -466,7 +525,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5FA4C71B1CDA7B5B004A728C /* Build configuration list for PBXProject "Palette-Knife" */ = {
+		5FA4C71B1CDA7B5B004A728C /* Build configuration list for PBXProject "PaletteKnife" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5FA4C7461CDA7B5B004A728C /* Debug */,
@@ -475,7 +534,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5FA4C7481CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "Palette-Knife" */ = {
+		5FA4C7481CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "PaletteKnife" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5FA4C7491CDA7B5B004A728C /* Debug */,
@@ -483,7 +542,7 @@
 			);
 			defaultConfigurationIsVisible = 0;
 		};
-		5FA4C74B1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "Palette-KnifeTests" */ = {
+		5FA4C74B1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "PaletteKnifeTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5FA4C74C1CDA7B5B004A728C /* Debug */,
@@ -491,7 +550,7 @@
 			);
 			defaultConfigurationIsVisible = 0;
 		};
-		5FA4C74E1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "Palette-KnifeUITests" */ = {
+		5FA4C74E1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "PaletteKnifeUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5FA4C74F1CDA7B5B004A728C /* Debug */,

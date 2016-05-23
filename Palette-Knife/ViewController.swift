@@ -22,25 +22,20 @@ class ViewController: UIViewController {
         
         
         let pathBrush = PathBrush();
-        print(pathBrush);
-        var pB = NSClassFromString("PaletteKnife.PathBrush")
-        print(pB);
-        if let f = Brush.create("PathBrush")
-              {
-                            print(f.position);
-                
-                     }
-                else
-                 {
-                            print("No class")
-                     }
+        pathBrush.position.x = 100;
+        pathBrush.position.y = 100;
+        //print(pathBrush);
+        let f = pathBrush.clone();
+        f.foo();
+        let b = Behavior();
+        let e = Event<(EventType,Observable)>()
+        b.addEventActionPair(pathBrush,event:e,action:PathBrush.testHandler);
+        e.raise((EventType.STYLUS_DOWN,f));
 
-       /* let brush = Brush.create("PathBrush");
-       brush!.setValue(bP);
-        brush!.setPosition(Point(x:50,y:50));
-        print("position \(brush!.position.x)\(brush!.position.y)")*/
+        //f!.position.x = 400;
+        //f!.position.y = 400;
+        print("positions\(pathBrush.position.x,pathBrush.position.y,f.position.x,f.position.y)");
 
-        // Do any additional setup after loading the view, typically from a nib.
     }
 
     override func didReceiveMemoryWarning() {

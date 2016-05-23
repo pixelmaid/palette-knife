@@ -10,48 +10,60 @@ import Foundation
 
 // Brush: Base class for all dynamic brush objects
 
-class Brush:Equatable {
-    class func create(name : String) -> Brush?
-    {
-       
-        let appName = NSBundle.mainBundle().infoDictionary!["CFBundleName"] as! String
-        
-         print(appName);
-        guard let any : AnyObject.Type = NSClassFromString(appName + "." + name) , let ns = any as? Brush.Type  else
-        {
-            return nil;
-        }
-        return ns.init()    }
-    
-    func description() -> String
-    {
-        return  NSStringFromClass(self.dynamicType)
-    }
-    
-    
-    func hello()
-    {
-        print("base hello");
-    }
-    
-
-    
+class Brush:Observable, Equatable {
     var children = [Brush]();
     var strokes = [Stroke]();
     var parent: Brush?
-    var behavior: Behavior?;
+    var behaviors = [String:Behavior]();
     
     //geometric/stylistic properties
     var strokeColor = Color(r:0,g:0,b:0);
+    var fillColor = Color(r:0,g:0,b:0);
+
     var reflect = false;
     var penDown = false;
     var position = Point(x:0,y:0);
     var scaling = Point(x:1,y:1);
     
-    required init(){
+    required override init(){
         
     }
     
+    /*func create()->Brush?{
+        let appName = NSBundle.mainBundle().infoDictionary!["CFBundleName"] as! String
+        let brushMirror = Mirror(reflecting: self)
+        
+        let name = "\(brushMirror.subjectType)"
+        print("target name\(appName+"."+name)")
+        
+        guard let any : AnyObject.Type = NSClassFromString(appName + "." + name) , let ns = any as? Brush.Type  else
+        {
+            return nil;
+        }
+        return ns.init()
+    
+    }*/
+    
+    func create()->Brush{
+        return Brush();
+    }
+
+    func testHandler (data:(EventType,Observable)){
+        print("test handler triggered by\(data.0,data.1)");
+    }
+    
+    func clone()->Brush{
+        let clone = self.create();
+        
+        clone.reflect = self.reflect;
+        clone.penDown = self.penDown;
+        clone.position = self.position;
+        clone.scaling = self.scaling;
+        clone.strokeColor = self.strokeColor;
+        clone.fillColor = self.fillColor;
+        return clone;
+       
+    }
     
     func setValue(args:BrushProperties){
         
@@ -97,40 +109,19 @@ class Brush:Equatable {
         self.penDown = value
     }
     
-    func setBehavior(value:Behavior){
-        self.behavior = value;
+    func addBehavior(name:String,behavior:Behavior){
+        self.behaviors[name] = behavior;
+    }
+    
+    func removeBehavior(name:String)->Behavior{
+        return self.behaviors.removeValueForKey(name)!
     }
     
     //creates number of clones specified by num and adds them as children
     func spawn(num:Int, args:[BrushProperties]) {
-        var spawned = [Brush]();
-       /* for (var i = 0; i < num; i += 1) {
-    
-            var child;
-            var type = args[i].type;
-            if(args[i].hasOwnProperty('type')){
-    console.log('type',args[i]['type'],map);
-    child = new map[args[i]['type']](args[i]);
-    }
-    else{
-    child = new this.constructor(args[i]);
+        let spawned = self.clone();
     }
     
-    
-    child.parent = this;
-    child.position = this.position.clone();
-    this.children.push(child);
-    spawned.push(child);
-    
-				}
-				if (this.behavior) {
-    window.setTimeout(self.passOnBehavior, 5, spawned);
-				}
-				return spawned;*/
-    }
-
-    
-       
     //move(point): point should be a vector (i.e mouse delta). Transforms point in accordance with current geometric properties
     func move(point:Point) {
         let d = self.transformDelta(point);
@@ -156,22 +147,34 @@ class Brush:Equatable {
     }
     
     func destroy() {
-        if((self.behavior) != nil){
-            self.behavior!.removeTarget(self);
-        }
+       
     }
 }
 
 
 // MARK: Equatable
-
-    func ==(lhs:Brush, rhs:Brush) -> Bool {
+func ==(lhs:Brush, rhs:Brush) -> Bool {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
-    }
+}
+
     
 
 class PathBrush:Brush{
+   
+    override func create()->PathBrush{
+        return PathBrush();
+    }
+    override func testHandler (data:(EventType,Observable)){
+        print("path brush test handler triggered by\(data.0,data.1)");
+    }
     
+    override func clone()->PathBrush{
+        return super.clone() as! PathBrush;
+    }
+    
+    func foo(){
+        
+    }
 }
 
 struct BrushProperties {

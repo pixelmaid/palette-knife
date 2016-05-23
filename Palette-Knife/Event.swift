@@ -6,6 +6,24 @@
 //
 
 
+
+protocol PropertyObservable {
+    typealias eventType
+    typealias TargetType
+    var propertyChanged: Event<(EventType,TargetType)> { get }
+}
+
+class Observable: PropertyObservable {
+    typealias eventType = EventType
+    let propertyChanged = Event<(EventType, Observable)>()
+}
+
+
+enum EventType {
+    case STYLUS_DOWN, STYLUS_UP, STYLUS_MOVE, SPAWN
+}
+
+
 public protocol Disposable {
     func dispose()
 }

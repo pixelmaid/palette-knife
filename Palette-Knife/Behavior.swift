@@ -10,36 +10,15 @@ import Foundation
 
 // Behavior: stores actions: events and callbacks that determine the drawing behavior of the target brush
 
-class Behavior{
-    var targets = [Brush]()
+class Behavior: Observable{
     
-    init(){
-        
+   
+    
+    // links a generic target to a generic handler.
+    func addEventActionPair<U: Observable, T: Observable>(target: U, event:Event<(EventType,T)>, action: (U) -> (EventType,Observable)->()){
+        event.addHandler(target, handler: action)
     }
     
-    func addTarget(target:Brush){
-        self.targets.append(target);
-    }
-    
-    func removeTarget(target:Brush){
-        let index = self.targets.indexOf(target);
-        if(index > -1){
-            self.targets.removeAtIndex(index!);
-        }
-    }
-    
-    func addTargets(targets:[Brush]) {
-       for item in targets {
-            self.addTarget(item);
-  
-        }
-    }
-    
-    func add
-
-
-    
-    
-    
+ 
     
 }

@@ -21,7 +21,6 @@
 		5FA4C75E1CDBA530004A728C /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75D1CDBA530004A728C /* Color.swift */; };
 		5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75F1CDBC5F7004A728C /* Behavior.swift */; };
 		5FA4C7621CDBC6C2004A728C /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7611CDBC6C2004A728C /* Event.swift */; };
-		5FA4C7641CDC04B4004A728C /* Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7631CDC04B4004A728C /* Factory.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,7 +61,6 @@
 		5FA4C75D1CDBA530004A728C /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		5FA4C75F1CDBC5F7004A728C /* Behavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Behavior.swift; sourceTree = "<group>"; };
 		5FA4C7611CDBC6C2004A728C /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
-		5FA4C7631CDC04B4004A728C /* Factory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Factory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,7 +145,6 @@
 			isa = PBXGroup;
 			children = (
 				5FA4C7571CDB9EF8004A728C /* Brush.swift */,
-				5FA4C7631CDC04B4004A728C /* Factory.swift */,
 				5FA4C75F1CDBC5F7004A728C /* Behavior.swift */,
 				5FA4C7611CDBC6C2004A728C /* Event.swift */,
 				5FA4C75B1CDBA47D004A728C /* Point.swift */,
@@ -301,7 +298,6 @@
 				5FA4C7621CDBC6C2004A728C /* Event.swift in Sources */,
 				5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */,
 				5FA4C7261CDA7B5B004A728C /* ViewController.swift in Sources */,
-				5FA4C7641CDC04B4004A728C /* Factory.swift in Sources */,
 				5FA4C75E1CDBA530004A728C /* Color.swift in Sources */,
 				5FA4C75C1CDBA47D004A728C /* Point.swift in Sources */,
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
@@ -541,6 +537,7 @@
 				5FA4C74A1CDA7B5B004A728C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5FA4C74B1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "PaletteKnifeTests" */ = {
 			isa = XCConfigurationList;
@@ -549,6 +546,7 @@
 				5FA4C74D1CDA7B5B004A728C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5FA4C74E1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "PaletteKnifeUITests" */ = {
 			isa = XCConfigurationList;
@@ -557,6 +555,7 @@
 				5FA4C7501CDA7B5B004A728C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

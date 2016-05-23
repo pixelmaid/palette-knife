@@ -29,27 +29,12 @@ class Brush:Observable, Equatable {
         
     }
     
-    /*func create()->Brush?{
-        let appName = NSBundle.mainBundle().infoDictionary!["CFBundleName"] as! String
-        let brushMirror = Mirror(reflecting: self)
-        
-        let name = "\(brushMirror.subjectType)"
-        print("target name\(appName+"."+name)")
-        
-        guard let any : AnyObject.Type = NSClassFromString(appName + "." + name) , let ns = any as? Brush.Type  else
-        {
-            return nil;
-        }
-        return ns.init()
-    
-    }*/
-    
     func create()->Brush{
         return Brush();
     }
 
-    func testHandler (data:(EventType,Observable)){
-        print("test handler triggered by\(data.0,data.1)");
+    func testHandler (data:(Point,Float,Float)){
+        print("test handler triggered by\(data.0,data.1,data.2)");
     }
     
     func clone()->Brush{
@@ -164,17 +149,12 @@ class PathBrush:Brush{
     override func create()->PathBrush{
         return PathBrush();
     }
-    override func testHandler (data:(EventType,Observable)){
-        print("path brush test handler triggered by\(data.0,data.1)");
-    }
+   
     
     override func clone()->PathBrush{
         return super.clone() as! PathBrush;
     }
     
-    func foo(){
-        
-    }
 }
 
 struct BrushProperties {

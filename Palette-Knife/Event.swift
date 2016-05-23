@@ -7,20 +7,10 @@
 
 
 
-protocol PropertyObservable {
-    typealias eventType
-    typealias TargetType
-    var propertyChanged: Event<(EventType,TargetType)> { get }
-}
-
-class Observable: PropertyObservable {
-    typealias eventType = EventType
-    let propertyChanged = Event<(EventType, Observable)>()
-}
 
 
-enum EventType {
-    case STYLUS_DOWN, STYLUS_UP, STYLUS_MOVE, SPAWN
+class Observable {
+    
 }
 
 
@@ -35,10 +25,11 @@ public protocol Disposable {
 public class Event<T> {
     
     public typealias EventHandler = T -> ()
-    
+
     private var eventHandlers = [Invocable]()
     
     public init() {
+    
     }
     
     /// Raises the event, invoking all handlers

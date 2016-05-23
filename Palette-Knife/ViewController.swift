@@ -14,6 +14,12 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var canvasView: CanvasView!
     
+    var stylusUpEvent = Event<(Point,Float,Float)>()
+    var stylusDownEvent = Event<(Point,Float,Float)>()
+    var stylusMoveEvent = Event<(Point,Float,Float)>()
+    let b = Behavior();
+    let pathBrush = PathBrush();
+
     override func viewDidLoad() {
         super.viewDidLoad()
         var bP = BrushProperties();
@@ -21,20 +27,17 @@ class ViewController: UIViewController {
         bP.position = Point(x:100,y:200);
         
         
-        let pathBrush = PathBrush();
-        pathBrush.position.x = 100;
+               pathBrush.position.x = 100;
         pathBrush.position.y = 100;
         //print(pathBrush);
         let f = pathBrush.clone();
-        f.foo();
-        let b = Behavior();
-        let e = Event<(EventType,Observable)>()
-        b.addEventActionPair(pathBrush,event:e,action:PathBrush.testHandler);
-        e.raise((EventType.STYLUS_DOWN,f));
+        
+       b.addEventActionPair(pathBrush, event:stylusMoveEvent, action:PathBrush.testHandler);
+        stylusMoveEvent.raise((Point(x:100,y:100),0.0,40.0));
 
-        //f!.position.x = 400;
-        //f!.position.y = 400;
-        print("positions\(pathBrush.position.x,pathBrush.position.y,f.position.x,f.position.y)");
+        
+        
+        
 
     }
 
@@ -42,6 +45,56 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        if let touch = touches.first  {
+            
+            let point = touch.locationInView(view);
+            let x = Float(point.x)
+            let y = Float(point.y)
+            let force = Float(touch.force);
+            let angle = Float(touch.azimuthAngleInView(view))
+            
+            stylusUpEvent.raise(Point(x:x,y:y),force,angle);
+            
+        }
+        
+    }
+    
+    
+    
+    
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        if let touch = touches.first  {
+            
+            let point = touch.locationInView(view);
+            let x = Float(point.x)
+            let y = Float(point.y)
+            let force = Float(touch.force);
+            let angle = Float(touch.azimuthAngleInView(view))
+            
+            stylusDownEvent.raise(Point(x:x,y:y),force,angle);
+
+            
+        }
+    }
+    
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        if let touch = touches.first  {
+           
+            let point = touch.locationInView(view);
+            
+            let x = Float(point.x)
+            let y = Float(point.y)
+            let force = Float(touch.force);
+            let angle = Float(touch.azimuthAngleInView(view))
+            print("touches moved\(x,y,force,angle,stylusMoveEvent)")
+
+            stylusMoveEvent.raise(Point(x:x,y:y),force,angle);
+        
+        }
+    }
+    
 
 
 }

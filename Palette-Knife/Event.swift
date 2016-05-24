@@ -9,7 +9,7 @@
 
 
 
-class Observable {
+public class Observable {
     
 }
 

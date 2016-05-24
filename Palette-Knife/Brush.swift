@@ -8,9 +8,8 @@
 
 import Foundation
 
-// Brush: Base class for all dynamic brush objects
 
-class Brush:Observable, Equatable {
+class Brush: Factory, Equatable {
     var children = [Brush]();
     var strokes = [Stroke]();
     var parent: Brush?
@@ -24,21 +23,18 @@ class Brush:Observable, Equatable {
     var penDown = false;
     var position = Point(x:0,y:0);
     var scaling = Point(x:1,y:1);
+    var name = "Brush"
     
-    required override init(){
+    required init(){
         
     }
     
-    func create()->Brush{
-        return Brush();
-    }
-
     func testHandler (data:(Point,Float,Float)){
         print("test handler triggered by\(data.0,data.1,data.2)");
     }
     
     func clone()->Brush{
-        let clone = self.create();
+        let clone = Brush.create(self.name) as! Brush;
         
         clone.reflect = self.reflect;
         clone.penDown = self.penDown;
@@ -146,13 +142,17 @@ func ==(lhs:Brush, rhs:Brush) -> Bool {
 
 class PathBrush:Brush{
    
-    override func create()->PathBrush{
-        return PathBrush();
+    required init(){
+        super.init()
+       self.name = "PathBrush"
     }
-   
     
     override func clone()->PathBrush{
         return super.clone() as! PathBrush;
+    }
+    
+    func foo(){
+        
     }
     
 }

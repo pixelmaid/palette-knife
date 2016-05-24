@@ -17,5 +17,10 @@ class CanvasView: UIView {
         // Drawing code
     }
     */
+    
+    override func drawRect(rect: CGRect) {
+   
+    }
+
 
 }

@@ -17,29 +17,37 @@ class ViewController: UIViewController {
     var stylusUpEvent = Event<(Point,Float,Float)>()
     var stylusDownEvent = Event<(Point,Float,Float)>()
     var stylusMoveEvent = Event<(Point,Float,Float)>()
-    let b = Behavior();
-    let pathBrush = PathBrush();
+    
+    var brushes = [String:Brush]();
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        var bP = BrushProperties();
-        bP.reflect = false;
-        bP.position = Point(x:100,y:200);
-        
-        
-               pathBrush.position.x = 100;
-        pathBrush.position.y = 100;
-        //print(pathBrush);
-        let f = pathBrush.clone();
-        
-       b.addEventActionPair(pathBrush, event:stylusMoveEvent, action:PathBrush.testHandler);
-        stylusMoveEvent.raise((Point(x:100,y:100),0.0,40.0));
+        var brush = Brush();
+        var pathBrush = PathBrush()
+        var pathBrushClone = pathBrush.clone();
+
+        var brushClone = brush.clone();
+        print(brushClone,pathBrushClone)
+        // b.addEventActionPair(pathBrush, event:stylusMoveEvent, action:PathBrush.testHandler);
+        //stylusMoveEvent.raise((Point(x:100,y:100),0.0,40.0));
 
         
         
         
 
     }
+    
+    func brushGenerated(type:String){
+        let brush = Brush.create(type) as! Brush;
+        if(brushes[type] != nil){
+            print("overwriting existing brush on brush generated");
+        }
+        
+        brushes[type]=brush;
+        
+    }
+    
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

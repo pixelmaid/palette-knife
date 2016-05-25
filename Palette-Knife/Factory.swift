@@ -11,11 +11,12 @@ import Foundation
 typealias StylusType = (Point,Float,Float)
 typealias BrushType = (Brush)
 
-class Factory: Observable
+class Factory: Emitter
 {
     
     required override init(){
-        
+        super.init()
+ 
     }
     
     class func create(name : String) -> Factory?
@@ -30,26 +31,3 @@ class Factory: Observable
     
    
 }
-
-/*typealias BrushFactory = () -> BrushObject?
-
-
-
-enum BrushType {
-    case Brush, PathBrush, ShapeBrush
-}
-
-enum BrushHelper {
-    static func factoryFor(type : BrushType) -> BrushFactory {
-        switch type {
-       
-        case .PathBrush:
-            return PathBrush.make;
-        
-        default :
-            return Brush.make;
-        }
-        
-        
-    }
-}*/

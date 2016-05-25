@@ -7,40 +7,38 @@
 //
 
 import UIKit
-
-typealias BehaviorConfig = (Brush: Brush, Behavior: Behavior, EventType:String,  ActionName: String)
-
+let behaviorMapper = BehaviorMapper()
 
 class ViewController: UIViewController {
     
     // MARK: Properties
     
     @IBOutlet weak var canvasView: CanvasView!
+   
     
-    var stylusUpEvent = Event<(Point,Float,Float)>()
-    var stylusDownEvent = Event<(Point,Float,Float)>()
-    var stylusMoveEvent = Event<(Point,Float,Float)>()
     
-    var brushes = [String:Brush]();
-
+    var brushes = [String:Brush]()
+    var stylus = Stylus(x: 0,y:0,angle:0,force:0)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        var brush = Brush();
-        var pathBrush = PathBrush()
-        var pathBrushClone = pathBrush.clone();
-
-        var brushClone = brush.clone();
-        print(brushClone,pathBrushClone)
-        // b.addEventActionPair(pathBrush, event:stylusMoveEvent, action:PathBrush.testHandler);
-        //stylusMoveEvent.raise((Point(x:100,y:100),0.0,40.0));
-
         
-        generateBrush("PathBrush")
+        var brush = generateBrush("PathBrush");
+        let stylusMoveConfig = (target:brush, action: "notificationHandler", emitter:stylus, eventType:"STYLUS_MOVE", expression:"") as BehaviorConfig
         
+           let stylusUpConfig = (target:brush, action: "notificationHandler", emitter:stylus, eventType:"STYLUS_UP", expression:"") as BehaviorConfig
+        
+           let stylusDownConfig = (target:brush, action: "notificationHandler", emitter:stylus, eventType:"STYLUS_DOWN", expression:"") as BehaviorConfig
+        
+        self.addBehavior(stylusMoveConfig)
+        self.addBehavior(stylusUpConfig)
+        self.addBehavior(stylusDownConfig)
 
     }
     
-    func generateBrush(type:String){
+
+    
+    func generateBrush(type:String)->Brush{
         let brush = Brush.create(type) as! Brush;
         if(brushes[type] != nil){
             print("overwriting existing brush on brush generated");
@@ -48,14 +46,13 @@ class ViewController: UIViewController {
         brush.drawEvent.addHandler(self,handler: ViewController.brushDrawHandler)
         brushes[type]=brush;
         brush.drawEvent.raise((brush))
+        return brush
         
     }
     
-    /*func addToBehavior(config:BehaviorConfig){
-        var event = Factory.generateEvent(config.EventType);
-        var action = Factory.generateAction(config.ActionName);
-        config.Behavior.addEventActionPair(config.Brush, event: event, action: <#T##(U) -> (T) -> ()#>)
-    }*/
+    func addBehavior(config:BehaviorConfig){
+        behaviorMapper.createMapping(config)
+    }
     
     
     
@@ -76,8 +73,7 @@ class ViewController: UIViewController {
             let y = Float(point.y)
             let force = Float(touch.force);
             let angle = Float(touch.azimuthAngleInView(view))
-            
-            stylusUpEvent.raise(Point(x:x,y:y),force,angle);
+            stylus.onStylusUp()
             
         }
         
@@ -87,15 +83,14 @@ class ViewController: UIViewController {
     
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+
         if let touch = touches.first  {
-            
             let point = touch.locationInView(view);
             let x = Float(point.x)
             let y = Float(point.y)
             let force = Float(touch.force);
             let angle = Float(touch.azimuthAngleInView(view))
-            
-            stylusDownEvent.raise(Point(x:x,y:y),force,angle);
+            stylus.onStylusDown()
 
             
         }
@@ -110,9 +105,9 @@ class ViewController: UIViewController {
             let y = Float(point.y)
             let force = Float(touch.force);
             let angle = Float(touch.azimuthAngleInView(view))
-            print("touches moved\(x,y,force,angle,stylusMoveEvent)")
+            stylus.onStylusMove(x, y:y, force:force, angle:angle)
+            canvasView.drawPath(stylus.prevPosition, tP:stylus.position, w:10, c:Color(r:0,g:0,b:0))
 
-            stylusMoveEvent.raise(Point(x:x,y:y),force,angle);
         
         }
     }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct Point {
     
@@ -36,6 +37,10 @@ struct Point {
     mutating func setValue(value:Point){
         x = value.x;
         y = value.y;
+    }
+    
+    func toCGPoint()->CGPoint{
+        return CGPoint(x:CGFloat(self.x),y:CGFloat(self.y))
     }
     
     

@@ -6,14 +6,6 @@
 //
 
 
-
-
-
-public class Observable {
-    
-}
-
-
 public protocol Disposable {
     func dispose()
 }

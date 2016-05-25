@@ -15,7 +15,7 @@ class Brush: Factory, Equatable {
     var children = [Brush]();
     var strokes = [Stroke]();
     var parent: Brush?
-    var behaviors = [String:Behavior]();
+    var behavior_mappings = [String:(Emitter,String,String)]();
     
     //geometric/stylistic properties
     var strokeColor = Color(r:0,g:0,b:0);
@@ -27,14 +27,21 @@ class Brush: Factory, Equatable {
     var scaling = Point(x:1,y:1);
     var name = "Brush"
     var drawEvent = Event<(Brush)>()
-
+    let removeMappingEvent = Event<(Brush,String,Emitter)>()
     
     required init(){
-        
+        super.init()
+        self.events =  ["SPAWN"]
+        self.createKeyStorage();
     }
     
     func testHandler (data:(Point,Float,Float)){
         print("test handler triggered by\(data.0,data.1,data.2)");
+    }
+    
+    dynamic func notificationHandler(notification: NSNotification){
+        let emitter = notification.userInfo?["emitter"]
+        //print("notification\(emitter)")
     }
     
     func clone()->Brush{
@@ -94,12 +101,19 @@ class Brush: Factory, Equatable {
         self.penDown = value
     }
     
-    func addBehavior(name:String,behavior:Behavior){
-        self.behaviors[name] = behavior;
+    func addBehavior(key:String, selector:String, emitter: Emitter, expression:String?){
+        if(expression != nil){
+            behavior_mappings[key] = (emitter,selector,expression!)
+        }
+        else{
+            behavior_mappings[key] = (emitter,selector,"")
+        }
     }
     
-    func removeBehavior(name:String)->Behavior{
-        return self.behaviors.removeValueForKey(name)!
+    func removeBehavior(key:String){
+        let removal =  behavior_mappings.removeValueForKey(key)!
+        let data = (self, key, removal.0)
+        removeMappingEvent.raise(data);
     }
     
     //creates number of clones specified by num and adds them as children
@@ -143,23 +157,6 @@ func ==(lhs:Brush, rhs:Brush) -> Bool {
 }
 
     
-
-class PathBrush:Brush{
-   
-    required init(){
-        super.init()
-       self.name = "PathBrush"
-    }
-    
-    override func clone()->PathBrush{
-        return super.clone() as! PathBrush;
-    }
-    
-    func foo(){
-        
-    }
-    
-}
 
 struct BrushProperties {
     var strokeColor: Color?;

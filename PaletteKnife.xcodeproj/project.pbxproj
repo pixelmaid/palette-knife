@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5F8FEFC91CF5F4E600D2CB0C /* Stylus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFC81CF5F4E600D2CB0C /* Stylus.swift */; };
+		5F8FEFCC1CF5F51900D2CB0C /* BehaviorMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFCB1CF5F51900D2CB0C /* BehaviorMapper.swift */; };
+		5F8FEFD01CF6264A00D2CB0C /* BrushManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFCF1CF6264A00D2CB0C /* BrushManager.swift */; };
+		5F8FEFD21CF62F0700D2CB0C /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFD11CF62F0700D2CB0C /* Emitter.swift */; };
+		5F8FEFD51CF6487D00D2CB0C /* PathBrush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFD41CF6487D00D2CB0C /* PathBrush.swift */; };
 		5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */; };
 		5FA4C7261CDA7B5B004A728C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7251CDA7B5B004A728C /* ViewController.swift */; };
 		5FA4C7291CDA7B5B004A728C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FA4C7271CDA7B5B004A728C /* Main.storyboard */; };
@@ -42,6 +47,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5F8FEFC81CF5F4E600D2CB0C /* Stylus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylus.swift; sourceTree = "<group>"; };
+		5F8FEFCB1CF5F51900D2CB0C /* BehaviorMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorMapper.swift; sourceTree = "<group>"; };
+		5F8FEFCF1CF6264A00D2CB0C /* BrushManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrushManager.swift; sourceTree = "<group>"; };
+		5F8FEFD11CF62F0700D2CB0C /* Emitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
+		5F8FEFD41CF6487D00D2CB0C /* PathBrush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathBrush.swift; sourceTree = "<group>"; };
 		5FA4C7201CDA7B5B004A728C /* PaletteKnife.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaletteKnife.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5FA4C7251CDA7B5B004A728C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -90,6 +100,43 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5F8FEFCA1CF5F4EE00D2CB0C /* sensors */ = {
+			isa = PBXGroup;
+			children = (
+				5F8FEFC81CF5F4E600D2CB0C /* Stylus.swift */,
+			);
+			name = sensors;
+			sourceTree = "<group>";
+		};
+		5F8FEFCD1CF5F52200D2CB0C /* brushes */ = {
+			isa = PBXGroup;
+			children = (
+				5FA4C7571CDB9EF8004A728C /* Brush.swift */,
+				5F8FEFD41CF6487D00D2CB0C /* PathBrush.swift */,
+			);
+			name = brushes;
+			sourceTree = "<group>";
+		};
+		5F8FEFCE1CF5F54B00D2CB0C /* primitives */ = {
+			isa = PBXGroup;
+			children = (
+				5FA4C75B1CDBA47D004A728C /* Point.swift */,
+				5FA4C75D1CDBA530004A728C /* Color.swift */,
+				5FA4C7591CDBA1FA004A728C /* Stroke.swift */,
+			);
+			name = primitives;
+			sourceTree = "<group>";
+		};
+		5F8FEFD31CF62F1300D2CB0C /* base */ = {
+			isa = PBXGroup;
+			children = (
+				5FA4C7611CDBC6C2004A728C /* Event.swift */,
+				5FFFA96E1CF4B787001D7C37 /* Factory.swift */,
+				5F8FEFD11CF62F0700D2CB0C /* Emitter.swift */,
+			);
+			name = base;
+			sourceTree = "<group>";
+		};
 		5FA4C7171CDA7B5B004A728C = {
 			isa = PBXGroup;
 			children = (
@@ -146,13 +193,13 @@
 		5FA4C7551CDB9E9A004A728C /* models */ = {
 			isa = PBXGroup;
 			children = (
-				5FFFA96E1CF4B787001D7C37 /* Factory.swift */,
-				5FA4C7571CDB9EF8004A728C /* Brush.swift */,
+				5F8FEFD31CF62F1300D2CB0C /* base */,
+				5F8FEFCE1CF5F54B00D2CB0C /* primitives */,
+				5F8FEFCD1CF5F52200D2CB0C /* brushes */,
+				5F8FEFCA1CF5F4EE00D2CB0C /* sensors */,
 				5FA4C75F1CDBC5F7004A728C /* Behavior.swift */,
-				5FA4C7611CDBC6C2004A728C /* Event.swift */,
-				5FA4C75B1CDBA47D004A728C /* Point.swift */,
-				5FA4C75D1CDBA530004A728C /* Color.swift */,
-				5FA4C7591CDBA1FA004A728C /* Stroke.swift */,
+				5F8FEFCB1CF5F51900D2CB0C /* BehaviorMapper.swift */,
+				5F8FEFCF1CF6264A00D2CB0C /* BrushManager.swift */,
 			);
 			name = models;
 			sourceTree = "<group>";
@@ -300,12 +347,17 @@
 				5FA4C75A1CDBA1FA004A728C /* Stroke.swift in Sources */,
 				5FA4C7621CDBC6C2004A728C /* Event.swift in Sources */,
 				5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */,
+				5F8FEFD51CF6487D00D2CB0C /* PathBrush.swift in Sources */,
+				5F8FEFC91CF5F4E600D2CB0C /* Stylus.swift in Sources */,
+				5F8FEFCC1CF5F51900D2CB0C /* BehaviorMapper.swift in Sources */,
 				5FA4C7261CDA7B5B004A728C /* ViewController.swift in Sources */,
 				5FA4C75E1CDBA530004A728C /* Color.swift in Sources */,
 				5FA4C75C1CDBA47D004A728C /* Point.swift in Sources */,
+				5F8FEFD21CF62F0700D2CB0C /* Emitter.swift in Sources */,
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
 				5FFFA96F1CF4B787001D7C37 /* Factory.swift in Sources */,
 				5FA4C7581CDB9EF8004A728C /* Brush.swift in Sources */,
+				5F8FEFD01CF6264A00D2CB0C /* BrushManager.swift in Sources */,
 				5FA4C7521CDA7C1B004A728C /* CanvasView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

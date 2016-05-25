@@ -48,6 +48,17 @@ public class Event<T> {
     
 }
 
+class StylusEvent:Event<(Point,Float,Float)>{
+    
+}
+
+class BrushEvent:Event<(Brush)>{
+    
+}
+
+
+
+
 // MARK:- Private
 
 // A protocol for a type that can be invoked

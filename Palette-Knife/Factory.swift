@@ -8,6 +8,8 @@
 
 import Foundation
 
+typealias StylusType = (Point,Float,Float)
+typealias BrushType = (Brush)
 
 class Factory: Observable
 {
@@ -25,6 +27,8 @@ class Factory: Observable
         }
         return ns.init()
     }
+    
+   
 }
 
 /*typealias BrushFactory = () -> BrushObject?

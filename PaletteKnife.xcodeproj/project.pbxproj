@@ -21,7 +21,7 @@
 		5FA4C75E1CDBA530004A728C /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75D1CDBA530004A728C /* Color.swift */; };
 		5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75F1CDBC5F7004A728C /* Behavior.swift */; };
 		5FA4C7621CDBC6C2004A728C /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7611CDBC6C2004A728C /* Event.swift */; };
-		5FFFA96F1CF4B787001D7C37 /* BrushFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFFA96E1CF4B787001D7C37 /* BrushFactory.swift */; };
+		5FFFA96F1CF4B787001D7C37 /* Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFFA96E1CF4B787001D7C37 /* Factory.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,7 +62,7 @@
 		5FA4C75D1CDBA530004A728C /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		5FA4C75F1CDBC5F7004A728C /* Behavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Behavior.swift; sourceTree = "<group>"; };
 		5FA4C7611CDBC6C2004A728C /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
-		5FFFA96E1CF4B787001D7C37 /* BrushFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrushFactory.swift; sourceTree = "<group>"; };
+		5FFFA96E1CF4B787001D7C37 /* Factory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Factory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,7 +146,7 @@
 		5FA4C7551CDB9E9A004A728C /* models */ = {
 			isa = PBXGroup;
 			children = (
-				5FFFA96E1CF4B787001D7C37 /* BrushFactory.swift */,
+				5FFFA96E1CF4B787001D7C37 /* Factory.swift */,
 				5FA4C7571CDB9EF8004A728C /* Brush.swift */,
 				5FA4C75F1CDBC5F7004A728C /* Behavior.swift */,
 				5FA4C7611CDBC6C2004A728C /* Event.swift */,
@@ -304,7 +304,7 @@
 				5FA4C75E1CDBA530004A728C /* Color.swift in Sources */,
 				5FA4C75C1CDBA47D004A728C /* Point.swift in Sources */,
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
-				5FFFA96F1CF4B787001D7C37 /* BrushFactory.swift in Sources */,
+				5FFFA96F1CF4B787001D7C37 /* Factory.swift in Sources */,
 				5FA4C7581CDB9EF8004A728C /* Brush.swift in Sources */,
 				5FA4C7521CDA7C1B004A728C /* CanvasView.swift in Sources */,
 			);

@@ -9,6 +9,8 @@
 import Foundation
 
 
+
+
 class Brush: Factory, Equatable {
     var children = [Brush]();
     var strokes = [Stroke]();
@@ -24,6 +26,8 @@ class Brush: Factory, Equatable {
     var position = Point(x:0,y:0);
     var scaling = Point(x:1,y:1);
     var name = "Brush"
+    var drawEvent = Event<(Brush)>()
+
     
     required init(){
         

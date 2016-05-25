@@ -8,6 +8,9 @@
 
 import UIKit
 
+typealias BehaviorConfig = (Brush: Brush, Behavior: Behavior, EventType:String,  ActionName: String)
+
+
 class ViewController: UIViewController {
     
     // MARK: Properties
@@ -32,22 +35,33 @@ class ViewController: UIViewController {
         //stylusMoveEvent.raise((Point(x:100,y:100),0.0,40.0));
 
         
-        
+        generateBrush("PathBrush")
         
 
     }
     
-    func brushGenerated(type:String){
+    func generateBrush(type:String){
         let brush = Brush.create(type) as! Brush;
         if(brushes[type] != nil){
             print("overwriting existing brush on brush generated");
         }
-        
+        brush.drawEvent.addHandler(self,handler: ViewController.brushDrawHandler)
         brushes[type]=brush;
+        brush.drawEvent.raise((brush))
         
     }
     
+    /*func addToBehavior(config:BehaviorConfig){
+        var event = Factory.generateEvent(config.EventType);
+        var action = Factory.generateAction(config.ActionName);
+        config.Behavior.addEventActionPair(config.Brush, event: event, action: <#T##(U) -> (T) -> ()#>)
+    }*/
     
+    
+    
+    func brushDrawHandler(data:(Brush)){
+        print("draw handler called\(data)")
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

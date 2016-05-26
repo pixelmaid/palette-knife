@@ -7,12 +7,13 @@
 //
 
 import Foundation
+import SwiftKVC
 
-class Emitter{
+class Emitter: Model  {
     
     var events =  [String]()
     var keyStorage=[String:[String]]()
-
+    
     func createKeyStorage(){
         for e in events{
             keyStorage[e] = [String]();
@@ -30,3 +31,4 @@ class Emitter{
         }
     }
 }
+

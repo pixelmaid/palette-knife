@@ -13,7 +13,6 @@ import Foundation
 
 class Brush: Factory, Equatable {
     var children = [Brush]();
-    var strokes = [Stroke]();
     var parent: Brush?
     var behavior_mappings = [String:(Emitter,String,String)]();
     
@@ -22,11 +21,12 @@ class Brush: Factory, Equatable {
     var fillColor = Color(r:0,g:0,b:0);
 
     var reflect = false;
+    var position: Point!;
+    var prevPosition: Point!;
     var penDown = false;
-    var position = Point(x:0,y:0);
     var scaling = Point(x:1,y:1);
     var name = "Brush"
-    var drawEvent = Event<(Brush)>()
+    var geometryModified = Event<(Geometry,String,String)>()
     let removeMappingEvent = Event<(Brush,String,Emitter)>()
     
     required init(){
@@ -35,13 +35,30 @@ class Brush: Factory, Equatable {
         self.createKeyStorage();
     }
     
-    func testHandler (data:(Point,Float,Float)){
-        print("test handler triggered by\(data.0,data.1,data.2)");
-    }
-    
     dynamic func notificationHandler(notification: NSNotification){
         let emitter = notification.userInfo?["emitter"]
         //print("notification\(emitter)")
+    }
+    
+    dynamic func setHandler(notification: NSNotification){
+        let emitter = notification.userInfo?["emitter"] as! Emitter
+        let key = notification.userInfo?["key"] as! String
+        let mapping = behavior_mappings[key]
+        let expression = mapping!.2
+        var emitterProp = expression.componentsSeparatedByString(":")[0]
+        var targetProp = expression.componentsSeparatedByString(":")[1]
+        
+        self.set(targetProp,value: emitter[emitterProp])
+
+    }
+    
+    func addBehavior(key:String, selector:String, emitter: Emitter, expression:String?){
+        if(expression != nil){
+            behavior_mappings[key] = (emitter,selector,expression!)
+        }
+        else{
+            behavior_mappings[key] = (emitter,selector,"")
+        }
     }
     
     func clone()->Brush{
@@ -81,8 +98,30 @@ class Brush: Factory, Equatable {
         }
     }
     
+    func set(targetProp:String,value:Any){
+        switch targetProp{
+            case "position":
+                self.setPosition(value as! Point)
+            break
+            case "penDown":
+                self.setPenDown(value as! Bool)
+            break
+
+        default:
+            
+            break
+        }
+    }
+    
     func setPosition(value:Point){
-        self.position.setValue(value)
+        if(self.position != nil){
+            self.prevPosition = self.position;
+            self.position.setValue(value)
+
+        }
+        else{
+            self.position = value;
+        }
     }
     
     func setScale(value:Point){
@@ -101,14 +140,7 @@ class Brush: Factory, Equatable {
         self.penDown = value
     }
     
-    func addBehavior(key:String, selector:String, emitter: Emitter, expression:String?){
-        if(expression != nil){
-            behavior_mappings[key] = (emitter,selector,expression!)
-        }
-        else{
-            behavior_mappings[key] = (emitter,selector,"")
-        }
-    }
+  
     
     func removeBehavior(key:String){
         let removal =  behavior_mappings.removeValueForKey(key)!

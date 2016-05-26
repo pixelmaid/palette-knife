@@ -8,9 +8,10 @@
 
 import Foundation
 import UIKit
+import SwiftKVC
 
-struct Point {
-    
+struct Point: Property{
+  
     var x = Float(0);
     var y = Float(0);
     var diameter = Float(0);
@@ -46,4 +47,6 @@ struct Point {
     
     
 }
+
+
 

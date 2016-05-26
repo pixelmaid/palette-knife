@@ -11,43 +11,41 @@ import Foundation
 
 // manages stylus data, notifies behaviors of stylus events
 class Stylus: Emitter {
-    var position: Point
     var prevPosition: Point
     var force: Float
     var prevForce: Float
     var angle: Float
     var prevAngle: Float
-    var pen = false
-    
+    var position = Point(x:0,y:0);
+    var penDown = false;
+
     init(x:Float,y:Float,angle:Float,force:Float){
-        
-        position = Point(x:x, y:y)
         prevPosition = Point(x:x, y:y)
         self.force = force
         self.prevForce = force
         self.angle = angle
         self.prevAngle = angle;
         super.init()
+        position = Point(x:x, y:y)
         self.events =  ["STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE"]
         self.createKeyStorage();
+        
     }
 
     
     func onStylusUp(){
         
-        self.pen = false
-        print("on stylus up")
+        self.penDown = false
         for key in keyStorage["STYLUS_UP"]!  {
-            NSNotificationCenter.defaultCenter().postNotificationName(key, object: self, userInfo: ["emitter":self])
+            NSNotificationCenter.defaultCenter().postNotificationName(key, object: self, userInfo: ["emitter":self,"key":key])
         }
     }
     
     func onStylusDown(){
         
-        self.pen = true
-        print("on stylus down")
+        self.penDown = true
         for key in keyStorage["STYLUS_DOWN"]!  {
-            NSNotificationCenter.defaultCenter().postNotificationName(key, object: self, userInfo: ["emitter":self])
+            NSNotificationCenter.defaultCenter().postNotificationName(key, object: self, userInfo: ["emitter":self,"key":key])
         }
     }
     
@@ -62,7 +60,7 @@ class Stylus: Emitter {
       
         //print("on stylus move")
         for key in keyStorage["STYLUS_MOVE"]!  {
-            NSNotificationCenter.defaultCenter().postNotificationName(key, object: self, userInfo: ["emitter":self])
+            NSNotificationCenter.defaultCenter().postNotificationName(key, object: self, userInfo: ["emitter":self,"key":key])
         }
     }
 

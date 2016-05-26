@@ -17,13 +17,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="A0m-RG-gIu" customClass="CanvasView" customModule="PaletteKnife" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="600" id="k1w-cO-0As"/>
-                                    <constraint firstAttribute="width" constant="600" id="nLC-bx-EPY"/>
-                                </constraints>
-                            </imageView>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="10" verticalHuggingPriority="10" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="oPy-c3-1gW">
                                 <rect key="frame" x="11" y="11" width="173" height="29"/>
                                 <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
@@ -33,8 +26,17 @@
                                     <segment title="edit"/>
                                 </segments>
                             </segmentedControl>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="A0m-RG-gIu" customClass="CanvasView" customModule="PaletteKnife">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="A0m-RG-gIu" secondAttribute="trailing" id="Bou-0U-Ux7"/>
+                            <constraint firstItem="A0m-RG-gIu" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Yvj-qB-2fX"/>
+                            <constraint firstItem="A0m-RG-gIu" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="dS7-3i-98y"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="A0m-RG-gIu" secondAttribute="bottom" id="lYT-DW-qUS"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="canvasView" destination="A0m-RG-gIu" id="wjg-3J-jEp"/>

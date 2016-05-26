@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>Pods-PaletteKnife.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-PaletteKnifeTests.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-PaletteKnifeUITests.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>SwiftKVC.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>5181BD99B9EB70CF163CD48EF1094846</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>91C86AB4BD1478616E9E7DC55094E990</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>93D70B9DAE2291EB871A39B72B793899</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>AE1DE7E2EFFB70B68885852ADC8D3F4E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>

@@ -27,6 +27,9 @@
 		5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75F1CDBC5F7004A728C /* Behavior.swift */; };
 		5FA4C7621CDBC6C2004A728C /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7611CDBC6C2004A728C /* Event.swift */; };
 		5FFFA96F1CF4B787001D7C37 /* Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFFA96E1CF4B787001D7C37 /* Factory.swift */; };
+		C3F01D59E47F65EDF60C99AA /* Pods_PaletteKnife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C025956B67C44E5D9B3D8E3 /* Pods_PaletteKnife.framework */; };
+		DB63A5DAF0353A3170814552 /* Pods_PaletteKnifeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF0D512CD35C8D5F04C1F76B /* Pods_PaletteKnifeUITests.framework */; };
+		F1788446A747B6E7D54F8306 /* Pods_PaletteKnifeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C5B2DD978F9AF407F2157179 /* Pods_PaletteKnifeTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +50,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0C025956B67C44E5D9B3D8E3 /* Pods_PaletteKnife.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PaletteKnife.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5EBFC69578F7678EA1BBD757 /* Pods-PaletteKnifeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeTests/Pods-PaletteKnifeTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5F1E15891F199E478AB56B38 /* Pods-PaletteKnife.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnife.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife.debug.xcconfig"; sourceTree = "<group>"; };
 		5F8FEFC81CF5F4E600D2CB0C /* Stylus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylus.swift; sourceTree = "<group>"; };
 		5F8FEFCB1CF5F51900D2CB0C /* BehaviorMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorMapper.swift; sourceTree = "<group>"; };
 		5F8FEFCF1CF6264A00D2CB0C /* BrushManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrushManager.swift; sourceTree = "<group>"; };
@@ -73,6 +79,12 @@
 		5FA4C75F1CDBC5F7004A728C /* Behavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Behavior.swift; sourceTree = "<group>"; };
 		5FA4C7611CDBC6C2004A728C /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		5FFFA96E1CF4B787001D7C37 /* Factory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Factory.swift; sourceTree = "<group>"; };
+		7CCD589D0593142C66540CEB /* Pods-PaletteKnifeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		B6B77515AB3FB205C8F75A30 /* Pods-PaletteKnifeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.release.xcconfig"; sourceTree = "<group>"; };
+		C5B2DD978F9AF407F2157179 /* Pods_PaletteKnifeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PaletteKnifeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB3CB08366805D209E552991 /* Pods-PaletteKnife.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnife.release.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife.release.xcconfig"; sourceTree = "<group>"; };
+		FA8AAC1ACBF37C5AD0902C35 /* Pods-PaletteKnifeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeTests/Pods-PaletteKnifeTests.release.xcconfig"; sourceTree = "<group>"; };
+		FF0D512CD35C8D5F04C1F76B /* Pods_PaletteKnifeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PaletteKnifeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C3F01D59E47F65EDF60C99AA /* Pods_PaletteKnife.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +100,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1788446A747B6E7D54F8306 /* Pods_PaletteKnifeTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB63A5DAF0353A3170814552 /* Pods_PaletteKnifeUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,6 +159,8 @@
 				5FA4C7371CDA7B5B004A728C /* Palette-KnifeTests */,
 				5FA4C7421CDA7B5B004A728C /* Palette-KnifeUITests */,
 				5FA4C7211CDA7B5B004A728C /* Products */,
+				8F20EDB8F92782AB3C0A53F1 /* Pods */,
+				A8FB9B6AFF975A979A8CC39F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -212,6 +229,29 @@
 			name = views;
 			sourceTree = "<group>";
 		};
+		8F20EDB8F92782AB3C0A53F1 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				5F1E15891F199E478AB56B38 /* Pods-PaletteKnife.debug.xcconfig */,
+				CB3CB08366805D209E552991 /* Pods-PaletteKnife.release.xcconfig */,
+				5EBFC69578F7678EA1BBD757 /* Pods-PaletteKnifeTests.debug.xcconfig */,
+				FA8AAC1ACBF37C5AD0902C35 /* Pods-PaletteKnifeTests.release.xcconfig */,
+				7CCD589D0593142C66540CEB /* Pods-PaletteKnifeUITests.debug.xcconfig */,
+				B6B77515AB3FB205C8F75A30 /* Pods-PaletteKnifeUITests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		A8FB9B6AFF975A979A8CC39F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0C025956B67C44E5D9B3D8E3 /* Pods_PaletteKnife.framework */,
+				C5B2DD978F9AF407F2157179 /* Pods_PaletteKnifeTests.framework */,
+				FF0D512CD35C8D5F04C1F76B /* Pods_PaletteKnifeUITests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -219,9 +259,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5FA4C7481CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "PaletteKnife" */;
 			buildPhases = (
+				19C0DBDA0AB6B51F549786BA /* 📦 Check Pods Manifest.lock */,
 				5FA4C71C1CDA7B5B004A728C /* Sources */,
 				5FA4C71D1CDA7B5B004A728C /* Frameworks */,
 				5FA4C71E1CDA7B5B004A728C /* Resources */,
+				522D5DD3DE192664F5D097FF /* 📦 Embed Pods Frameworks */,
+				45DDB1884A4E0B0DB0F7428D /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -236,9 +279,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5FA4C74B1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "PaletteKnifeTests" */;
 			buildPhases = (
+				F46814F8459F54F4AE1FF832 /* 📦 Check Pods Manifest.lock */,
 				5FA4C7301CDA7B5B004A728C /* Sources */,
 				5FA4C7311CDA7B5B004A728C /* Frameworks */,
 				5FA4C7321CDA7B5B004A728C /* Resources */,
+				9624F59BCEA3EEBF79073EA0 /* 📦 Embed Pods Frameworks */,
+				9E2DF2C277529EAAAFD2B409 /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -254,9 +300,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5FA4C74E1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "PaletteKnifeUITests" */;
 			buildPhases = (
+				9D8ED9DE43EC74A3B78F63E8 /* 📦 Check Pods Manifest.lock */,
 				5FA4C73B1CDA7B5B004A728C /* Sources */,
 				5FA4C73C1CDA7B5B004A728C /* Frameworks */,
 				5FA4C73D1CDA7B5B004A728C /* Resources */,
+				9B2CD0D193F9EC56C7E92D1B /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -338,6 +386,129 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		19C0DBDA0AB6B51F549786BA /* 📦 Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		45DDB1884A4E0B0DB0F7428D /* 📦 Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		522D5DD3DE192664F5D097FF /* 📦 Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9624F59BCEA3EEBF79073EA0 /* 📦 Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PaletteKnifeTests/Pods-PaletteKnifeTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9B2CD0D193F9EC56C7E92D1B /* 📦 Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9D8ED9DE43EC74A3B78F63E8 /* 📦 Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		9E2DF2C277529EAAAFD2B409 /* 📦 Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PaletteKnifeTests/Pods-PaletteKnifeTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F46814F8459F54F4AE1FF832 /* 📦 Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5FA4C71C1CDA7B5B004A728C /* Sources */ = {
@@ -500,6 +671,7 @@
 		};
 		5FA4C7491CDA7B5B004A728C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5F1E15891F199E478AB56B38 /* Pods-PaletteKnife.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -515,6 +687,7 @@
 		};
 		5FA4C74A1CDA7B5B004A728C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CB3CB08366805D209E552991 /* Pods-PaletteKnife.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -530,6 +703,7 @@
 		};
 		5FA4C74C1CDA7B5B004A728C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5EBFC69578F7678EA1BBD757 /* Pods-PaletteKnifeTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = "Palette-KnifeTests/Info.plist";
@@ -542,6 +716,7 @@
 		};
 		5FA4C74D1CDA7B5B004A728C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = FA8AAC1ACBF37C5AD0902C35 /* Pods-PaletteKnifeTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = "Palette-KnifeTests/Info.plist";
@@ -554,6 +729,7 @@
 		};
 		5FA4C74F1CDA7B5B004A728C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7CCD589D0593142C66540CEB /* Pods-PaletteKnifeUITests.debug.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "Palette-KnifeUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -565,6 +741,7 @@
 		};
 		5FA4C7501CDA7B5B004A728C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B6B77515AB3FB205C8F75A30 /* Pods-PaletteKnifeUITests.release.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "Palette-KnifeUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";

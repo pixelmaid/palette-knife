@@ -54,14 +54,14 @@ class BrushEvent:Event<(Brush)>{
 // MARK:- Private
 
 // A protocol for a type that can be invoked
-private protocol Invocable: class {
+protocol Invocable: class {
     func invoke(data: Any)
 }
 
 // takes a reference to a handler, as a class method, allowing
 // a weak reference to the owning type.
 // see: http://oleb.net/blog/2014/07/swift-instance-methods-curried-functions/
-private class EventHandlerWrapper<T: AnyObject, U> : Invocable, Disposable {
+class EventHandlerWrapper<T: AnyObject, U> : Invocable, Disposable {
     weak var target: T?
     let handler: T -> U -> ()
     let event: Event<U>

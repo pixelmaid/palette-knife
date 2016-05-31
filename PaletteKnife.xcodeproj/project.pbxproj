@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5F451BF11CF775E00037EA88 /* ArcBrush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F451BF01CF775E00037EA88 /* ArcBrush.swift */; };
+		5F451BF31CF7928E0037EA88 /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F451BF21CF7928E0037EA88 /* Line.swift */; };
 		5F8FEFC91CF5F4E600D2CB0C /* Stylus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFC81CF5F4E600D2CB0C /* Stylus.swift */; };
 		5F8FEFCC1CF5F51900D2CB0C /* BehaviorMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFCB1CF5F51900D2CB0C /* BehaviorMapper.swift */; };
 		5F8FEFD01CF6264A00D2CB0C /* BrushManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFCF1CF6264A00D2CB0C /* BrushManager.swift */; };
@@ -21,11 +23,12 @@
 		5FA4C7441CDA7B5B004A728C /* Palette_KnifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */; };
 		5FA4C7521CDA7C1B004A728C /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7511CDA7C1B004A728C /* CanvasView.swift */; };
 		5FA4C7581CDB9EF8004A728C /* Brush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7571CDB9EF8004A728C /* Brush.swift */; };
-		5FA4C75A1CDBA1FA004A728C /* Stroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7591CDBA1FA004A728C /* Stroke.swift */; };
+		5FA4C75A1CDBA1FA004A728C /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7591CDBA1FA004A728C /* Path.swift */; };
 		5FA4C75C1CDBA47D004A728C /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75B1CDBA47D004A728C /* Point.swift */; };
 		5FA4C75E1CDBA530004A728C /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75D1CDBA530004A728C /* Color.swift */; };
 		5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75F1CDBC5F7004A728C /* Behavior.swift */; };
 		5FA4C7621CDBC6C2004A728C /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7611CDBC6C2004A728C /* Event.swift */; };
+		5FCFDED51CF79B2400CE296B /* Numerical.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCFDED41CF79B2400CE296B /* Numerical.swift */; };
 		5FFFA96F1CF4B787001D7C37 /* Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFFA96E1CF4B787001D7C37 /* Factory.swift */; };
 		C3F01D59E47F65EDF60C99AA /* Pods_PaletteKnife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C025956B67C44E5D9B3D8E3 /* Pods_PaletteKnife.framework */; };
 		DB63A5DAF0353A3170814552 /* Pods_PaletteKnifeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF0D512CD35C8D5F04C1F76B /* Pods_PaletteKnifeUITests.framework */; };
@@ -53,6 +56,8 @@
 		0C025956B67C44E5D9B3D8E3 /* Pods_PaletteKnife.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PaletteKnife.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5EBFC69578F7678EA1BBD757 /* Pods-PaletteKnifeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeTests/Pods-PaletteKnifeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5F1E15891F199E478AB56B38 /* Pods-PaletteKnife.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnife.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife.debug.xcconfig"; sourceTree = "<group>"; };
+		5F451BF01CF775E00037EA88 /* ArcBrush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArcBrush.swift; sourceTree = "<group>"; };
+		5F451BF21CF7928E0037EA88 /* Line.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		5F8FEFC81CF5F4E600D2CB0C /* Stylus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylus.swift; sourceTree = "<group>"; };
 		5F8FEFCB1CF5F51900D2CB0C /* BehaviorMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorMapper.swift; sourceTree = "<group>"; };
 		5F8FEFCF1CF6264A00D2CB0C /* BrushManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrushManager.swift; sourceTree = "<group>"; };
@@ -73,11 +78,12 @@
 		5FA4C7451CDA7B5B004A728C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5FA4C7511CDA7C1B004A728C /* CanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CanvasView.swift; path = ../CanvasView.swift; sourceTree = "<group>"; };
 		5FA4C7571CDB9EF8004A728C /* Brush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Brush.swift; sourceTree = "<group>"; };
-		5FA4C7591CDBA1FA004A728C /* Stroke.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stroke.swift; sourceTree = "<group>"; };
+		5FA4C7591CDBA1FA004A728C /* Path.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
 		5FA4C75B1CDBA47D004A728C /* Point.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		5FA4C75D1CDBA530004A728C /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		5FA4C75F1CDBC5F7004A728C /* Behavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Behavior.swift; sourceTree = "<group>"; };
 		5FA4C7611CDBC6C2004A728C /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		5FCFDED41CF79B2400CE296B /* Numerical.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Numerical.swift; sourceTree = "<group>"; };
 		5FFFA96E1CF4B787001D7C37 /* Factory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Factory.swift; sourceTree = "<group>"; };
 		7CCD589D0593142C66540CEB /* Pods-PaletteKnifeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		B6B77515AB3FB205C8F75A30 /* Pods-PaletteKnifeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -128,6 +134,7 @@
 			children = (
 				5FA4C7571CDB9EF8004A728C /* Brush.swift */,
 				5F8FEFD41CF6487D00D2CB0C /* PathBrush.swift */,
+				5F451BF01CF775E00037EA88 /* ArcBrush.swift */,
 			);
 			name = brushes;
 			sourceTree = "<group>";
@@ -137,7 +144,8 @@
 			children = (
 				5FA4C75B1CDBA47D004A728C /* Point.swift */,
 				5FA4C75D1CDBA530004A728C /* Color.swift */,
-				5FA4C7591CDBA1FA004A728C /* Stroke.swift */,
+				5FA4C7591CDBA1FA004A728C /* Path.swift */,
+				5F451BF21CF7928E0037EA88 /* Line.swift */,
 			);
 			name = primitives;
 			sourceTree = "<group>";
@@ -148,6 +156,7 @@
 				5FA4C7611CDBC6C2004A728C /* Event.swift */,
 				5FFFA96E1CF4B787001D7C37 /* Factory.swift */,
 				5F8FEFD11CF62F0700D2CB0C /* Emitter.swift */,
+				5FCFDED41CF79B2400CE296B /* Numerical.swift */,
 			);
 			name = base;
 			sourceTree = "<group>";
@@ -515,9 +524,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5FA4C75A1CDBA1FA004A728C /* Stroke.swift in Sources */,
+				5FA4C75A1CDBA1FA004A728C /* Path.swift in Sources */,
 				5FA4C7621CDBC6C2004A728C /* Event.swift in Sources */,
+				5F451BF31CF7928E0037EA88 /* Line.swift in Sources */,
 				5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */,
+				5F451BF11CF775E00037EA88 /* ArcBrush.swift in Sources */,
 				5F8FEFD51CF6487D00D2CB0C /* PathBrush.swift in Sources */,
 				5F8FEFC91CF5F4E600D2CB0C /* Stylus.swift in Sources */,
 				5F8FEFCC1CF5F51900D2CB0C /* BehaviorMapper.swift in Sources */,
@@ -527,6 +538,7 @@
 				5F8FEFD21CF62F0700D2CB0C /* Emitter.swift in Sources */,
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
 				5FFFA96F1CF4B787001D7C37 /* Factory.swift in Sources */,
+				5FCFDED51CF79B2400CE296B /* Numerical.swift in Sources */,
 				5FA4C7581CDB9EF8004A728C /* Brush.swift in Sources */,
 				5F8FEFD01CF6264A00D2CB0C /* BrushManager.swift in Sources */,
 				5FA4C7521CDA7C1B004A728C /* CanvasView.swift in Sources */,

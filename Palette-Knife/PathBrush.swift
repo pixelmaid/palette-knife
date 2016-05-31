@@ -8,11 +8,11 @@
 
 import Foundation
 
-
+//Basic path drawing brush
 class PathBrush:Brush{
     var currentStroke:Stroke?;
     var strokes = [Stroke]();
-    
+
     required init(){
         super.init()
         self.name = "PathBrush"

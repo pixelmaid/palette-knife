@@ -9,17 +9,21 @@
 import Foundation
 
 
-
-
-class Brush: Factory, Equatable {
-    var children = [Brush]();
+class Brush: Factory, Hashable{
+   
+    //hierarcical data
     var parent: Brush?
+    var children = [Brush]();
+    
+    //dictionary to store expressions for emitter->action handlers
     var behavior_mappings = [String:(Emitter,String,String)]();
     
+    //dictionary for storing arrays of handlers for children (for later removal)
+    var childHandlers = [Brush:[Invocable]]()
+   
     //geometric/stylistic properties
     var strokeColor = Color(r:0,g:0,b:0);
     var fillColor = Color(r:0,g:0,b:0);
-
     var reflect = false;
     var position: Point!;
     var prevPosition: Point!;
@@ -28,6 +32,7 @@ class Brush: Factory, Equatable {
     var name = "Brush"
     var geometryModified = Event<(Geometry,String,String)>()
     let removeMappingEvent = Event<(Brush,String,Emitter)>()
+    let id = NSUUID().UUIDString;
     
     required init(){
         super.init()
@@ -35,11 +40,24 @@ class Brush: Factory, Equatable {
         self.createKeyStorage();
     }
     
-    dynamic func notificationHandler(notification: NSNotification){
-        let emitter = notification.userInfo?["emitter"]
-        //print("notification\(emitter)")
+    //MARK: - Hashable
+    var hashValue : Int {
+        get {
+            return "\(self.id)".hashValue
+        }
     }
     
+    //Event handlers
+    //chains communication between brushes and view controller
+    func brushDrawHandler(data:(Geometry,String,String)){
+        self.geometryModified.raise(data)
+    }
+    
+    //NS Notification handlers
+    // communication between emitter and brush
+    
+    
+    // setHandler: recieves  expression in the form of "propertyA:propertyB" which is used to determine mapping for set action
     dynamic func setHandler(notification: NSNotification){
         let emitter = notification.userInfo?["emitter"] as! Emitter
         let key = notification.userInfo?["key"] as! String
@@ -47,7 +65,6 @@ class Brush: Factory, Equatable {
         let expression = mapping!.2
         var emitterProp = expression.componentsSeparatedByString(":")[0]
         var targetProp = expression.componentsSeparatedByString(":")[1]
-        
         self.set(targetProp,value: emitter[emitterProp])
 
     }
@@ -72,30 +89,6 @@ class Brush: Factory, Equatable {
         clone.fillColor = self.fillColor;
         return clone;
        
-    }
-    
-    func setValue(args:BrushProperties){
-        
-        if ((args.strokeColor) != nil) {
-            self.strokeColor=(args.strokeColor)!;
-        }
-        if ((args.reflect) != nil) {
-            self.reflect=(args.reflect)!;
-        }
-        if ((args.penDown) != nil) {
-            self.penDown=(args.penDown)!;
-        }
-        if ((args.position) != nil) {
-            self.position=(args.position)!;
-        }
-        if ((args.scaling) != nil) {
-            self.scaling=(args.scaling)!;
-        }
-        if((args.children) != nil){
-            for (index, data ) in args.children! {
-                self.children[index].setValue(data);
-            }
-        }
     }
     
     func set(targetProp:String,value:Any){
@@ -149,8 +142,24 @@ class Brush: Factory, Equatable {
     }
     
     //creates number of clones specified by num and adds them as children
-    func spawn(num:Int, args:[BrushProperties]) {
-        let spawned = self.clone();
+    func spawn(num:Int, type:String) {
+        let child = Brush.create(type) as! Brush;
+        self.children.append(child);
+        let handler = child.geometryModified.addHandler(self,handler: Brush.brushDrawHandler)
+        childHandlers[child]=[EventHandlerWrapper]();
+        childHandlers[child].append(handler)
+        
+    }
+    
+    //removes child at an index and returns it
+    // removes listener on child, but does not destroy it
+    func removeChildAt(index:Int)->Brush{
+        let child = self.children.removeAtIndex(index)
+        for h in childHandlers[child]{
+            h.dispose()
+        }
+        childHandlers.removeValueForKey(child)
+        return child
     }
     
     //move(point): point should be a vector (i.e mouse delta). Transforms point in accordance with current geometric properties
@@ -190,28 +199,3 @@ func ==(lhs:Brush, rhs:Brush) -> Bool {
 
     
 
-struct BrushProperties {
-    var strokeColor: Color?;
-    var reflect: Bool?;
-    var penDown: Bool?;
-    var position : Point?;
-    var scaling: Point?;
-    var children: [Int:BrushProperties]?;
-    var type = Brush.self;
-    
-    func iterate(target:Brush){
-
-        var t = self.type;
-        
-        var p = self.position;
-        
-        let mirrored_object = Mirror(reflecting: self)
-        
-        for (index, attr) in mirrored_object.children.enumerate() {
-            if let property_name = attr.label as String! {
-                
-                print("Attr \(index): \(property_name) = \(attr.value)")
-            }
-        }
-    }
-}

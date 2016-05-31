@@ -31,13 +31,21 @@ class ViewController: UIViewController {
 
         let stylusMoveConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_MOVE", expression:"position:position") as BehaviorConfig
         
-           let stylusUpConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_UP", expression:"penDown:penDown") as BehaviorConfig
+        let spawnConfig = (target:brush, action:"spawnHandler", emitter:stylus, eventType:"STYLUS_MOVE", expression:"ArcBrush") as BehaviorConfig
         
-           let stylusDownConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_DOWN", expression:"penDown:penDown") as BehaviorConfig
+        let arcConfig = (target:brush, action:"setChildHandler", emitter:brush, eventType:"SPAWN", expression:"") as BehaviorConfig
+        
+        let stylusUpConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_UP", expression:"penDown:penDown") as BehaviorConfig
+        
+        let stylusDownConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_DOWN", expression:"penDown:penDown") as BehaviorConfig
         
         self.addBehavior(stylusMoveConfig)
         self.addBehavior(stylusUpConfig)
         self.addBehavior(stylusDownConfig)
+        self.addBehavior(spawnConfig)
+        self.addBehavior(arcConfig)
+
+
        // stylus["position"] = stylus.position
         
         //stylus["position"] = stylus.position
@@ -64,13 +72,19 @@ class ViewController: UIViewController {
     
     
     func brushDrawHandler(data:(Geometry,String,String)){
-        print("draw handler called\(data)")
+        //print("draw handler called\(data)")
         switch data.2{
             case "DRAW":
                 switch data.1{
                     case "SEGMENT":
                         let seg = data.0 as! Segment
-                        canvasView.drawPath(seg.fromPoint,tP: seg.toPoint, w:10, c:Color(r:0,g:0,b:0))
+                
+                        let prevSeg = seg.getPreviousSegment()
+                        if(prevSeg != nil){
+                           // print("draw segment called \(seg.point,prevSeg!.point)\n\n");
+
+                            canvasView.drawPath(prevSeg!.point,tP: seg.point, w:10, c:Color(r:0,g:0,b:0))
+                        }
                     break
                     case "POLYGON":
                         //canvasView.drawPath(stylus.prevPosition, tP:stylus.position, w:10, c:Color(r:0,g:0,b:0))

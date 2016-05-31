@@ -19,7 +19,7 @@ class Brush: Factory, Hashable{
     var behavior_mappings = [String:(Emitter,String,String)]();
     
     //dictionary for storing arrays of handlers for children (for later removal)
-    var childHandlers = [Brush:[Invocable]]()
+    var childHandlers = [Brush:[Disposable]]()
    
     //geometric/stylistic properties
     var strokeColor = Color(r:0,g:0,b:0);
@@ -63,10 +63,26 @@ class Brush: Factory, Hashable{
         let key = notification.userInfo?["key"] as! String
         let mapping = behavior_mappings[key]
         let expression = mapping!.2
-        var emitterProp = expression.componentsSeparatedByString(":")[0]
-        var targetProp = expression.componentsSeparatedByString(":")[1]
+        let emitterProp = expression.componentsSeparatedByString(":")[0]
+        let targetProp = expression.componentsSeparatedByString(":")[1]
         self.set(targetProp,value: emitter[emitterProp])
 
+    }
+    
+    dynamic func setChildHandler(notification:NSNotification){
+       let spawned = self.children.last as! ArcBrush;
+       spawned.setPosition()
+
+    }
+    
+    dynamic func spawnHandler(notification:NSNotification){
+        let emitter = notification.userInfo?["emitter"] as! Emitter
+        let key = notification.userInfo?["key"] as! String
+        let mapping = behavior_mappings[key]
+        let expression = mapping!.2
+        let type = expression.componentsSeparatedByString(":")[0]
+        self.spawn(type)
+        
     }
     
     func addBehavior(key:String, selector:String, emitter: Emitter, expression:String?){
@@ -142,20 +158,23 @@ class Brush: Factory, Hashable{
     }
     
     //creates number of clones specified by num and adds them as children
-    func spawn(num:Int, type:String) {
+    func spawn(type:String) {
         let child = Brush.create(type) as! Brush;
         self.children.append(child);
-        let handler = child.geometryModified.addHandler(self,handler: Brush.brushDrawHandler)
-        childHandlers[child]=[EventHandlerWrapper]();
-        childHandlers[child].append(handler)
+        let handler = self.children.last!.geometryModified.addHandler(self,handler: Brush.brushDrawHandler)
+        childHandlers[child]=[Disposable]();
+        childHandlers[child]?.append(handler)
         
+        for key in keyStorage["SPAWN"]!  {
+            NSNotificationCenter.defaultCenter().postNotificationName(key, object: self, userInfo: ["emitter":self,"key":key])
+        }
     }
     
     //removes child at an index and returns it
     // removes listener on child, but does not destroy it
     func removeChildAt(index:Int)->Brush{
         let child = self.children.removeAtIndex(index)
-        for h in childHandlers[child]{
+        for h in childHandlers[child]!{
             h.dispose()
         }
         childHandlers.removeValueForKey(child)

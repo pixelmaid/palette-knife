@@ -59,8 +59,8 @@ class Line {
      * @return {Point} the intersection point of the lines, `undefined` if the
      *     two lines are collinear, or `null` if they don't intersect.
      */
-    func intersect(line:Line, isInfinite:Bool)->Point?{
-        return Line.intersect(self.p.x, p1y: self.p.y, v1x: self.v.x, v1y: self.v.y,p2x: line.p.x, p2y: line.p.y, v2x: line.v.x, v2y: line.v.y, isInfinite: isInfinite);
+    func intersect(line:Line,  isInfinite:Bool)->Point?{
+        return Line.intersect(self.p.x, p1y: self.p.y, v1x: self.v.x, v1y: self.v.y,p2x: line.p.x, p2y: line.p.y, v2x: line.v.x, v2y: line.v.y, asVector:true, isInfinite: isInfinite);
     }
     
     
@@ -88,9 +88,15 @@ class Line {
     }
     
     //statics: /** @lends Line */{
-    static func intersect(p1x:Float, p1y:Float, v1x:Float, v1y:Float, p2x:Float, p2y:Float, v2x:Float, v2y:Float, isInfinite:Bool)->Point? {
+    static func intersect(p1x:Float, p1y:Float, var v1x:Float, var v1y:Float, p2x:Float, p2y:Float, var v2x:Float, var v2y:Float, asVector:Bool, isInfinite:Bool)->Point? {
            
-            var cross = v1x * v2y - v1y * v2x;
+        if (!asVector) {
+            v1x -= p1x;
+            v1y -= p1y;
+            v2x -= p2x;
+            v2y -= p2y;
+        }
+       let cross = v1x * v2y - v1y * v2x;
 
            // Avoid divisions by 0, and errors when getting too close to 0
             if (!Numerical.isZero(cross)) {
@@ -113,6 +119,7 @@ class Line {
                     return Point(x:p1x + u1 * v1x,y:p1y + u1 * v1y);
                 }
             }
+            return nil
         }
         
         static func getSide(px:Float, py:Float, vx:Float, vy:Float, x:Float, y:Float, isInfinite:Bool)->Int {

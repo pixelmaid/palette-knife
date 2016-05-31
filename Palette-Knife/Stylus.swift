@@ -58,7 +58,6 @@ class Stylus: Emitter {
         self.prevAngle = self.angle;
         self.angle = angle
       
-        //print("on stylus move")
         for key in keyStorage["STYLUS_MOVE"]!  {
             NSNotificationCenter.defaultCenter().postNotificationName(key, object: self, userInfo: ["emitter":self,"key":key])
         }

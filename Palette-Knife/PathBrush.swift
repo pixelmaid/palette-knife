@@ -25,10 +25,9 @@ class PathBrush:Brush{
    override func setPosition(value:Point){
     super.setPosition(value);
         if((self.penDown) && (self.prevPosition != nil)){
-            self.addSegmentToStroke(self.prevPosition,toPoint: self.position);
+            self.addSegmentToStroke(self.position);
         }
-        print("position \(self.position)")
-
+    
     }
     
     override func setPenDown(value:Bool){
@@ -38,17 +37,16 @@ class PathBrush:Brush{
             self.prevPosition = nil
             self.position = nil
         }
-        print("pendown \(self.penDown)")
     }
     
-    func addSegmentToStroke(fromPoint:Point,toPoint:Point){
+    func addSegmentToStroke(point:Point){
         if(self.currentStroke == nil){
             self.currentStroke = Stroke();
             self.strokes.append(self.currentStroke!)
         }
         
-        let seg = self.currentStroke!.addSegment(fromPoint,toPoint:toPoint)
-        self.geometryModified.raise((seg,"SEGMENT","DRAW"))
+        let seg = self.currentStroke!.addSegment(point)
+       // self.geometryModified.raise((seg,"SEGMENT","DRAW"))
         
        
     }

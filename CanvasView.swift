@@ -19,11 +19,9 @@ class CanvasView:  UIImageView {
     */
    
     override func drawRect(rect: CGRect) {
-        print("draw rect called")
     }
     
     func drawPath(fP: Point, tP: Point, w:Float, c:Color) {
-       print("drawPath\(fP.x,fP.y,tP.x,tP.y,w,c)")
         UIGraphicsBeginImageContext(self.frame.size)
         let context = UIGraphicsGetCurrentContext()!
         self.image?.drawInRect(CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))

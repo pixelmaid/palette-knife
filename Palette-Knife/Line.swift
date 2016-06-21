@@ -7,7 +7,7 @@
 //
 
 import Foundation
-class Line {
+class Line: Geometry{
     
     var p: Point
     var v: Point
@@ -27,10 +27,21 @@ class Line {
         self.p = p
         self.v = v
         
-        if (!asVector) {
+        if (asVector) {
             self.v = self.v.sub(self.p)
         }
     }
+    
+    init(p:Point,length:Float,angle:Float, asVector:Bool) {
+        
+        self.p = p;
+        self.v = p.pointAtDistance(length, a: angle)
+        print("line pointa\(self.p.x,self.p.y,self.v.x,self.v.y)")
+        if (asVector) {
+            self.v = self.v.sub(self.p)
+        }
+    }
+
 
     
     /**
@@ -86,6 +97,20 @@ class Line {
     func isOrthogonal(line:Line)->Bool {
         return Point.isOrthoganal(self.v.x, y1: self.v.y, x2: line.v.x, y2: line.v.y);
     }
+    
+    func getSlope()->Float{
+        return (v.y-p.y)/(v.x-p.x)
+    }
+    
+    func getYIntercept()->Float{
+        return -getSlope()*p.x+p.y
+    }
+    
+    func getMidpoint()->Point{
+        return Point(x:(p.x+v.x)/2,y:(p.y+v.y)/2)
+    }
+    
+    
     
     //statics: /** @lends Line */{
     static func intersect(p1x:Float, p1y:Float, var v1x:Float, var v1y:Float, p2x:Float, p2y:Float, var v2x:Float, var v2y:Float, asVector:Bool, isInfinite:Bool)->Point? {
@@ -174,4 +199,6 @@ class Line {
             }
             
         }
+    
+    
     }

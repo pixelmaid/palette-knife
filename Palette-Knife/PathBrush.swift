@@ -26,7 +26,19 @@ class PathBrush:Brush{
     super.setPosition(value);
         if((self.penDown) && (self.prevPosition != nil)){
             self.addSegmentToStroke(self.position);
+            self.setLength(currentStroke!.getLength())
         }
+        else{
+            self.setLength(0)
+
+        }
+    if(self.prevPosition != nil){
+        self.setAngle(self.position.sub(self.prevPosition).angle)
+    }
+    else{
+        self.setAngle(0)
+    }
+
     
     }
     
@@ -34,8 +46,6 @@ class PathBrush:Brush{
         super.setPenDown(value)
         if(!self.penDown){
             self.currentStroke = nil
-            self.prevPosition = nil
-            self.position = nil
         }
     }
     
@@ -46,7 +56,7 @@ class PathBrush:Brush{
         }
         
         let seg = self.currentStroke!.addSegment(point)
-       // self.geometryModified.raise((seg,"SEGMENT","DRAW"))
+        self.geometryModified.raise((seg,"SEGMENT","DRAW"))
         
        
     }

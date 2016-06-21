@@ -15,6 +15,18 @@ protocol Geometry {
     
 }
 
+struct StoredDrawing:Geometry{
+    var angle:Float
+    var scaling:Point
+    var position:Point
+    
+    init(position:Point,scaling:Point,angle:Float){
+        self.angle = angle
+        self.scaling = scaling
+        self.position = position
+    }
+}
+
 // Segment: line segement described as two points
 struct Segment:Geometry {
     
@@ -63,6 +75,67 @@ struct Segment:Geometry {
     
 }
 
+
+class Arc:Geometry {
+    var center:Point
+    var radius:Float
+    var startAngle:Float
+    var endAngle:Float
+    
+    
+    init(center:Point,startAngle:Float,endAngle:Float, radius:Float)    {
+        self.center=center
+        self.startAngle = startAngle
+        self.endAngle = endAngle
+        self.radius = radius
+ 
+    }
+    
+    convenience init(point:Point,length:Float,angle:Float, radius:Float)    {
+        
+        let p2 = point.pointAtDistance(length, a: angle);
+        let p3 = Line(p:point,v:p2,asVector: false).getMidpoint()
+        let centerX =  p3.x + sqrt(pow(radius,2)-pow((length/2),2))*(point.y-p2.y)/length
+        let centerY = p3.y + sqrt(pow(radius,2)-pow((length/2),2))*(p2.x-point.x)/length
+        let center = Point(x: centerX, y: centerY)
+        let startAngle = atan2(point.y - center.y, point.x - center.x);
+        let endAngle = atan2(p2.y - center.y, p2.x - center.x);
+        self.init(center:center,startAngle:startAngle,endAngle:endAngle,radius:radius)
+        
+    }
+    
+    convenience init(x1:Float,y1:Float,x2:Float,y2:Float,x3:Float,y3:Float){
+        
+        let r = Line(px:x1,py: y1,vx: x2,vy: y2,asVector: false)
+        let t = Line(px: x2,py: y2,vx: x3,vy: y3,asVector: false)
+        let rM = r.getSlope();
+        //let rB = r.getYIntercept();
+        let tM = t.getSlope();
+        //let tB = t.getYIntercept();
+        
+        
+        let r_midpoint = r.getMidpoint();
+        //let t_midpoint = t.getMidpoint();
+        let rpM = 0-(1/rM)
+        //let tpM = 0-(1/tM)
+        let rpB = -rpM*r_midpoint.x+r_midpoint.y;
+        
+        let centerX = (rM*tM*(y3-y1)+rM*(x2+x3)-tM*(x1+x2))/(2*(rM-tM))
+        let centerY = rpM*centerX + rpB
+        let center = Point(x:centerX,y:centerY)
+        let radius = center.dist(Point(x:x1,y:y1));
+        let startAngle = atan2(y1 - center.y, x1 - center.x);
+        let endAngle = atan2(y3 - center.y, x3 - center.x);
+        
+        
+       self.init(center:center,startAngle:startAngle,endAngle:endAngle,radius:radius)
+    }
+    
+
+
+}
+
+
 // Stroke: Model for storing a stroke object in multiple representations
 // as a series of segments
 // as a series of vectors over time
@@ -94,6 +167,15 @@ class Stroke:Geometry {
         return segments
     }
     
+    func getLength()->Float{
+        var l = Float(0.0);
+        if(segments.count>1){
+        for i in 1...segments.count-1{
+            l +=  segments[i-1].point.dist(segments[i].point)
+            }}
+        return l;
+    }
+    
     
     
     /*init(fromPoint:Point,angle:Float,length:Float){
@@ -114,6 +196,9 @@ class Stroke:Geometry {
         let seg = Segment(point:to)
         self.addSegment(seg);
     }
+    
+    
+   
     
     
     func arcTo(from:Point, through:Point, to:Point) throws{
@@ -140,7 +225,7 @@ class Stroke:Geometry {
             }
             throw DrawError.InvalidArc
         }
-         print("line: \(line.p.x,line.p.y,line.v.x,line.v.y)l1:\(l1.p.x,l1.p.y,l1.v.x,l1.v.y) l2:\(l2.p.x, l2.p.y,l2.v.x,l2.v.y) center:\(center!.x,center!.y)\n\n")
+         //print("line: \(line.p.x,line.p.y,line.v.x,line.v.y)l1:\(l1.p.x,l1.p.y,l1.v.x,l1.v.y) l2:\(l2.p.x, l2.p.y,l2.v.x,l2.v.y) center:\(center!.x,center!.y)\n\n")
             var vector = from.sub(center!);
             var extent = vector.getDirectedAngle(to.sub(center!));
             let centerSide = line.getSide(center!, isInfinite: false);

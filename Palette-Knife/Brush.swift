@@ -14,6 +14,7 @@ class Brush: Factory, Hashable{
     //hierarcical data
     var parent: Brush?
     var children = [Brush]();
+    var lastSpawned = [Brush]();
     
     //dictionary to store expressions for emitter->action handlers
     var behavior_mappings = [String:(Emitter,String,String)]();
@@ -26,9 +27,13 @@ class Brush: Factory, Hashable{
     var fillColor = Color(r:0,g:0,b:0);
     var reflect = false;
     var position: Point!;
-    var prevPosition: Point!;
+    var prevPosition: Point!
     var penDown = false;
-    var scaling = Point(x:1,y:1);
+    var scaling:Point!
+    var angle:Float!
+    var n1:Float!
+    var n2:Float!
+    var length:Float!
     var name = "Brush"
     var geometryModified = Event<(Geometry,String,String)>()
     let removeMappingEvent = Event<(Brush,String,Emitter)>()
@@ -70,9 +75,41 @@ class Brush: Factory, Hashable{
     }
     
     dynamic func setChildHandler(notification:NSNotification){
-       let spawned = self.children.last as! ArcBrush;
-       spawned.setPosition()
+        let emitter = notification.userInfo?["emitter"] as! Brush
+        let spawned = emitter.lastSpawned;
+        let key = notification.userInfo?["key"] as! String
+        let mapping = behavior_mappings[key]
+        let expression = mapping!.2
+        let settings = expression.componentsSeparatedByString("|")
+        for s in settings{
+            let childProp = s.componentsSeparatedByString(":")[0]
+            let setter = s.componentsSeparatedByString(":")[1]
+            let setterTarget = setter.componentsSeparatedByString(".")[0]
+            let setterProp = setter.componentsSeparatedByString(".")[1]
+            var t:Emitter?
 
+            if(setterTarget == "parent"){
+                t = emitter;
+              
+            }
+            else if(setterTarget=="stylus"){
+                t = stylus
+            }
+            else{
+                t = nil
+            }
+            print("setter:\(setter,self.position), getter:\(childProp)")
+            for i in 0...spawned.count-1{
+                if(setterProp.containsString(",")){
+                    let cProp = setterProp.componentsSeparatedByString(",")[i]
+                     spawned[i].set(childProp,value: t!.get(cProp))
+                }
+                else{
+                    spawned[i].set(childProp,value: t!.get(setterProp))
+                }
+            }
+            
+        }
     }
     
     dynamic func spawnHandler(notification:NSNotification){
@@ -81,7 +118,9 @@ class Brush: Factory, Hashable{
         let mapping = behavior_mappings[key]
         let expression = mapping!.2
         let type = expression.componentsSeparatedByString(":")[0]
-        self.spawn(type)
+        let string_count = expression.componentsSeparatedByString(":")[1]
+        let count =  NSNumberFormatter().numberFromString(string_count)?.integerValue
+        self.spawn(type, num:count!)
         
     }
     
@@ -107,19 +146,60 @@ class Brush: Factory, Hashable{
        
     }
     
-    func set(targetProp:String,value:Any){
+    func set(targetProp:String,value:Any)->Bool{
+        print("targetProp:\(targetProp) value:\(value)")
+        
         switch targetProp{
             case "position":
                 self.setPosition(value as! Point)
-            break
+                return true
             case "penDown":
                 self.setPenDown(value as! Bool)
-            break
+        case "length":
+            self.setLength(value as! Float * 100+0.5)
+            return true
+        case "angle":
+            self.setAngle(value as! Float)
+            return true
+        case "scaling":
+            self.setScale(value as! Point)
+            return true
+        case "scalingAll":
+            let s = value as! Float
+            print("scaling All value\(s)")
+
+            self.setScale(Point(x:s,y:s))
+            return true
+            default: break
+                }
+        
+    
+        return false;
+    }
+    
+    override func get(targetProp:String)->Any?{
+        switch targetProp{
+        case "position":
+            return self.position
+
+        case "penDown":
+            return self.penDown
+        case "angle":
+            return self.angle
+        case "n1":
+            return self.n1
+        case "n2":
+            return self.n2
+        case "length":
+            return self.length
+        case "scaling":
+            return self.scaling
 
         default:
+            return nil
             
-            break
         }
+
     }
     
     func setPosition(value:Point){
@@ -133,8 +213,24 @@ class Brush: Factory, Hashable{
         }
     }
     
+    func setAngle(value:Float){
+        self.angle = value
+        self.n1 = angle-90
+        self.n2 = angle+90
+        
+    }
+    
+    func setLength(value:Float){
+        self.length = value;
+    }
+    
     func setScale(value:Point){
+        if(self.scaling == nil){
+            self.scaling = value
+        }
+        else{
         self.scaling.setValue(value)
+        }
     }
     
     func setStrokeColor(value:Color){
@@ -158,15 +254,20 @@ class Brush: Factory, Hashable{
     }
     
     //creates number of clones specified by num and adds them as children
-    func spawn(type:String) {
+    func spawn(type:String,num:Int) {
+        lastSpawned.removeAll()
+        for _ in 0...num-1{
         let child = Brush.create(type) as! Brush;
         self.children.append(child);
+        child.parent = self;
         let handler = self.children.last!.geometryModified.addHandler(self,handler: Brush.brushDrawHandler)
         childHandlers[child]=[Disposable]();
         childHandlers[child]?.append(handler)
+        lastSpawned.append(child)
+        }
         
         for key in keyStorage["SPAWN"]!  {
-            NSNotificationCenter.defaultCenter().postNotificationName(key, object: self, userInfo: ["emitter":self,"key":key])
+            NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
         }
     }
     

@@ -15,13 +15,14 @@ struct Point: Property{
   
     var x = Float(0);
     var y = Float(0);
-    var angle = 0;
+    var angle = Float(0);
     var diameter = Float(0);
     var color = Color(r:0,g:0,b:0);
     
     init(x:Float,y:Float) {
         self.x=x;
         self.y=y;
+        self.angle = atan2(y, x) * Float(180 / M_PI);
     }
     
     func add(point:Point)->Point{
@@ -106,8 +107,8 @@ struct Point: Property{
     
     
     func pointAtDistance(d:Float,a:Float)->Point{
-        let x = self.x + (d * cos(a))
-        let y = self.y + (d * sin(a))
+        let x = self.x + (d * cos(a*Float(M_PI/180)))
+        let y = self.y + (d * sin(a*Float(M_PI/180)))
         return Point(x: x,y: y)
     }
     

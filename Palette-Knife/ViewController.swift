@@ -8,6 +8,7 @@
 
 import UIKit
 let behaviorMapper = BehaviorMapper()
+var stylus = Stylus(x: 0,y:0,angle:0,force:0)
 
 class ViewController: UIViewController {
     
@@ -18,7 +19,7 @@ class ViewController: UIViewController {
     
     
     var brushes = [String:Brush]()
-    var stylus = Stylus(x: 0,y:0,angle:0,force:0)
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,27 +30,35 @@ class ViewController: UIViewController {
         brush["penDown"] = brush.penDown
         brush["position"] = brush.position
 
-        let stylusMoveConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_MOVE", expression:"position:position") as BehaviorConfig
+        let stylusMoveConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_MOVE", eventCondition: nil, expression:"position:position") as BehaviorConfig
+        let ec = stylusCondition(state: "MOVE_BY",value: Float(100))
+        let spawnConfig = (target:brush, action:"spawnHandler", emitter:stylus, eventType:"STYLUS_MOVE",  eventCondition: ec, expression:"LeafBrush:2") as BehaviorConfig
         
-        let spawnConfig = (target:brush, action:"spawnHandler", emitter:stylus, eventType:"STYLUS_MOVE", expression:"ArcBrush") as BehaviorConfig
+        let arcConfig = (target:brush, action:"setChildHandler", emitter:brush, eventType:"SPAWN",  eventCondition: nil, expression:"position:parent.position|scalingAll:stylus.force|angle:parent.n1,n2") as BehaviorConfig
         
-        let arcConfig = (target:brush, action:"setChildHandler", emitter:brush, eventType:"SPAWN", expression:"") as BehaviorConfig
+        let stylusUpConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_UP",  eventCondition: nil, expression:"penDown:penDown") as BehaviorConfig
         
-        let stylusUpConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_UP", expression:"penDown:penDown") as BehaviorConfig
+        let flowerConfig = (target:brush, action: "spawnHandler", emitter:stylus, eventType:"STYLUS_UP",  eventCondition: nil, expression:"FlowerBrush:2") as BehaviorConfig
+
+        let flowerSpawnConfig = (target:brush, action:"setChildHandler", emitter:brush, eventType:"SPAWN",  eventCondition:spawnCondition(state: "IS_TYPE",value: "FlowerBrush"), expression:"position:parent.position") as BehaviorConfig
+
+        let stylusDownConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_DOWN", eventCondition: nil, expression:"penDown:penDown") as BehaviorConfig
         
-        let stylusDownConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_DOWN", expression:"penDown:penDown") as BehaviorConfig
-        
-        self.addBehavior(stylusMoveConfig)
-        self.addBehavior(stylusUpConfig)
-        self.addBehavior(stylusDownConfig)
-        self.addBehavior(spawnConfig)
-        self.addBehavior(arcConfig)
+         behaviorMapper.createMapping(stylusMoveConfig)
+        behaviorMapper.createMapping(stylusUpConfig)
+        behaviorMapper.createMapping(stylusDownConfig)
+        behaviorMapper.createMapping(spawnConfig)
+        behaviorMapper.createMapping(arcConfig)
+        behaviorMapper.createMapping(flowerConfig)
+        behaviorMapper.createMapping(flowerSpawnConfig)
+
 
 
        // stylus["position"] = stylus.position
         
         //stylus["position"] = stylus.position
-
+        //
+        canvasView.drawFlower(Point(x:100,y:100))
     }
     
 
@@ -72,7 +81,7 @@ class ViewController: UIViewController {
     
     
     func brushDrawHandler(data:(Geometry,String,String)){
-        //print("draw handler called\(data)")
+        print("draw handler \(data.1,data.2)")
         switch data.2{
             case "DRAW":
                 switch data.1{
@@ -86,6 +95,30 @@ class ViewController: UIViewController {
                             canvasView.drawPath(prevSeg!.point,tP: seg.point, w:10, c:Color(r:0,g:0,b:0))
                         }
                     break
+                    case "ARC":
+                        let arc = data.0 as! Arc
+                        canvasView.drawArc(arc.center, radius: arc.radius, startAngle: arc.startAngle, endAngle: arc.endAngle, w: 10, c: Color(r:0,g:0,b:0))
+                    break
+                    
+                    case "LINE":
+                    let line = data.0 as! Line
+                    print("draw line \(line.p.x,line.p.y,line.v.x,line.v.y)")
+
+                    canvasView.drawPath(line.p, tP:line.v, w: 10, c: Color(r:0,g:0,b:0))
+                    break
+                    
+                case "LEAF":
+                    let leaf = data.0 as! StoredDrawing
+                    
+                    canvasView.drawLeaf(leaf.position, angle:leaf.angle, scale:leaf.scaling.x)
+                    break
+                    
+                case "FLOWER":
+                    let flower = data.0 as! StoredDrawing
+                    canvasView.drawFlower(flower.position)
+                    
+                    break
+    
                     case "POLYGON":
                         //canvasView.drawPath(stylus.prevPosition, tP:stylus.position, w:10, c:Color(r:0,g:0,b:0))
                     break

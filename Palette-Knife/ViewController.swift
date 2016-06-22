@@ -7,10 +7,11 @@
 //
 
 import UIKit
+import Starscream
+
 let behaviorMapper = BehaviorMapper()
 var stylus = Stylus(x: 0,y:0,angle:0,force:0)
-
-class ViewController: UIViewController {
+class ViewController: UIViewController, WebSocketDelegate {
     
     // MARK: Properties
     
@@ -20,9 +21,18 @@ class ViewController: UIViewController {
     
     var brushes = [String:Brush]()
    
-    
+    var socket = WebSocket(url: NSURL(string: "ws://10.8.0.205:8080/")!, protocols: ["chat", "superchat"])
+
     override func viewDidLoad() {
+        
+        
+        
         super.viewDidLoad()
+        
+        socket.delegate = self
+        socket.connect()
+        
+        
         stylus["penDown"] = stylus.penDown
         stylus["position"] = stylus.position
 
@@ -61,7 +71,46 @@ class ViewController: UIViewController {
         canvasView.drawFlower(Point(x:100,y:100))
     }
     
-
+    // MARK: Websocket Delegate Methods.
+    
+    func websocketDidConnect(ws: WebSocket) {
+        print("websocket is connected")
+        writeText()
+    }
+    
+    func websocketDidDisconnect(ws: WebSocket, error: NSError?) {
+        if let e = error {
+            print("websocket is disconnected: \(e.localizedDescription)")
+        } else {
+            print("websocket disconnected")
+        }
+    }
+    
+    func websocketDidReceiveMessage(ws: WebSocket, text: String) {
+        print("ifconfig text: \(text)")
+    }
+    
+    func websocketDidReceiveData(ws: WebSocket, data: NSData) {
+        print("Received data: \(data.length)")
+    }
+    
+    // MARK: Write Text Action
+    
+    func writeText() {
+        print("writing text")
+        socket.writeString("hello there!")
+    }
+    
+    // MARK: Disconnect Action
+    
+    func disconnect() {
+        if socket.isConnected {
+           
+            socket.disconnect()
+        } else {
+            socket.connect()
+        }
+    }
     
     func generateBrush(type:String)->Brush{
         let brush = Brush.create(type) as! Brush;

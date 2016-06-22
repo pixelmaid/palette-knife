@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5181BD99B9EB70CF163CD48EF1094846"
+               BlueprintIdentifier = "459A5503A9B06D6EE9C42C927BC39195"
                BuildableName = "Pods_PaletteKnife.framework"
                BlueprintName = "Pods-PaletteKnife"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5181BD99B9EB70CF163CD48EF1094846"
+            BlueprintIdentifier = "459A5503A9B06D6EE9C42C927BC39195"
             BuildableName = "Pods_PaletteKnife.framework"
             BlueprintName = "Pods-PaletteKnife"
             ReferencedContainer = "container:Pods.xcodeproj">

@@ -8,6 +8,8 @@ target 'PaletteKnife' do
   # Pods for PaletteKnife
   pod 'SwiftKVC'
 
+  pod 'Starscream'
+
   target 'PaletteKnifeTests' do
     inherit! :search_paths
     # Pods for testing

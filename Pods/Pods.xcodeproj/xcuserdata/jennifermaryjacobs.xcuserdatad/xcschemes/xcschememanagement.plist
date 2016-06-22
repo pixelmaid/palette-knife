@@ -19,6 +19,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Starscream.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>SwiftKVC.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -27,7 +32,17 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>5181BD99B9EB70CF163CD48EF1094846</key>
+		<key>27887C10C4FA80009C84D2CDE138D05F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>459A5503A9B06D6EE9C42C927BC39195</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7F1AABB20E2CFBD60AD1506DBD1BE215</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -38,11 +53,6 @@
 			<true/>
 		</dict>
 		<key>93D70B9DAE2291EB871A39B72B793899</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>AE1DE7E2EFFB70B68885852ADC8D3F4E</key>
 		<dict>
 			<key>primary</key>
 			<true/>

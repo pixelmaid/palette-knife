@@ -36,7 +36,6 @@ class Line: Geometry{
         
         self.p = p;
         self.v = p.pointAtDistance(length, a: angle)
-        print("line pointa\(self.p.x,self.p.y,self.v.x,self.v.y)")
         if (asVector) {
             self.v = self.v.sub(self.p)
         }

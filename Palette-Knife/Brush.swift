@@ -98,7 +98,6 @@ class Brush: Factory, Hashable{
             else{
                 t = nil
             }
-            print("setter:\(setter,self.position), getter:\(childProp)")
             for i in 0...spawned.count-1{
                 if(setterProp.containsString(",")){
                     let cProp = setterProp.componentsSeparatedByString(",")[i]
@@ -147,7 +146,6 @@ class Brush: Factory, Hashable{
     }
     
     func set(targetProp:String,value:Any)->Bool{
-        print("targetProp:\(targetProp) value:\(value)")
         
         switch targetProp{
             case "position":
@@ -166,7 +164,6 @@ class Brush: Factory, Hashable{
             return true
         case "scalingAll":
             let s = value as! Float
-            print("scaling All value\(s)")
 
             self.setScale(Point(x:s,y:s))
             return true

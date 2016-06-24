@@ -51,7 +51,6 @@ class CanvasView:  UIImageView {
         
         let color = c.toCGColor();
         
-        //print(center.x,center.y,radius,startAngle,endAngle)
         let _center = center.toCGPoint()
         let _radius = CGFloat(radius);
         let _startAngle = CGFloat(Float(M_PI/180)*startAngle)
@@ -79,7 +78,6 @@ class CanvasView:  UIImageView {
     }
     
     func drawFlower(position:Point){
-        print("drawing flower at \(position.x,position.y)")
         UIGraphicsBeginImageContext(self.frame.size)
         
         let context = UIGraphicsGetCurrentContext()

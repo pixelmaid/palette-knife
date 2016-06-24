@@ -60,7 +60,6 @@ class FlowerBrush:LeafBrush{
         if((scaling != nil)  && (angle != nil) && (position != nil)){
             current = StoredDrawing(position: position!, scaling: scaling!, angle: angle!)
             geometry.append(current!)
-            print("check draw\(scaling,angle,position)")
 
             self.geometryModified.raise((current!,"FLOWER","DRAW"))
         }

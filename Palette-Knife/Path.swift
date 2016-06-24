@@ -213,7 +213,6 @@ class Stroke:Geometry {
         let center = l1.intersect(l2, isInfinite: true);
        
         
-        //print("throughSide:\(throughSide) l1:\(l1.p,l1.v) l2:\(l2.p,l2.v) center:\(center)")
         // If the two lines are collinear, there cannot be an arc as the
         // circle is infinitely big and has no center point. If side is
         // 0, the connecting arc line of this huge circle is a line

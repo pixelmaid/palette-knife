@@ -21,8 +21,8 @@ class ViewController: UIViewController, WebSocketDelegate {
     
     var brushes = [String:Brush]()
    
-    var socket = WebSocket(url: NSURL(string: "ws://10.8.0.205:8080/")!, protocols: ["chat", "superchat"])
-
+    var socket = WebSocket(url: NSURL(string: "ws://10.8.0.205:8080/")!, protocols: ["ipad_client"])
+    var startTime:NSDate?
     override func viewDidLoad() {
         
         
@@ -75,7 +75,8 @@ class ViewController: UIViewController, WebSocketDelegate {
     
     func websocketDidConnect(ws: WebSocket) {
         print("websocket is connected")
-        writeText()
+        //send name of client
+        socket.writeString("ipad")
     }
     
     func websocketDidDisconnect(ws: WebSocket, error: NSError?) {
@@ -96,9 +97,19 @@ class ViewController: UIViewController, WebSocketDelegate {
     
     // MARK: Write Text Action
     
-    func writeText() {
-        print("writing text")
-        socket.writeString("hello there!")
+    func sendStylusData(pressure:Float,position:Point,angle:Float,delta:Point,penDown:Bool) {
+        let end = NSDate();
+        let timeInterval = end.timeIntervalSinceDate(startTime!);
+        var string = "{"
+        string+="\"time\":"+String(timeInterval)+","
+        string+="\"pressure\":"+String(pressure)+","
+        string+="\"angle\":"+String(angle)+","
+        string+="\"penDown\":"+String(penDown)+","
+        string+="\"position\":{\"x\":"+String(position.x)+",\"y\":"+String(position.y)+"},"
+        string+="\"delta\":{\"x\":"+String(delta.x)+",\"y\":"+String(delta.y)+"}"
+        string+="}"
+        print("message: \(string)")
+        socket.writeString(string)
     }
     
     // MARK: Disconnect Action
@@ -130,7 +141,6 @@ class ViewController: UIViewController, WebSocketDelegate {
     
     
     func brushDrawHandler(data:(Geometry,String,String)){
-        print("draw handler \(data.1,data.2)")
         switch data.2{
             case "DRAW":
                 switch data.1{
@@ -197,7 +207,8 @@ class ViewController: UIViewController, WebSocketDelegate {
             let force = Float(touch.force);
             let angle = Float(touch.azimuthAngleInView(view))
             stylus.onStylusUp()
-            
+            sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
+
         }
         
     }
@@ -206,7 +217,9 @@ class ViewController: UIViewController, WebSocketDelegate {
     
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-
+        if(startTime == nil){
+            startTime = NSDate();
+        }
         if let touch = touches.first  {
             let point = touch.locationInView(view);
             let x = Float(point.x)
@@ -214,7 +227,7 @@ class ViewController: UIViewController, WebSocketDelegate {
             let force = Float(touch.force);
             let angle = Float(touch.azimuthAngleInView(view))
             stylus.onStylusDown()
-
+            sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
             
         }
     }
@@ -223,14 +236,13 @@ class ViewController: UIViewController, WebSocketDelegate {
         if let touch = touches.first  {
            
             let point = touch.locationInView(view);
-            
             let x = Float(point.x)
             let y = Float(point.y)
             let force = Float(touch.force);
             let angle = Float(touch.azimuthAngleInView(view))
             stylus.onStylusMove(x, y:y, force:force, angle:angle)
+            sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
 
-        
         }
     }
     

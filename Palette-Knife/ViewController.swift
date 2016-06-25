@@ -11,18 +11,22 @@ import Starscream
 
 let behaviorMapper = BehaviorMapper()
 var stylus = Stylus(x: 0,y:0,angle:0,force:0)
+var socket = WebSocket(url: NSURL(string: "ws://10.8.0.205:8080/")!, protocols: ["ipad_client"])
+
 class ViewController: UIViewController, WebSocketDelegate {
     
     // MARK: Properties
     
     @IBOutlet weak var canvasView: CanvasView!
-   
+    @IBOutlet weak var new_canvas: UIButton!
+    @IBOutlet weak var new_drawing: UIButton!
+    @IBOutlet weak var clearAll: UIButton!
+    
     
     
     var brushes = [String:Brush]()
-   
-    var socket = WebSocket(url: NSURL(string: "ws://10.8.0.205:8080/")!, protocols: ["ipad_client"])
-    var startTime:NSDate?
+    var currentCanvas: Canvas?
+        var startTime:NSDate?
     override func viewDidLoad() {
         
         
@@ -32,6 +36,8 @@ class ViewController: UIViewController, WebSocketDelegate {
         socket.delegate = self
         socket.connect()
         
+       clearAll.addTarget(self, action: #selector(ViewController.clearClicked(_:)), forControlEvents: .TouchUpInside)
+
         
         stylus["penDown"] = stylus.penDown
         stylus["position"] = stylus.position
@@ -54,7 +60,7 @@ class ViewController: UIViewController, WebSocketDelegate {
 
         let stylusDownConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_DOWN", eventCondition: nil, expression:"penDown:penDown") as BehaviorConfig
         
-         behaviorMapper.createMapping(stylusMoveConfig)
+        behaviorMapper.createMapping(stylusMoveConfig)
         behaviorMapper.createMapping(stylusUpConfig)
         behaviorMapper.createMapping(stylusDownConfig)
         behaviorMapper.createMapping(spawnConfig)
@@ -68,8 +74,26 @@ class ViewController: UIViewController, WebSocketDelegate {
         
         //stylus["position"] = stylus.position
         //
-        canvasView.drawFlower(Point(x:100,y:100))
     }
+    
+    func clearClicked(sender: AnyObject?) {
+        canvasView.clear()
+    }
+    
+    func newCanvasClicked(sender: AnyObject?){
+        self.initCanvas();
+    }
+    
+    func newDrawingClicked(sender: AnyObject){
+        currentCanvas?.initDrawing();
+    }
+    
+    func initCanvas(){
+        currentCanvas = Canvas();
+    }
+    
+    
+
     
     // MARK: Websocket Delegate Methods.
     

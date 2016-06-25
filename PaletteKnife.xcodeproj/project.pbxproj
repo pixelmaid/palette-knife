@@ -31,6 +31,8 @@
 		5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75F1CDBC5F7004A728C /* Behavior.swift */; };
 		5FA4C7621CDBC6C2004A728C /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7611CDBC6C2004A728C /* Event.swift */; };
 		5FCFDED51CF79B2400CE296B /* Numerical.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCFDED41CF79B2400CE296B /* Numerical.swift */; };
+		5FFDAB051D1DFA2500632A26 /* Canvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB041D1DFA2500632A26 /* Canvas.swift */; };
+		5FFDAB071D1E040B00632A26 /* Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB061D1E040B00632A26 /* Drawing.swift */; };
 		5FFFA96F1CF4B787001D7C37 /* Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFFA96E1CF4B787001D7C37 /* Factory.swift */; };
 		C3F01D59E47F65EDF60C99AA /* Pods_PaletteKnife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C025956B67C44E5D9B3D8E3 /* Pods_PaletteKnife.framework */; };
 		DB63A5DAF0353A3170814552 /* Pods_PaletteKnifeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF0D512CD35C8D5F04C1F76B /* Pods_PaletteKnifeUITests.framework */; };
@@ -88,6 +90,8 @@
 		5FA4C75F1CDBC5F7004A728C /* Behavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Behavior.swift; sourceTree = "<group>"; };
 		5FA4C7611CDBC6C2004A728C /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		5FCFDED41CF79B2400CE296B /* Numerical.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Numerical.swift; sourceTree = "<group>"; };
+		5FFDAB041D1DFA2500632A26 /* Canvas.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Canvas.swift; sourceTree = "<group>"; };
+		5FFDAB061D1E040B00632A26 /* Drawing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drawing.swift; sourceTree = "<group>"; };
 		5FFFA96E1CF4B787001D7C37 /* Factory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Factory.swift; sourceTree = "<group>"; };
 		7CCD589D0593142C66540CEB /* Pods-PaletteKnifeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		B6B77515AB3FB205C8F75A30 /* Pods-PaletteKnifeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -136,6 +140,8 @@
 		5F8FEFCD1CF5F52200D2CB0C /* brushes */ = {
 			isa = PBXGroup;
 			children = (
+				5FFDAB041D1DFA2500632A26 /* Canvas.swift */,
+				5FFDAB061D1E040B00632A26 /* Drawing.swift */,
 				5FA4C7571CDB9EF8004A728C /* Brush.swift */,
 				5F8FEFD41CF6487D00D2CB0C /* PathBrush.swift */,
 				5F451BF01CF775E00037EA88 /* ArcBrush.swift */,
@@ -550,10 +556,12 @@
 				5F8FEFC91CF5F4E600D2CB0C /* Stylus.swift in Sources */,
 				5F8FEFCC1CF5F51900D2CB0C /* BehaviorMapper.swift in Sources */,
 				5FA4C7261CDA7B5B004A728C /* ViewController.swift in Sources */,
+				5FFDAB071D1E040B00632A26 /* Drawing.swift in Sources */,
 				5F382BB11CFF68DC007F8AA8 /* LeafBrush.swift in Sources */,
 				5FA4C75E1CDBA530004A728C /* Color.swift in Sources */,
 				5FA4C75C1CDBA47D004A728C /* Point.swift in Sources */,
 				5F8FEFD21CF62F0700D2CB0C /* Emitter.swift in Sources */,
+				5FFDAB051D1DFA2500632A26 /* Canvas.swift in Sources */,
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
 				5FFFA96F1CF4B787001D7C37 /* Factory.swift in Sources */,
 				5FCFDED51CF79B2400CE296B /* Numerical.swift in Sources */,

@@ -77,6 +77,10 @@ class CanvasView:  UIImageView {
         
     }
     
+    func clear(){
+        self.image = nil
+    }
+    
     func drawFlower(position:Point){
         UIGraphicsBeginImageContext(self.frame.size)
         

@@ -8,7 +8,7 @@
 
 import Foundation
 //brush that draws arcs of varying sizes
-class ArcBrush:Brush{
+/*class ArcBrush:Brush{
     var currentArc:Arc?
     var arcs = [Arc]()
     required init(){
@@ -49,4 +49,4 @@ class ArcBrush:Brush{
         return super.clone() as! ArcBrush;
     }
 
-}
+}*/

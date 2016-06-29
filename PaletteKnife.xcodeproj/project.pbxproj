@@ -25,7 +25,7 @@
 		5FA4C7441CDA7B5B004A728C /* Palette_KnifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */; };
 		5FA4C7521CDA7C1B004A728C /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7511CDA7C1B004A728C /* CanvasView.swift */; };
 		5FA4C7581CDB9EF8004A728C /* Brush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7571CDB9EF8004A728C /* Brush.swift */; };
-		5FA4C75A1CDBA1FA004A728C /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7591CDBA1FA004A728C /* Path.swift */; };
+		5FA4C75A1CDBA1FA004A728C /* Stroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7591CDBA1FA004A728C /* Stroke.swift */; };
 		5FA4C75C1CDBA47D004A728C /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75B1CDBA47D004A728C /* Point.swift */; };
 		5FA4C75E1CDBA530004A728C /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75D1CDBA530004A728C /* Color.swift */; };
 		5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75F1CDBC5F7004A728C /* Behavior.swift */; };
@@ -33,6 +33,9 @@
 		5FCFDED51CF79B2400CE296B /* Numerical.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCFDED41CF79B2400CE296B /* Numerical.swift */; };
 		5FFDAB051D1DFA2500632A26 /* Canvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB041D1DFA2500632A26 /* Canvas.swift */; };
 		5FFDAB071D1E040B00632A26 /* Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB061D1E040B00632A26 /* Drawing.swift */; };
+		5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB081D21B5C400632A26 /* SocketManager.swift */; };
+		5FFDAB0B1D21B7EC00632A26 /* WebTransmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB0A1D21B7EC00632A26 /* WebTransmitter.swift */; };
+		5FFDAB0D1D234B6100632A26 /* TimeSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB0C1D234B6100632A26 /* TimeSeries.swift */; };
 		5FFFA96F1CF4B787001D7C37 /* Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFFA96E1CF4B787001D7C37 /* Factory.swift */; };
 		C3F01D59E47F65EDF60C99AA /* Pods_PaletteKnife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C025956B67C44E5D9B3D8E3 /* Pods_PaletteKnife.framework */; };
 		DB63A5DAF0353A3170814552 /* Pods_PaletteKnifeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF0D512CD35C8D5F04C1F76B /* Pods_PaletteKnifeUITests.framework */; };
@@ -84,7 +87,7 @@
 		5FA4C7451CDA7B5B004A728C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5FA4C7511CDA7C1B004A728C /* CanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CanvasView.swift; path = ../CanvasView.swift; sourceTree = "<group>"; };
 		5FA4C7571CDB9EF8004A728C /* Brush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Brush.swift; sourceTree = "<group>"; };
-		5FA4C7591CDBA1FA004A728C /* Path.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
+		5FA4C7591CDBA1FA004A728C /* Stroke.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stroke.swift; sourceTree = "<group>"; };
 		5FA4C75B1CDBA47D004A728C /* Point.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		5FA4C75D1CDBA530004A728C /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		5FA4C75F1CDBC5F7004A728C /* Behavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Behavior.swift; sourceTree = "<group>"; };
@@ -92,6 +95,9 @@
 		5FCFDED41CF79B2400CE296B /* Numerical.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Numerical.swift; sourceTree = "<group>"; };
 		5FFDAB041D1DFA2500632A26 /* Canvas.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Canvas.swift; sourceTree = "<group>"; };
 		5FFDAB061D1E040B00632A26 /* Drawing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drawing.swift; sourceTree = "<group>"; };
+		5FFDAB081D21B5C400632A26 /* SocketManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
+		5FFDAB0A1D21B7EC00632A26 /* WebTransmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebTransmitter.swift; sourceTree = "<group>"; };
+		5FFDAB0C1D234B6100632A26 /* TimeSeries.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSeries.swift; sourceTree = "<group>"; };
 		5FFFA96E1CF4B787001D7C37 /* Factory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Factory.swift; sourceTree = "<group>"; };
 		7CCD589D0593142C66540CEB /* Pods-PaletteKnifeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		B6B77515AB3FB205C8F75A30 /* Pods-PaletteKnifeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -156,7 +162,7 @@
 			children = (
 				5FA4C75B1CDBA47D004A728C /* Point.swift */,
 				5FA4C75D1CDBA530004A728C /* Color.swift */,
-				5FA4C7591CDBA1FA004A728C /* Path.swift */,
+				5FA4C7591CDBA1FA004A728C /* Stroke.swift */,
 				5F451BF21CF7928E0037EA88 /* Line.swift */,
 			);
 			name = primitives;
@@ -165,6 +171,8 @@
 		5F8FEFD31CF62F1300D2CB0C /* base */ = {
 			isa = PBXGroup;
 			children = (
+				5FFDAB0C1D234B6100632A26 /* TimeSeries.swift */,
+				5FFDAB0A1D21B7EC00632A26 /* WebTransmitter.swift */,
 				5FA4C7611CDBC6C2004A728C /* Event.swift */,
 				5FFFA96E1CF4B787001D7C37 /* Factory.swift */,
 				5F8FEFD11CF62F0700D2CB0C /* Emitter.swift */,
@@ -202,6 +210,7 @@
 				5FA4C7551CDB9E9A004A728C /* models */,
 				5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */,
 				5FA4C7251CDA7B5B004A728C /* ViewController.swift */,
+				5FFDAB081D21B5C400632A26 /* SocketManager.swift */,
 				5FA4C7271CDA7B5B004A728C /* Main.storyboard */,
 				5FA4C72A1CDA7B5B004A728C /* Assets.xcassets */,
 				5FA4C72C1CDA7B5B004A728C /* LaunchScreen.storyboard */,
@@ -546,7 +555,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5FA4C75A1CDBA1FA004A728C /* Path.swift in Sources */,
+				5FA4C75A1CDBA1FA004A728C /* Stroke.swift in Sources */,
+				5FFDAB0D1D234B6100632A26 /* TimeSeries.swift in Sources */,
 				5F48563D1CFF3CB60049923C /* LineBrush.swift in Sources */,
 				5FA4C7621CDBC6C2004A728C /* Event.swift in Sources */,
 				5F451BF31CF7928E0037EA88 /* Line.swift in Sources */,
@@ -556,6 +566,7 @@
 				5F8FEFC91CF5F4E600D2CB0C /* Stylus.swift in Sources */,
 				5F8FEFCC1CF5F51900D2CB0C /* BehaviorMapper.swift in Sources */,
 				5FA4C7261CDA7B5B004A728C /* ViewController.swift in Sources */,
+				5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */,
 				5FFDAB071D1E040B00632A26 /* Drawing.swift in Sources */,
 				5F382BB11CFF68DC007F8AA8 /* LeafBrush.swift in Sources */,
 				5FA4C75E1CDBA530004A728C /* Color.swift in Sources */,
@@ -563,6 +574,7 @@
 				5F8FEFD21CF62F0700D2CB0C /* Emitter.swift in Sources */,
 				5FFDAB051D1DFA2500632A26 /* Canvas.swift in Sources */,
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
+				5FFDAB0B1D21B7EC00632A26 /* WebTransmitter.swift in Sources */,
 				5FFFA96F1CF4B787001D7C37 /* Factory.swift in Sources */,
 				5FCFDED51CF79B2400CE296B /* Numerical.swift in Sources */,
 				5FA4C7581CDB9EF8004A728C /* Brush.swift in Sources */,

@@ -9,7 +9,7 @@
 import Foundation
 
 
-class Brush: Factory, Hashable{
+class Brush: Factory, WebTransmitter, Hashable{
    
     //hierarcical data
     var parent: Brush?
@@ -35,9 +35,13 @@ class Brush: Factory, Hashable{
     var n2:Float!
     var length:Float!
     var name = "Brush"
+    var currentCanvas:Canvas?
     var geometryModified = Event<(Geometry,String,String)>()
+    var event = Event<(String)>()
+
     let removeMappingEvent = Event<(Brush,String,Emitter)>()
-    let id = NSUUID().UUIDString;
+
+    var id = NSUUID().UUIDString;
     
     required init(){
         super.init()
@@ -123,6 +127,11 @@ class Brush: Factory, Hashable{
         
     }
     
+    //sets canvas target to output geometry into
+    func setCanvasTarget(canvas:Canvas){
+        self.currentCanvas = canvas;
+    }
+    
     func addBehavior(key:String, selector:String, emitter: Emitter, expression:String?){
         if(expression != nil){
             behavior_mappings[key] = (emitter,selector,expression!)
@@ -146,7 +155,7 @@ class Brush: Factory, Hashable{
     }
     
     func set(targetProp:String,value:Any)->Bool{
-        
+        //print("value = \(value),\(targetProp)");
         switch targetProp{
             case "position":
                 self.setPosition(value as! Point)

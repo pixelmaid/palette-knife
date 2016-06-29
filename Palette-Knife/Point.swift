@@ -25,6 +25,11 @@ struct Point: Property{
         self.angle = atan2(y, x) * Float(180 / M_PI);
     }
     
+    func toJSON()->String{
+        let string = "\"x\":"+String(self.x)+",\"y\":"+String(self.y)
+        return string;
+    }
+    
     func add(point:Point)->Point{
         return Point(x:self.x+point.x,y:self.y+point.y);
     }

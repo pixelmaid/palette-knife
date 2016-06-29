@@ -12,7 +12,7 @@ enum DrawError: ErrorType {
     
 }
 protocol Geometry {
-    
+    func toJSON()->String
 }
 
 struct StoredDrawing:Geometry{
@@ -25,6 +25,11 @@ struct StoredDrawing:Geometry{
         self.scaling = scaling
         self.position = position
     }
+    
+    //todo: create toJSON method
+    func toJSON()->String{
+        return "placeholder_string"
+    }
 }
 
 // Segment: line segement described as two points
@@ -33,10 +38,11 @@ struct Segment:Geometry {
     var point:Point;
     var handleIn: Point;
     var handleOut: Point;
-    var path:Stroke?;
+    var parent:Stroke?;
     var index:Int?
     var diameter = Float(0);
     var color = Color(r:0,g:0,b:0);
+    var time = Float(0);
     
     init(x:Float,y:Float) {
         self.init(x:x,y:y,hi_x:0,hi_y:0,ho_x:0,ho_y:0)
@@ -61,13 +67,32 @@ struct Segment:Geometry {
     }
     
     
+    func getTimeDelta()->Float{
+        let prevSeg = self.getPreviousSegment();
+        if(prevSeg == nil){
+            return 0;
+        }
+        
+        let currentTime = self.time;
+        let prevTime = prevSeg!.time;
+        return currentTime-prevTime;
+    }
+    
+   
+    
     func getPreviousSegment()->Segment?{
-        if(self.path != nil){
+        if(self.parent != nil){
             if(self.index>0){
-                return path!.segments[self.index!-1]
+                return parent!.segments[self.index!-1]
             }
         }
         return nil
+    }
+    
+    func toJSON()->String{
+        var string = "{\"point\":{"+self.point.toJSON()+"},"
+        string += "\"time\":"+String(parent!.getTimeElapsed())+"}"
+        return string
     }
     
     
@@ -76,7 +101,7 @@ struct Segment:Geometry {
 }
 
 
-class Arc:Geometry {
+/*class Arc:Geometry {
     var center:Point
     var radius:Float
     var startAngle:Float
@@ -130,26 +155,28 @@ class Arc:Geometry {
         
        self.init(center:center,startAngle:startAngle,endAngle:endAngle,radius:radius)
     }
-    
+    func toJSON()->String{
+        let string = "\"center\":{\"x\":"+String(self.point.x)+",\"y\":"+String(self.point.y)+"\""
+        return string
+    }
 
 
-}
+
+}*/
 
 
 // Stroke: Model for storing a stroke object in multiple representations
 // as a series of segments
 // as a series of vectors over time
-class Stroke:Geometry {
+class Stroke:TimeSeries, Geometry {
     var segments = [Segment]();
-    
-    
-    init(){
-        
-    }
+    let id = NSUUID().UUIDString;
+   
     
     func addSegment(var segment:Segment)->Segment{
-        segment.path = self
+        segment.parent = self
         segment.index = self.segments.count;
+        segment.time = Float(0-timer.timeIntervalSinceNow);
         segments.append(segment)
         return segment
     }
@@ -167,6 +194,7 @@ class Stroke:Geometry {
         return segments
     }
     
+    
     func getLength()->Float{
         var l = Float(0.0);
         if(segments.count>1){
@@ -177,6 +205,20 @@ class Stroke:Geometry {
     }
     
     
+    
+    func toJSON()->String{
+        var string = "segments:["
+        for i in 0...segments.count-1{
+            
+            string += "{"+segments[i].toJSON()+"}"
+            if(i<segments.count-1){
+                string+=","
+            }
+        }
+        string += "],"
+        return string
+
+    }
     
     /*init(fromPoint:Point,angle:Float,length:Float){
         self.fromPoint = fromPoint;

@@ -40,6 +40,10 @@ class Line: Geometry{
             self.v = self.v.sub(self.p)
         }
     }
+    func toJSON()->String{
+        let string = "\"p\":{"+self.p.toJSON()+"},\"v\":{"+self.v.toJSON()+"}"
+        return string
+    }
 
 
     

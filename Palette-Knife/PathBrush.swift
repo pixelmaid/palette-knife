@@ -10,8 +10,7 @@ import Foundation
 
 //Basic path drawing brush
 class PathBrush:Brush{
-    var currentStroke:Stroke?;
-    var strokes = [Stroke]();
+   
 
     required init(){
         super.init()
@@ -25,13 +24,10 @@ class PathBrush:Brush{
    override func setPosition(value:Point){
     super.setPosition(value);
         if((self.penDown) && (self.prevPosition != nil)){
-            self.addSegmentToStroke(self.position);
-            self.setLength(currentStroke!.getLength())
+            self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.position);
+            //self.setLength(currentStroke!.getLength())
         }
-        else{
-            self.setLength(0)
-
-        }
+    
     if(self.prevPosition != nil){
         self.setAngle(self.position.sub(self.prevPosition).angle)
     }
@@ -45,21 +41,11 @@ class PathBrush:Brush{
     override func setPenDown(value:Bool){
         super.setPenDown(value)
         if(!self.penDown){
-            self.currentStroke = nil
+            self.currentCanvas!.currentDrawing!.currentStroke = nil;
         }
     }
     
-    func addSegmentToStroke(point:Point){
-        if(self.currentStroke == nil){
-            self.currentStroke = Stroke();
-            self.strokes.append(self.currentStroke!)
-        }
-        
-        let seg = self.currentStroke!.addSegment(point)
-        self.geometryModified.raise((seg,"SEGMENT","DRAW"))
-        
-       
-    }
+   
     
     
 }

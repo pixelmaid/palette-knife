@@ -19,6 +19,7 @@ class Stylus: Emitter {
     var position = Point(x:0,y:0);
     var penDown = false;
     var distance = Float(0);
+    var forceSub = Float(1);
 
     init(x:Float,y:Float,angle:Float,force:Float){
         prevPosition = Point(x:x, y:y)

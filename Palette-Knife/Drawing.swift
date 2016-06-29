@@ -46,8 +46,8 @@ class Drawing: TimeSeries, Hashable{
         data += "\"type\":\"stroke_data\","
         data += "\"strokeData\":{"
         data += "\"segments\":"+seg.toJSON()+",";
-        data += "\"length\":{\"data\":"+String(currentStroke!.getLength())+",\"time\":"
-        data += String(currentStroke!.getTimeElapsed())
+        data += "\"lengths\":{\"length\":"+String(currentStroke!.getLength())+",\"time\":"
+        data += String(self .getTimeElapsed())
         data += "}}"
         print("current length = \(currentStroke!.getLength())")
         self.event.raise((data))

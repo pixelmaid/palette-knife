@@ -75,6 +75,7 @@ class ViewController: UIViewController {
     func initCanvas(){
         currentCanvas = Canvas();
         socketManager.initAction(currentCanvas!);
+        socketManager.initAction(stylus);
         currentCanvas!.initDrawing();
         currentCanvas!.geometryModified.addHandler(self,handler: ViewController.canvasDrawHandler)
 
@@ -88,27 +89,27 @@ class ViewController: UIViewController {
     brush["penDown"] = brush.penDown
     brush["position"] = brush.position
     
-    let stylusMoveConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_MOVE", eventCondition: nil, expression:"position:position") as BehaviorConfig
-    let ec = stylusCondition(state: "MOVE_BY",value: Float(100))
-    let spawnConfig = (target:brush, action:"spawnHandler", emitter:stylus, eventType:"STYLUS_MOVE",  eventCondition: ec, expression:"LeafBrush:2") as BehaviorConfig
+    let stylusMoveConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_MOVE", eventCondition: nil, expression:"position:position| weight:stylus.force") as BehaviorConfig
+    //let ec = stylusCondition(state: "MOVE_BY",value: Float(100))
+    /*let spawnConfig = (target:brush, action:"spawnHandler", emitter:stylus, eventType:"STYLUS_MOVE",  eventCondition: ec, expression:"LeafBrush:2") as BehaviorConfig
     
-    let arcConfig = (target:brush, action:"setChildHandler", emitter:brush, eventType:"SPAWN",  eventCondition: nil, expression:"position:parent.position|scalingAll:stylus.force|angle:parent.n1,n2") as BehaviorConfig
+    let arcConfig = (target:brush, action:"setChildHandler", emitter:brush, eventType:"SPAWN",  eventCondition: nil, expression:"position:parent.position|scalingAll:stylus.force|angle:parent.n1,n2") as BehaviorConfig*/
     
     let stylusUpConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_UP",  eventCondition: nil, expression:"penDown:penDown") as BehaviorConfig
     
-    let flowerConfig = (target:brush, action: "spawnHandler", emitter:stylus, eventType:"STYLUS_UP",  eventCondition: nil, expression:"FlowerBrush:2") as BehaviorConfig
+    /*let flowerConfig = (target:brush, action: "spawnHandler", emitter:stylus, eventType:"STYLUS_UP",  eventCondition: nil, expression:"FlowerBrush:2") as BehaviorConfig
     
-    let flowerSpawnConfig = (target:brush, action:"setChildHandler", emitter:brush, eventType:"SPAWN",  eventCondition:spawnCondition(state: "IS_TYPE",value: "FlowerBrush"), expression:"position:parent.position") as BehaviorConfig
+    let flowerSpawnConfig = (target:brush, action:"setChildHandler", emitter:brush, eventType:"SPAWN",  eventCondition:spawnCondition(state: "IS_TYPE",value: "FlowerBrush"), expression:"position:parent.position") as BehaviorConfig*/
     
     let stylusDownConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_DOWN", eventCondition: nil, expression:"penDown:penDown") as BehaviorConfig
     
     behaviorMapper.createMapping(stylusMoveConfig)
     behaviorMapper.createMapping(stylusUpConfig)
     behaviorMapper.createMapping(stylusDownConfig)
-    behaviorMapper.createMapping(spawnConfig)
-    behaviorMapper.createMapping(arcConfig)
-    behaviorMapper.createMapping(flowerConfig)
-    behaviorMapper.createMapping(flowerSpawnConfig)
+    //behaviorMapper.createMapping(spawnConfig)
+    ////behaviorMapper.createMapping(arcConfig)
+   // behaviorMapper.createMapping(flowerConfig)
+   // behaviorMapper.createMapping(flowerSpawnConfig)
     }
     
     func generateBrush(type:String)->Brush{
@@ -138,9 +139,9 @@ class ViewController: UIViewController {
                 
                         let prevSeg = seg.getPreviousSegment()
                         if(prevSeg != nil){
-                           // print("draw segment called \(seg.point,prevSeg!.point)\n\n");
+                            print("draw segment called \(seg.diameter)\n\n");
 
-                            canvasView.drawPath(prevSeg!.point,tP: seg.point, w:10, c:Color(r:0,g:0,b:0))
+                            canvasView.drawPath(prevSeg!.point,tP: seg.point, w:seg.diameter, c:Color(r:0,g:0,b:0))
                         }
                     break
                     /*case "ARC":
@@ -195,6 +196,7 @@ class ViewController: UIViewController {
             let angle = Float(touch.azimuthAngleInView(view))
             stylus.onStylusUp()
            // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
+            socketManager.sendStylusData();
 
         }
         
@@ -205,12 +207,16 @@ class ViewController: UIViewController {
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first  {
-            let point = touch.locationInView(view);
+            let point = touch.locationInView(view)
+            let x = Float(point.x)
+            let y = Float(point.y)
+;
             let force = Float(touch.force);
             let angle = Float(touch.azimuthAngleInView(view))
-            stylus.onStylusDown()
+            stylus.onStylusDown(x, y:y, force:force, angle:angle)
            // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
-            
+            socketManager.sendStylusData();
+ 
         }
     }
     
@@ -224,7 +230,7 @@ class ViewController: UIViewController {
             let angle = Float(touch.azimuthAngleInView(view))
             stylus.onStylusMove(x, y:y, force:force, angle:angle)
             // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
-
+            socketManager.sendStylusData();
         }
     }
     

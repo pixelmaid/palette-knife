@@ -40,7 +40,7 @@ struct Segment:Geometry {
     var handleOut: Point;
     var parent:Stroke?;
     var index:Int?
-    var diameter = Float(0);
+    var diameter = Float(1);
     var color = Color(r:0,g:0,b:0);
     var time = Float(0);
     

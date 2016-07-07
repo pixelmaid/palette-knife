@@ -10,16 +10,20 @@ import Foundation
 
 
 // manages stylus data, notifies behaviors of stylus events
-class Stylus: Emitter {
+class Stylus: TimeSeries, WebTransmitter {
     var prevPosition: Point
     static var force = Float(0)
     var prevForce: Float
     var angle: Float
+    var speed = Float(0)
     var prevAngle: Float
     var position = Point(x:0,y:0);
+    var prevTime = Float(0);
     var penDown = false;
     var distance = Float(0);
     var forceSub = Float(1);
+    var id = NSUUID().UUIDString;
+    var name = "stylus"
 
     init(x:Float,y:Float,angle:Float,force:Float){
         prevPosition = Point(x:x, y:y)
@@ -62,6 +66,7 @@ class Stylus: Emitter {
     func onStylusUp(){
         
         self.penDown = false
+        self.speed = 0;
         for key in keyStorage["STYLUS_UP"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
@@ -73,9 +78,11 @@ class Stylus: Emitter {
         }
     }
     
-    func onStylusDown(){
-        
+    func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
+        self.position = Point(x:x, y:y)
         self.penDown = true
+        self.prevTime = self.getTimeElapsed();
+        self.speed = 0;
         for key in keyStorage["STYLUS_DOWN"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
@@ -97,7 +104,9 @@ class Stylus: Emitter {
         Stylus.force = force
         self.prevAngle = self.angle;
         self.angle = angle
-      
+        let currentTime = self.getTimeElapsed();
+        self.speed = prevPosition.dist(position)/(currentTime-prevTime)
+        self.prevTime = currentTime;
         for key in keyStorage["STYLUS_MOVE"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;

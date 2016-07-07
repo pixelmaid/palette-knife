@@ -35,12 +35,13 @@ class Drawing: TimeSeries, Hashable{
         self.event.raise((data))
     }
     
-    func addSegmentToStroke(point:Point){
+    func addSegmentToStroke(point:Point, weight:Float){
         if(self.currentStroke == nil){
             self.initStroke();
         }
         
-        let seg = self.currentStroke!.addSegment(point)
+        var seg = self.currentStroke!.addSegment(point)
+        seg.diameter = weight;
         var data = "\"drawing_id\":\""+self.id+"\","
         data += "\"stroke_id\":\""+self.currentStroke!.id+"\","
         data += "\"type\":\"stroke_data\","

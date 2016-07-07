@@ -12,8 +12,7 @@ import Foundation
 class Brush: Factory, WebTransmitter, Hashable{
    
     //hierarcical data
-    var parent: Brush?
-    var children = [Brush]();
+     var children = [Brush]();
     var lastSpawned = [Brush]();
     
     //dictionary to store expressions for emitter->action handlers
@@ -25,6 +24,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     //geometric/stylistic properties
     var strokeColor = Color(r:0,g:0,b:0);
     var fillColor = Color(r:0,g:0,b:0);
+    var weight = Float(1.0)
     var reflect = false;
     var position: Point!;
     var prevPosition: Point!
@@ -38,7 +38,8 @@ class Brush: Factory, WebTransmitter, Hashable{
     var currentCanvas:Canvas?
     var geometryModified = Event<(Geometry,String,String)>()
     var event = Event<(String)>()
-
+    var parent: Brush?
+    
     let removeMappingEvent = Event<(Brush,String,Emitter)>()
 
     var id = NSUUID().UUIDString;
@@ -160,6 +161,9 @@ class Brush: Factory, WebTransmitter, Hashable{
             case "position":
                 self.setPosition(value as! Point)
                 return true
+            case "weight":
+            self.weight = (value as! Float)
+            return true
             case "penDown":
                 self.setPenDown(value as! Bool)
         case "length":

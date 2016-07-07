@@ -87,20 +87,20 @@ class SocketManager: WebSocketDelegate{
     
     // MARK: Write Text Action
     
-    /*func sendStylusData(pressure:Float,position:Point,angle:Float,delta:Point,penDown:Bool) {
-        let end = NSDate();
-        let timeInterval = end.timeIntervalSinceDate(startTime!);
-        var string = "{"
-        string+="\"time\":"+String(timeInterval)+","
-        string+="\"pressure\":"+String(pressure)+","
-        string+="\"angle\":"+String(angle)+","
-        string+="\"penDown\":"+String(penDown)+","
-        string+="\"position\":{\"x\":"+String(position.x)+",\"y\":"+String(position.y)+"},"
-        string+="\"delta\":{\"x\":"+String(delta.x)+",\"y\":"+String(delta.y)+"}"
-        string+="}"
-        print("message: \(string)")
-        dataQueue.append(string)
-    }*/
+    func sendStylusData() {
+        var string = "{\"type\":\"stylus_data\",\"canvas_id\":\""+stylus.id;
+        string += "\",\"stylusData\":{"
+        string+="\"time\":"+String(stylus.getTimeElapsed())+","
+        string+="\"pressure\":"+String(Stylus.force)+","
+        string+="\"angle\":"+String(stylus.angle)+","
+        string+="\"penDown\":"+String(stylus.penDown)+","
+        string+="\"speed\":"+String(stylus.speed)+","
+        string+="\"position\":{\"x\":"+String(stylus.position.x)+",\"y\":"+String(stylus.position.y)+"}"
+       // string+="\"delta\":{\"x\":"+String(delta.x)+",\"y\":"+String(delta.y)+"}"
+        string+="}}"
+        //print("message: \(string)")
+        drawingDataGenerated(string)
+    }
     
     func initAction(target:WebTransmitter){
         let data = "{\"type\":\"new_canvas\",\"canvas_id\":\""+target.id+"\",\"canvas_name\":\""+target.name+"\"}";

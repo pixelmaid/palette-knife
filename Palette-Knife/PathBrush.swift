@@ -10,8 +10,6 @@ import Foundation
 
 //Basic path drawing brush
 class PathBrush:Brush{
-   
-
     required init(){
         super.init()
         self.name = "PathBrush"
@@ -24,7 +22,7 @@ class PathBrush:Brush{
    override func setPosition(value:Point){
     super.setPosition(value);
         if((self.penDown) && (self.prevPosition != nil)){
-            self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.position);
+            self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.position,weight: self.weight);
             //self.setLength(currentStroke!.getLength())
         }
     

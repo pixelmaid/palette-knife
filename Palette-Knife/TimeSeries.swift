@@ -8,12 +8,12 @@
 
 import Foundation
 
-class TimeSeries{
+class TimeSeries: Emitter{
     
     var event = Event<(String)>()
     var timer:NSDate
 
-    init(){
+    override init(){
         timer = NSDate()
 
     }

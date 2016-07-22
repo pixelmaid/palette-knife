@@ -10,6 +10,7 @@ import Foundation
 
 struct State {
     var mappings = [String:Mapping]()
+    var methods = [String]()
     init(){
     
     }
@@ -27,6 +28,12 @@ struct State {
         
         
     }
+    
+    mutating func addMethod(key:String, methodName:String){
+        methods.append(methodName);
+    }
+    
+    
     
     mutating func removeMapping(key:String)->Mapping?{
         return mappings.removeValueForKey(key)

@@ -128,6 +128,7 @@ class ViewController: UIViewController {
         behaviorMapper.createState(dripBrush,stateName:"create_stroke")
         behaviorMapper.createStateTransition(stylus, relative: dripBrush, eventName: "STYLUS_DOWN", fromState:"default",toState: "create_stroke", condition: nil)
         behaviorMapper.createStateTransition(dripBrush, relative: dripBrush, eventName: "STATE_COMPLETE", fromState:"create_stroke",toState: "default", condition: nil)
+        behaviorMapper.addMethod(dripBrush,state:"create_stroke",methodName:"newStroke");
     }
     
     func generateBrush(type:String)->Brush{

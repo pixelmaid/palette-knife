@@ -101,10 +101,9 @@ class Brush: Factory, WebTransmitter, Hashable{
             let stateTransition = mapping as! StateTransition
           print(" to state \(stateTransition.toState)\n\n")
             self.currentState = stateTransition.toState;
-           
-            //execute functions in state
-           
-
+            
+           //execute methods
+            self.executeStateMethods()
             //check constraints
             
             //trigger state complete after functions are executed
@@ -115,6 +114,21 @@ class Brush: Factory, WebTransmitter, Hashable{
                 
             }
         }
+    }
+    
+    func executeStateMethods(){
+        let methods = self.states[currentState]!.methods
+        for i in 0..<methods.count{
+            var methodName = methods[i];
+            switch (methodName){
+                case "newStroke":
+                    self.newStroke();
+                    break;
+            default:
+                break;
+            }
+        }
+        
     }
 
     // setHandler: recieves  expression in the form of "propertyA:propertyB" which is used to determine mapping for set action
@@ -199,6 +213,10 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     func addStateTransition(key:String, reference:Emitter, fromState: String, toState:String){
         states[fromState]!.addStateTransitionMapping(key,reference: reference, toState:toState)
+    }
+    
+    func addMethod(key:String,state:String, methodName:String){
+        states[state]!.addMethod(key,methodName:methodName)
     }
     
     
@@ -322,6 +340,13 @@ class Brush: Factory, WebTransmitter, Hashable{
         }
     }
     
+    //METHODS AVAILABLE TO USER
+    
+    //
+    func newStroke(){
+        
+    }
+    
     //creates number of clones specified by num and adds them as children
     func spawn(type:String,num:Int) {
         lastSpawned.removeAll()
@@ -378,6 +403,8 @@ class Brush: Factory, WebTransmitter, Hashable{
     func destroy() {
         
     }
+    
+    //END METHODS AVAILABLE TO USER
 }
 
 

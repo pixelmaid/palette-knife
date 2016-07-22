@@ -35,11 +35,8 @@ class PathBrush:Brush{
     
     }
     
-    override func setPenDown(value:Bool){
-        super.setPenDown(value)
-        if(!self.penDown){
-            self.currentCanvas!.currentDrawing!.currentStroke = nil;
-        }
+    override func newStroke(){
+        currentCanvas!.newStroke();
     }
     
    

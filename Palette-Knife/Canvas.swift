@@ -51,6 +51,10 @@ class Canvas: WebTransmitter, Hashable{
         self.event.raise((string));
     }
     
+    func newStroke(){
+        currentDrawing!.newStroke();
+    }
+    
     
     //Event handlers
     //chains communication between brushes and view controller

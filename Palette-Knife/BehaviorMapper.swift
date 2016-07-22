@@ -50,6 +50,11 @@ class BehaviorMapper{
         relative.addStateTransition(key, reference: reference, fromState:fromState, toState:toState)
         relative.removeMappingEvent.addHandler(self, handler: BehaviorMapper.removeMapping)
     }
+    
+    func addMethod(relative:Brush,state:String,methodName:String){
+        let key = NSUUID().UUIDString;
+        relative.addMethod(key,state:state,methodName:methodName)
+    }
 }
 
 

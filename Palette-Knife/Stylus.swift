@@ -84,9 +84,6 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func onStylusUp(){
-        
-        self.penDown = false
-        self.speed = 0;
         for key in keyStorage["STYLUS_UP"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
@@ -96,15 +93,14 @@ class Stylus: TimeSeries, WebTransmitter {
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
             }
         }
+
+        self.penDown = false
+        self.speed = 0;
         self.transmitData();
 
     }
     
     func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
-        self.position.set(x, y:y)
-        self.penDown = true
-        self.prevTime = self.getTimeElapsed();
-        self.speed = 0;
         for key in self.keyStorage["STYLUS_DOWN"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
@@ -113,30 +109,23 @@ class Stylus: TimeSeries, WebTransmitter {
             else{
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
             }
-
+            
         }
-        self.transmitData();
+        self.position.set(x, y:y)
+        self.penDown = true
+        self.prevTime = self.getTimeElapsed();
+        self.speed = 0;
+                self.transmitData();
 
     }
     
     func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
-        
-        self.prevPosition.set(position);
-        self.position.set(x, y:y)
-        self.distance += prevPosition.dist(position)
-        self.prevForce = self.force
-        self.force = force
-        self.prevAngle = self.angle;
-        self.angle = angle
-        let currentTime = self.getTimeElapsed();
-        self.speed = prevPosition.dist(position)/(currentTime-prevTime)
-        self.prevTime = currentTime;
         for key in keyStorage["STYLUS_MOVE"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
                 if(eventCondition.validate(self)){
                     NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
-
+                    
                 }
                 else{
                     print("EVALUATION FOR CONDITION FAILED")
@@ -147,6 +136,17 @@ class Stylus: TimeSeries, WebTransmitter {
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
             }
         }
+        self.prevPosition.set(position);
+        self.position.set(x, y:y)
+        self.distance += prevPosition.dist(position)
+        self.prevForce = self.force
+        self.force = force
+        self.prevAngle = self.angle;
+        self.angle = angle
+        let currentTime = self.getTimeElapsed();
+        self.speed = prevPosition.dist(position)/(currentTime-prevTime)
+        self.prevTime = currentTime;
+       
     }
 
     

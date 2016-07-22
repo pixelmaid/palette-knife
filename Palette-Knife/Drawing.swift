@@ -24,7 +24,7 @@ class Drawing: TimeSeries, Hashable{
         }
     }
     
-    func initStroke(){
+    func newStroke(){
         self.currentStroke = Stroke();
         self.geometry.append(self.currentStroke!)
         var data = "\"drawing_id\":\""+self.id+"\","
@@ -37,7 +37,8 @@ class Drawing: TimeSeries, Hashable{
     
     func addSegmentToStroke(point:Point, weight:Float){
         if(self.currentStroke == nil){
-            self.initStroke();
+            print("tried to add segment to stroke, but no stroke exists")
+           return
         }
         
         var seg = self.currentStroke!.addSegment(point)

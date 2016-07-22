@@ -12,15 +12,20 @@ import SwiftKVC
 class Emitter: Model  {
     
     var events =  [String]()
-    var keyStorage=[String:[(String,EventCondition!)]]()
+    var keyStorage=[String:[(String,Condition!)]]()
     
-    func createKeyStorage(){
-        for e in events{
-            keyStorage[e] = [(String,EventCondition!)]();
-        }
+    func set(value:Emitter){
+        
     }
     
-    func assignKey(eventType:String,key:String,eventCondition:EventCondition!){
+      func createKeyStorage(){
+        for e in events{
+            self.keyStorage[e] = [(String,Condition!)]();
+        }
+
+    }
+    
+    func assignKey(eventType:String,key:String,eventCondition:Condition!){
         if(eventCondition != nil){
             keyStorage[eventType]?.append((key,eventCondition))
         }

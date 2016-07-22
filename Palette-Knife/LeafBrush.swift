@@ -21,11 +21,11 @@ class LeafBrush:Brush{
 
     
   func checkDraw(){
-        if((scaling != nil)  && (angle != nil) && (position != nil)){
-            current = StoredDrawing(position: position!, scaling: scaling!, angle: angle!)
+    
+            current = StoredDrawing(position: position, scaling: scaling!, angle: angle!)
             geometry.append(current!)
             self.geometryModified.raise((current!,"LEAF","DRAW"))
-        }
+    
     }
     
     override func set(targetProp:String,value:Any)->Bool{
@@ -57,12 +57,12 @@ class FlowerBrush:LeafBrush{
     override func checkDraw(){
         
         
-        if((scaling != nil)  && (angle != nil) && (position != nil)){
-            current = StoredDrawing(position: position!, scaling: scaling!, angle: angle!)
+        
+            current = StoredDrawing(position: position, scaling: scaling!, angle: angle!)
             geometry.append(current!)
 
             self.geometryModified.raise((current!,"FLOWER","DRAW"))
-        }
+        
         
         
     }

@@ -10,29 +10,28 @@ import Foundation
 
 //Basic path drawing brush
 class PathBrush:Brush{
+    
+    let positionKey = NSUUID().UUIDString;
+
     required init(){
         super.init()
         self.name = "PathBrush"
+        let selector = Selector("positionChange"+":");
+
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:positionKey, object: self.position)
+        self.position.assignKey("CHANGE",key: positionKey,eventCondition: nil)
+
     }
     
     override func clone()->PathBrush{
         return super.clone() as! PathBrush;
     }
     
-   override func setPosition(value:Point){
-    super.setPosition(value);
-        if((self.penDown) && (self.prevPosition != nil)){
-            self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.position,weight: self.weight);
-            //self.setLength(currentStroke!.getLength())
-        }
-    
-    if(self.prevPosition != nil){
-        self.setAngle(self.position.sub(self.prevPosition).angle)
-    }
-    else{
-        self.setAngle(0)
-    }
-
+    dynamic func positionChange(notification: NSNotification){
+    self.prevPosition.set(position.prevX,y: position.prevY);
+    self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.position.clone(),weight: self.weight);
+    self.setAngle(self.position.sub(self.prevPosition).angle)
+   
     
     }
     

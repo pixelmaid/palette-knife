@@ -91,14 +91,13 @@ class SocketManager: WebSocketDelegate{
         var string = "{\"type\":\"stylus_data\",\"canvas_id\":\""+stylus.id;
         string += "\",\"stylusData\":{"
         string+="\"time\":"+String(stylus.getTimeElapsed())+","
-        string+="\"pressure\":"+String(Stylus.force)+","
+        string+="\"pressure\":"+String(stylus.force)+","
         string+="\"angle\":"+String(stylus.angle)+","
         string+="\"penDown\":"+String(stylus.penDown)+","
         string+="\"speed\":"+String(stylus.speed)+","
         string+="\"position\":{\"x\":"+String(stylus.position.x)+",\"y\":"+String(stylus.position.y)+"}"
        // string+="\"delta\":{\"x\":"+String(delta.x)+",\"y\":"+String(delta.y)+"}"
         string+="}}"
-        //print("message: \(string)")
         drawingDataGenerated(string)
     }
     
@@ -112,7 +111,6 @@ class SocketManager: WebSocketDelegate{
     }
     
     func drawingDataGenerated(data:(String)){
-        print("drawing data generated \(data)")
         if(transmitComplete){
             transmitComplete = false;
             socket.writeString(data)

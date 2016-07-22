@@ -25,12 +25,13 @@ class ViewController: UIViewController {
     var brushes = [String:Brush]()
     var socketManager = SocketManager();
     var currentCanvas: Canvas?
+
     override func viewDidLoad() {
         
         
         
         super.viewDidLoad()
-       
+
         
        clearAll.addTarget(self, action: #selector(ViewController.clearClicked(_:)), forControlEvents: .TouchUpInside)
 
@@ -41,14 +42,17 @@ class ViewController: UIViewController {
         socketManager.socketEvent.addHandler(self,handler: ViewController.socketHandler)
         socketManager.connect();
         
+        self.initCanvas();
+        self.initTestBrushes();
+        
     }
     
     //event handler for socket connections
     func socketHandler(data:(String)){
         switch(data){
             case "first_connection":
-                self.initCanvas();
-                self.initTestBrushes();
+                //self.initCanvas();
+                //self.initTestBrushes();
                 break;
             case "disconnected":
                 break;
@@ -82,14 +86,18 @@ class ViewController: UIViewController {
     }
     
     func initTestBrushes(){
-    stylus["penDown"] = stylus.penDown
+   /* stylus["penDown"] = stylus.penDown
     stylus["position"] = stylus.position
+    stylus["force"] = stylus.force*/
+
     
-    var brush = generateBrush("PathBrush");
+    /*var brush = generateBrush("PathBrush");
     brush["penDown"] = brush.penDown
     brush["position"] = brush.position
+        
     
-    let stylusMoveConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_MOVE", eventCondition: nil, expression:"position:position| weight:stylus.force") as BehaviorConfig
+    
+    let stylusMoveConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_MOVE", eventCondition: nil, expression:"position:position|force:weight") as BehaviorConfig
     //let ec = stylusCondition(state: "MOVE_BY",value: Float(100))
     /*let spawnConfig = (target:brush, action:"spawnHandler", emitter:stylus, eventType:"STYLUS_MOVE",  eventCondition: ec, expression:"LeafBrush:2") as BehaviorConfig
     
@@ -109,7 +117,17 @@ class ViewController: UIViewController {
     //behaviorMapper.createMapping(spawnConfig)
     ////behaviorMapper.createMapping(arcConfig)
    // behaviorMapper.createMapping(flowerConfig)
-   // behaviorMapper.createMapping(flowerSpawnConfig)
+   // behaviorMapper.createMapping(flowerSpawnConfig)*/
+        
+        
+        var dripBrush = generateBrush("PathBrush");
+        dripBrush["penDown"] = dripBrush.penDown
+        dripBrush["position"] = dripBrush.position
+        dripBrush["weight"] = dripBrush.weight;
+        behaviorMapper.createMapping(stylus.position, relative: dripBrush, relativeProperty: dripBrush.position)
+        behaviorMapper.createState(dripBrush,stateName:"create_stroke")
+        behaviorMapper.createStateTransition(stylus, relative: dripBrush, eventName: "STYLUS_DOWN", fromState:"default",toState: "create_stroke", condition: nil)
+        behaviorMapper.createStateTransition(dripBrush, relative: dripBrush, eventName: "STATE_COMPLETE", fromState:"create_stroke",toState: "default", condition: nil)
     }
     
     func generateBrush(type:String)->Brush{
@@ -123,12 +141,7 @@ class ViewController: UIViewController {
         return brush
         
     }
-    
-    func addBehavior(config:BehaviorConfig){
-        behaviorMapper.createMapping(config)
-    }
-    
-    
+
     
     func canvasDrawHandler(data:(Geometry,String,String)){
         switch data.2{
@@ -139,7 +152,6 @@ class ViewController: UIViewController {
                 
                         let prevSeg = seg.getPreviousSegment()
                         if(prevSeg != nil){
-                            print("draw segment called \(seg.diameter)\n\n");
 
                             canvasView.drawPath(prevSeg!.point,tP: seg.point, w:seg.diameter, c:Color(r:0,g:0,b:0))
                         }
@@ -151,7 +163,6 @@ class ViewController: UIViewController {
                     
                     case "LINE":
                     let line = data.0 as! Line
-                    print("draw line \(line.p.x,line.p.y,line.v.x,line.v.y)")
 
                     canvasView.drawPath(line.p, tP:line.v, w: 10, c: Color(r:0,g:0,b:0))
                     break
@@ -196,7 +207,7 @@ class ViewController: UIViewController {
             let angle = Float(touch.azimuthAngleInView(view))
             stylus.onStylusUp()
            // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
-            socketManager.sendStylusData();
+            //socketManager.sendStylusData();
 
         }
         
@@ -215,7 +226,7 @@ class ViewController: UIViewController {
             let angle = Float(touch.azimuthAngleInView(view))
             stylus.onStylusDown(x, y:y, force:force, angle:angle)
            // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
-            socketManager.sendStylusData();
+           // socketManager.sendStylusData();
  
         }
     }
@@ -230,7 +241,7 @@ class ViewController: UIViewController {
             let angle = Float(touch.azimuthAngleInView(view))
             stylus.onStylusMove(x, y:y, force:force, angle:angle)
             // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
-            socketManager.sendStylusData();
+           // socketManager.sendStylusData();
         }
     }
     

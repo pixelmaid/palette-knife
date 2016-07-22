@@ -12,10 +12,12 @@ class TimeSeries: Emitter{
     
     var event = Event<(String)>()
     var timer:NSDate
-
+    var intervalTimer = NSTimer()
+    
     override init(){
         timer = NSDate()
-
+        super.init()
+     
     }
     
     func getTimeElapsed()->Float{
@@ -23,5 +25,16 @@ class TimeSeries: Emitter{
         let time = currentTime.timeIntervalSinceDate(timer)
         return Float(time);
     }
+    
+    func startInterval(){
+        intervalTimer  = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: #selector(TimeSeries.timerIntervalCallback), userInfo: nil, repeats: true)
+    }
+    
+  @objc func timerIntervalCallback()
+    {
+        
+    }
+    
+
 
 }

@@ -20,20 +20,12 @@ class LineBrush:Brush{
 
     
     func checkDraw(){
-            if((length != nil)  && (angle != nil) && (position != nil)){
-                current = Line(p: position!, length: length!, angle: angle!, asVector: false)
+        
+                current = Line(p: position, length: length!, angle: angle!, asVector: false)
                 geometry.append(current!)
 
                 self.geometryModified.raise((current!,"LINE","DRAW"))
-            }
-            else if((position != nil) && (prevPosition != nil)){
-                current = Line(p:position,v:prevPosition,asVector:false);
-                geometry.append(current!)
-
-                self.geometryModified.raise((current!,"LINE","DRAW"))
-
-
-            }
+        
             
         
     }

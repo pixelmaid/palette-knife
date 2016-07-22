@@ -50,7 +50,6 @@ class Drawing: TimeSeries, Hashable{
         data += "\"lengths\":{\"length\":"+String(currentStroke!.getLength())+",\"time\":"
         data += String(self .getTimeElapsed())
         data += "}}"
-        print("current length = \(currentStroke!.getLength())")
         self.event.raise((data))
         self.geometryModified.raise((seg,"SEGMENT","DRAW"))
     }

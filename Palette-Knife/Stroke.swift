@@ -33,7 +33,7 @@ struct StoredDrawing:Geometry{
 }
 
 // Segment: line segement described as two points
-struct Segment:Geometry {
+struct Segment:Geometry, Equatable {
     
     var point:Point;
     var handleIn: Point;
@@ -98,6 +98,10 @@ struct Segment:Geometry {
     
     
     
+}
+
+func ==(lhs: Segment, rhs: Segment) -> Bool {
+    return lhs.point == rhs.point
 }
 
 
@@ -266,7 +270,6 @@ class Stroke:TimeSeries, Geometry {
             }
             throw DrawError.InvalidArc
         }
-         //print("line: \(line.p.x,line.p.y,line.v.x,line.v.y)l1:\(l1.p.x,l1.p.y,l1.v.x,l1.v.y) l2:\(l2.p.x, l2.p.y,l2.v.x,l2.v.y) center:\(center!.x,center!.y)\n\n")
             var vector = from.sub(center!);
             var extent = vector.getDirectedAngle(to.sub(center!));
             let centerSide = line.getSide(center!, isInfinite: false);

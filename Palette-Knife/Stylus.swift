@@ -12,7 +12,7 @@ import Foundation
 // manages stylus data, notifies behaviors of stylus events
 class Stylus: TimeSeries, WebTransmitter {
     var prevPosition: Point
-    static var force = Float(0)
+    var force = Float(0)
     var prevForce: Float
     var angle: Float
     var speed = Float(0)
@@ -27,22 +27,42 @@ class Stylus: TimeSeries, WebTransmitter {
 
     init(x:Float,y:Float,angle:Float,force:Float){
         prevPosition = Point(x:x, y:y)
-        Stylus.force = force
+        self.force = force
         self.prevForce = force
         self.angle = angle
         self.prevAngle = angle;
         super.init()
-        position = Point(x:x, y:y)
+        position.set(x, y:y)
         self.events =  ["STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE"]
         self.createKeyStorage();
+
+        //self.startInterval();
         
     }
+    @objc override func timerIntervalCallback()
+    {
+        self.transmitData();
+    }
 
+    func transmitData(){
+        var string = "{\"type\":\"stylus_data\",\"canvas_id\":\""+self.id;
+        string += "\",\"stylusData\":{"
+        string+="\"time\":"+String(self.getTimeElapsed())+","
+        string+="\"pressure\":"+String(self.force)+","
+        string+="\"angle\":"+String(self.angle)+","
+        string+="\"penDown\":"+String(self.penDown)+","
+        string+="\"speed\":"+String(self.speed)+","
+        string+="\"position\":{\"x\":"+String(self.position.x)+",\"y\":"+String(self.position.y)+"}"
+        // string+="\"delta\":{\"x\":"+String(delta.x)+",\"y\":"+String(delta.y)+"}"
+        string+="}}"
+
+        event.raise(string)
+    }
     
     override func get(targetProp:String)->Any?{
         switch targetProp{
         case "force":
-            return Stylus.force
+            return force
             
         case "angle":
             return self.angle
@@ -76,14 +96,16 @@ class Stylus: TimeSeries, WebTransmitter {
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
             }
         }
+        self.transmitData();
+
     }
     
     func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
-        self.position = Point(x:x, y:y)
+        self.position.set(x, y:y)
         self.penDown = true
         self.prevTime = self.getTimeElapsed();
         self.speed = 0;
-        for key in keyStorage["STYLUS_DOWN"]!  {
+        for key in self.keyStorage["STYLUS_DOWN"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
                 eventCondition.validate(self)
@@ -93,15 +115,17 @@ class Stylus: TimeSeries, WebTransmitter {
             }
 
         }
+        self.transmitData();
+
     }
     
     func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
         
-        self.prevPosition = position;
-        self.position = Point(x:x, y:y)
+        self.prevPosition.set(position);
+        self.position.set(x, y:y)
         self.distance += prevPosition.dist(position)
-        self.prevForce = Stylus.force
-        Stylus.force = force
+        self.prevForce = self.force
+        self.force = force
         self.prevAngle = self.angle;
         self.angle = angle
         let currentTime = self.getTimeElapsed();

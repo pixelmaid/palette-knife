@@ -8,95 +8,48 @@
 
 import Foundation
 
-typealias BehaviorConfig = (target: Brush, action: String, emitter:Emitter, eventType:String, eventCondition:EventCondition!, expression: String?)
+typealias BehaviorConfig = (target: Brush, action: String, emitter:Emitter, eventType:String, eventCondition:Condition!, expression: String?)
 
 
 // creates mappings between brushes and behaviors
 class BehaviorMapper{
-   
-    func createMapping (config:BehaviorConfig){
+    
+    /*func createMapping (config:BehaviorConfig){
         let key = NSUUID().UUIDString;
         let selector = Selector(config.action+":");
         config.emitter.assignKey(config.eventType,key: key,eventCondition: config.eventCondition)
         NSNotificationCenter.defaultCenter().addObserver(config.target, selector:selector, name:key, object: config.emitter)
         config.target.addBehavior(key, selector: config.action, emitter: config.emitter, expression: config.expression)
         config.target.removeMappingEvent.addHandler(self, handler: BehaviorMapper.removeMapping)
-    }
+    }*/
     
     func removeMapping(data:(Brush, String, Emitter)){
         NSNotificationCenter.defaultCenter().removeObserver(data.0, name: data.1, object: data.2)
         data.2.removeKey(data.1)
     }
     
+    func createMapping(reference:Emitter, relative:Brush, relativeProperty:Emitter){
+        let key = NSUUID().UUIDString;
+        reference.assignKey("CHANGE",key: key,eventCondition: nil)
+        let selector = Selector("setHandler"+":");
+        NSNotificationCenter.defaultCenter().addObserver(relative, selector:selector, name:key, object: reference)
+        relative.addConstraint(key, reference: reference, relative: relativeProperty)
+        relative.removeMappingEvent.addHandler(self, handler: BehaviorMapper.removeMapping)
+    }
     
+    func createState(target:Brush,stateName:String){
+        target.createState(stateName);
+    }
+    
+    func createStateTransition(reference:Emitter,relative:Brush, eventName:String, fromState:String, toState:String, condition:Condition!){
+        
+        let key = NSUUID().UUIDString;
+        reference.assignKey(eventName,key:key,eventCondition: condition)
+        let selector = Selector("stateTransitionHandler"+":");
+        NSNotificationCenter.defaultCenter().addObserver(relative, selector:selector, name:key, object: reference)
+        relative.addStateTransition(key, reference: reference, fromState:fromState, toState:toState)
+        relative.removeMappingEvent.addHandler(self, handler: BehaviorMapper.removeMapping)
+    }
 }
 
 
-protocol EventCondition{
-    var prop:String { get set }
-    var value:Any? {get set}
-    func validate(emitter:Emitter)->Bool
-}
-
-struct stylusCondition: EventCondition{
-    var prop: String
-    var value: Any?
-    
-    init(state:String, value:Any?){
-        self.prop = state
-        self.value = value;
-    }
-    
-    
-    func validate(emitter:Emitter)->Bool{
-        let stylus = emitter as! Stylus
-        switch(prop){
-        case "MOVE_BY":
-            if stylus.getDistance() > self.value as! Float {
-                stylus.resetDistance()
-                return true
-            }
-            else{
-                return false
-            }
-        default:
-            break
-        }
-        
-        print("ERROR: CONDITIONAL EVALUATED WITH NO VALID PROP")
-        return false
-        
-    }
-
-}
-
-struct spawnCondition: EventCondition{
-    var prop: String
-    var value: Any?
-    
-    init(state:String, value:Any?){
-        self.prop = state
-        self.value = value;
-    }
-    
-    
-    func validate(emitter:Emitter)->Bool{
-        let emitter = emitter as! Brush
-        switch(prop){
-        case "IS_TYPE":
-            if emitter.lastSpawned[0].name == self.value as! String {
-            return true
-            }
-            else{
-                return false
-            }
-        default:
-            break
-        }
-        
-        print("ERROR: CONDITIONAL EVALUATED WITH NO VALID PROP")
-        return false
-        
-    }
-    
-}

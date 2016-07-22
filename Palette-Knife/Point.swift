@@ -11,23 +11,60 @@ import UIKit
 
 import SwiftKVC
 
-struct Point: Property{
+class Point: Emitter, Equatable, Geometry{
   
     var x = Float(0);
     var y = Float(0);
+    var prevX = Float(0);
+    var prevY = Float(0);
     var angle = Float(0);
     var diameter = Float(0);
     var color = Color(r:0,g:0,b:0);
     
     init(x:Float,y:Float) {
+        super.init()
         self.x=x;
         self.y=y;
+        self.events =  ["CHANGE"]
+        self.createKeyStorage();
         self.angle = atan2(y, x) * Float(180 / M_PI);
     }
     
     func toJSON()->String{
         let string = "\"x\":"+String(self.x)+",\"y\":"+String(self.y)
         return string;
+    }
+    
+    override func set(val:Emitter){
+        let point = val as! Point
+        self.set(point.x,y:point.y)
+    }
+    
+    func set(x:Float, y:Float){
+        prevX = self.x;
+        prevY = self.y;
+        self.x = x;
+        self.y = y;
+        for key in keyStorage["CHANGE"]!  {
+           /* if(key.1 != nil){
+                let eventCondition = key.1;
+                if(eventCondition.validate(self)){
+                    NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
+                    
+                }
+                else{
+                    print("EVALUATION FOR CONDITION FAILED")
+                }
+                
+            }
+            else{*/
+                NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
+            //}
+        }
+    }
+    
+    func clone()->Point{
+        return Point(x:self.x,y:self.y)
     }
     
     func add(point:Point)->Point{
@@ -122,11 +159,6 @@ struct Point: Property{
         return Point(x:0,y:0).pointAtDistance(l,a:angle);
     }
     
-    mutating func setValue(value:Point){
-        x = value.x;
-        y = value.y;
-    }
-    
     func toCGPoint()->CGPoint{
         return CGPoint(x:CGFloat(self.x),y:CGFloat(self.y))
     }
@@ -137,6 +169,9 @@ struct Point: Property{
     
     
     
+}
+func ==(lhs: Point, rhs: Point) -> Bool {
+    return lhs.x == rhs.x && lhs.y == rhs.y
 }
 
 

@@ -12,5 +12,5 @@ import Foundation
 protocol WebTransmitter{
     var name: String { get set }
     var id:String { get set }
-    var event:Event<(String)>{get set}
+    var transmitEvent:Event<(String)>{get set}
 }

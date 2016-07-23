@@ -40,7 +40,7 @@ public class Event<T> {
     
 }
 
-class StylusEvent:Event<(Point,Float,Float)>{
+class StylusEvent:Event<(PointEmitter,Float,Float)>{
     
 }
 

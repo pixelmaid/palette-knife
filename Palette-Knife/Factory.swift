@@ -8,10 +8,10 @@
 
 import Foundation
 
-typealias StylusType = (Point,Float,Float)
+typealias StylusType = (PointEmitter,Float,Float)
 typealias BrushType = (Brush)
 
-class Factory: Emitter
+class Factory: TimeSeries
 {
     
     required override init(){

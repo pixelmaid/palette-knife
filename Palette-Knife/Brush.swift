@@ -25,20 +25,20 @@ class Brush: Factory, WebTransmitter, Hashable{
     //geometric/stylistic properties
     var strokeColor = Color(r:0,g:0,b:0);
     var fillColor = Color(r:0,g:0,b:0);
-    var weight = Float(5.0)
+    var weight = FloatEmitter(val: 5.0)
     var reflect = false;
-    var position = Point(x:0,y:0)
-    var prevPosition = Point(x:0,y:0)
+    var position = PointEmitter(x:0,y:0)
+    var prevPosition = PointEmitter(x:0,y:0)
     var penDown = false;
-    var scaling:Point!
-    var angle:Float!
+    var scaling = PointEmitter(x:1,y:1)
+    var angle = FloatEmitter(val:0)
     var n1:Float!
     var n2:Float!
     var length:Float!
     var name = "Brush"
     var currentCanvas:Canvas?
     var geometryModified = Event<(Geometry,String,String)>()
-    var event = Event<(String)>()
+    var transmitEvent = Event<(String)>()
     
     let removeMappingEvent = Event<(Brush,String,Emitter)>()
     
@@ -52,6 +52,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         self.createState("default");
        
         self.createState(currentState);
+        self.startInterval()
     }
     
     //MARK: - Hashable
@@ -119,7 +120,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     func executeStateMethods(){
         let methods = self.states[currentState]!.methods
         for i in 0..<methods.count{
-            var methodName = methods[i];
+            let methodName = methods[i];
             switch (methodName){
                 case "newStroke":
                     self.newStroke();
@@ -234,7 +235,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         
     }
     
-    func set(targetProp:String,value:Any)->Bool{
+    /*func set(targetProp:String,value:Any)->Bool{
         switch targetProp{
         case "position":
             self.setPosition(value as! Point)
@@ -325,7 +326,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     func setPenDown(value:Bool){
         self.penDown = value
-    }
+    }*/
     
     
     
@@ -376,14 +377,9 @@ class Brush: Factory, WebTransmitter, Hashable{
         return child
     }
     
-    //move(point): point should be a vector (i.e mouse delta). Transforms point in accordance with current geometric properties
-    func move(point:Point) {
-        let d = self.transformDelta(point);
-        self.position = self.position.add(d);
-    }
     
     
-    func transformDelta(delta:Point)->Point {
+    /*func transformDelta(delta:Point)->Point {
         if((self.parent) != nil){
             let newDelta = self.parent!.transformDelta(delta);
             return newDelta;
@@ -391,7 +387,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         else{
             return delta;
         }
-    }
+    }*/
     
     func destroyChildren(){
         for child in self.children as [Brush] {

@@ -124,10 +124,17 @@ class ViewController: UIViewController {
         dripBrush["penDown"] = dripBrush.penDown
         dripBrush["position"] = dripBrush.position
         dripBrush["weight"] = dripBrush.weight;
+        
+       // var timeCondition = new
         behaviorMapper.createMapping(stylus.position, relative: dripBrush, relativeProperty: dripBrush.position)
         behaviorMapper.createState(dripBrush,stateName:"create_stroke")
+        behaviorMapper.createState(dripBrush,stateName:"drip")
+        behaviorMapper.createState(dripBrush,stateName:"stop")
+
         behaviorMapper.createStateTransition(stylus, relative: dripBrush, eventName: "STYLUS_DOWN", fromState:"default",toState: "create_stroke", condition: nil)
         behaviorMapper.createStateTransition(dripBrush, relative: dripBrush, eventName: "STATE_COMPLETE", fromState:"create_stroke",toState: "default", condition: nil)
+        behaviorMapper.createStateTransition(dripBrush, relative: dripBrush, eventName: "TIME_INCREMENT", fromState:"drip",toState: "stop", condition: nil)
+
         behaviorMapper.addMethod(dripBrush,state:"create_stroke",methodName:"newStroke");
     }
     
@@ -171,7 +178,7 @@ class ViewController: UIViewController {
                 case "LEAF":
                     let leaf = data.0 as! StoredDrawing
                     
-                    canvasView.drawLeaf(leaf.position, angle:leaf.angle, scale:leaf.scaling.x)
+                    canvasView.drawLeaf(leaf.position, angle:leaf.angle, scale:leaf.scaling.x.get())
                     break
                     
                 case "FLOWER":

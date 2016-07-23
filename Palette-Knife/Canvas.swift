@@ -16,7 +16,8 @@ class Canvas: WebTransmitter, Hashable{
     var name:String;
     var drawings = [Drawing]()
     var currentDrawing:Drawing?
-    var event = Event<(String)>()
+    var transmitEvent = Event<(String)>()
+
     var geometryModified = Event<(Geometry,String,String)>()
 
     //MARK: - Hashable
@@ -34,13 +35,13 @@ class Canvas: WebTransmitter, Hashable{
     func initDrawing(){
         currentDrawing = Drawing();
         drawings.append(currentDrawing!)
-        currentDrawing!.event.addHandler(self,handler: Canvas.drawingDataGenerated);
+        currentDrawing!.transmitEvent.addHandler(self,handler: Canvas.drawingDataGenerated);
         currentDrawing!.geometryModified.addHandler(self,handler: Canvas.drawHandler);
 
         var string = "{\"canvas_id\":\""+self.id+"\","
         string += "\"drawing_id\":\""+currentDrawing!.id+"\","
         string += "\"type\":\"new_drawing\"}"
-        self.event.raise((string));
+        self.transmitEvent.raise((string));
 
     }
     
@@ -48,7 +49,7 @@ class Canvas: WebTransmitter, Hashable{
         var string = "{\"canvas_id\":\""+self.id+"\","
         string += data;
         string += "}"
-        self.event.raise((string));
+        self.transmitEvent.raise((string));
     }
     
     func newStroke(){

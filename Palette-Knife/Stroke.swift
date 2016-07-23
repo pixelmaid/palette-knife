@@ -17,10 +17,10 @@ protocol Geometry {
 
 struct StoredDrawing:Geometry{
     var angle:Float
-    var scaling:Point
-    var position:Point
+    var scaling:PointEmitter
+    var position:PointEmitter
     
-    init(position:Point,scaling:Point,angle:Float){
+    init(position:PointEmitter,scaling:PointEmitter,angle:Float){
         self.angle = angle
         self.scaling = scaling
         self.position = position
@@ -35,9 +35,9 @@ struct StoredDrawing:Geometry{
 // Segment: line segement described as two points
 struct Segment:Geometry, Equatable {
     
-    var point:Point;
-    var handleIn: Point;
-    var handleOut: Point;
+    var point:PointEmitter;
+    var handleIn: PointEmitter;
+    var handleOut: PointEmitter;
     var parent:Stroke?;
     var index:Int?
     var diameter = Float(1);
@@ -48,19 +48,19 @@ struct Segment:Geometry, Equatable {
         self.init(x:x,y:y,hi_x:0,hi_y:0,ho_x:0,ho_y:0)
     }
     
-    init(point:Point){
-        self.init(point:point,handleIn:Point(x: 0, y: 0),handleOut:Point(x: 0, y: 0))
+    init(point:PointEmitter){
+        self.init(point:point,handleIn:PointEmitter(x: 0, y: 0),handleOut:PointEmitter(x: 0, y: 0))
     }
     
     init(x:Float,y:Float,hi_x:Float,hi_y:Float,ho_x:Float,ho_y:Float){
-        let point = Point(x:x,y:y)
-        let hI = Point(x: hi_x,y: hi_y)
-        let hO = Point(x: ho_x,y: ho_y)
+        let point = PointEmitter(x:x,y:y)
+        let hI = PointEmitter(x: hi_x,y: hi_y)
+        let hO = PointEmitter(x: ho_x,y: ho_y)
         self.init(point:point,handleIn:hI,handleOut:hO)
 
     }
     
-    init(point:Point,handleIn:Point,handleOut:Point) {
+    init(point:PointEmitter,handleIn:PointEmitter,handleOut:PointEmitter) {
         self.point = point
         self.handleIn = handleIn
         self.handleOut = handleOut
@@ -185,7 +185,7 @@ class Stroke:TimeSeries, Geometry {
         return segment
     }
     
-    func addSegment(point:Point)->Segment{
+    func addSegment(point:PointEmitter)->Segment{
         let segment = Segment(point:point)
         return self.addSegment(segment)
     }
@@ -237,7 +237,7 @@ class Stroke:TimeSeries, Geometry {
         self.clockwise = clockwise
     }*/
     
-   func lineTo(to:Point) {
+   func lineTo(to:PointEmitter) {
         // Let's not be picky about calling moveTo() first:
         let seg = Segment(point:to)
         self.addSegment(seg);
@@ -247,80 +247,7 @@ class Stroke:TimeSeries, Geometry {
    
     
     
-    func arcTo(from:Point, through:Point, to:Point) throws{
-        // Calculate center, vector and extend for non SVG versions:
-        // Construct the two perpendicular middle lines to
-        // (from, through) and (through, to), and intersect them to get
-        // the center.
-        let l1 = Line(p:from.add(through).div(2), v: through.sub(from).rotate(90), asVector: true)
-        let l2 = Line(p: through.add(to).div(2),v: to.sub(through).rotate(90), asVector: true)
-        let line = Line(p: from, v: to, asVector: false)
-        let throughSide = line.getSide(through,isInfinite: false);
-        let center = l1.intersect(l2, isInfinite: true);
-       
-        
-        // If the two lines are collinear, there cannot be an arc as the
-        // circle is infinitely big and has no center point. If side is
-        // 0, the connecting arc line of this huge circle is a line
-        // between the two points, so we can use #lineTo instead.
-        // Otherwise we bail out:
-        if (center == nil) {
-            if (throughSide == nil){
-                return self.lineTo(to);
-            }
-            throw DrawError.InvalidArc
-        }
-            var vector = from.sub(center!);
-            var extent = vector.getDirectedAngle(to.sub(center!));
-            let centerSide = line.getSide(center!, isInfinite: false);
-            if (centerSide! == 0) {
-                // If the center is lying on the line, we might have gotten
-                // the wrong sign for extent above. Use the sign of the side
-                // of the through point.
-                extent = Float(throughSide!) * abs(extent);
-            } else if (throughSide! == centerSide!) {
-                // If the center is on the same side of the line (from, to)
-                // as the through point, we're extending bellow 180 degrees
-                // and need to adapt extent.
-                extent += extent < 0 ? 360 : -360;
-            }
-            
-            let ext = abs(extent)
-            var count:Float
-            if ext >= 360{
-                count = 4
-            }
-            else{
-                count = ceil(ext / 90)
-            }
-            let inc = extent / count
-            let half = inc *  Float(M_PI/360)
-            let z = 4 / 3 *  sin(half) / (1 + cos(half));
-            var segments = [Segment]();
-            for i in 0...Int(count-1) {
-                // Explicitly use to point for last segment, since depending
-                // on values the calculation adds imprecision:
-                var pt = to
-                let out = vector.rotate(90).mul(z);
-                pt = center!.add(vector);
-                    
-                
-                if (i == 0) {
-                    // Modify startSegment
-                    //current.setHandleOut(out);
-                } else {
-                    // Add new Segment
-                    let _in = vector.rotate(-90).mul(z);
-                    
-                    segments.append(Segment(point: pt, handleIn: _in, handleOut: out));
-                }
-                vector = vector.rotate(inc);
-            }
-        
-            // Add all segments at once at the end for higher performance
-           self.addSegment(segments);
-        }
-    }
+}
 
 
         

@@ -104,7 +104,7 @@ class SocketManager: WebSocketDelegate{
     func initAction(target:WebTransmitter){
         let data = "{\"type\":\"new_canvas\",\"canvas_id\":\""+target.id+"\",\"canvas_name\":\""+target.name+"\"}";
         targets.append(target);
-        target.event.addHandler(self,handler: SocketManager.drawingDataGenerated);
+        target.transmitEvent.addHandler(self,handler: SocketManager.drawingDataGenerated);
         drawingDataGenerated(data);
 
         

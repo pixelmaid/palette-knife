@@ -11,22 +11,23 @@ import Foundation
 
 // manages stylus data, notifies behaviors of stylus events
 class Stylus: TimeSeries, WebTransmitter {
-    var prevPosition: Point
+    var prevPosition: PointEmitter
     var force = Float(0)
     var prevForce: Float
     var angle: Float
     var speed = Float(0)
     var prevAngle: Float
-    var position = Point(x:0,y:0);
+    var position = PointEmitter(x:0,y:0);
     var prevTime = Float(0);
     var penDown = false;
     var distance = Float(0);
     var forceSub = Float(1);
     var id = NSUUID().UUIDString;
     var name = "stylus"
+    var transmitEvent = Event<(String)>()
 
     init(x:Float,y:Float,angle:Float,force:Float){
-        prevPosition = Point(x:x, y:y)
+        prevPosition = PointEmitter(x:x, y:y)
         self.force = force
         self.prevForce = force
         self.angle = angle
@@ -56,7 +57,7 @@ class Stylus: TimeSeries, WebTransmitter {
         // string+="\"delta\":{\"x\":"+String(delta.x)+",\"y\":"+String(delta.y)+"}"
         string+="}}"
 
-        event.raise(string)
+        transmitEvent.raise(string)
     }
     
     override func get(targetProp:String)->Any?{
@@ -87,7 +88,6 @@ class Stylus: TimeSeries, WebTransmitter {
         for key in keyStorage["STYLUS_UP"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
-                
             }
             else{
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])

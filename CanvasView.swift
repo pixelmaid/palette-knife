@@ -21,7 +21,7 @@ class CanvasView:  UIImageView {
     override func drawRect(rect: CGRect) {
     }
     
-    func drawPath(fP: Point, tP: Point, w:Float, c:Color) {
+    func drawPath(fP: PointEmitter, tP: PointEmitter, w:Float, c:Color) {
         UIGraphicsBeginImageContext(self.frame.size)
         let context = UIGraphicsGetCurrentContext()!
         self.image?.drawInRect(CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))
@@ -44,7 +44,7 @@ class CanvasView:  UIImageView {
 
         }
     
-    func drawArc(center:Point, radius:Float,startAngle:Float,endAngle:Float, w:Float, c:Color){
+    func drawArc(center:PointEmitter, radius:Float,startAngle:Float,endAngle:Float, w:Float, c:Color){
         UIGraphicsBeginImageContext(self.frame.size)
         let context = UIGraphicsGetCurrentContext()!
         self.image?.drawInRect(CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))
@@ -81,7 +81,7 @@ class CanvasView:  UIImageView {
         self.image = nil
     }
     
-    func drawFlower(position:Point){
+    func drawFlower(position:PointEmitter){
         UIGraphicsBeginImageContext(self.frame.size)
         
         let context = UIGraphicsGetCurrentContext()
@@ -90,7 +90,7 @@ class CanvasView:  UIImageView {
         let color3 = UIColor(red: 0.754, green: 0.101, blue: 0.876, alpha: 1.000)
         
         //// Oval Drawing
-        let ovalPath = UIBezierPath(ovalInRect: CGRect(x: CGFloat(position.x-52/2), y: CGFloat(position.y-46/2), width: 52, height: 46))
+        let ovalPath = UIBezierPath(ovalInRect: CGRect(x: CGFloat(position.x.get()-52/2), y: CGFloat(position.y.get()-46/2), width: 52, height: 46))
         color3.setFill()
         ovalPath.fill()
         
@@ -102,7 +102,7 @@ class CanvasView:  UIImageView {
     }
     
     
-    func drawLeaf(position:Point,angle:Float,scale:Float){
+    func drawLeaf(position:PointEmitter,angle:Float,scale:Float){
         //// General Declarations
         UIGraphicsBeginImageContext(self.frame.size)
 

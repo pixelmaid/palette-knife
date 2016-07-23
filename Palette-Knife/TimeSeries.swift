@@ -10,7 +10,6 @@ import Foundation
 
 class TimeSeries: Emitter{
     
-    var event = Event<(String)>()
     var timer:NSDate
     var intervalTimer = NSTimer()
     

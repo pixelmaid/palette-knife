@@ -18,28 +18,7 @@ class LeafBrush:Brush{
         self.name = "LeafBrush"
         
     }
-
     
-  func checkDraw(){
-    
-            current = StoredDrawing(position: position, scaling: scaling!, angle: angle!)
-            geometry.append(current!)
-            self.geometryModified.raise((current!,"LEAF","DRAW"))
-    
-    }
-    
-    override func set(targetProp:String,value:Any)->Bool{
-        let superSet = super.set(targetProp,value:value)
-        if(!superSet){
-            switch targetProp{
-            default: break
-                
-            }
-        }
-        self.checkDraw()
-        
-        return false;
-    }
     
 
 
@@ -54,18 +33,7 @@ class FlowerBrush:LeafBrush{
         self.name = "FlowerBrush"
         
     }
-    override func checkDraw(){
-        
-        
-        
-            current = StoredDrawing(position: position, scaling: scaling!, angle: angle!)
-            geometry.append(current!)
-
-            self.geometryModified.raise((current!,"FLOWER","DRAW"))
-        
-        
-        
-    }
+   
     
 }
 

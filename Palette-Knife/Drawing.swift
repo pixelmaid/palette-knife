@@ -11,11 +11,13 @@ import Foundation
 //Drawing
 //stores geometry
 
-class Drawing: TimeSeries, Hashable{
-    let id = NSUUID().UUIDString;
+class Drawing: TimeSeries, WebTransmitter, Hashable{
+   var id = NSUUID().UUIDString;
     var name:String = ""
     var currentStroke:Stroke?;
     var geometry = [Geometry]();
+    var transmitEvent = Event<(String)>()
+
        var geometryModified = Event<(Geometry,String,String)>()
     //MARK: - Hashable
     var hashValue : Int {
@@ -32,10 +34,10 @@ class Drawing: TimeSeries, Hashable{
         data += "\"time\":\""+String(self.getTimeElapsed())+"\","
 
         data += "\"type\":\"new_stroke\""
-        self.event.raise((data))
+        self.transmitEvent.raise((data))
     }
     
-    func addSegmentToStroke(point:Point, weight:Float){
+    func addSegmentToStroke(point:PointEmitter, weight:Float){
         if(self.currentStroke == nil){
             print("tried to add segment to stroke, but no stroke exists")
            return
@@ -51,7 +53,7 @@ class Drawing: TimeSeries, Hashable{
         data += "\"lengths\":{\"length\":"+String(currentStroke!.getLength())+",\"time\":"
         data += String(self .getTimeElapsed())
         data += "}}"
-        self.event.raise((data))
+        self.transmitEvent.raise((data))
         self.geometryModified.raise((seg,"SEGMENT","DRAW"))
     }
     

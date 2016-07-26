@@ -126,7 +126,9 @@ class ViewController: UIViewController {
         dripBrush["weight"] = dripBrush.weight;
         
        // var timeCondition = new
-        behaviorMapper.createMapping(stylus.position, relative: dripBrush, relativeProperty: dripBrush.position)
+        behaviorMapper.createMapping(stylus.position.y, relative: dripBrush, relativeProperty: dripBrush.position.y)
+        behaviorMapper.createMapping(stylus.position.x, relative: dripBrush, relativeProperty: dripBrush.position.x)
+
         behaviorMapper.createState(dripBrush,stateName:"create_stroke")
         behaviorMapper.createState(dripBrush,stateName:"drip")
         behaviorMapper.createState(dripBrush,stateName:"stop")

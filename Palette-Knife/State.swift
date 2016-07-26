@@ -17,10 +17,20 @@ struct State {
     
     mutating func addConstraintMapping(key:String,reference:Emitter,relativeProperty:Emitter){
         let mapping = Constraint(reference: reference,relativeProperty:relativeProperty)
+        relativeProperty.constrained = true;
+       print("constrained relative\(relativeProperty,relativeProperty.constrained)")
         mappings[key] = mapping;
         
 
     }
+    
+    mutating func removeConstraintMapping(key:String,relativeProperty:Emitter){
+        relativeProperty.constrained = false;
+        mappings.removeValueForKey(key)
+        
+        
+    }
+    
     
     mutating func addStateTransitionMapping(key:String,reference:Emitter,toState:String){
         let mapping = StateTransition(reference:reference,toState:toState)

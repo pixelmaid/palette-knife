@@ -28,9 +28,11 @@ class PathBrush:Brush{
     }
     
     dynamic func positionChange(notification: NSNotification){
-    self.prevPosition.set(position.prevX.get(),y: position.prevY.get());
+    print("position change\(position.x.get(),position.y.get())")
+      //  print("stylus position \(stylus.position.x.get(),stylus.position.y.get()))")
+
+    self.prevPosition.set(position.prevX,y: position.prevY);
     self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.position.clone(),weight: self.weight.get());
-    print("angle, position, \(self.prevPosition, self.position, self.position.sub(self.prevPosition).angle.get(),self.angle))")
     self.angle.set(self.position.sub(self.prevPosition).angle)
    
     

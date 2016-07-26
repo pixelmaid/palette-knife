@@ -35,6 +35,7 @@ class BehaviorMapper{
         NSNotificationCenter.defaultCenter().addObserver(relative, selector:selector, name:key, object: reference)
         relative.addConstraint(key, reference: reference, relative: relativeProperty)
         relative.removeMappingEvent.addHandler(self, handler: BehaviorMapper.removeMapping)
+    
     }
     
     func createState(target:Brush,stateName:String){

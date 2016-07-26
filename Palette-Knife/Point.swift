@@ -15,19 +15,28 @@ class PointEmitter: Emitter, Equatable, Geometry{
   
     var x = FloatEmitter(val: 0);
     var y = FloatEmitter(val: 0);
-    var prevX = FloatEmitter(val: 0);
-    var prevY = FloatEmitter(val: 0);
-    var angle = FloatEmitter(val:0);
-    var diameter = FloatEmitter(val:0);
-    var color = Color(r:0,g:0,b:0);
+    var prevX = Float(0);
+    var prevY = Float(0);
+    var angle = Float(0);
+    let xKey = NSUUID().UUIDString;
+    let yKey = NSUUID().UUIDString;
+    
     
     init(x:Float,y:Float) {
         super.init()
         self.x.set(x);
         self.y.set(y);
-        self.events =  ["CHANGE"]
+        self.events =  ["CHANGE","INVALIDATED"]
         self.createKeyStorage();
-        self.angle.set(atan2(y, x) * Float(180 / M_PI));
+        self.angle = atan2(y, x) * Float(180 / M_PI);
+        let selector = Selector("propertyInvalidated"+":");
+
+       NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:xKey, object: self.x)
+        self.x.assignKey("INVALIDATED",key:xKey,eventCondition: nil);
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:yKey, object: self.y)
+        self.x.assignKey("INVALIDATED",key:yKey,eventCondition: nil);
+
     }
     
     func toJSON()->String{
@@ -41,26 +50,46 @@ class PointEmitter: Emitter, Equatable, Geometry{
     }
     
     
+    override dynamic func propertyInvalidated(notification: NSNotification) {
+        super.propertyInvalidated(notification)
+        let reference = notification.userInfo?["emitter"] as! FloatEmitter
+        print("invalidate,\(x.constrained,y.constrained)")
+        if(!x.constrained && !y.constrained){
+            return;
+        }
+        else if(x.constrained && !y.constrained && reference == self.x){
+            self.set(self.x.get(),y:self.y.get());
+        }
+        else if(!x.constrained && y.constrained && reference == self.y){
+            self.set(self.x.get(),y:self.y.get());
+        }
+        else{
+             print("both constrained x:\(x.invalidated) y:\(y.invalidated)");
+            if(self.x.invalidated && self.y.invalidated){
+               
+                self.set(self.x.get(),y:self.y.get());
+
+            }
+        }
+    }
+    
+     func get()->(Float,Float){
+       super.get()
+        return (self.x.get(),self.y.get())
+    }
+    
+    
     func set(x:Float, y:Float){
-        prevX = self.x;
-        prevY = self.y;
+        prevX = self.x.get();
+        prevY = self.y.get();
         self.x.set(x);
         self.y.set(y);
-        for key in keyStorage["CHANGE"]!  {
-           /* if(key.1 != nil){
-                let eventCondition = key.1;
-                if(eventCondition.validate(self)){
-                    NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
-                    
-                }
-                else{
-                    print("EVALUATION FOR CONDITION FAILED")
-                }
-                
-            }
-            else{*/
+        for i in 0..<events.count{
+let event = events[i]
+        for key in keyStorage[event]!  {
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
-            //}
+        
+        }
         }
     }
     

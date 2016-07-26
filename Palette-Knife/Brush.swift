@@ -80,12 +80,15 @@ class Brush: Factory, WebTransmitter, Hashable{
     // communication between emitter and brush
     //setHandler: recieves  expression in the form of "propertyA:propertyB" which is used to determine mapping for set action
     dynamic func setHandler(notification: NSNotification){
+        
         let reference = notification.userInfo?["emitter"] as! Emitter
+       
         let key = notification.userInfo?["key"] as! String
         let mapping = states[currentState]?.getMapping(key)
          if(mapping != nil){
          let constraint = mapping as! Constraint
-         constraint.relativeProperty.set(reference);
+
+         constraint.relativeProperty.set(reference as! FloatEmitter);
          }
     }
     
@@ -95,12 +98,9 @@ class Brush: Factory, WebTransmitter, Hashable{
     dynamic func stateTransitionHandler(notification: NSNotification){
        
         let key = notification.userInfo?["key"] as! String
-          print("current state \(self.currentState)\n\n")
         let mapping = states[currentState]?.getMapping(key)
-         print("state transition, current state \(self.currentState) key:\(key) mapping \(mapping)\n\n")
         if(mapping != nil){
             let stateTransition = mapping as! StateTransition
-          print(" to state \(stateTransition.toState)\n\n")
             self.currentState = stateTransition.toState;
             
            //execute methods
@@ -108,7 +108,6 @@ class Brush: Factory, WebTransmitter, Hashable{
             //check constraints
             
             //trigger state complete after functions are executed
-           print("state complete keys \(self.keyStorage["STATE_COMPLETE"])\n\n")
             for key in self.keyStorage["STATE_COMPLETE"]!  {
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
                 
@@ -396,8 +395,8 @@ class Brush: Factory, WebTransmitter, Hashable{
         }
     }
     
-    func destroy() {
-        
+    override func destroy() {
+        super.destroy();
     }
     
     //END METHODS AVAILABLE TO USER

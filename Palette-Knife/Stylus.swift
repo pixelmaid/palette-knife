@@ -60,7 +60,7 @@ class Stylus: TimeSeries, WebTransmitter {
         transmitEvent.raise(string)
     }
     
-    override func get(targetProp:String)->Any?{
+     func get(targetProp:String)->Any?{
         switch targetProp{
         case "force":
             return force
@@ -136,8 +136,11 @@ class Stylus: TimeSeries, WebTransmitter {
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
             }
         }
+        print("stylus change\(x,y)")
+
         self.prevPosition.set(position);
-        self.position.set(x, y:y)
+        self.position.x.set(x)
+        self.position.y.set(y)
         self.distance += prevPosition.dist(position)
         self.prevForce = self.force
         self.force = force

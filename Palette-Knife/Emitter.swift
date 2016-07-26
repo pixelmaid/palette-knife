@@ -13,9 +13,10 @@ class Emitter: Model  {
     
     var events =  [String]()
     var keyStorage=[String:[(String,Condition!)]]()
+    var invalidated = false;
+    var constrained = false;
     
     func set(value:Emitter){
-        
     }
     
       func createKeyStorage(){
@@ -23,6 +24,17 @@ class Emitter: Model  {
             self.keyStorage[e] = [(String,Condition!)]();
         }
 
+    }
+    
+    dynamic func propertyInvalidated(notification: NSNotification){
+        self.invalidated = true;
+        let reference = notification.userInfo?["emitter"] as! Emitter
+        //print("property invalidated \(reference.get(),reference)")
+        for key in keyStorage["INVALIDATED"]!  {
+            NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
+            
+        }
+        
     }
     
     func assignKey(eventType:String,key:String,eventCondition:Condition!){
@@ -42,13 +54,13 @@ class Emitter: Model  {
         }
     }
     
-    func get(targetProp:String)->Any?{
-        switch targetProp{
-            
-        default:
-            return nil
-            
-        }
+    func get()->Float{
+        invalidated = false;
+        return 0;
+    }
+    
+    func destroy(){
+        NSNotificationCenter.defaultCenter().removeObserver(self);
         
     }
 }

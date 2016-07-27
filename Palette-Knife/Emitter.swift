@@ -9,7 +9,7 @@
 import Foundation
 import SwiftKVC
 
-class Emitter: Model  {
+class Emitter: Model, Equatable  {
     
     var events =  [String]()
     var keyStorage=[String:[(String,Condition!)]]()
@@ -64,4 +64,10 @@ class Emitter: Model  {
         
     }
 }
+
+// MARK: Equatable
+func ==(lhs:Emitter, rhs:Emitter) -> Bool {
+    return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
+}
+
 

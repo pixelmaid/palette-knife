@@ -25,15 +25,13 @@ class TimeSeries: Emitter{
     
     func getTimeElapsed()->Float{
         let currentTime = NSDate();
-        let time = currentTime.timeIntervalSinceDate(timer)
-        return Float(time);
+        let t = currentTime.timeIntervalSinceDate(timer)
+        return Float(t);
     }
     
     func startInterval(){
         intervalTimer  = NSTimer.scheduledTimerWithTimeInterval(0.005, target: self, selector: #selector(TimeSeries.timerIntervalCallback), userInfo: nil, repeats: true)
     }
-    
-    
     
     override func destroy(){
         super.destroy();
@@ -43,11 +41,11 @@ class TimeSeries: Emitter{
   @objc func timerIntervalCallback()
     {
         let currentTime = NSDate();
-        let time = Float(currentTime.timeIntervalSinceDate(timer))
+        let t = Float(currentTime.timeIntervalSinceDate(timer))
 
-        self.time.set(time)
+        self.time.set(t)
         print("current time =\(self.time.get())")
-        if(time>4){
+        if(t>4){
             print("listeners on time increment\(keyStorage["TIME_INCREMENT"])")
         for key in keyStorage["TIME_INCREMENT"]! {
                   NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])

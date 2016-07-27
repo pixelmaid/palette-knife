@@ -10,10 +10,10 @@ import Foundation
 
 
 class Expression: Emitter{
-    var operand1:FloatEmitter
-    var operand2:FloatEmitter
+    var operand1:Emitter
+    var operand2:Emitter
     
-    required init(operand1:FloatEmitter,operand2:FloatEmitter){
+    required init(operand1:Emitter,operand2:Emitter){
         self.operand1 = operand1;
         self.operand2 = operand2;
         super.init()

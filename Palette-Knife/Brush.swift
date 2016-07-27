@@ -26,8 +26,9 @@ class Brush: Factory, WebTransmitter, Hashable{
     var fillColor = Color(r:0,g:0,b:0);
     var weight = FloatEmitter(val: 5.0)
     var reflect = false;
-    var foo = 10;
     var position = PointEmitter(x:0,y:0)
+    var x:FloatEmitter
+    var y:FloatEmitter
     var prevPosition = PointEmitter(x:0,y:0)
     var penDown = false;
     var scaling = PointEmitter(x:1,y:1)
@@ -39,20 +40,33 @@ class Brush: Factory, WebTransmitter, Hashable{
     var currentCanvas:Canvas?
     var geometryModified = Event<(Geometry,String,String)>()
     var transmitEvent = Event<(String)>()
-    
     let removeMappingEvent = Event<(Brush,String,Emitter)>()
+    let positionKey = NSUUID().UUIDString;
     
     var id = NSUUID().UUIDString;
     
-    required init(){
+    required init(behaviorDef:BehaviorDefinition?){
         self.currentState = "default"
+        self.x = self.position.x;
+        self.y = self.position.y;
         super.init()
         self.events =  ["SPAWN", "STATE_COMPLETE"]
         self.createKeyStorage();
-        self.createState("default");
-       
         self.createState(currentState);
+        
+        let selector = Selector("positionChange"+":");
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:positionKey, object: self.position)
+        self.position.assignKey("CHANGE",key: positionKey,eventCondition: nil)
+        if(behaviorDef != nil){
+            behaviorDef?.createBehavior(self)
+        }
     }
+    
+    required init() {
+        fatalError("init() has not been implemented")
+    }
+    
     
     //MARK: - Hashable
     var hashValue : Int {
@@ -91,9 +105,18 @@ class Brush: Factory, WebTransmitter, Hashable{
          }
     }
     
-    //NS Notification handlers
-    // communication between emitter and brush
-    //setHandler: recieves  expression in the form of "propertyA:propertyB" which is used to determine mapping for set action
+    
+    dynamic func positionChange(notification: NSNotification){
+        print("position change\(position.x.get(),position.y.get())")
+        //  print("stylus position \(stylus.position.x.get(),stylus.position.y.get()))")
+        
+        self.prevPosition.set(position.prevX,y: position.prevY);
+        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.position.clone(),weight: self.weight.get());
+        self.angle.set(self.position.sub(self.prevPosition).angle)
+        
+        
+    }
+
     dynamic func stateTransitionHandler(notification: NSNotification){
        
         let key = notification.userInfo?["key"] as! String
@@ -101,7 +124,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         if(mapping != nil){
             let stateTransition = mapping as! StateTransition
             self.currentState = stateTransition.toState;
-            print("transition to state\(currentState)")
+            print("transition to state\(currentState,self.states[currentState]!.methods)")
            //execute methods
             self.executeStateMethods()
             //check constraints
@@ -115,6 +138,8 @@ class Brush: Factory, WebTransmitter, Hashable{
         }
     }
     
+    
+
     func executeStateMethods(){
         let methods = self.states[currentState]!.methods
         for i in 0..<methods.count{
@@ -346,10 +371,13 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     //METHODS AVAILABLE TO USER
     
-    //
+    
+    
+  
+    
     func newStroke(){
         self.startInterval()
-
+ currentCanvas!.newStroke();
     }
     
     //creates number of clones specified by num and adds them as children

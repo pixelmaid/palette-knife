@@ -19,6 +19,10 @@ class LeafBrush:Brush{
         
     }
     
+    required init(behaviorDef: BehaviorDefinition?) {
+        fatalError("init(behaviorDef:) has not been implemented")
+    }
+    
     
 
 
@@ -32,6 +36,10 @@ class FlowerBrush:LeafBrush{
         super.init()
         self.name = "FlowerBrush"
         
+    }
+    
+    required init(behaviorDef: BehaviorDefinition?) {
+        fatalError("init(behaviorDef:) has not been implemented")
     }
    
     

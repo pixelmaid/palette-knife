@@ -18,6 +18,8 @@ class Stylus: TimeSeries, WebTransmitter {
     var speed = Float(0)
     var prevAngle: Float
     var position = PointEmitter(x:0,y:0);
+    var x:FloatEmitter
+    var y:FloatEmitter
     var prevTime = Float(0);
     var penDown = false;
     var distance = Float(0);
@@ -34,6 +36,8 @@ class Stylus: TimeSeries, WebTransmitter {
         self.prevForce = force
         self.angle = angle
         self.prevAngle = angle;
+        self.x = position.x;
+        self.y = position.y
         super.init()
         position.set(x, y:y)
         self.events =  ["STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE"]

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class FloatEmitter: Emitter, Equatable{
+class FloatEmitter: Emitter{
     var val:Float;
     var name = "foo"
     init(val:Float){

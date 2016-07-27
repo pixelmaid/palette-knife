@@ -11,7 +11,6 @@ import Foundation
 //Basic path drawing brush
 class PathBrush:Brush{
     
-    let positionKey = NSUUID().UUIDString;
 
     required init(){
         super.init()
@@ -23,11 +22,15 @@ class PathBrush:Brush{
 
     }
     
+    required init(behaviorDef: BehaviorDefinition?) {
+        fatalError("init(behaviorDef:) has not been implemented")
+    }
+    
     override func clone()->PathBrush{
         return super.clone() as! PathBrush;
     }
     
-    dynamic func positionChange(notification: NSNotification){
+    dynamic override func positionChange(notification: NSNotification){
     print("position change\(position.x.get(),position.y.get())")
       //  print("stylus position \(stylus.position.x.get(),stylus.position.y.get()))")
 

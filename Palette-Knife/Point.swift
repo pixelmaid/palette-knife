@@ -11,7 +11,7 @@ import UIKit
 
 import SwiftKVC
 
-class PointEmitter: Emitter, Equatable, Geometry{
+class PointEmitter: Emitter, Geometry{
   
     var x = FloatEmitter(val: 0);
     var y = FloatEmitter(val: 0);

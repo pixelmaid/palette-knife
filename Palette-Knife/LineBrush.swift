@@ -18,6 +18,10 @@ class LineBrush:Brush{
         
     }
     
+    required init(behaviorDef: BehaviorDefinition?) {
+        fatalError("init(behaviorDef:) has not been implemented")
+    }
+    
     override func clone()->LineBrush{
         return super.clone() as! LineBrush;
     }

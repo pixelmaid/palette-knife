@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 class Brush: Factory, WebTransmitter, Hashable{
     
     //hierarcical data
@@ -27,6 +26,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     var fillColor = Color(r:0,g:0,b:0);
     var weight = FloatEmitter(val: 5.0)
     var reflect = false;
+    var foo = 10;
     var position = PointEmitter(x:0,y:0)
     var prevPosition = PointEmitter(x:0,y:0)
     var penDown = false;

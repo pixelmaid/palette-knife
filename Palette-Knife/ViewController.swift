@@ -126,33 +126,46 @@ class ViewController: UIViewController {
         dripBrush["weight"] = dripBrush.weight;
         dripBrush["y"] = dripBrush.position.y;
         dripBrush["x"] = dripBrush.position.x;
-
+        dripBrush["foo"] = "foo"
+        var emitter = Emitter();
+        do {
+            try emitter.setValue("John", forKey: "name")
+           
+        } catch {
+            print(error)
+        }
+        
+        do{
+            let val = try emitter.valueForKey("name")
+            print("value = \(val)")
+        }
+        catch{
+            print(error)
+        }
+        print("drip brush weight \(dripBrush["weight"], dripBrush.weight )")
+        
         let weightExpression = AddExpression(operand1: FloatEmitter(val: 1),operand2: stylus.force)
         let timeExpression = AddExpression(operand1: dripBrush.time,operand2: dripBrush.position.y)
         let timeWeightExpression = AddExpression(operand1: dripBrush.time,operand2: dripBrush.weight)
 
-
-        behaviorMapper.createState(dripBrush,stateName:"drip")
-        behaviorMapper.addMethod(dripBrush,state:"drip",methodName:"newStroke");
+        let behaviorDef = BehaviorDefinition()
+        behaviorDef.addState("drip")
+        behaviorDef.addState("stop")
         
-        behaviorMapper.createMapping(timeExpression, relative: dripBrush, relativeProperty: dripBrush.position.y, targetState: "drip")
-          behaviorMapper.createMapping(timeWeightExpression, relative: dripBrush, relativeProperty: dripBrush.weight, targetState: "drip")
-
+        behaviorDef.addMethod("drip", targetMethod: "newStroke")
+        behaviorDef.addMethod("drip", targetMethod:"destroy")
         
-       // var timeCondition = new
-        behaviorMapper.createMapping(stylus.position.y, relative: dripBrush, relativeProperty: dripBrush.position.y, targetState: "default")
-        behaviorMapper.createMapping(stylus.position.x, relative: dripBrush, relativeProperty: dripBrush.position.x, targetState: "default")
-        behaviorMapper.createMapping(weightExpression, relative: dripBrush, relativeProperty: dripBrush.weight, targetState: "default")
+        behaviorDef.addTransition(stylus, event: "STYLUS_UP", fromState: "default", toState: "drip")
+        behaviorDef.addTransition(nil, event: "TIME_INCREMENT", fromState: "drip", toState: "stop")
 
-     
-        behaviorMapper.createState(dripBrush,stateName:"stop")
-        behaviorMapper.addMethod(dripBrush,state:"stop",methodName:"destroy");
+        //behaviorDef.addMapping(timeExpression, relativePropertyName: "y",targetState: "drip");
+        behaviorDef.addMapping(timeWeightExpression, relativePropertyName: "weight",targetState: "drip");
+       // behaviorDef.addMapping(stylus.position.y, relativePropertyName: "y",targetState: "default");
+        //behaviorDef.addMapping(stylus.position.x, relativePropertyName: "x",targetState: "default");
+        behaviorDef.addMapping(weightExpression, relativePropertyName: "weight",targetState: "default");
 
 
-        behaviorMapper.createStateTransition(stylus, relative: dripBrush, eventName: "STYLUS_UP", fromState:"default",toState: "drip", condition: nil)
-        behaviorMapper.createStateTransition(dripBrush, relative: dripBrush, eventName: "TIME_INCREMENT", fromState:"drip",toState: "stop", condition: nil)
-         behaviorMapper.createStateTransition(dripBrush, relative: dripBrush, eventName: "STATE_COMPLETE", fromState:"stop",toState: "default", condition: nil)
-
+        behaviorDef.createBehavior(dripBrush)
     }
     
     func generateBrush(type:String)->Brush{

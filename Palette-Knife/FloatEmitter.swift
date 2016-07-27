@@ -10,6 +10,7 @@ import Foundation
 
 class FloatEmitter: Emitter, Equatable{
     var val:Float;
+    var name = "foo"
     init(val:Float){
         self.val = val;
         super.init();
@@ -33,7 +34,7 @@ class FloatEmitter: Emitter, Equatable{
             self.val = val
             self.invalidated = true;
 
-       // print("float key storage change,\(keyStorage["CHANGE"]!.count)")
+       print("float key storage change,\(self.name, keyStorage["INVALIDATED"]!.count,keyStorage["CHANGE"]!.count)")
         for key in keyStorage["INVALIDATED"]!  {
             NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
             

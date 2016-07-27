@@ -20,6 +20,7 @@ class Expression: Emitter{
         self.events = ["CHANGE"]
         self.createKeyStorage()
         self.createMapping(operand1);
+
     }
     
     func createMapping(reference:Emitter){
@@ -32,7 +33,8 @@ class Expression: Emitter{
     
     
     
-    func setHandler(){
+    dynamic func setHandler(notification: NSNotification){
+        print("set handler called for expression")
         for key in keyStorage["CHANGE"]!  {
             NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
             
@@ -51,6 +53,7 @@ class Expression: Emitter{
 class AddExpression:Expression{
     
     override func get()->Float{
+        print("adding:\(operand1.get() , operand2.get())")
         return operand1.get() + operand2.get();
     }
     

@@ -35,7 +35,10 @@ class PointEmitter: Emitter, Equatable, Geometry{
         self.x.assignKey("INVALIDATED",key:xKey,eventCondition: nil);
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:yKey, object: self.y)
-        self.x.assignKey("INVALIDATED",key:yKey,eventCondition: nil);
+        self.y.assignKey("INVALIDATED",key:yKey,eventCondition: nil);
+        
+        self.x.name = "x"
+        self.y.name = "y"
 
     }
     
@@ -51,7 +54,7 @@ class PointEmitter: Emitter, Equatable, Geometry{
     
     
     override dynamic func propertyInvalidated(notification: NSNotification) {
-        super.propertyInvalidated(notification)
+       /* super.propertyInvalidated(notification)
         let reference = notification.userInfo?["emitter"] as! FloatEmitter
         print("invalidate,\(x.constrained,y.constrained)")
         if(!x.constrained && !y.constrained){
@@ -70,7 +73,8 @@ class PointEmitter: Emitter, Equatable, Geometry{
                 self.set(self.x.get(),y:self.y.get());
 
             }
-        }
+        }*/
+        self.set(self.x.get(),y:self.y.get());
     }
     
      func get()->(Float,Float){

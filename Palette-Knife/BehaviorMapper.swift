@@ -28,12 +28,12 @@ class BehaviorMapper{
         data.2.removeKey(data.1)
     }
     
-    func createMapping(reference:Emitter, relative:Brush, relativeProperty:Emitter){
+    func createMapping(reference:Emitter, relative:Brush, relativeProperty:Emitter,targetState:String){
         let key = NSUUID().UUIDString;
         reference.assignKey("CHANGE",key: key,eventCondition: nil)
         let selector = Selector("setHandler"+":");
         NSNotificationCenter.defaultCenter().addObserver(relative, selector:selector, name:key, object: reference)
-        relative.addConstraint(key, reference: reference, relative: relativeProperty)
+        relative.addConstraint(key, reference: reference, relative: relativeProperty, targetState: targetState)
         relative.removeMappingEvent.addHandler(self, handler: BehaviorMapper.removeMapping)
     
     }

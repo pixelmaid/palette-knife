@@ -124,20 +124,35 @@ class ViewController: UIViewController {
         dripBrush["penDown"] = dripBrush.penDown
         dripBrush["position"] = dripBrush.position
         dripBrush["weight"] = dripBrush.weight;
+        dripBrush["y"] = dripBrush.position.y;
+        dripBrush["x"] = dripBrush.position.x;
+
+        let weightExpression = AddExpression(operand1: FloatEmitter(val: 1),operand2: stylus.force)
+        let timeExpression = AddExpression(operand1: dripBrush.time,operand2: dripBrush.position.y)
+        let timeWeightExpression = AddExpression(operand1: dripBrush.time,operand2: dripBrush.weight)
+
+
+        behaviorMapper.createState(dripBrush,stateName:"drip")
+        behaviorMapper.addMethod(dripBrush,state:"drip",methodName:"newStroke");
+        
+        behaviorMapper.createMapping(timeExpression, relative: dripBrush, relativeProperty: dripBrush.position.y, targetState: "drip")
+          behaviorMapper.createMapping(timeWeightExpression, relative: dripBrush, relativeProperty: dripBrush.weight, targetState: "drip")
+
         
        // var timeCondition = new
-        behaviorMapper.createMapping(stylus.position.y, relative: dripBrush, relativeProperty: dripBrush.position.y)
-        behaviorMapper.createMapping(stylus.position.x, relative: dripBrush, relativeProperty: dripBrush.position.x)
+        behaviorMapper.createMapping(stylus.position.y, relative: dripBrush, relativeProperty: dripBrush.position.y, targetState: "default")
+        behaviorMapper.createMapping(stylus.position.x, relative: dripBrush, relativeProperty: dripBrush.position.x, targetState: "default")
+        behaviorMapper.createMapping(weightExpression, relative: dripBrush, relativeProperty: dripBrush.weight, targetState: "default")
 
-        behaviorMapper.createState(dripBrush,stateName:"create_stroke")
-        behaviorMapper.createState(dripBrush,stateName:"drip")
+     
         behaviorMapper.createState(dripBrush,stateName:"stop")
+        behaviorMapper.addMethod(dripBrush,state:"stop",methodName:"destroy");
 
-        behaviorMapper.createStateTransition(stylus, relative: dripBrush, eventName: "STYLUS_DOWN", fromState:"default",toState: "create_stroke", condition: nil)
-        behaviorMapper.createStateTransition(dripBrush, relative: dripBrush, eventName: "STATE_COMPLETE", fromState:"create_stroke",toState: "default", condition: nil)
+
+        behaviorMapper.createStateTransition(stylus, relative: dripBrush, eventName: "STYLUS_UP", fromState:"default",toState: "drip", condition: nil)
         behaviorMapper.createStateTransition(dripBrush, relative: dripBrush, eventName: "TIME_INCREMENT", fromState:"drip",toState: "stop", condition: nil)
+         behaviorMapper.createStateTransition(dripBrush, relative: dripBrush, eventName: "STATE_COMPLETE", fromState:"stop",toState: "default", condition: nil)
 
-        behaviorMapper.addMethod(dripBrush,state:"create_stroke",methodName:"newStroke");
     }
     
     func generateBrush(type:String)->Brush{

@@ -39,6 +39,7 @@ class PathBrush:Brush{
     }
     
     override func newStroke(){
+        super.newStroke();
         currentCanvas!.newStroke();
     }
     

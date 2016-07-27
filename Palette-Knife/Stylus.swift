@@ -12,7 +12,7 @@ import Foundation
 // manages stylus data, notifies behaviors of stylus events
 class Stylus: TimeSeries, WebTransmitter {
     var prevPosition: PointEmitter
-    var force = Float(0)
+    var force = FloatEmitter(val: 0)
     var prevForce: Float
     var angle: Float
     var speed = Float(0)
@@ -25,10 +25,12 @@ class Stylus: TimeSeries, WebTransmitter {
     var id = NSUUID().UUIDString;
     var name = "stylus"
     var transmitEvent = Event<(String)>()
+    var dataQueue = [(Float,Float)]()
+    var constraintTransmitComplete = true;
 
     init(x:Float,y:Float,angle:Float,force:Float){
         prevPosition = PointEmitter(x:x, y:y)
-        self.force = force
+        self.force.set(force);
         self.prevForce = force
         self.angle = angle
         self.prevAngle = angle;
@@ -101,6 +103,7 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
+        print("stylus down transitions\(self.keyStorage["STYLUS_DOWN"])")
         for key in self.keyStorage["STYLUS_DOWN"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
@@ -137,13 +140,11 @@ class Stylus: TimeSeries, WebTransmitter {
             }
         }
         print("stylus change\(x,y)")
-
+        dataGenerated((x,y))
         self.prevPosition.set(position);
-        self.position.x.set(x)
-        self.position.y.set(y)
         self.distance += prevPosition.dist(position)
-        self.prevForce = self.force
-        self.force = force
+        self.prevForce = self.force.get()
+        self.force.set(force)
         self.prevAngle = self.angle;
         self.angle = angle
         let currentTime = self.getTimeElapsed();
@@ -151,7 +152,18 @@ class Stylus: TimeSeries, WebTransmitter {
         self.prevTime = currentTime;
        
     }
-
+    
+    func dataGenerated(data:(Float,Float)){
+        if(constraintTransmitComplete){
+            //constraintTransmitComplete = false;
+            self.position.set(data.0,y:data.1)
+            
+        }
+        else{
+            dataQueue.append(data)
+        }
+    }
+    
     
     
 }

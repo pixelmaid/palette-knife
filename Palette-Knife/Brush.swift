@@ -52,7 +52,6 @@ class Brush: Factory, WebTransmitter, Hashable{
         self.createState("default");
        
         self.createState(currentState);
-        self.startInterval()
     }
     
     //MARK: - Hashable
@@ -87,8 +86,8 @@ class Brush: Factory, WebTransmitter, Hashable{
         let mapping = states[currentState]?.getMapping(key)
          if(mapping != nil){
          let constraint = mapping as! Constraint
-
-         constraint.relativeProperty.set(reference as! FloatEmitter);
+            print("setting relative \(constraint.relativeProperty.get()) to reference \(reference.get())")
+         constraint.relativeProperty.set(reference);
          }
     }
     
@@ -102,7 +101,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         if(mapping != nil){
             let stateTransition = mapping as! StateTransition
             self.currentState = stateTransition.toState;
-            
+            print("transition to state\(currentState)")
            //execute methods
             self.executeStateMethods()
             //check constraints
@@ -124,6 +123,9 @@ class Brush: Factory, WebTransmitter, Hashable{
                 case "newStroke":
                     self.newStroke();
                     break;
+            case "destroy":
+                self.destroy();
+                break;
             default:
                 break;
             }
@@ -207,8 +209,10 @@ class Brush: Factory, WebTransmitter, Hashable{
         self.currentCanvas = canvas;
     }
     
-    func addConstraint(key:String, reference:Emitter, relative:Emitter){
-        states[currentState]!.addConstraintMapping(key,reference: reference, relativeProperty: relative)
+    func addConstraint(key:String, reference:Emitter, relative:Emitter, targetState:String){
+        relative.set(reference);
+
+        states[targetState]!.addConstraintMapping(key,reference: reference, relativeProperty: relative)
     }
     
     func addStateTransition(key:String, reference:Emitter, fromState: String, toState:String){
@@ -344,7 +348,8 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     //
     func newStroke(){
-        
+        self.startInterval()
+
     }
     
     //creates number of clones specified by num and adds them as children

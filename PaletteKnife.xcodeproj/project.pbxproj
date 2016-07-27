@@ -40,6 +40,7 @@
 		5FFF818C1D4267F700C1349B /* Condition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFF818B1D4267F700C1349B /* Condition.swift */; };
 		5FFF818E1D42EC8700C1349B /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFF818D1D42EC8600C1349B /* Expression.swift */; };
 		5FFF81901D42EEB200C1349B /* FloatEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFF818F1D42EEB200C1349B /* FloatEmitter.swift */; };
+		5FFF81921D49219700C1349B /* BehaviorDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFF81911D49219700C1349B /* BehaviorDefinition.swift */; };
 		5FFFA96F1CF4B787001D7C37 /* Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFFA96E1CF4B787001D7C37 /* Factory.swift */; };
 		C3F01D59E47F65EDF60C99AA /* Pods_PaletteKnife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C025956B67C44E5D9B3D8E3 /* Pods_PaletteKnife.framework */; };
 		DB63A5DAF0353A3170814552 /* Pods_PaletteKnifeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF0D512CD35C8D5F04C1F76B /* Pods_PaletteKnifeUITests.framework */; };
@@ -106,6 +107,7 @@
 		5FFF818B1D4267F700C1349B /* Condition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Condition.swift; path = ../Condition.swift; sourceTree = "<group>"; };
 		5FFF818D1D42EC8600C1349B /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
 		5FFF818F1D42EEB200C1349B /* FloatEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatEmitter.swift; sourceTree = "<group>"; };
+		5FFF81911D49219700C1349B /* BehaviorDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BehaviorDefinition.swift; path = ../BehaviorDefinition.swift; sourceTree = "<group>"; };
 		5FFFA96E1CF4B787001D7C37 /* Factory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Factory.swift; sourceTree = "<group>"; };
 		7CCD589D0593142C66540CEB /* Pods-PaletteKnifeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		B6B77515AB3FB205C8F75A30 /* Pods-PaletteKnifeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -281,6 +283,7 @@
 		5FFF81881D402BF000C1349B /* behavior */ = {
 			isa = PBXGroup;
 			children = (
+				5FFF81911D49219700C1349B /* BehaviorDefinition.swift */,
 				5FFF818B1D4267F700C1349B /* Condition.swift */,
 				5FFF81891D403C4D00C1349B /* State.swift */,
 				5F8FEFCB1CF5F51900D2CB0C /* BehaviorMapper.swift */,
@@ -583,6 +586,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FFF81921D49219700C1349B /* BehaviorDefinition.swift in Sources */,
 				5FA4C75A1CDBA1FA004A728C /* Stroke.swift in Sources */,
 				5FFDAB0D1D234B6100632A26 /* TimeSeries.swift in Sources */,
 				5F48563D1CFF3CB60049923C /* LineBrush.swift in Sources */,

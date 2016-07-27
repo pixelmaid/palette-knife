@@ -38,6 +38,7 @@ class Emitter: Model, Equatable  {
     }
     
     func assignKey(eventType:String,key:String,eventCondition:Condition!){
+        print("assigning key for event type: \(eventType) type:\(self)")
         if(eventCondition != nil){
             keyStorage[eventType]?.append((key,eventCondition))
         }

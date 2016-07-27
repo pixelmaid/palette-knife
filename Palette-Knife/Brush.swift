@@ -62,6 +62,8 @@ class Brush: Factory, WebTransmitter, Hashable{
         if(behaviorDef != nil){
             behaviorDef?.createBehavior(self)
         }
+        //TODO: no idea why this is needed- is hack for having state transitions working correctly
+        //self.addStateTransition(NSUUID().UUIDString, reference: self, fromState: "default", toState: "default")
     }
     
     required init() {
@@ -120,10 +122,10 @@ class Brush: Factory, WebTransmitter, Hashable{
     }
 
     dynamic func stateTransitionHandler(notification: NSNotification){
-       
+
         let key = notification.userInfo?["key"] as! String
         let mapping = states[currentState]?.getMapping(key)
-        print("transition to state called\(key,mapping)")
+        //print("transition to state called \(key,mapping,currentState)")
 
         if(mapping != nil){
             let stateTransition = mapping as! StateTransition
@@ -134,6 +136,7 @@ class Brush: Factory, WebTransmitter, Hashable{
             //check constraints
             
             //trigger state complete after functions are executed
+            print("listeners for state complete transition: \(self.keyStorage["STATE_COMPLETE"]!.count)")
             for key in self.keyStorage["STATE_COMPLETE"]!  {
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
                 
@@ -248,8 +251,10 @@ class Brush: Factory, WebTransmitter, Hashable{
     }
     
     func addStateTransition(key:String, reference:Emitter, fromState: String, toState:String){
-        print("adding state transition from \(reference) from \(fromState) to \(toState)")
+        print("adding state transition \(key) from \(reference) from \(fromState) to \(toState)")
+        //if(reference != self){
         states[fromState]!.addStateTransitionMapping(key,reference: reference, toState:toState)
+        //}
     }
     
     func addMethod(key:String,state:String, methodName:String, arguments:[Any]?){
@@ -384,6 +389,7 @@ class Brush: Factory, WebTransmitter, Hashable{
   
     
     func newStroke(){
+        print("creating new stroke")
         self.startInterval()
  currentCanvas!.newStroke();
     }

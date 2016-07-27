@@ -45,9 +45,9 @@ class TimeSeries: Emitter{
         let t = Float(currentTime.timeIntervalSinceDate(timer))
 
         self.timerTime.set(t)
-        print("current time =\(self.timerTime.get())")
+        //print("current time =\(self.timerTime.get())")
         if(t>4){
-            print("listeners on time increment\(keyStorage["TIME_INCREMENT"])")
+            //print("listeners on time increment\(keyStorage["TIME_INCREMENT"])")
         for key in keyStorage["TIME_INCREMENT"]! {
                   NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
             

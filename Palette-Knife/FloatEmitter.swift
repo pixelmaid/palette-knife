@@ -34,7 +34,7 @@ class FloatEmitter: Emitter{
             self.val = val
             self.invalidated = true;
 
-       print("float key storage change,\(self.name, keyStorage["INVALIDATED"]!.count,keyStorage["CHANGE"]!.count)")
+      // print("float key storage change,\(self.name, keyStorage["INVALIDATED"]!.count,keyStorage["CHANGE"]!.count)")
         for key in keyStorage["INVALIDATED"]!  {
             NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
             

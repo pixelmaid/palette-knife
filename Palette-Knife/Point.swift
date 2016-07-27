@@ -54,7 +54,7 @@ class PointEmitter: Emitter, Geometry{
     
     
     override dynamic func propertyInvalidated(notification: NSNotification) {
-       /* super.propertyInvalidated(notification)
+       super.propertyInvalidated(notification)
         let reference = notification.userInfo?["emitter"] as! FloatEmitter
         print("invalidate,\(x.constrained,y.constrained)")
         if(!x.constrained && !y.constrained){
@@ -73,8 +73,8 @@ class PointEmitter: Emitter, Geometry{
                 self.set(self.x.get(),y:self.y.get());
 
             }
-        }*/
-        self.set(self.x.get(),y:self.y.get());
+        }
+        //self.set(self.x.get(),y:self.y.get());
     }
     
      func get()->(Float,Float){

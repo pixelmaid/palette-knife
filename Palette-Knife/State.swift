@@ -40,7 +40,7 @@ struct State {
     }
     
     mutating func addMethod(key:String, methodName:String, arguments:[Any]?){
-        methods.append(methodName,arguments);
+        methods.append((methodName,arguments));
     }
     
     

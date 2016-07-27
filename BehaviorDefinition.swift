@@ -96,14 +96,14 @@ class BehaviorDefinition {
         }
         
         for transition in transitions{
-            var relative:Emitter
+            var reference:Emitter
             if(transition.0 == nil){
-                relative = targetBrush
+                reference = targetBrush
             }
             else{
-                relative = transition.0!;
+                reference = transition.0!;
             }
-            behaviorMapper.createStateTransition(relative, relative: targetBrush, eventName: transition.1, fromState:transition.2,toState:transition.3, condition: nil)
+            behaviorMapper.createStateTransition(reference, relative: targetBrush, eventName: transition.1, fromState:transition.2,toState:transition.3, condition: nil)
 
         }
         //referenceProperty!,referenceName!,relativePropertyName,targetState

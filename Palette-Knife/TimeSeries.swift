@@ -12,13 +12,14 @@ class TimeSeries: Emitter{
     
     var timer:NSDate
     var intervalTimer = NSTimer()
-    var time = FloatEmitter(val:0);
+    //TODO: this is duplication to facilitate KVC- should be removed/fixed
+    var timerTime = FloatEmitter(val:0);
     override init(){
         timer = NSDate()
         super.init()
         self.events =  ["TIME_INCREMENT"]
         self.createKeyStorage();
-        time.name = "time";
+        timerTime.name = "time";
 
      
     }
@@ -43,8 +44,8 @@ class TimeSeries: Emitter{
         let currentTime = NSDate();
         let t = Float(currentTime.timeIntervalSinceDate(timer))
 
-        self.time.set(t)
-        print("current time =\(self.time.get())")
+        self.timerTime.set(t)
+        print("current time =\(self.timerTime.get())")
         if(t>4){
             print("listeners on time increment\(keyStorage["TIME_INCREMENT"])")
         for key in keyStorage["TIME_INCREMENT"]! {

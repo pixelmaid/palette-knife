@@ -29,7 +29,7 @@ class Stylus: TimeSeries, WebTransmitter {
     var transmitEvent = Event<(String)>()
     var dataQueue = [(Float,Float)]()
     var constraintTransmitComplete = true;
-
+    var time = FloatEmitter(val:0)
     init(x:Float,y:Float,angle:Float,force:Float){
         prevPosition = PointEmitter(x:x, y:y)
         self.force.set(force);
@@ -39,6 +39,8 @@ class Stylus: TimeSeries, WebTransmitter {
         self.x = position.x;
         self.y = position.y
         super.init()
+        self.time = self.timerTime
+
         position.set(x, y:y)
         self.events =  ["STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE"]
         self.createKeyStorage();
@@ -91,11 +93,16 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func onStylusUp(){
+        print("stylus up transitions \(self.keyStorage["STYLUS_UP"]!.count)")
+
         for key in keyStorage["STYLUS_UP"]!  {
+            print("key",key)
             if(key.1 != nil){
                 let eventCondition = key.1;
             }
             else{
+                print("triggering notification")
+
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
             }
         }
@@ -107,13 +114,15 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
-        print("stylus down transitions\(self.keyStorage["STYLUS_DOWN"])")
+        print("stylus down transitions \(self.keyStorage["STYLUS_DOWN"]!.count)")
         for key in self.keyStorage["STYLUS_DOWN"]!  {
+            print("key",key)
             if(key.1 != nil){
                 let eventCondition = key.1;
                 eventCondition.validate(self)
             }
             else{
+                print("triggering notification")
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
             }
             
@@ -122,7 +131,7 @@ class Stylus: TimeSeries, WebTransmitter {
         self.penDown = true
         self.prevTime = self.getTimeElapsed();
         self.speed = 0;
-                self.transmitData();
+        self.transmitData();
 
     }
     

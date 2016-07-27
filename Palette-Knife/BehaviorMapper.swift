@@ -45,6 +45,8 @@ class BehaviorMapper{
     func createStateTransition(reference:Emitter,relative:Brush, eventName:String, fromState:String, toState:String, condition:Condition!){
         
         let key = NSUUID().UUIDString;
+        print("adding state transition for \(reference, eventName, key)")
+
         reference.assignKey(eventName,key:key,eventCondition: condition)
         let selector = Selector("stateTransitionHandler"+":");
         NSNotificationCenter.defaultCenter().addObserver(relative, selector:selector, name:key, object: reference)
@@ -52,9 +54,9 @@ class BehaviorMapper{
         relative.removeMappingEvent.addHandler(self, handler: BehaviorMapper.removeMapping)
     }
     
-    func addMethod(relative:Brush,state:String,methodName:String){
+    func addMethod(relative:Brush,state:String,methodName:String, arguments:[Any]?){
         let key = NSUUID().UUIDString;
-        relative.addMethod(key,state:state,methodName:methodName)
+        relative.addMethod(key,state:state,methodName:methodName, arguments:arguments)
     }
 }
 

@@ -42,7 +42,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     var transmitEvent = Event<(String)>()
     let removeMappingEvent = Event<(Brush,String,Emitter)>()
     let positionKey = NSUUID().UUIDString;
-    
+    var time = FloatEmitter(val:0)
     var id = NSUUID().UUIDString;
     
     required init(behaviorDef:BehaviorDefinition?){
@@ -50,6 +50,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         self.x = self.position.x;
         self.y = self.position.y;
         super.init()
+        self.time = self.timerTime
         self.events =  ["SPAWN", "STATE_COMPLETE"]
         self.createKeyStorage();
         self.createState(currentState);
@@ -111,6 +112,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         //  print("stylus position \(stylus.position.x.get(),stylus.position.y.get()))")
         
         self.prevPosition.set(position.prevX,y: position.prevY);
+        print("canvas, drawing \( self.currentCanvas)")
         self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.position.clone(),weight: self.weight.get());
         self.angle.set(self.position.sub(self.prevPosition).angle)
         
@@ -121,6 +123,8 @@ class Brush: Factory, WebTransmitter, Hashable{
        
         let key = notification.userInfo?["key"] as! String
         let mapping = states[currentState]?.getMapping(key)
+        print("transition to state called\(key,mapping)")
+
         if(mapping != nil){
             let stateTransition = mapping as! StateTransition
             self.currentState = stateTransition.toState;
@@ -144,12 +148,15 @@ class Brush: Factory, WebTransmitter, Hashable{
         let methods = self.states[currentState]!.methods
         for i in 0..<methods.count{
             let methodName = methods[i];
-            switch (methodName){
+            switch (methodName.0){
                 case "newStroke":
                     self.newStroke();
                     break;
             case "destroy":
                 self.destroy();
+                break;
+            case "spawn":
+                self.spawn((methodName.1![0] as! BehaviorDefinition),num:(methodName.1![1] as! Int));
                 break;
             default:
                 break;
@@ -241,11 +248,12 @@ class Brush: Factory, WebTransmitter, Hashable{
     }
     
     func addStateTransition(key:String, reference:Emitter, fromState: String, toState:String){
+        print("adding state transition from \(reference) from \(fromState) to \(toState)")
         states[fromState]!.addStateTransitionMapping(key,reference: reference, toState:toState)
     }
     
-    func addMethod(key:String,state:String, methodName:String){
-        states[state]!.addMethod(key,methodName:methodName)
+    func addMethod(key:String,state:String, methodName:String, arguments:[Any]?){
+        states[state]!.addMethod(key,methodName:methodName,arguments:arguments)
     }
     
     
@@ -381,10 +389,10 @@ class Brush: Factory, WebTransmitter, Hashable{
     }
     
     //creates number of clones specified by num and adds them as children
-    func spawn(type:String,num:Int) {
+    func spawn(behavior:BehaviorDefinition,num:Int) {
         lastSpawned.removeAll()
         for _ in 0...num-1{
-            let child = Brush.create(type) as! Brush;
+            let child = Brush(behaviorDef: behavior)
             self.children.append(child);
             child.parent = self;
             let handler = self.children.last!.geometryModified.addHandler(self,handler: Brush.brushDrawHandler)

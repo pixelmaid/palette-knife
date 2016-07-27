@@ -13,7 +13,7 @@ class BehaviorDefinition {
     
     var states = [String]()
     var expressions = [String:(Emitter?,String?,Emitter?,String?)]()
-    var methods = [(String,String)]()
+    var methods = [(String,String,[Any]?)]()
     var transitions = [(Emitter?,String,String,String)]()
     var behaviorMapper = BehaviorMapper()
     var mappings = [(Emitter?,String?,String,String)]()
@@ -23,8 +23,8 @@ class BehaviorDefinition {
         states.append(stateName)
     }
 
-    func addMethod(targetState:String, targetMethod:String){
-        methods.append((targetState,targetMethod))
+    func addMethod(targetState:String, targetMethod:String, arguments:[Any]?){
+        methods.append((targetState,targetMethod,arguments))
     }
     
     func addTransition(eventEmitter:Emitter?,event:String, fromState:String,toState:String){
@@ -92,7 +92,7 @@ class BehaviorDefinition {
 
         }
          for method in methods{
-            behaviorMapper.addMethod(targetBrush,state:method.0,methodName:method.1);
+            behaviorMapper.addMethod(targetBrush,state:method.0,methodName:method.1,arguments:method.2);
         }
         
         for transition in transitions{

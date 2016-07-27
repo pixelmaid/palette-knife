@@ -10,7 +10,7 @@ import Foundation
 
 struct State {
     var mappings = [String:Mapping]()
-    var methods = [String]()
+    var methods = [(String,[Any]?)]()
     init(){
     
     }
@@ -39,8 +39,8 @@ struct State {
         
     }
     
-    mutating func addMethod(key:String, methodName:String){
-        methods.append(methodName);
+    mutating func addMethod(key:String, methodName:String, arguments:[Any]?){
+        methods.append(methodName,arguments);
     }
     
     

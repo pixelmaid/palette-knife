@@ -194,11 +194,19 @@ let event = events[i]
         return PointEmitter(x: x,y: y)
     }
     
-    func rotate(angle:Float)->PointEmitter{
-        let l = self.length();
-        return PointEmitter(x:0,y:0).pointAtDistance(l,a:angle);
+    func rotate(angle:Float, origin:PointEmitter)->PointEmitter{
+        var a = angle * Float(M_PI)/180;
+        let centerX = origin.x.get();
+        let centerY = origin.y.get();
+        let x = self.x.get();
+        let y = self.y.get();
+        let newX = centerX + (x-centerX)*cos(a) - (y-centerY)*sin(a);
+        
+        let newY = centerY + (x-centerX)*sin(a) + (y-centerY)*cos(a);
+        return PointEmitter(x:newX,y:newY)
     }
-     
+    
+    
      
      func getDirectedAngle(point:PointEmitter)->Float {
      return atan2(self.cross(point), self.dot(point)) * 180 / Float(M_PI);

@@ -27,6 +27,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     var weight = FloatEmitter(val: 5.0)
     var reflect = false;
     var position = PointEmitter(x:0,y:0)
+    var origin: PointEmitter?
     var x:FloatEmitter
     var y:FloatEmitter
     var prevPosition = PointEmitter(x:0,y:0)
@@ -121,12 +122,17 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     
     dynamic func positionChange(notification: NSNotification){
-        //print("position change called\(position.x.get(),position.y.get())")
-        
+        print("position change called\(position.x.get(),position.y.get())")
+        if(origin == nil){
+            origin = self.position.clone();
+            print("generating new origin for \(self.name,origin!.x.get(),origin!.y.get())")
+
+        }
         self.prevPosition.set(position.prevX,y: position.prevY);
-        print("weight=\(self.weight.get())")
-        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:self.position.clone(),weight: self.weight.get());
-        self.angle.set(self.position.sub(self.prevPosition).angle)
+        let pos = self.position.clone()//self.position.rotate(self.angle.get())
+        let rpos = self.position.rotate(self.angle.get(),origin:self.origin!)
+        print("angle = \(self.angle.get()) rpos =\(rpos.x.get(),rpos.y.get()) pos= \(pos.x.get(),pos.y.get())")
+        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:rpos,weight: self.weight.get());
         
         
     }
@@ -161,13 +167,16 @@ class Brush: Factory, WebTransmitter, Hashable{
         constraint_mappings =  states[currentState]!.constraint_mappings
         for (_, value) in constraint_mappings{
             value.relativeProperty.constrained = true;
+
+            self.setConstraint(value)
+
         }
         //execute methods
         self.executeStateMethods()
         //check constraints
         
         //trigger state complete after functions are executed
-        //print("listeners for state complete transition: \(self.name, self.keyStorage["STATE_COMPLETE"]!.count)")
+        print("listeners for state complete transition: \(state, self.name, self.keyStorage["STATE_COMPLETE"]!.count)")
         for key in self.keyStorage["STATE_COMPLETE"]!  {
             NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STATE_COMPLETE"])
             
@@ -261,6 +270,13 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     func newStroke(){
         //print("creating new stroke")
+        if(origin != nil){
+        var oldOriginX = origin!.x.get();
+        var oldOriginY = origin!.y.get();
+        print("retiring origin for \(self.name, oldOriginX,oldOriginY)")
+        self.origin = nil
+
+        }
         currentCanvas!.currentDrawing!.retireCurrentStrokes(self.id)
         currentCanvas!.currentDrawing!.newStroke(self.id);
     }
@@ -315,6 +331,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     }
     
     override func destroy() {
+        currentCanvas!.currentDrawing!.retireCurrentStrokes(self.id)
         super.destroy();
     }
     

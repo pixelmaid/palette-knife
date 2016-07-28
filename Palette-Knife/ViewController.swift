@@ -86,59 +86,8 @@ class ViewController: UIViewController {
     }
     
     func initTestBrushes(){
-   /* stylus["penDown"] = stylus.penDown
-    stylus["position"] = stylus.position
-    stylus["force"] = stylus.force*/
-
-    
-    /*var brush = generateBrush("PathBrush");
-    brush["penDown"] = brush.penDown
-    brush["position"] = brush.position
-        
-    
-    
-    let stylusMoveConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_MOVE", eventCondition: nil, expression:"position:position|force:weight") as BehaviorConfig
-    //let ec = stylusCondition(state: "MOVE_BY",value: Float(100))
-    /*let spawnConfig = (target:brush, action:"spawnHandler", emitter:stylus, eventType:"STYLUS_MOVE",  eventCondition: ec, expression:"LeafBrush:2") as BehaviorConfig
-    
-    let arcConfig = (target:brush, action:"setChildHandler", emitter:brush, eventType:"SPAWN",  eventCondition: nil, expression:"position:parent.position|scalingAll:stylus.force|angle:parent.n1,n2") as BehaviorConfig*/
-    
-    let stylusUpConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_UP",  eventCondition: nil, expression:"penDown:penDown") as BehaviorConfig
-    
-    /*let flowerConfig = (target:brush, action: "spawnHandler", emitter:stylus, eventType:"STYLUS_UP",  eventCondition: nil, expression:"FlowerBrush:2") as BehaviorConfig
-    
-    let flowerSpawnConfig = (target:brush, action:"setChildHandler", emitter:brush, eventType:"SPAWN",  eventCondition:spawnCondition(state: "IS_TYPE",value: "FlowerBrush"), expression:"position:parent.position") as BehaviorConfig*/
-    
-    let stylusDownConfig = (target:brush, action: "setHandler", emitter:stylus, eventType:"STYLUS_DOWN", eventCondition: nil, expression:"penDown:penDown") as BehaviorConfig
-    
-    behaviorMapper.createMapping(stylusMoveConfig)
-    behaviorMapper.createMapping(stylusUpConfig)
-    behaviorMapper.createMapping(stylusDownConfig)
-    //behaviorMapper.createMapping(spawnConfig)
-    ////behaviorMapper.createMapping(arcConfig)
-   // behaviorMapper.createMapping(flowerConfig)
-   // behaviorMapper.createMapping(flowerSpawnConfig)*/
-        
-        //var testBrush = Brush(behaviorDef:nil);
-             //  print("emitter prop \(testBrush["time"])")
-
-
-        
-       /* let testBehavior = BehaviorDefinition()
-        
-        testBehavior.addState("state2")
-        testBehavior.addState("foo1")
-
-        testBehavior.addState("foo2")
-
-        testBehavior.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "state2")
-        testBehavior.addTransition(stylus, event: "STYLUS_UP", fromState: "state2", toState: "default")
-
-
-        
-        let testBrush = Brush(behaviorDef:testBehavior)*/
-        
-       let dripBehavior = BehaviorDefinition()
+        //DRIP BRUSH
+       /*let dripBehavior = BehaviorDefinition()
         
         dripBehavior.addExpression("timeExpression", type:"add", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "y")
      dripBehavior.addExpression("timeWeightExpression",type:"logigrowth", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "weight")
@@ -184,33 +133,52 @@ class ViewController: UIViewController {
         
         dripGeneratorBehavior.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
         dripGeneratorBehavior.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
-        dripGeneratorBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
+        //dripGeneratorBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
 
 
         var dripGenerator = Brush(behaviorDef: dripGeneratorBehavior, canvas:self.currentCanvas!)
         dripGenerator.name = "dripGenerator"
-         dripGenerator.setCanvasTarget(self.currentCanvas!)
+         dripGenerator.setCanvasTarget(self.currentCanvas!)*/
+        
+        //RADIAL BRUSH
+        
+        let radialBehavior = BehaviorDefinition()
+        let rotationMap = RangeVariable(min: 0,max: 20,start: 0,stop: 360)
+        radialBehavior.addState("stop")
+        
+        radialBehavior.addMethod("default", targetMethod: "newStroke",arguments: nil)
+        radialBehavior.addMethod("stop", targetMethod: "destroy",arguments: nil)
+
+        radialBehavior.addTransition(stylus, event: "STYLUS_UP", fromState: "default", toState: "stop")
+
+        
+        radialBehavior.addMapping(rotationMap, referenceName:nil,relativePropertyName: "angle", targetState: "default")
+        radialBehavior.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
+        radialBehavior.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
+       
+        
+        let radialGenerator = BehaviorDefinition()
+        radialGenerator.addState("initStroke")
+        
+        radialGenerator.addMethod("initStroke", targetMethod: "newStroke",arguments: nil)
+        radialGenerator.addMethod("initStroke", targetMethod: "spawn", arguments:[radialBehavior,20])
+        
+        radialGenerator.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke")
+        radialGenerator.addTransition(nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default")
         
         
-    //var dripBrush = Brush(behaviorDef: dripBehavior)
-    //dripBrush.setCanvasTarget(self.currentCanvas!)
+        radialGenerator.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
+        radialGenerator.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
+        //dripGeneratorBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
         
- 
+        
+        var radialBrush = Brush(behaviorDef: radialGenerator, canvas:self.currentCanvas!)
+        radialBrush.name = "radialBrush"
+
 
         
     }
     
-    func generateBrush(type:String)->Brush{
-        let brush = Brush.create(type) as! Brush;
-        if(brushes[type] != nil){
-            print("overwriting existing brush on brush generated");
-        }
-        //brush.geometryModified.addHandler(self,handler: ViewController.brushDrawHandler)
-        brushes[type]=brush;
-        brush.setCanvasTarget(self.currentCanvas!)
-        return brush
-        
-    }
 
     
     func canvasDrawHandler(data:(Geometry,String,String)){

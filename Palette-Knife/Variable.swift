@@ -19,7 +19,8 @@ class RangeVariable:Variable{
     var index = 0;
     init(min:Int,max:Int,start:Float,stop:Float){
         let increment = (stop-start)/Float(max-min)
-        for i in min...max{
+        for i in min...max-1{
+            print(i)
             val.append(start+increment*Float(i))
         }
         super.init();
@@ -32,8 +33,10 @@ class RangeVariable:Variable{
         }
     }
     override func get() -> Float {
+        var old_index = index;
        let v = val[index]
         self.incrementIndex();
+        print("incrementing index to \(old_index,self.index, self.val.count, self.val)")
         return v;
     }
     

@@ -143,7 +143,7 @@ class ViewController: UIViewController {
         //RADIAL BRUSH
         
         let radialBehavior = BehaviorDefinition()
-        let rotationMap = RangeVariable(min: 0,max: 20,start: 0,stop: 360)
+        let rotationMap = RangeVariable(min: 0,max: 15, start: 0,stop: 360)
         radialBehavior.addState("stop")
         
         radialBehavior.addMethod("default", targetMethod: "newStroke",arguments: nil)
@@ -160,15 +160,15 @@ class ViewController: UIViewController {
         let radialGenerator = BehaviorDefinition()
         radialGenerator.addState("initStroke")
         
-        radialGenerator.addMethod("initStroke", targetMethod: "newStroke",arguments: nil)
-        radialGenerator.addMethod("initStroke", targetMethod: "spawn", arguments:[radialBehavior,20])
+       // radialGenerator.addMethod("initStroke", targetMethod: "newStroke",arguments: nil)
+        radialGenerator.addMethod("initStroke", targetMethod: "spawn", arguments:[radialBehavior,15])
         
         radialGenerator.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke")
         radialGenerator.addTransition(nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default")
         
         
-        radialGenerator.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
-        radialGenerator.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
+        //radialGenerator.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
+        //radialGenerator.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
         //dripGeneratorBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
         
         

@@ -67,12 +67,16 @@ class Brush: Factory, WebTransmitter, Hashable{
         //TODO: no idea why this is needed- is hack for having state transitions working correctly
         //self.addStateTransition(NSUUID().UUIDString, reference: self, fromState: "default", toState: "default")
         self.startInterval()
-        
-        self.transitionToState(currentState)
+        _  = NSTimer.scheduledTimerWithTimeInterval(0.0001, target: self, selector: #selector(Brush.defaultCallback), userInfo: nil, repeats: false)
     }
     
     required init() {
         fatalError("init() has not been implemented")
+    }
+    
+    @objc func defaultCallback(){
+        self.transitionToState(currentState)
+
     }
     
     
@@ -168,7 +172,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         for (_, value) in constraint_mappings{
             value.relativeProperty.constrained = true;
 
-            self.setConstraint(value)
+            //self.setConstraint(value)
 
         }
         //execute methods

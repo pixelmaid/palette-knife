@@ -13,8 +13,8 @@ import Foundation
 
 class Drawing: TimeSeries, WebTransmitter, Hashable{
    var id = NSUUID().UUIDString;
-    var currentStroke:Stroke?;
-    var geometry = [Geometry]();
+    var activeStrokes = [String:[Stroke]]();
+   // var geometry = [Geometry]();
     var transmitEvent = Event<(String)>()
 
        var geometryModified = Event<(Geometry,String,String)>()
@@ -31,35 +31,48 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         self.name = "drawing"
 
     }
-    func newStroke(){
-        self.currentStroke = Stroke();
-        self.geometry.append(self.currentStroke!)
+    
+    func retireCurrentStrokes(parentID:String){
+        if (self.activeStrokes[parentID] != nil){
+            self.activeStrokes[parentID]!.removeAll();
+        }
+    }
+    
+    func newStroke(parentID:String){
+        let stroke = Stroke();
+        if (self.activeStrokes[parentID] == nil){
+            self.activeStrokes[parentID] = [Stroke]()
+        }
+        self.activeStrokes[parentID]!.append(stroke);
+        //self.geometry.append(self.currentStroke!)
         var data = "\"drawing_id\":\""+self.id+"\","
-        data += "\"stroke_id\":\""+self.currentStroke!.id+"\","
+        data += "\"stroke_id\":\""+stroke.id+"\","
         data += "\"time\":\""+String(self.getTimeElapsed())+"\","
 
         data += "\"type\":\"new_stroke\""
         self.transmitEvent.raise((data))
     }
     
-    func addSegmentToStroke(point:PointEmitter, weight:Float){
-        if(self.currentStroke == nil){
-            print("tried to add segment to stroke, but no stroke exists")
+    func addSegmentToStroke(parentID:String, point:PointEmitter, weight:Float){
+         if (self.activeStrokes[parentID] == nil){
+            //print("tried to add segment to strokes, but no strokes exist")
            return
         }
-        
-        var seg = self.currentStroke!.addSegment(point)
+        for i in 0..<self.activeStrokes[parentID]!.count{
+        let currentStroke = self.activeStrokes[parentID]![i]
+        var seg = currentStroke.addSegment(point)
         seg.diameter = weight;
         var data = "\"drawing_id\":\""+self.id+"\","
-        data += "\"stroke_id\":\""+self.currentStroke!.id+"\","
+        data += "\"stroke_id\":\""+currentStroke.id+"\","
         data += "\"type\":\"stroke_data\","
         data += "\"strokeData\":{"
         data += "\"segments\":"+seg.toJSON()+",";
-        data += "\"lengths\":{\"length\":"+String(currentStroke!.getLength())+",\"time\":"
+        data += "\"lengths\":{\"length\":"+String(currentStroke.getLength())+",\"time\":"
         data += String(self .getTimeElapsed())
         data += "}}"
         self.transmitEvent.raise((data))
         self.geometryModified.raise((seg,"SEGMENT","DRAW"))
+        }
     }
     
 }

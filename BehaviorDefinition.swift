@@ -12,7 +12,7 @@ import Foundation
 class BehaviorDefinition {
     
     var states = [String]()
-    var expressions = [String:(Emitter?,String?,Emitter?,String?)]()
+    var expressions = [String:(String,Emitter?,String?,Emitter?,String?)]()
     var methods = [(String,String,[Any]?)]()
     var transitions = [(Emitter?,String,String,String)]()
     var behaviorMapper = BehaviorMapper()
@@ -35,8 +35,8 @@ class BehaviorDefinition {
         mappings.append((referenceProperty,referenceName,relativePropertyName,targetState))
     }
     
-    func addExpression(name:String, emitter1:Emitter?, operand1Name:String?,emitter2:Emitter?,operand2Name:String?){
-        expressions[name]=(emitter1, operand1Name, emitter2, operand2Name);
+    func addExpression(name:String, type:String, emitter1:Emitter?, operand1Name:String?,emitter2:Emitter?,operand2Name:String?){
+        expressions[name]=(type,emitter1, operand1Name, emitter2, operand2Name);
     }
     
 
@@ -52,37 +52,61 @@ class BehaviorDefinition {
             var operand1:Emitter
             var operand2: Emitter
             
-            if(expression_data.0 == nil){
+            if(expression_data.1 == nil){
                 emitter1 = targetBrush;
             }
             else{
-                emitter1 = expression_data.0!
+                emitter1 = expression_data.1!
             }
 
-            if (expression_data.2 == nil){
+            if (expression_data.3 == nil){
                 emitter2 = targetBrush
             }
             else{
-                emitter2 = expression_data.2!
+                emitter2 = expression_data.3!
             }
             
-            if(expression_data.1 == nil){
+            if(expression_data.2 == nil){
                 operand1 = emitter1
             }
             else{
-                print("expression data 1 = \(expression_data.1!, emitter1)")
-                operand1 = emitter1[expression_data.1!] as! Emitter
+                operand1 = emitter1[expression_data.2!] as! Emitter
             }
             
-            if(expression_data.3  == nil){
+            if(expression_data.4  == nil){
                 operand2 = emitter2
             }
             else{
-                operand2 = emitter2[expression_data.3!] as! Emitter
+                operand2 = emitter2[expression_data.4!] as! Emitter
             }
 
-            
-           var expression = AddExpression(operand1: operand1,operand2: operand2)
+            let expression:Expression;
+            switch(expression_data.0){
+                case "add":
+                   expression = AddExpression(operand1: operand1,operand2: operand2)
+
+                break;
+            case "log":
+                expression = LogExpression(operand1: operand1,operand2: operand2)
+                
+                break;
+            case "exp":
+                expression = ExpExpression(operand1: operand1,operand2: operand2)
+                
+                break;
+            case "logigrowth":
+                expression = LogiGrowthExpression(operand1: operand1,operand2: operand2)
+                
+                break;
+            case "sub":
+                expression = SubExpression(operand1: operand1,operand2: operand2)
+                
+                break;
+            default:
+                expression = AddExpression(operand1: operand1,operand2: operand2)
+
+                    break;
+            }
             self.storedExpressions[name] = expression;
 
         }

@@ -30,9 +30,11 @@ class Stylus: TimeSeries, WebTransmitter {
     var constraintTransmitComplete = true;
     var time = FloatEmitter(val:0)
     var moveDist = Float(0);
+    var moveLimit = Float(20);
+
     init(x:Float,y:Float,angle:Float,force:Float){
         prevPosition = PointEmitter(x:0, y:0)
-        self.force.set(force);
+        self.force.set(force*1.5);
         self.prevForce = force
         self.angle = angle
         self.prevAngle = angle;
@@ -97,15 +99,13 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func onStylusUp(){
-        print("stylus up transitions \(self.keyStorage["STYLUS_UP"]!.count)")
+        //print("stylus up transitions \(self.keyStorage["STYLUS_UP"]!.count)")
 
         for key in keyStorage["STYLUS_UP"]!  {
-            print("key",key)
             if(key.1 != nil){
                 let eventCondition = key.1;
             }
             else{
-                print("triggering notification")
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_UP"])
                 
             }
@@ -118,15 +118,13 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
-        print("stylus down transitions \(self.keyStorage["STYLUS_DOWN"]!.count)")
+        //print("stylus down transitions \(self.keyStorage["STYLUS_DOWN"]!.count)")
         for key in self.keyStorage["STYLUS_DOWN"]!  {
-            print("key",key)
             if(key.1 != nil){
                 let eventCondition = key.1;
                 eventCondition.validate(self)
             }
             else{
-                print("triggering notification")
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_DOWN"])
             }
             
@@ -148,17 +146,17 @@ class Stylus: TimeSeries, WebTransmitter {
                     
                 }
                 else{
-                    print("EVALUATION FOR CONDITION FAILED")
+                    //print("EVALUATION FOR CONDITION FAILED")
                 }
                 
             }
             else{
-                print("move limit: \(moveDist)")
+//print("move limit: \(moveDist)")
 
-                if(moveDist>100){
-                    print("move limit reached \(moveDist)")
+                if(moveDist>moveLimit){
+                    //print("move limit reached \(moveDist)")
                     moveDist = 0;
-
+                    moveLimit = Float(arc4random_uniform(10) + 60)
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE"])
                 }
             }
@@ -168,7 +166,7 @@ class Stylus: TimeSeries, WebTransmitter {
         self.distance += prevPosition.dist(position)
         moveDist += prevPosition.dist(position)
         self.prevForce = self.force.get()
-        self.force.set(force)
+        self.force.set(force*1.5)
         self.prevAngle = self.angle;
         self.angle = angle
         let currentTime = self.getTimeElapsed();

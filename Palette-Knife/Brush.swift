@@ -114,19 +114,18 @@ class Brush: Factory, WebTransmitter, Hashable{
     }
     
     func setConstraint(constraint:Constraint){
-        print("setting change called relative \(constraint.relativeProperty.get(), constraint.relativeProperty.name) to reference \(constraint.reference.get(),constraint.reference.name)")
+        //print("setting change called relative \(constraint.relativeProperty.get(), constraint.relativeProperty.name) to reference \(constraint.reference.get(),constraint.reference.name)")
         constraint.relativeProperty.set(constraint.reference);
 
     }
     
     
     dynamic func positionChange(notification: NSNotification){
-        print("position change called\(position.x.get(),position.y.get())")
-        //  print("stylus position \(stylus.position.x.get(),stylus.position.y.get()))")
+        //print("position change called\(position.x.get(),position.y.get())")
         
         self.prevPosition.set(position.prevX,y: position.prevY);
-        print("canvas, drawing \( self.currentCanvas, self.name)")
-        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.position.clone(),weight: self.weight.get());
+        print("weight=\(self.weight.get())")
+        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:self.position.clone(),weight: self.weight.get());
         self.angle.set(self.position.sub(self.prevPosition).angle)
         
         
@@ -139,7 +138,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         //print("transition to state called \(mapping != nil,currentState,self.name,notification.userInfo?["event"])")
         
         if(mapping != nil){
-            print("making transition \(self.name)")
+            //print("making transition \(self.name)")
             let stateTransition = mapping as! StateTransition
             self.transitionToState(stateTransition.toState)
             
@@ -147,20 +146,28 @@ class Brush: Factory, WebTransmitter, Hashable{
     }
     
     func transitionToState(state:String){
-        let constraint_mappings =  states[currentState]!.constraint_mappings
-        print("position change called constraint_mappings \(constraint_mappings.count,state,currentState)")
-        for (_, value) in constraint_mappings{
+        var constraint_mappings =  states[currentState]!.constraint_mappings
+        //print("position change called constraint_mappings \(constraint_mappings.count,state,currentState)")
+        for (key, value) in constraint_mappings{
            
 
             self.setConstraint(value)
+            //print("clearing constraints on old state \(self.currentState,value.relativeProperty.constrained)")
+            value.relativeProperty.constrained = false;
+
+            
         }
         self.currentState = state
+        constraint_mappings =  states[currentState]!.constraint_mappings
+        for (_, value) in constraint_mappings{
+            value.relativeProperty.constrained = true;
+        }
         //execute methods
         self.executeStateMethods()
         //check constraints
         
         //trigger state complete after functions are executed
-        print("listeners for state complete transition: \(self.name, self.keyStorage["STATE_COMPLETE"]!.count)")
+        //print("listeners for state complete transition: \(self.name, self.keyStorage["STATE_COMPLETE"]!.count)")
         for key in self.keyStorage["STATE_COMPLETE"]!  {
             NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STATE_COMPLETE"])
             
@@ -200,10 +207,10 @@ class Brush: Factory, WebTransmitter, Hashable{
     }
     
     func addStateTransition(key:String, reference:Emitter, fromState: String, toState:String){
-        print("adding state transition \(key) from \(reference) from \(fromState) to \(toState)")
-        //if(reference != self){
+        //print("adding state transition \(key) from \(reference) from \(fromState) to \(toState)")
+        
         states[fromState]!.addStateTransitionMapping(key,reference: reference, toState:toState)
-        //}
+        
     }
     
     func addMethod(key:String,state:String, methodName:String, arguments:[Any]?){
@@ -253,14 +260,15 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     
     func newStroke(){
-        print("creating new stroke")
-        currentCanvas!.newStroke();
+        //print("creating new stroke")
+        currentCanvas!.currentDrawing!.retireCurrentStrokes(self.id)
+        currentCanvas!.currentDrawing!.newStroke(self.id);
     }
     
     //creates number of clones specified by num and adds them as children
     func spawn(behavior:BehaviorDefinition,num:Int) {
         lastSpawned.removeAll()
-        print("SPAWN change called \(self.children.count)")
+        //print("SPAWN change called \(self.children.count)")
         for _ in 0...num-1{
             let child = Brush(behaviorDef: behavior, canvas:self.currentCanvas!)
             self.children.append(child);

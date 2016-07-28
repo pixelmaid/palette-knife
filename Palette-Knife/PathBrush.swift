@@ -31,21 +31,16 @@ class PathBrush:Brush{
     }
     
     dynamic override func positionChange(notification: NSNotification){
-    print("position change\(position.x.get(),position.y.get())")
       //  print("stylus position \(stylus.position.x.get(),stylus.position.y.get()))")
 
     self.prevPosition.set(position.prevX,y: position.prevY);
-    self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.position.clone(),weight: self.weight.get());
+        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:self.position.clone(),weight: self.weight.get());
     self.angle.set(self.position.sub(self.prevPosition).angle)
    
     
     }
     
-    override func newStroke(){
-        super.newStroke();
-        currentCanvas!.newStroke();
-    }
-    
+   
    
     
     

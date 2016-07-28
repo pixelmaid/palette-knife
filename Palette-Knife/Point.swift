@@ -55,26 +55,31 @@ class PointEmitter: Emitter, Geometry{
     
     override dynamic func propertyInvalidated(notification: NSNotification) {
        super.propertyInvalidated(notification)
-        let reference = notification.userInfo?["emitter"] as! FloatEmitter
-        print("invalidate,\(x.constrained,y.constrained)")
-       /* if(!x.constrained && !y.constrained){
+       let reference = notification.userInfo?["emitter"] as! FloatEmitter
+        //print("validated attempt,\(x.constrained,y.constrained, reference.name,reference == self.y )")
+        if(!x.constrained && !y.constrained){
             return;
         }
         else if(x.constrained && !y.constrained && reference == self.x){
+            //print("constraints validated no y");
+
             self.set(self.x.get(),y:self.y.get());
         }
         else if(!x.constrained && y.constrained && reference == self.y){
+            //print("constraints validated no x");
+
             self.set(self.x.get(),y:self.y.get());
         }
         else{
-             print("both constrained x:\(x.invalidated) y:\(y.invalidated)");
+            // print("both constrained x:\(x.invalidated) y:\(y.invalidated)");
             if(self.x.invalidated && self.y.invalidated){
-               
+               // print("constraints validated x:\(x.invalidated) y:\(y.invalidated)");
+
                 self.set(self.x.get(),y:self.y.get());
 
             }
-        }*/
-        self.set(self.x.get(),y:self.y.get());
+        }
+        //self.set(self.x.get(),y:self.y.get());
     }
     
      func get()->(Float,Float){
@@ -90,6 +95,7 @@ class PointEmitter: Emitter, Geometry{
         self.y.set(y);
         for i in 0..<events.count{
 let event = events[i]
+            //print("set called from constraints \(self.x.get(),self.y.get(),keyStorage[event]!.count,event)")
         for key in keyStorage[event]!  {
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":event])
         

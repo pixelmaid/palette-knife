@@ -140,11 +140,11 @@ class ViewController: UIViewController {
         
        let dripBehavior = BehaviorDefinition()
         
-      dripBehavior.addExpression("timeExpression", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "y")
-     dripBehavior.addExpression("timeWeightExpression", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "weight")
-    dripBehavior.addExpression("stylusYExpression", emitter1: stylus, operand1Name: "y", emitter2: FloatEmitter(val:0), operand2Name: nil)
-        dripBehavior.addExpression("stylusXExpression", emitter1: stylus, operand1Name: "x", emitter2: FloatEmitter(val:0), operand2Name: nil)
-        dripBehavior.addExpression("xExpression", emitter1: nil, operand1Name: "x", emitter2: FloatEmitter(val:0), operand2Name: nil)
+        dripBehavior.addExpression("timeExpression", type:"add", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "y")
+     dripBehavior.addExpression("timeWeightExpression",type:"logigrowth", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "weight")
+    dripBehavior.addExpression("stylusYExpression", type:"add",emitter1: stylus, operand1Name: "y", emitter2: FloatEmitter(val:0), operand2Name: nil)
+        dripBehavior.addExpression("stylusXExpression", type:"add",emitter1: stylus, operand1Name: "x", emitter2: FloatEmitter(val:0), operand2Name: nil)
+        dripBehavior.addExpression("xExpression", type:"add",emitter1: nil, operand1Name: "x", emitter2: FloatEmitter(val:0), operand2Name: nil)
 
 
 
@@ -160,12 +160,12 @@ class ViewController: UIViewController {
         
        dripBehavior.addMapping(nil, referenceName:"stylusYExpression", relativePropertyName: "y",targetState: "default");
         dripBehavior.addMapping(nil, referenceName:"stylusXExpression", relativePropertyName: "x",targetState: "default");
-        
+        dripBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
+
         dripBehavior.addMapping(nil, referenceName:"timeExpression", relativePropertyName: "y",targetState: "drip");
-        dripBehavior.addMapping(nil, referenceName:"xExpression", relativePropertyName: "x",targetState: "drip");
         
 
-        dripBehavior.addMapping(nil, referenceName:"timeWeightExpression", relativePropertyName: "weight",targetState: "drip");
+   dripBehavior.addMapping(nil, referenceName:"timeWeightExpression", relativePropertyName: "weight",targetState: "drip");
         
 
 
@@ -173,7 +173,7 @@ class ViewController: UIViewController {
         dripGeneratorBehavior.addState("spawnDrip")
         dripGeneratorBehavior.addState("initStroke")
         
-       // dripGeneratorBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil)
+        dripGeneratorBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil)
         dripGeneratorBehavior.addMethod("spawnDrip", targetMethod: "spawn", arguments:[dripBehavior,1])
 
         dripGeneratorBehavior.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke")
@@ -182,9 +182,9 @@ class ViewController: UIViewController {
         dripGeneratorBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "spawnDrip", toState: "default")
 
         
-        //dripGeneratorBehavior.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
-        //dripGeneratorBehavior.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
-        //dripGeneratorBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
+        dripGeneratorBehavior.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
+        dripGeneratorBehavior.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
+        dripGeneratorBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
 
 
         var dripGenerator = Brush(behaviorDef: dripGeneratorBehavior, canvas:self.currentCanvas!)

@@ -52,9 +52,7 @@ class Canvas: WebTransmitter, Hashable{
         self.transmitEvent.raise((string));
     }
     
-    func newStroke(){
-        currentDrawing!.newStroke();
-    }
+    
     
     
     //Event handlers

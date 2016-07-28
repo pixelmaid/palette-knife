@@ -19,7 +19,6 @@ struct State {
     
     mutating func addConstraintMapping(key:String, reference:Emitter, relativeProperty:Emitter){
         let mapping = Constraint(reference: reference, relativeProperty:relativeProperty)
-        relativeProperty.constrained = true;
         constraint_mappings[key] = mapping;
         
 
@@ -56,7 +55,7 @@ struct State {
             return  constraint_mappings[key]
         }
         else {
-            print("constraint mapping not found for state:\(key)")
+            //print("constraint mapping not found for state:\(key)")
 
             return nil
         }
@@ -67,7 +66,7 @@ struct State {
             return  transition_mappings[key]
         }
         else {
-            print("transition mapping not found for state:\(key)")
+           // print("transition mapping not found for state:\(key)")
             
             return nil
         }

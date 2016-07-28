@@ -9,24 +9,25 @@
 import Foundation
 
 struct State {
-    var mappings = [String:Mapping]()
+    var transition_mappings = [String:StateTransition]()
+    var constraint_mappings = [String:Constraint]()
+
     var methods = [(String,[Any]?)]()
     init(){
     
     }
     
-    mutating func addConstraintMapping(key:String,reference:Emitter,relativeProperty:Emitter){
-        let mapping = Constraint(reference: reference,relativeProperty:relativeProperty)
+    mutating func addConstraintMapping(key:String, reference:Emitter, relativeProperty:Emitter){
+        let mapping = Constraint(reference: reference, relativeProperty:relativeProperty)
         relativeProperty.constrained = true;
-       print("constrained relative\(relativeProperty,relativeProperty.constrained)")
-        mappings[key] = mapping;
+        constraint_mappings[key] = mapping;
         
 
     }
     
-    mutating func removeConstraintMapping(key:String,relativeProperty:Emitter){
-        relativeProperty.constrained = false;
-        mappings.removeValueForKey(key)
+    mutating func removeConstraintMapping(key:String)->Constraint?{
+        constraint_mappings[key]!.relativeProperty.constrained = false;
+       return constraint_mappings.removeValueForKey(key)
         
         
     }
@@ -34,7 +35,7 @@ struct State {
     
     mutating func addStateTransitionMapping(key:String,reference:Emitter,toState:String){
         let mapping = StateTransition(reference:reference,toState:toState)
-        mappings[key] = mapping;
+        transition_mappings[key] = mapping;
         
         
     }
@@ -45,28 +46,48 @@ struct State {
     
     
     
-    mutating func removeMapping(key:String)->Mapping?{
-        return mappings.removeValueForKey(key)
+    mutating func removeTransitionMapping(key:String)->Mapping?{
+        return transition_mappings.removeValueForKey(key)
         
     }
-    
-    func getMapping(key:String)->Mapping?{
-             if let _ = mappings[key] {
-            return  mappings[key]
+ 
+    func getConstraintMapping(key:String)->Mapping?{
+             if let _ = constraint_mappings[key] {
+            return  constraint_mappings[key]
         }
         else {
-            print("mapping not found for state:\(key)")
+            print("constraint mapping not found for state:\(key)")
 
             return nil
         }
     }
     
-    func hasKey(key:String)->Bool{
-        if(mappings[key] != nil){
+    func getTransitionMapping(key:String)->Mapping?{
+        if let _ = transition_mappings[key] {
+            return  transition_mappings[key]
+        }
+        else {
+            print("transition mapping not found for state:\(key)")
+            
+            return nil
+        }
+    }
+
+    
+    func hasTransitionKey(key:String)->Bool{
+        if(transition_mappings[key] != nil){
             return true
         }
         return false
     }
+    
+    func hasConstraintKey(key:String)->Bool{
+        if(constraint_mappings[key] != nil){
+            return true
+        }
+        return false
+    }
+
     
   
 }
@@ -74,7 +95,6 @@ struct State {
 struct Constraint: Mapping{
     var reference:Emitter
     var relativeProperty:Emitter
-    
     init(reference:Emitter, relativeProperty:Emitter){
         self.reference = reference
         self.relativeProperty = relativeProperty

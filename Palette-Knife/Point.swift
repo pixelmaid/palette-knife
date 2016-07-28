@@ -57,7 +57,7 @@ class PointEmitter: Emitter, Geometry{
        super.propertyInvalidated(notification)
         let reference = notification.userInfo?["emitter"] as! FloatEmitter
         print("invalidate,\(x.constrained,y.constrained)")
-        if(!x.constrained && !y.constrained){
+       /* if(!x.constrained && !y.constrained){
             return;
         }
         else if(x.constrained && !y.constrained && reference == self.x){
@@ -73,8 +73,8 @@ class PointEmitter: Emitter, Geometry{
                 self.set(self.x.get(),y:self.y.get());
 
             }
-        }
-        //self.set(self.x.get(),y:self.y.get());
+        }*/
+        self.set(self.x.get(),y:self.y.get());
     }
     
      func get()->(Float,Float){
@@ -91,7 +91,7 @@ class PointEmitter: Emitter, Geometry{
         for i in 0..<events.count{
 let event = events[i]
         for key in keyStorage[event]!  {
-                NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
+                NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":event])
         
         }
         }

@@ -46,10 +46,10 @@ class TimeSeries: Emitter{
 
         self.timerTime.set(t)
         //print("current time =\(self.timerTime.get())")
-        if(t>4){
+        if(t>1){
             //print("listeners on time increment\(keyStorage["TIME_INCREMENT"])")
         for key in keyStorage["TIME_INCREMENT"]! {
-                  NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
+                  NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INCREMENT"])
             
         }
         }

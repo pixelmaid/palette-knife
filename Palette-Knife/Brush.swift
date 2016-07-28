@@ -36,7 +36,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     var n1:Float!
     var n2:Float!
     var length:Float!
-    var name = "Brush"
+  
     var currentCanvas:Canvas?
     var geometryModified = Event<(Geometry,String,String)>()
     var transmitEvent = Event<(String)>()
@@ -45,16 +45,17 @@ class Brush: Factory, WebTransmitter, Hashable{
     var time = FloatEmitter(val:0)
     var id = NSUUID().UUIDString;
     
-    required init(behaviorDef:BehaviorDefinition?){
+    required init(behaviorDef:BehaviorDefinition?, canvas:Canvas){
         self.currentState = "default"
         self.x = self.position.x;
         self.y = self.position.y;
         super.init()
+        self.name = "brush"
         self.time = self.timerTime
         self.events =  ["SPAWN", "STATE_COMPLETE"]
         self.createKeyStorage();
         self.createState(currentState);
-        
+        self.setCanvasTarget(canvas)
         let selector = Selector("positionChange"+":");
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:positionKey, object: self.position)
@@ -64,6 +65,9 @@ class Brush: Factory, WebTransmitter, Hashable{
         }
         //TODO: no idea why this is needed- is hack for having state transitions working correctly
         //self.addStateTransition(NSUUID().UUIDString, reference: self, fromState: "default", toState: "default")
+        self.startInterval()
+        
+        self.transitionToState(currentState)
     }
     
     required init() {
@@ -97,64 +101,82 @@ class Brush: Factory, WebTransmitter, Hashable{
     //setHandler: recieves  expression in the form of "propertyA:propertyB" which is used to determine mapping for set action
     dynamic func setHandler(notification: NSNotification){
         
-        let reference = notification.userInfo?["emitter"] as! Emitter
-       
+       // let reference = notification.userInfo?["emitter"] as! Emitter
+        
         let key = notification.userInfo?["key"] as! String
-        let mapping = states[currentState]?.getMapping(key)
-         if(mapping != nil){
-         let constraint = mapping as! Constraint
-            print("setting relative \(constraint.relativeProperty.get()) to reference \(reference.get())")
-         constraint.relativeProperty.set(reference);
-         }
+        let mapping = states[currentState]?.getConstraintMapping(key)
+       // print("set handler change called \(self.name,key,mapping != nil,currentState,notification.userInfo?["event"])")
+        
+        if(mapping != nil){
+            let constraint = mapping as! Constraint
+            self.setConstraint(constraint)
+                   }
+    }
+    
+    func setConstraint(constraint:Constraint){
+        print("setting change called relative \(constraint.relativeProperty.get(), constraint.relativeProperty.name) to reference \(constraint.reference.get(),constraint.reference.name)")
+        constraint.relativeProperty.set(constraint.reference);
+
     }
     
     
     dynamic func positionChange(notification: NSNotification){
-        print("position change\(position.x.get(),position.y.get())")
+        print("position change called\(position.x.get(),position.y.get())")
         //  print("stylus position \(stylus.position.x.get(),stylus.position.y.get()))")
         
         self.prevPosition.set(position.prevX,y: position.prevY);
-        print("canvas, drawing \( self.currentCanvas)")
+        print("canvas, drawing \( self.currentCanvas, self.name)")
         self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.position.clone(),weight: self.weight.get());
         self.angle.set(self.position.sub(self.prevPosition).angle)
         
         
     }
-
+    
     dynamic func stateTransitionHandler(notification: NSNotification){
-
+        
         let key = notification.userInfo?["key"] as! String
-        let mapping = states[currentState]?.getMapping(key)
-        //print("transition to state called \(key,mapping,currentState)")
-
+        let mapping = states[currentState]?.getTransitionMapping(key)
+        //print("transition to state called \(mapping != nil,currentState,self.name,notification.userInfo?["event"])")
+        
         if(mapping != nil){
+            print("making transition \(self.name)")
             let stateTransition = mapping as! StateTransition
-            self.currentState = stateTransition.toState;
-            print("transition to state\(currentState,self.states[currentState]!.methods)")
-           //execute methods
-            self.executeStateMethods()
-            //check constraints
+            self.transitionToState(stateTransition.toState)
             
-            //trigger state complete after functions are executed
-            print("listeners for state complete transition: \(self.keyStorage["STATE_COMPLETE"]!.count)")
-            for key in self.keyStorage["STATE_COMPLETE"]!  {
-                NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
-                
-                
-            }
+        }
+    }
+    
+    func transitionToState(state:String){
+        let constraint_mappings =  states[currentState]!.constraint_mappings
+        print("position change called constraint_mappings \(constraint_mappings.count,state,currentState)")
+        for (_, value) in constraint_mappings{
+           
+
+            self.setConstraint(value)
+        }
+        self.currentState = state
+        //execute methods
+        self.executeStateMethods()
+        //check constraints
+        
+        //trigger state complete after functions are executed
+        print("listeners for state complete transition: \(self.name, self.keyStorage["STATE_COMPLETE"]!.count)")
+        for key in self.keyStorage["STATE_COMPLETE"]!  {
+            NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STATE_COMPLETE"])
+            
         }
     }
     
     
-
+    
     func executeStateMethods(){
         let methods = self.states[currentState]!.methods
         for i in 0..<methods.count{
             let methodName = methods[i];
             switch (methodName.0){
-                case "newStroke":
-                    self.newStroke();
-                    break;
+            case "newStroke":
+                self.newStroke();
+                break;
             case "destroy":
                 self.destroy();
                 break;
@@ -167,77 +189,6 @@ class Brush: Factory, WebTransmitter, Hashable{
         }
         
     }
-
-    // setHandler: recieves  expression in the form of "propertyA:propertyB" which is used to determine mapping for set action
-    /*dynamic func setHandler(notification: NSNotification){
-     let emitter = notification.userInfo?["emitter"] as! Emitter
-     let key = notification.userInfo?["key"] as! String
-     let mapping = states[currentState]![key]
-     if(mapping != nil){
-     let expression = mapping!.2
-     let settings = expression.componentsSeparatedByString("|")
-     for s in settings{
-     let emitterProp = s.componentsSeparatedByString(":")[0]
-     let targetProp = s.componentsSeparatedByString(":")[1]
-     self.set(targetProp,value: emitter[emitterProp])
-     }
-     
-     }*/
-    
-    
-    
-   /* dynamic func setChildHandler(notification:NSNotification){
-        let emitter = notification.userInfo?["emitter"] as! Brush
-        let spawned = emitter.lastSpawned;
-        let key = notification.userInfo?["key"] as! String
-        let mapping = states[currentState]!.getMapping(key)
-        if(mapping != nil){
-            let expression = mapping!.2
-            let settings = expression.componentsSeparatedByString("|")
-            for s in settings{
-                let childProp = s.componentsSeparatedByString(":")[0]
-                let setter = s.componentsSeparatedByString(":")[1]
-                let setterTarget = setter.componentsSeparatedByString(".")[0]
-                let setterProp = setter.componentsSeparatedByString(".")[1]
-                var t:Emitter?
-                
-                if(setterTarget == "parent"){
-                    t = emitter;
-                    
-                }
-                else if(setterTarget=="stylus"){
-                    t = stylus
-                }
-                else{
-                    t = nil
-                }
-                for i in 0...spawned.count-1{
-                    if(setterProp.containsString(",")){
-                        let cProp = setterProp.componentsSeparatedByString(",")[i]
-                        spawned[i].set(childProp,value: t!.get(cProp))
-                    }
-                    else{
-                        spawned[i].set(childProp,value: t!.get(setterProp))
-                    }
-                }
-                
-            }
-        }
-    }
-    
-    dynamic func spawnHandler(notification:NSNotification){
-        let emitter = notification.userInfo?["emitter"] as! Emitter
-        let key = notification.userInfo?["key"] as! String
-        let mapping = states[currentState]!.getMapping(key)
-        if(mapping != nil){
-            
-            let expression = mapping!.2
-            let type = expression.componentsSeparatedByString(":")[0]
-            let string_count = expression.componentsSeparatedByString(":")[1]
-            let count =  NSNumberFormatter().numberFromString(string_count)?.integerValue
-            self.spawn(type, num:count!)
-        }
-    }*/
     
     //sets canvas target to output geometry into
     func setCanvasTarget(canvas:Canvas){
@@ -245,9 +196,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     }
     
     func addConstraint(key:String, reference:Emitter, relative:Emitter, targetState:String){
-        relative.set(reference);
-
-        states[targetState]!.addConstraintMapping(key,reference: reference, relativeProperty: relative)
+        states[targetState]!.addConstraintMapping(key,reference:reference,relativeProperty: relative)
     }
     
     func addStateTransition(key:String, reference:Emitter, fromState: String, toState:String){
@@ -276,105 +225,22 @@ class Brush: Factory, WebTransmitter, Hashable{
         
     }
     
-    /*func set(targetProp:String,value:Any)->Bool{
-        switch targetProp{
-        case "position":
-            self.setPosition(value as! Point)
-            return true
-        case "weight":
-            self.weight = (value as! Float)
-            
-            return true
-        case "penDown":
-            self.setPenDown(value as! Bool)
-        case "length":
-            self.setLength(value as! Float * 100+0.5)
-            return true
-        case "angle":
-            self.setAngle(value as! Float)
-            return true
-        case "scaling":
-            self.setScale(value as! Point)
-            return true
-        case "scalingAll":
-            let s = value as! Float
-            
-            self.setScale(Point(x:s,y:s))
-            return true
-        default: break
-        }
-        
-        
-        return false;
-    }
     
-    override func get(targetProp:String)->Any?{
-        switch targetProp{
-        case "position":
-            return self.position
-        case "penDown":
-            return self.penDown
-        case "angle":
-            return self.angle
-        case "n1":
-            return self.n1
-        case "n2":
-            return self.n2
-        case "length":
-            return self.length
-        case "scaling":
-            return self.scaling
-            
-        default:
-            return nil
-            
-        }
-        
-    }
-    
-    func setPosition(value:Point){
-            self.prevPosition.set(position);
-            self.position.set(value)
-    }
-    
-    func setAngle(value:Float){
-        self.angle = value
-        self.n1 = angle-90
-        self.n2 = angle+90
-        
-    }
-    
-    func setLength(value:Float){
-        self.length = value;
-    }
-    
-    func setScale(value:Point){
-        if(self.scaling == nil){
-            self.scaling = value
-        }
-        else{
-            self.scaling.set(value)
-        }
-    }
-    
-    func setStrokeColor(value:Color){
-        self.strokeColor.setValue(value)
-    }
-    
-    func setReflect(value:Bool){
-        self.reflect = value
-    }
-    
-    func setPenDown(value:Bool){
-        self.penDown = value
-    }*/
-    
-    
-    
-    func removeBehavior(key:String){
+    func removeConstraint(key:String){
         for (key, var val) in states {
-            if(val.hasKey(key)){
-                let removal =  val.removeMapping(key)!
+            if(val.hasConstraintKey(key)){
+                let removal =  val.removeConstraintMapping(key)
+                let data = (self, key, removal!.reference)
+                removeMappingEvent.raise(data)
+                break
+            }
+        }
+    }
+    
+    func removeTransition(key:String){
+        for (key, var val) in states {
+            if(val.hasTransitionKey(key)){
+                let removal =  val.removeTransitionMapping(key)!
                 let data = (self, key, removal.reference)
                 removeMappingEvent.raise(data)
                 break
@@ -386,19 +252,17 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     
     
-  
-    
     func newStroke(){
         print("creating new stroke")
-        self.startInterval()
- currentCanvas!.newStroke();
+        currentCanvas!.newStroke();
     }
     
     //creates number of clones specified by num and adds them as children
     func spawn(behavior:BehaviorDefinition,num:Int) {
         lastSpawned.removeAll()
+        print("SPAWN change called \(self.children.count)")
         for _ in 0...num-1{
-            let child = Brush(behaviorDef: behavior)
+            let child = Brush(behaviorDef: behavior, canvas:self.currentCanvas!)
             self.children.append(child);
             child.parent = self;
             let handler = self.children.last!.geometryModified.addHandler(self,handler: Brush.brushDrawHandler)
@@ -408,7 +272,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         }
         
         for key in keyStorage["SPAWN"]!  {
-            NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
+            NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"SPAWN"])
         }
     }
     
@@ -426,14 +290,14 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     
     /*func transformDelta(delta:Point)->Point {
-        if((self.parent) != nil){
-            let newDelta = self.parent!.transformDelta(delta);
-            return newDelta;
-        }
-        else{
-            return delta;
-        }
-    }*/
+     if((self.parent) != nil){
+     let newDelta = self.parent!.transformDelta(delta);
+     return newDelta;
+     }
+     else{
+     return delta;
+     }
+     }*/
     
     func destroyChildren(){
         for child in self.children as [Brush] {

@@ -18,7 +18,7 @@ class LineBrush:Brush{
         
     }
     
-    required init(behaviorDef: BehaviorDefinition?) {
+    required init(behaviorDef: BehaviorDefinition? , canvas:Canvas) {
         fatalError("init(behaviorDef:) has not been implemented")
     }
     

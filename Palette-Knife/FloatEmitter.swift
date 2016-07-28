@@ -10,10 +10,11 @@ import Foundation
 
 class FloatEmitter: Emitter{
     var val:Float;
-    var name = "foo"
     init(val:Float){
         self.val = val;
         super.init();
+        self.name = "float"
+
         self.events =  ["INVALIDATED","CHANGE"]
         self.createKeyStorage();
         
@@ -33,14 +34,15 @@ class FloatEmitter: Emitter{
         if(self.val != val){
             self.val = val
             self.invalidated = true;
-
-      // print("float key storage change,\(self.name, keyStorage["INVALIDATED"]!.count,keyStorage["CHANGE"]!.count)")
+            if(self.name == "x" || self.name == "y"){
+                print("set float change called,\(self.name, val)")
+            }
         for key in keyStorage["INVALIDATED"]!  {
-            NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
+            NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"INVALIDATED"])
             
         }
         for key in keyStorage["CHANGE"]!  {
-            NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
+            NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"CHANGE"])
             
         }
         }

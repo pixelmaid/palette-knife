@@ -19,7 +19,7 @@ class LeafBrush:Brush{
         
     }
     
-    required init(behaviorDef: BehaviorDefinition?) {
+    required init(behaviorDef: BehaviorDefinition? , canvas:Canvas) {
         fatalError("init(behaviorDef:) has not been implemented")
     }
     
@@ -38,7 +38,7 @@ class FlowerBrush:LeafBrush{
         
     }
     
-    required init(behaviorDef: BehaviorDefinition?) {
+    required init(behaviorDef: BehaviorDefinition?, canvas:Canvas) {
         fatalError("init(behaviorDef:) has not been implemented")
     }
    

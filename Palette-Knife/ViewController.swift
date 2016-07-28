@@ -138,43 +138,57 @@ class ViewController: UIViewController {
         
         let testBrush = Brush(behaviorDef:testBehavior)*/
         
-       //let dripBehavior = BehaviorDefinition()
+       let dripBehavior = BehaviorDefinition()
         
-      //dripBehavior.addExpression("timeExpression", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "y")
-      //dripBehavior.addExpression("timeWeightExpression", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "weight")
+      dripBehavior.addExpression("timeExpression", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "y")
+     dripBehavior.addExpression("timeWeightExpression", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "weight")
+    dripBehavior.addExpression("stylusYExpression", emitter1: stylus, operand1Name: "y", emitter2: FloatEmitter(val:0), operand2Name: nil)
+        dripBehavior.addExpression("stylusXExpression", emitter1: stylus, operand1Name: "x", emitter2: FloatEmitter(val:0), operand2Name: nil)
+        dripBehavior.addExpression("xExpression", emitter1: nil, operand1Name: "x", emitter2: FloatEmitter(val:0), operand2Name: nil)
 
-        //dripBehavior.addState("drip")
-       // dripBehavior.addState("stop")
-        
-       // dripBehavior.addMethod("drip", targetMethod: "newStroke", arguments: nil)
-      // dripBehavior.addMethod("stop", targetMethod:"destroy", arguments: nil)
-        
-       // dripBehavior.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "drip")
-    //dripBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "drip", toState: "stop")
 
-        //dripBehavior.addMapping(nil, referenceName:"timeExpression", relativePropertyName: "y",targetState: "drip");
-        //dripBehavior.addMapping(nil, referenceName:"timeWeightExpression", relativePropertyName: "weight",targetState: "drip");
-        //dripBehavior.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
-        //dripBehavior.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
+
+       dripBehavior.addState("drip")
+      dripBehavior.addState("stop")
+        
+       dripBehavior.addMethod("default", targetMethod: "newStroke", arguments: nil)
+      dripBehavior.addMethod("stop", targetMethod:"destroy", arguments: nil)
+        
+        dripBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "default", toState: "drip")
+       dripBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "drip", toState: "stop")
+
+        
+       dripBehavior.addMapping(nil, referenceName:"stylusYExpression", relativePropertyName: "y",targetState: "default");
+        dripBehavior.addMapping(nil, referenceName:"stylusXExpression", relativePropertyName: "x",targetState: "default");
+        
+        dripBehavior.addMapping(nil, referenceName:"timeExpression", relativePropertyName: "y",targetState: "drip");
+        dripBehavior.addMapping(nil, referenceName:"xExpression", relativePropertyName: "x",targetState: "drip");
+        
+
+        dripBehavior.addMapping(nil, referenceName:"timeWeightExpression", relativePropertyName: "weight",targetState: "drip");
+        
 
 
          let dripGeneratorBehavior = BehaviorDefinition()
         dripGeneratorBehavior.addState("spawnDrip")
         dripGeneratorBehavior.addState("initStroke")
         
-        dripGeneratorBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil)
-      // dripGeneratorBehavior.addMethod("spawnDrip", targetMethod: "spawn", arguments:[dripBehavior,1])
+       // dripGeneratorBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil)
+        dripGeneratorBehavior.addMethod("spawnDrip", targetMethod: "spawn", arguments:[dripBehavior,1])
 
         dripGeneratorBehavior.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke")
         dripGeneratorBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default")
+        dripGeneratorBehavior.addTransition(stylus, event: "STYLUS_MOVE", fromState: "default", toState: "spawnDrip")
+        dripGeneratorBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "spawnDrip", toState: "default")
 
         
-        dripGeneratorBehavior.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
-        dripGeneratorBehavior.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
+        //dripGeneratorBehavior.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
+        //dripGeneratorBehavior.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
         //dripGeneratorBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
 
 
-         var dripGenerator = Brush(behaviorDef: dripGeneratorBehavior)
+        var dripGenerator = Brush(behaviorDef: dripGeneratorBehavior, canvas:self.currentCanvas!)
+        dripGenerator.name = "dripGenerator"
          dripGenerator.setCanvasTarget(self.currentCanvas!)
         
         

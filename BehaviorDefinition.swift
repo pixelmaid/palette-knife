@@ -35,7 +35,7 @@ class BehaviorDefinition {
         mappings.append((referenceProperty,referenceName,relativePropertyName,targetState))
     }
     
-    func addExpression(name:String, emitter1:Emitter?, operand1Name:String,emitter2:Emitter?,operand2Name:String){
+    func addExpression(name:String, emitter1:Emitter?, operand1Name:String?,emitter2:Emitter?,operand2Name:String?){
         expressions[name]=(emitter1, operand1Name, emitter2, operand2Name);
     }
     
@@ -74,7 +74,7 @@ class BehaviorDefinition {
                 operand1 = emitter1[expression_data.1!] as! Emitter
             }
             
-            if(expression_data.3 == nil){
+            if(expression_data.3  == nil){
                 operand2 = emitter2
             }
             else{

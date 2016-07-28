@@ -34,9 +34,8 @@ class Expression: Emitter{
     
     
     dynamic func setHandler(notification: NSNotification){
-        print("set handler called for expression")
         for key in keyStorage["CHANGE"]!  {
-            NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
+            NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"CHANGE"])
             
         }
     }

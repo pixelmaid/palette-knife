@@ -15,7 +15,7 @@ class Emitter: Model, Equatable  {
     var keyStorage=[String:[(String,Condition!)]]()
     var invalidated = false;
     var constrained = false;
-    
+    var name = "default"
     func set(value:Emitter){
     }
     
@@ -31,7 +31,7 @@ class Emitter: Model, Equatable  {
         let reference = notification.userInfo?["emitter"] as! Emitter
         //print("property invalidated \(reference.get(),reference)")
         for key in keyStorage["INVALIDATED"]!  {
-            NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0])
+            NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0, "event":"INVALIDATED"])
             
         }
         

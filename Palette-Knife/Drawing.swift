@@ -13,12 +13,12 @@ import Foundation
 
 class Drawing: TimeSeries, WebTransmitter, Hashable{
    var id = NSUUID().UUIDString;
-    var name:String = ""
     var currentStroke:Stroke?;
     var geometry = [Geometry]();
     var transmitEvent = Event<(String)>()
 
        var geometryModified = Event<(Geometry,String,String)>()
+    
     //MARK: - Hashable
     var hashValue : Int {
         get {
@@ -26,6 +26,11 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         }
     }
     
+    override init(){
+        super.init()
+        self.name = "drawing"
+
+    }
     func newStroke(){
         self.currentStroke = Stroke();
         self.geometry.append(self.currentStroke!)

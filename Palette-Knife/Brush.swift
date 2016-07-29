@@ -46,7 +46,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     var time = FloatEmitter(val:0)
     var id = NSUUID().UUIDString;
     
-    required init(behaviorDef:BehaviorDefinition?, canvas:Canvas){
+    required init(behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
         self.currentState = "default"
         self.x = self.position.x;
         self.y = self.position.y;
@@ -61,6 +61,8 @@ class Brush: Factory, WebTransmitter, Hashable{
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:positionKey, object: self.position)
         self.position.assignKey("CHANGE",key: positionKey,eventCondition: nil)
+        self.parent = parent
+        
         if(behaviorDef != nil){
             behaviorDef?.createBehavior(self)
         }
@@ -119,7 +121,6 @@ class Brush: Factory, WebTransmitter, Hashable{
     }
     
     func setConstraint(constraint:Constraint){
-        //print("setting change called relative \(constraint.relativeProperty.get(), constraint.relativeProperty.name) to reference \(constraint.reference.get(),constraint.reference.name)")
         constraint.relativeProperty.set(constraint.reference);
 
     }
@@ -131,6 +132,9 @@ class Brush: Factory, WebTransmitter, Hashable{
             origin = self.position.clone();
             print("generating new origin for \(self.name,origin!.x.get(),origin!.y.get())")
 
+        }
+        if(self.parent != nil){
+            print("parent angle = \(self.parent!.id, self.parent!.angle.get())")
         }
         self.prevPosition.set(position.prevX,y: position.prevY);
         let pos = self.position.clone()//self.position.rotate(self.angle.get())
@@ -176,11 +180,17 @@ class Brush: Factory, WebTransmitter, Hashable{
 
         }
         //execute methods
+        print("executed methods, name \(self.name) angle \(self.angle.get())")
         self.executeStateMethods()
         //check constraints
         
         //trigger state complete after functions are executed
-        print("listeners for state complete transition: \(state, self.name, self.keyStorage["STATE_COMPLETE"]!.count)")
+        
+        _  = NSTimer.scheduledTimerWithTimeInterval(0.0001, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
+        
+    }
+    
+    @objc func completeCallback(){
         for key in self.keyStorage["STATE_COMPLETE"]!  {
             NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STATE_COMPLETE"])
             
@@ -290,9 +300,8 @@ class Brush: Factory, WebTransmitter, Hashable{
         lastSpawned.removeAll()
         //print("SPAWN change called \(self.children.count)")
         for _ in 0...num-1{
-            let child = Brush(behaviorDef: behavior, canvas:self.currentCanvas!)
+            let child = Brush(behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
             self.children.append(child);
-            child.parent = self;
             let handler = self.children.last!.geometryModified.addHandler(self,handler: Brush.brushDrawHandler)
             childHandlers[child]=[Disposable]();
             childHandlers[child]?.append(handler)

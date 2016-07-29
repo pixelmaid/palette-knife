@@ -33,10 +33,35 @@ class RangeVariable:Variable{
         }
     }
     override func get() -> Float {
-        var old_index = index;
+        let old_index = index;
        let v = val[index]
         self.incrementIndex();
-        print("incrementing index to \(old_index,self.index, self.val.count, self.val)")
+        return v;
+    }
+    
+    
+    
+}
+
+
+class AlternateVariable:Variable{
+    var val = [Float]();
+    var index = 0;
+    init(values:[Float]){
+        val = values;
+        super.init();
+    }
+    
+    func incrementIndex(){
+        index += 1;
+        if(index>=val.count){
+            index=0;
+        }
+    }
+    override func get() -> Float {
+        let old_index = index;
+        let v = val[index]
+        self.incrementIndex();
         return v;
     }
     

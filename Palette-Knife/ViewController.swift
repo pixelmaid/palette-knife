@@ -141,9 +141,21 @@ class ViewController: UIViewController {
          dripGenerator.setCanvasTarget(self.currentCanvas!)*/
         
         //RADIAL BRUSH
-        
+        let radialGeneratorCount = 4;
+        let radialCount = 7;
         let radialBehavior = BehaviorDefinition()
-        let rotationMap = RangeVariable(min: 0,max: 15, start: 0,stop: 360)
+        let rotationMap = RangeVariable(min: 0,max: radialCount, start: 0,stop: 40)
+        let rotationMap2 = RangeVariable(min: 0,max: radialGeneratorCount, start: 0,stop: 360)
+        let xpositionMap = AlternateVariable(values:[0,-75,-150,-75]);
+        let ypositionMap = AlternateVariable(values:[0,75,0,-75]);
+
+
+        radialBehavior.addExpression("rotationAdd", type: "add", emitter1: rotationMap, operand1Name: nil, emitter2: nil, operand2Name: "angle", parentFlag: false)
+        
+        radialBehavior.addExpression("parentAdd", type: "add", emitter1: rotationMap, operand1Name: nil, emitter2: nil, operand2Name: "angle", parentFlag: true)
+       radialBehavior.addExpression("xpositionAdd", type: "add", emitter1: stylus, operand1Name: "x", emitter2: nil, operand2Name: "x", parentFlag: true)
+        radialBehavior.addExpression("ypositionAdd", type: "add", emitter1: stylus, operand1Name: "y", emitter2: nil, operand2Name: "y", parentFlag: true)
+
         radialBehavior.addState("stop")
         
         radialBehavior.addMethod("default", targetMethod: "newStroke",arguments: nil)
@@ -152,28 +164,44 @@ class ViewController: UIViewController {
         radialBehavior.addTransition(stylus, event: "STYLUS_UP", fromState: "default", toState: "stop")
 
         
-        radialBehavior.addMapping(rotationMap, referenceName:nil,relativePropertyName: "angle", targetState: "default")
-        radialBehavior.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
-        radialBehavior.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
+        radialBehavior.addMapping(nil, referenceName:"parentAdd",relativePropertyName: "angle", targetState: "default")
+        radialBehavior.addMapping(nil, referenceName:"ypositionAdd", relativePropertyName: "y",targetState: "default");
+        radialBehavior.addMapping(nil, referenceName:"xpositionAdd", relativePropertyName: "x",targetState: "default");
+        
+       radialBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
+
        
         
         let radialGenerator = BehaviorDefinition()
-        radialGenerator.addState("initStroke")
+       
+        radialGenerator.addState("stop")
         
-       // radialGenerator.addMethod("initStroke", targetMethod: "newStroke",arguments: nil)
-        radialGenerator.addMethod("initStroke", targetMethod: "spawn", arguments:[radialBehavior,15])
+       radialGenerator.addMethod("default", targetMethod: "spawn", arguments:[radialBehavior,radialCount])
+        radialGenerator.addMethod("stop", targetMethod: "destroy",arguments: nil)
+
+        radialGenerator.addTransition(nil, event: "STATE_COMPLETE", fromState: "default", toState: "stop")
+        radialGenerator.addMapping(rotationMap2, referenceName:nil,relativePropertyName: "angle", targetState: "default")
+        radialGenerator.addMapping(xpositionMap, referenceName:nil,relativePropertyName: "x", targetState: "default")
+        radialGenerator.addMapping(ypositionMap, referenceName:nil,relativePropertyName: "y", targetState: "default")
+
         
-        radialGenerator.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke")
-        radialGenerator.addTransition(nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default")
+        let multiWaveGenerator = BehaviorDefinition()
+        multiWaveGenerator.addState("spawn")
         
+        multiWaveGenerator.addMethod("spawn", targetMethod: "spawn", arguments:[radialGenerator,radialGeneratorCount])
+
+        
+        multiWaveGenerator.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "spawn")
+        multiWaveGenerator.addTransition(nil, event: "STATE_COMPLETE", fromState: "spawn", toState: "default")
+
         
         //radialGenerator.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
         //radialGenerator.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
         //dripGeneratorBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
         
         
-        var radialBrush = Brush(behaviorDef: radialGenerator, canvas:self.currentCanvas!)
-        radialBrush.name = "radialBrush"
+        var multiWaveGeneratorBrush = Brush(behaviorDef: multiWaveGenerator, parent:nil, canvas:self.currentCanvas!)
+        multiWaveGeneratorBrush.name = "multiwave"
 
 
         

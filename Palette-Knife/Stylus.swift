@@ -14,7 +14,7 @@ class Stylus: TimeSeries, WebTransmitter {
     var prevPosition: PointEmitter
     var force = FloatEmitter(val: 0)
     var prevForce: Float
-    var angle: Float
+    var angle = FloatEmitter(val:0)
     var speed = Float(0)
     var prevAngle: Float
     var position = PointEmitter(x:0,y:0);
@@ -36,7 +36,7 @@ class Stylus: TimeSeries, WebTransmitter {
         prevPosition = PointEmitter(x:0, y:0)
         self.force.set(force*1.5);
         self.prevForce = force
-        self.angle = angle
+        self.angle.set(angle)
         self.prevAngle = angle;
         self.x = position.x;
         self.y = position.y
@@ -167,8 +167,8 @@ class Stylus: TimeSeries, WebTransmitter {
         moveDist += prevPosition.dist(position)
         self.prevForce = self.force.get()
         self.force.set(force*1.5)
-        self.prevAngle = self.angle;
-        self.angle = angle
+        self.prevAngle = self.angle.get();
+        self.angle.set(angle)
         let currentTime = self.getTimeElapsed();
         self.speed = prevPosition.dist(position)/(currentTime-prevTime)
         self.prevTime = currentTime;

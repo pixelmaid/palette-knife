@@ -52,7 +52,7 @@ class Expression: Emitter{
 class AddExpression:Expression{
     
     override func get()->Float{
-        //print("adding:\(operand1.get() , operand2.get())")
+        print("adding:\(operand1.get() , operand2.get())")
         return operand1.get() + operand2.get();
     }
     

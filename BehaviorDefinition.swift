@@ -12,7 +12,7 @@ import Foundation
 class BehaviorDefinition {
     
     var states = [String]()
-    var expressions = [String:(String,Emitter?,String?,Emitter?,String?)]()
+    var expressions = [String:(String,Emitter?,String?,Emitter?,String?,Bool)]()
     var methods = [(String,String,[Any]?)]()
     var transitions = [(Emitter?,String,String,String)]()
     var behaviorMapper = BehaviorMapper()
@@ -35,8 +35,8 @@ class BehaviorDefinition {
         mappings.append((referenceProperty,referenceName,relativePropertyName,targetState))
     }
     
-    func addExpression(name:String, type:String, emitter1:Emitter?, operand1Name:String?,emitter2:Emitter?,operand2Name:String?){
-        expressions[name]=(type,emitter1, operand1Name, emitter2, operand2Name);
+    func addExpression(name:String, type:String, emitter1:Emitter?, operand1Name:String?,emitter2:Emitter?,operand2Name:String?,parentFlag:Bool){
+        expressions[name]=(type,emitter1, operand1Name, emitter2, operand2Name,parentFlag);
     }
     
 
@@ -53,14 +53,24 @@ class BehaviorDefinition {
             var operand2: Emitter
             
             if(expression_data.1 == nil){
+               
                 emitter1 = targetBrush;
+                
             }
             else{
                 emitter1 = expression_data.1!
             }
 
             if (expression_data.3 == nil){
-                emitter2 = targetBrush
+                if(expression_data.5){
+                    print("name,parent \(targetBrush.name,targetBrush.parent)")
+                    emitter2 = targetBrush.parent!;
+                    
+                }
+                else{
+                    emitter2 = targetBrush;
+                }
+
             }
             else{
                 emitter2 = expression_data.3!

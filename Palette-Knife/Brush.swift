@@ -47,15 +47,29 @@ class Brush: Factory, WebTransmitter, Hashable{
     var id = NSUUID().UUIDString;
     
     required init(behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
-        self.currentState = "default"
         self.x = self.position.x;
         self.y = self.position.y;
+        
+        self.currentState = "default"
+
         super.init()
         self.name = "brush"
         self.time = self.timerTime
+        
+        //setup events and create listener storage
         self.events =  ["SPAWN", "STATE_COMPLETE"]
         self.createKeyStorage();
+        
+        
+        //add in default state
         self.createState(currentState);
+        
+        //add in default stop state with destroy method
+        //self.createState("stop");
+        //let destroy_key = NSUUID().UUIDString;
+        //self.addMethod(destroy_key, state: "stop", methodName: "destroy", arguments: nil)
+        
+        
         self.setCanvasTarget(canvas)
         let selector = Selector("positionChange"+":");
         
@@ -66,10 +80,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         if(behaviorDef != nil){
             behaviorDef?.createBehavior(self)
         }
-        //TODO: no idea why this is needed- is hack for having state transitions working correctly
-        //self.addStateTransition(NSUUID().UUIDString, reference: self, fromState: "default", toState: "default")
-        self.startInterval()
-        _  = NSTimer.scheduledTimerWithTimeInterval(0.0001, target: self, selector: #selector(Brush.defaultCallback), userInfo: nil, repeats: false)
+            _  = NSTimer.scheduledTimerWithTimeInterval(0.00001, target: self, selector: #selector(Brush.defaultCallback), userInfo: nil, repeats: false)
     }
     
     required init() {
@@ -112,9 +123,11 @@ class Brush: Factory, WebTransmitter, Hashable{
         
         let key = notification.userInfo?["key"] as! String
         let mapping = states[currentState]?.getConstraintMapping(key)
-       // print("set handler change called \(self.name,key,mapping != nil,currentState,notification.userInfo?["event"])")
+      print("set handler change called for state \(self.currentState), self.name and mapping: \(self.name,key,mapping != nil,notification.userInfo?["event"])")
         
         if(mapping != nil){
+            print("set handler change initiated for state \(self.currentState)")
+
             let constraint = mapping as! Constraint
             self.setConstraint(constraint)
                    }
@@ -133,9 +146,9 @@ class Brush: Factory, WebTransmitter, Hashable{
             print("generating new origin for \(self.name,origin!.x.get(),origin!.y.get())")
 
         }
-        if(self.parent != nil){
-            print("parent angle = \(self.parent!.id, self.parent!.angle.get())")
-        }
+        //if(self.parent != nil){
+            //print("parent angle = \(self.parent!.id, self.parent!.angle.get())")
+        //}
         self.prevPosition.set(position.prevX,y: position.prevY);
         let pos = self.position.clone()//self.position.rotate(self.angle.get())
         let rpos = self.position.rotate(self.angle.get(),origin:self.origin!)
@@ -149,17 +162,19 @@ class Brush: Factory, WebTransmitter, Hashable{
         
         let key = notification.userInfo?["key"] as! String
         let mapping = states[currentState]?.getTransitionMapping(key)
-        //print("transition to state called \(mapping != nil,currentState,self.name,notification.userInfo?["event"])")
+        print("\n\ntransition to state called for mapping =\(mapping != nil), from state:\(currentState), for object named:\(self.name), from notifcation \(notification.userInfo?["event"])\n\n")
         
         if(mapping != nil){
-            //print("making transition \(self.name)")
             let stateTransition = mapping as! StateTransition
+            print("\n\n making transition \(self.name, stateTransition.toState)")
+
             self.transitionToState(stateTransition.toState)
             
         }
     }
     
     func transitionToState(state:String){
+        print("transition to state called for \(self.name) to state: \(state) \n\n\n\n")
         var constraint_mappings =  states[currentState]!.constraint_mappings
         //print("position change called constraint_mappings \(constraint_mappings.count,state,currentState)")
         for (key, value) in constraint_mappings{
@@ -180,13 +195,13 @@ class Brush: Factory, WebTransmitter, Hashable{
 
         }
         //execute methods
-        print("executed methods, name \(self.name) angle \(self.angle.get())")
+        print("executed methods, name \(self.name) state \(self.currentState))")
         self.executeStateMethods()
         //check constraints
         
         //trigger state complete after functions are executed
         
-        _  = NSTimer.scheduledTimerWithTimeInterval(0.0001, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
+        _  = NSTimer.scheduledTimerWithTimeInterval(0.00001, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
         
     }
     
@@ -201,6 +216,8 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     func executeStateMethods(){
         let methods = self.states[currentState]!.methods
+        print("transition made, methods to execute \(self.name, methods)")
+
         for i in 0..<methods.count{
             let methodName = methods[i];
             switch (methodName.0){
@@ -208,6 +225,7 @@ class Brush: Factory, WebTransmitter, Hashable{
                 self.newStroke();
                 break;
             case "destroy":
+                print("executed destroy for \(self.name)")
                 self.destroy();
                 break;
             case "spawn":
@@ -284,6 +302,8 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     func newStroke(){
         //print("creating new stroke")
+        self.startInterval()
+
         if(origin != nil){
         var oldOriginX = origin!.x.get();
         var oldOriginY = origin!.y.get();
@@ -316,6 +336,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     //removes child at an index and returns it
     // removes listener on child, but does not destroy it
     func removeChildAt(index:Int)->Brush{
+        print("destroying \(self.name)")
         let child = self.children.removeAtIndex(index)
         for h in childHandlers[child]!{
             h.dispose()

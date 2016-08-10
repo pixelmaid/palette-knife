@@ -96,7 +96,12 @@ class LogiGrowthExpression:Expression{
 class SubExpression:Expression{
     
     override func get()->Float{
-        return operand1.get() - operand2.get();
+        let val = operand1.get() - operand2.get();
+
+        print("sub result:\(val,operand1.get(),operand2.get())")
+        
+        return val
+
     }
     
 }

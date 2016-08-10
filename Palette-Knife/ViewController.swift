@@ -87,13 +87,13 @@ class ViewController: UIViewController {
     
     func initTestBrushes(){
         //DRIP BRUSH
-       /*let dripBehavior = BehaviorDefinition()
+      /* let dripBehavior = BehaviorDefinition()
         
-        dripBehavior.addExpression("timeExpression", type:"add", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "y")
-     dripBehavior.addExpression("timeWeightExpression",type:"logigrowth", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "weight")
-    dripBehavior.addExpression("stylusYExpression", type:"add",emitter1: stylus, operand1Name: "y", emitter2: FloatEmitter(val:0), operand2Name: nil)
-        dripBehavior.addExpression("stylusXExpression", type:"add",emitter1: stylus, operand1Name: "x", emitter2: FloatEmitter(val:0), operand2Name: nil)
-        dripBehavior.addExpression("xExpression", type:"add",emitter1: nil, operand1Name: "x", emitter2: FloatEmitter(val:0), operand2Name: nil)
+        dripBehavior.addExpression("timeExpression", type:"add", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "y", parentFlag: false)
+     dripBehavior.addExpression("timeWeightExpression",type:"logigrowth", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "weight", parentFlag: false)
+    dripBehavior.addExpression("stylusYExpression", type:"add",emitter1: stylus, operand1Name: "y", emitter2: FloatEmitter(val:0), operand2Name: nil, parentFlag: false)
+        dripBehavior.addExpression("stylusXExpression", type:"add",emitter1: stylus, operand1Name: "x", emitter2: FloatEmitter(val:0), operand2Name: nil, parentFlag: false)
+        dripBehavior.addExpression("xExpression", type:"add",emitter1: nil, operand1Name: "x", emitter2: FloatEmitter(val:0), operand2Name: nil, parentFlag: false)
 
 
 
@@ -136,12 +136,11 @@ class ViewController: UIViewController {
         //dripGeneratorBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
 
 
-        var dripGenerator = Brush(behaviorDef: dripGeneratorBehavior, canvas:self.currentCanvas!)
-        dripGenerator.name = "dripGenerator"
-         dripGenerator.setCanvasTarget(self.currentCanvas!)*/
+        let dripGenerator = Brush(behaviorDef: dripGeneratorBehavior, parent: nil, canvas:self.currentCanvas!)
+        dripGenerator.name = "dripGenerator"*/
         
         //RADIAL BRUSH
-        let radialGeneratorCount = 4;
+        /*let radialGeneratorCount = 4;
         let radialCount = 7;
         let radialBehavior = BehaviorDefinition()
         let rotationMap = RangeVariable(min: 0,max: radialCount, start: 0,stop: 40)
@@ -201,9 +200,48 @@ class ViewController: UIViewController {
         
         
         var multiWaveGeneratorBrush = Brush(behaviorDef: multiWaveGenerator, parent:nil, canvas:self.currentCanvas!)
-        multiWaveGeneratorBrush.name = "multiwave"
+        multiWaveGeneratorBrush.name = "multiwave"*/
+        
+        
+        //FRACTAL BRUSH
+        
+        let root = BehaviorDefinition();
+       // let constAdd = FloatEmitter(val: 10)
+        root.addExpression("timeExpression", type:"add", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "y", parentFlag: false)
+         root.addExpression("stylusYExpression", type:"add",emitter1: stylus, operand1Name: "y", emitter2: FloatEmitter(val:0), operand2Name: nil, parentFlag: false)
+         root.addExpression("stylusXExpression", type:"add",emitter1: stylus, operand1Name: "x", emitter2: FloatEmitter(val:0), operand2Name: nil, parentFlag: false)
+        
+        root.addState("grow")
+        root.addState("stop")
+        
+        root.addMethod("default", targetMethod: "newStroke", arguments: nil)
+        root.addMethod("stop", targetMethod:"destroy", arguments: nil)
+
+        root.addTransition(nil, event: "STATE_COMPLETE", fromState: "default", toState: "grow")
+        root.addTransition(nil, event: "TIME_INCREMENT", fromState: "grow", toState: "stop")
+        
+        root.addMapping(nil, referenceName:"stylusYExpression", relativePropertyName: "y",targetState: "default");
+        root.addMapping(nil, referenceName:"stylusXExpression", relativePropertyName: "x",targetState: "default");
+        
+        root.addMapping(nil, referenceName:"timeExpression", relativePropertyName: "y",targetState: "grow");
+
+        
+        let rootGenerator = BehaviorDefinition();
+        
+        rootGenerator.addState("spawn")
+        rootGenerator.addMethod("spawn", targetMethod: "spawn", arguments:[root,1])
+        
+        rootGenerator.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "spawn")
+
+        rootGenerator.addTransition(nil, event: "STATE_COMPLETE", fromState: "spawn", toState: "default")
 
 
+        let rootGeneratorBrush = Brush(behaviorDef: rootGenerator, parent:nil, canvas:self.currentCanvas!)
+        rootGeneratorBrush.name = "rootGenerator"
+        
+        
+        
+        
         
     }
     

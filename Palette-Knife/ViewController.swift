@@ -206,22 +206,35 @@ class ViewController: UIViewController {
         //FRACTAL BRUSH
         
         let root = BehaviorDefinition();
-       // let constAdd = FloatEmitter(val: 10)
+       let constAdd = FloatEmitter(val: 0)
+        let angleConst = FloatEmitter(val: 30)
+
+        //TODO: this is dumb- time change drives constraint update, can't have time set as second operand and therefore can't do negative changes in y
         root.addExpression("timeExpression", type:"add", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "y", parentFlag: false)
-         root.addExpression("stylusYExpression", type:"add",emitter1: stylus, operand1Name: "y", emitter2: FloatEmitter(val:0), operand2Name: nil, parentFlag: false)
-         root.addExpression("stylusXExpression", type:"add",emitter1: stylus, operand1Name: "x", emitter2: FloatEmitter(val:0), operand2Name: nil, parentFlag: false)
+       
+        root.addExpression("xpositionAdd", type: "add", emitter1: constAdd, operand1Name: nil, emitter2: nil, operand2Name: "rX", parentFlag: true)
+        root.addExpression("ypositionAdd", type: "add", emitter1: constAdd, operand1Name: nil, emitter2: nil, operand2Name: "rY", parentFlag: true)
+        
+        root.addExpression("angleAdd", type: "add", emitter1: angleConst, operand1Name: nil, emitter2: nil, operand2Name: "angle", parentFlag: true)
+        
+        
         
         root.addState("grow")
         root.addState("stop")
         
         root.addMethod("default", targetMethod: "newStroke", arguments: nil)
+        root.addMethod("stop", targetMethod: "spawn", arguments:[root,1])
         root.addMethod("stop", targetMethod:"destroy", arguments: nil)
+
 
         root.addTransition(nil, event: "STATE_COMPLETE", fromState: "default", toState: "grow")
         root.addTransition(nil, event: "TIME_INCREMENT", fromState: "grow", toState: "stop")
         
-        root.addMapping(nil, referenceName:"stylusYExpression", relativePropertyName: "y",targetState: "default");
-        root.addMapping(nil, referenceName:"stylusXExpression", relativePropertyName: "x",targetState: "default");
+        root.addMapping(nil, referenceName:"angleAdd", relativePropertyName: "angle",targetState: "default");
+
+        root.addMapping(nil, referenceName:"ypositionAdd", relativePropertyName: "y",targetState: "default");
+        root.addMapping(nil, referenceName:"xpositionAdd", relativePropertyName: "x",targetState: "default");
+      
         
         root.addMapping(nil, referenceName:"timeExpression", relativePropertyName: "y",targetState: "grow");
 
@@ -231,10 +244,12 @@ class ViewController: UIViewController {
         rootGenerator.addState("spawn")
         rootGenerator.addMethod("spawn", targetMethod: "spawn", arguments:[root,1])
         
-        rootGenerator.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "spawn")
+        rootGenerator.addTransition(stylus, event: "STYLUS_UP", fromState: "default", toState: "spawn")
 
         rootGenerator.addTransition(nil, event: "STATE_COMPLETE", fromState: "spawn", toState: "default")
 
+        rootGenerator.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
+        rootGenerator.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
 
         let rootGeneratorBrush = Brush(behaviorDef: rootGenerator, parent:nil, canvas:self.currentCanvas!)
         rootGeneratorBrush.name = "rootGenerator"

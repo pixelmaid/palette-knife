@@ -30,6 +30,12 @@ class Brush: Factory, WebTransmitter, Hashable{
     var origin: PointEmitter?
     var x:FloatEmitter
     var y:FloatEmitter
+    
+    //stores current position, rotated. Need to fix this
+    var rotatedPosition = PointEmitter(x:0,y:0)
+    var rX: FloatEmitter
+    var rY: FloatEmitter
+    
     var prevPosition = PointEmitter(x:0,y:0)
     var penDown = false;
     var scaling = PointEmitter(x:1,y:1)
@@ -49,7 +55,9 @@ class Brush: Factory, WebTransmitter, Hashable{
     required init(behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
         self.x = self.position.x;
         self.y = self.position.y;
-        
+        self.rX = self.rotatedPosition.x;
+        self.rY = self.rotatedPosition.y;
+
         self.currentState = "default"
 
         super.init()
@@ -143,20 +151,39 @@ class Brush: Factory, WebTransmitter, Hashable{
         print("position change called\(position.x.get(),position.y.get())")
         if(origin == nil){
             origin = self.position.clone();
-            print("generating new origin for \(self.name,origin!.x.get(),origin!.y.get())")
+            let r = self.position.rotate(90,origin:self.origin!)
+
+            print("generating new origin for \(self.name,origin!.x.get(),origin!.y.get(),r.x.get(),r.y.get())")
 
         }
-        //if(self.parent != nil){
-            //print("parent angle = \(self.parent!.id, self.parent!.angle.get())")
-        //}
+        
         self.prevPosition.set(position.prevX,y: position.prevY);
-        let pos = self.position.clone()//self.position.rotate(self.angle.get())
         let rpos = self.position.rotate(self.angle.get(),origin:self.origin!)
-        print("angle = \(self.angle.get()) rpos =\(rpos.x.get(),rpos.y.get()) pos= \(pos.x.get(),pos.y.get())")
-        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:rpos,weight: self.weight.get());
+        self.rotatedPosition.set(rpos)
+        print("angle = \(self.angle.get()) rpos =\( self.rotatedPosition.x.get(), self.rotatedPosition.y.get()) pos= \(self.position.x.get(),self.position.y.get())")
+        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point: self.rotatedPosition,weight: self.weight.get());
         
         
     }
+    
+    func transformDelta(delta:PointEmitter)->PointEmitter{
+        var _delta:PointEmitter
+    if(self.parent != nil){
+        _delta = self.parent!.transformDelta(delta);
+    }
+    else{
+        _delta = delta
+        }
+    if(self.reflect){
+    if(self.parent != nil){
+        let n = PointEmitter.normalize((self.parent?.rotatedPosition.sub((self.parent?.origin)!))!);
+				_delta = n.mul(_delta.dot(n)*2).sub(_delta);
+    }
+    }
+    _delta = _delta.rotate(self.angle.get(),origin: self.origin!);
+    
+    return _delta;
+    };
     
     dynamic func stateTransitionHandler(notification: NSNotification){
         
@@ -186,6 +213,7 @@ class Brush: Factory, WebTransmitter, Hashable{
 
             
         }
+        print("\(self.name) current position at transition to \(state) = \(self.position.x.val,self.position.y.val)")
         self.currentState = state
         constraint_mappings =  states[currentState]!.constraint_mappings
         for (_, value) in constraint_mappings{

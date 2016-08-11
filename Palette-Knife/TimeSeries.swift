@@ -46,7 +46,7 @@ class TimeSeries: Emitter{
 
         self.timerTime.set(t)
         print("executed timer callback =\(t,self.name))")
-        if(t>3){
+        if(t>1){
             print("listeners on time increment\(keyStorage["TIME_INCREMENT"], self.name)")
         for key in keyStorage["TIME_INCREMENT"]!
 {

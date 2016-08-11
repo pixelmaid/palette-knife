@@ -194,6 +194,7 @@ let event = events[i]
         return PointEmitter(x: x,y: y)
     }
     
+    //returns new rotated point, original point is unaffected
     func rotate(angle:Float, origin:PointEmitter)->PointEmitter{
         var a = angle * Float(M_PI)/180;
         let centerX = origin.x.get();
@@ -205,6 +206,8 @@ let event = events[i]
         let newY = centerY + (x-centerX)*sin(a) + (y-centerY)*cos(a);
         return PointEmitter(x:newX,y:newY)
     }
+    
+
     
     
      

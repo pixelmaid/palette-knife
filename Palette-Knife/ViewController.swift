@@ -87,7 +87,7 @@ class ViewController: UIViewController {
     
     func initTestBrushes(){
         //DRIP BRUSH
-      /* let dripBehavior = BehaviorDefinition()
+     /*  let dripBehavior = BehaviorDefinition()
         
         dripBehavior.addExpression("timeExpression", type:"add", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "y", parentFlag: false)
      dripBehavior.addExpression("timeWeightExpression",type:"logigrowth", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "weight", parentFlag: false)
@@ -205,7 +205,7 @@ class ViewController: UIViewController {
         
         //FRACTAL BRUSH
         
-        let root = BehaviorDefinition();
+       /* let root = BehaviorDefinition();
        let constAdd = FloatEmitter(val: 0)
         let angleConst = FloatEmitter(val: 30)
 
@@ -252,11 +252,30 @@ class ViewController: UIViewController {
         rootGenerator.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
 
         let rootGeneratorBrush = Brush(behaviorDef: rootGenerator, parent:nil, canvas:self.currentCanvas!)
-        rootGeneratorBrush.name = "rootGenerator"
+        rootGeneratorBrush.name = "rootGenerator"*/
+        
+        //ROOT BRUSH (TAKE 2)
+        
+        let tapRootBehavior = BehaviorDefinition();
         
         
         
+        tapRootBehavior.addState("branch")
+        tapRootBehavior.addState("initStroke")
+         tapRootBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil)
         
+        tapRootBehavior.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke")
+        tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default")
+        
+        
+        tapRootBehavior.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
+        tapRootBehavior.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
+        //tapRootBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
+        
+        
+        let tapRootBrush = Brush(behaviorDef: tapRootBehavior, parent: nil, canvas:self.currentCanvas!)
+        tapRootBrush.name = "tapRootBrush"
+
         
     }
     
@@ -270,8 +289,9 @@ class ViewController: UIViewController {
                         let seg = data.0 as! Segment
                 
                         let prevSeg = seg.getPreviousSegment()
+                       
                         if(prevSeg != nil){
-
+ print("seg, prev seg \(seg.point.x.get(),seg.point.y.get(),prevSeg!.point.x.get(),prevSeg!.point.y.get())")
                             canvasView.drawPath(prevSeg!.point,tP: seg.point, w:seg.diameter, c:Color(r:0,g:0,b:0))
                         }
                     break

@@ -45,12 +45,12 @@ class TimeSeries: Emitter{
         let t = Float(currentTime.timeIntervalSinceDate(timer))
 
         self.timerTime.set(t)
-        print("executed timer callback =\(t,self.name))")
+        //print("executed timer callback =\(t,self.name))")
         if(t>1){
-            print("listeners on time increment\(keyStorage["TIME_INCREMENT"], self.name)")
+           // print("listeners on time increment\(keyStorage["TIME_INCREMENT"], self.name)")
         for key in keyStorage["TIME_INCREMENT"]!
 {
-    print("executed time increment \(key.0,self.name)")
+    //print("executed time increment \(key.0,self.name)")
 
     NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INCREMENT"])
             

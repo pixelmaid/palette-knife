@@ -27,6 +27,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     var weight = FloatEmitter(val: 5.0)
     var reflect = false;
     var position = PointEmitter(x:0,y:0)
+    var positionBuffer = [(Float,Float)]()
     var origin: PointEmitter?
     var x:FloatEmitter
     var y:FloatEmitter
@@ -36,14 +37,13 @@ class Brush: Factory, WebTransmitter, Hashable{
     var rX: FloatEmitter
     var rY: FloatEmitter
     
-    var prevPosition = PointEmitter(x:0,y:0)
     var penDown = false;
     var scaling = PointEmitter(x:1,y:1)
     var angle = FloatEmitter(val:0)
     var n1:Float!
     var n2:Float!
     var length:Float!
-  
+    
     var currentCanvas:Canvas?
     var geometryModified = Event<(Geometry,String,String)>()
     var transmitEvent = Event<(String)>()
@@ -57,9 +57,9 @@ class Brush: Factory, WebTransmitter, Hashable{
         self.y = self.position.y;
         self.rX = self.rotatedPosition.x;
         self.rY = self.rotatedPosition.y;
-
+        
         self.currentState = "default"
-
+        
         super.init()
         self.name = "brush"
         self.time = self.timerTime
@@ -88,7 +88,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         if(behaviorDef != nil){
             behaviorDef?.createBehavior(self)
         }
-            _  = NSTimer.scheduledTimerWithTimeInterval(0.00001, target: self, selector: #selector(Brush.defaultCallback), userInfo: nil, repeats: false)
+        _  = NSTimer.scheduledTimerWithTimeInterval(0.00001, target: self, selector: #selector(Brush.defaultCallback), userInfo: nil, repeats: false)
     }
     
     required init() {
@@ -97,7 +97,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     @objc func defaultCallback(){
         self.transitionToState(currentState)
-
+        
     }
     
     
@@ -127,23 +127,23 @@ class Brush: Factory, WebTransmitter, Hashable{
     //setHandler: recieves  expression in the form of "propertyA:propertyB" which is used to determine mapping for set action
     dynamic func setHandler(notification: NSNotification){
         
-       // let reference = notification.userInfo?["emitter"] as! Emitter
+        // let reference = notification.userInfo?["emitter"] as! Emitter
         
         let key = notification.userInfo?["key"] as! String
         let mapping = states[currentState]?.getConstraintMapping(key)
-      print("set handler change called for state \(self.currentState), self.name and mapping: \(self.name,key,mapping != nil,notification.userInfo?["event"])")
+        print("set handler change called for state \(self.currentState), self.name and mapping: \(self.name,key,mapping != nil,notification.userInfo?["event"])")
         
         if(mapping != nil){
             print("set handler change initiated for state \(self.currentState)")
-
+            
             let constraint = mapping as! Constraint
             self.setConstraint(constraint)
-                   }
+        }
     }
     
     func setConstraint(constraint:Constraint){
         constraint.relativeProperty.set(constraint.reference);
-
+        
     }
     
     
@@ -151,38 +151,38 @@ class Brush: Factory, WebTransmitter, Hashable{
         print("position change called\(position.x.get(),position.y.get())")
         if(origin == nil){
             origin = self.position.clone();
-            let r = self.position.rotate(90,origin:self.origin!)
-
-            print("generating new origin for \(self.name,origin!.x.get(),origin!.y.get(),r.x.get(),r.y.get())")
-
         }
         
-        self.prevPosition.set(position.prevX,y: position.prevY);
-        let rpos = self.position.rotate(self.angle.get(),origin:self.origin!)
-        self.rotatedPosition.set(rpos)
-        print("angle = \(self.angle.get()) rpos =\( self.rotatedPosition.x.get(), self.rotatedPosition.y.get()) pos= \(self.position.x.get(),self.position.y.get())")
-        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point: self.rotatedPosition,weight: self.weight.get());
+        let delta = self.position.sub(self.origin!);
+        self.transformDelta(delta)
+        //let rpos = self.position.rotate(self.angle.get(),origin:self.origin!)
+        //  print("angle = \(self.angle.get()) rpos =\( self.rotatedPosition.x.get(), self.rotatedPosition.y.get()) pos= \(self.position.x.get(),self.position.y.get())")
+       
         
+        positionBuffer.append((rotatedPosition.x.get(),rotatedPosition.y.get()));
+        print("position buffer \(positionBuffer)")
+         self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:self.rotatedPosition.clone(),weight: self.weight.get());
         
     }
     
     func transformDelta(delta:PointEmitter)->PointEmitter{
         var _delta:PointEmitter
-    if(self.parent != nil){
-        _delta = self.parent!.transformDelta(delta);
-    }
-    else{
-        _delta = delta
+        if(self.parent != nil){
+            _delta = self.parent!.transformDelta(delta);
         }
-    if(self.reflect){
-    if(self.parent != nil){
-        let n = PointEmitter.normalize((self.parent?.rotatedPosition.sub((self.parent?.origin)!))!);
-				_delta = n.mul(_delta.dot(n)*2).sub(_delta);
-    }
-    }
-    _delta = _delta.rotate(self.angle.get(),origin: self.origin!);
-    
-    return _delta;
+        else{
+            _delta = delta
+        }
+        if(self.reflect){
+            if(self.parent != nil){
+                let n = PointEmitter.normalize((self.parent?.rotatedPosition.sub((self.parent?.origin)!))!);
+                print("normalized point \(n.x.get(),n.y.get())")
+                _delta = n.mul(_delta.dot(n)*2).sub(_delta);
+            }
+        }
+        self.rotatedPosition.set(_delta.rotate(self.angle.get(),origin: self.origin!).add(self.origin!));
+        
+        return _delta;
     };
     
     dynamic func stateTransitionHandler(notification: NSNotification){
@@ -194,7 +194,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         if(mapping != nil){
             let stateTransition = mapping as! StateTransition
             print("\n\n making transition \(self.name, stateTransition.toState)")
-
+            
             self.transitionToState(stateTransition.toState)
             
         }
@@ -205,12 +205,12 @@ class Brush: Factory, WebTransmitter, Hashable{
         var constraint_mappings =  states[currentState]!.constraint_mappings
         //print("position change called constraint_mappings \(constraint_mappings.count,state,currentState)")
         for (key, value) in constraint_mappings{
-           
-
+            
+            
             self.setConstraint(value)
             //print("clearing constraints on old state \(self.currentState,value.relativeProperty.constrained)")
             value.relativeProperty.constrained = false;
-
+            
             
         }
         print("\(self.name) current position at transition to \(state) = \(self.position.x.val,self.position.y.val)")
@@ -218,9 +218,9 @@ class Brush: Factory, WebTransmitter, Hashable{
         constraint_mappings =  states[currentState]!.constraint_mappings
         for (_, value) in constraint_mappings{
             value.relativeProperty.constrained = true;
-
+            
             //self.setConstraint(value)
-
+            
         }
         //execute methods
         print("executed methods, name \(self.name) state \(self.currentState))")
@@ -245,7 +245,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     func executeStateMethods(){
         let methods = self.states[currentState]!.methods
         print("transition made, methods to execute \(self.name, methods)")
-
+        
         for i in 0..<methods.count{
             let methodName = methods[i];
             switch (methodName.0){
@@ -331,13 +331,13 @@ class Brush: Factory, WebTransmitter, Hashable{
     func newStroke(){
         //print("creating new stroke")
         self.startInterval()
-
+        
         if(origin != nil){
-        var oldOriginX = origin!.x.get();
-        var oldOriginY = origin!.y.get();
-        print("retiring origin for \(self.name, oldOriginX,oldOriginY)")
-        self.origin = nil
-
+            var oldOriginX = origin!.x.get();
+            var oldOriginY = origin!.y.get();
+            print("retiring origin for \(self.name, oldOriginX,oldOriginY)")
+            self.origin = nil
+            
         }
         currentCanvas!.currentDrawing!.retireCurrentStrokes(self.id)
         currentCanvas!.currentDrawing!.newStroke(self.id);

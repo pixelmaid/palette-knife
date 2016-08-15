@@ -256,16 +256,37 @@ class ViewController: UIViewController {
         
         //ROOT BRUSH (TAKE 2)
         
+               
+        let rootBehavior = BehaviorDefinition()
+        
+        
+        rootBehavior.addState("grow")
+        rootBehavior.addState("die")
+        
+             rootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "default", toState: "grow", condition:nil)
+        rootBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "grow", toState: "die", condition:nil)
+
+        rootBehavior.addMethod("die", targetMethod:"destroy", arguments: nil, condition: nil)
+        
+       
+        
+        
         let tapRootBehavior = BehaviorDefinition();
+        let timeIncrement = Interval(inc:4,times:10)
+
+        tapRootBehavior.addCondition("timeCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: timeIncrement, relativeName: nil, relativeParentFlag: false, relational: "within")
         
-        
+
         
         tapRootBehavior.addState("branch")
         tapRootBehavior.addState("initStroke")
-         tapRootBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil)
+        tapRootBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil, condition: nil)
+        tapRootBehavior.addMethod("branch", targetMethod: "spawn", arguments:[rootBehavior,1],condition:nil)
         
-        tapRootBehavior.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke")
-        tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default")
+        tapRootBehavior.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke",condition:nil)
+        tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default",condition:nil)
+        
+        tapRootBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "default", toState: "branch", condition:"timeCondition")
         
         
         tapRootBehavior.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
@@ -275,7 +296,8 @@ class ViewController: UIViewController {
         
         let tapRootBrush = Brush(behaviorDef: tapRootBehavior, parent: nil, canvas:self.currentCanvas!)
         tapRootBrush.name = "tapRootBrush"
-
+        
+        
         
     }
     

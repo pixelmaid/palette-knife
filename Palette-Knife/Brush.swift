@@ -82,7 +82,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         let selector = Selector("positionChange"+":");
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:positionKey, object: self.position)
-        self.position.assignKey("CHANGE",key: positionKey,eventCondition: nil)
+        self.position.assignKey("CHANGE",key: positionKey,condition: nil)
         self.parent = parent
         
         if(behaviorDef != nil){
@@ -161,7 +161,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         
         positionBuffer.append((rotatedPosition.x.get(),rotatedPosition.y.get()));
         print("position buffer \(positionBuffer)")
-         self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:self.rotatedPosition.clone(),weight: self.weight.get());
+        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:self.rotatedPosition.clone(),weight: self.weight.get());
         
     }
     
@@ -174,11 +174,15 @@ class Brush: Factory, WebTransmitter, Hashable{
             _delta = delta
         }
         if(self.reflect){
+            var n:PointEmitter
             if(self.parent != nil){
-                let n = PointEmitter.normalize((self.parent?.rotatedPosition.sub((self.parent?.origin)!))!);
-                print("normalized point \(n.x.get(),n.y.get())")
-                _delta = n.mul(_delta.dot(n)*2).sub(_delta);
+               n = PointEmitter.normalize((self.parent?.rotatedPosition.sub((self.parent?.origin)!))!);
             }
+            else{
+                n = PointEmitter(x:0,y:1)
+            }
+                _delta = n.mul(_delta.dot(n)*2).sub(_delta);
+            
         }
         self.rotatedPosition.set(_delta.rotate(self.angle.get(),origin: self.origin!).add(self.origin!));
         
@@ -193,6 +197,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         
         if(mapping != nil){
             let stateTransition = mapping as! StateTransition
+          
             print("\n\n making transition \(self.name, stateTransition.toState)")
             
             self.transitionToState(stateTransition.toState)
@@ -248,6 +253,13 @@ class Brush: Factory, WebTransmitter, Hashable{
         
         for i in 0..<methods.count{
             let methodName = methods[i];
+            //check to see if there's a conditional on the method, 
+            //and return if it evaluates to false
+            if(methods[i].2 != nil){
+                if(!methods[i].2!.evaluate()){
+                    return;
+                }
+            }
             switch (methodName.0){
             case "newStroke":
                 self.newStroke();
@@ -282,8 +294,8 @@ class Brush: Factory, WebTransmitter, Hashable{
         
     }
     
-    func addMethod(key:String,state:String, methodName:String, arguments:[Any]?){
-        states[state]!.addMethod(key,methodName:methodName,arguments:arguments)
+    func addMethod(key:String,state:String, methodName:String, arguments:[Any]?, condition:Condition?){
+        states[state]!.addMethod(key,methodName:methodName,arguments:arguments,condition:condition)
     }
     
     
@@ -373,17 +385,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         return child
     }
     
-    
-    
-    /*func transformDelta(delta:Point)->Point {
-     if((self.parent) != nil){
-     let newDelta = self.parent!.transformDelta(delta);
-     return newDelta;
-     }
-     else{
-     return delta;
-     }
-     }*/
+  
     
     func destroyChildren(){
         for child in self.children as [Brush] {

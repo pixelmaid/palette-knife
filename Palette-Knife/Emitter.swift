@@ -18,7 +18,6 @@ class Emitter: Model, Equatable  {
     var name = "default"
     func set(value:Emitter){
     }
-    
       func createKeyStorage(){
         for e in events{
             self.keyStorage[e] = [(String,Condition!)]();
@@ -37,15 +36,8 @@ class Emitter: Model, Equatable  {
         
     }
     
-    func assignKey(eventType:String,key:String,eventCondition:Condition!){
-        //print("assigning key for event type: \(eventType) type:\(self)")
-        if(eventCondition != nil){
-            keyStorage[eventType]?.append((key,eventCondition))
-        }
-        else{
-            keyStorage[eventType]?.append((key,nil))
- 
-        }
+    func assignKey(eventType:String,key:String,condition:Condition!){       
+            keyStorage[eventType]?.append((key,condition))
     }
     
     func removeKey(key:String){

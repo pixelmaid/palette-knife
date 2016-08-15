@@ -32,10 +32,10 @@ class PointEmitter: Emitter, Geometry{
         let selector = Selector("propertyInvalidated"+":");
 
        NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:xKey, object: self.x)
-        self.x.assignKey("INVALIDATED",key:xKey,eventCondition: nil);
+        self.x.assignKey("INVALIDATED",key:xKey,condition: nil);
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:yKey, object: self.y)
-        self.y.assignKey("INVALIDATED",key:yKey,eventCondition: nil);
+        self.y.assignKey("INVALIDATED",key:yKey,condition: nil);
         
         self.x.name = "x"
         self.y.name = "y"

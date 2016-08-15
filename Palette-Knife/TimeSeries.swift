@@ -20,8 +20,8 @@ class TimeSeries: Emitter{
         self.events =  ["TIME_INCREMENT"]
         self.createKeyStorage();
         timerTime.name = "time";
-
-     
+        
+        
     }
     
     func getTimeElapsed()->Float{
@@ -31,34 +31,46 @@ class TimeSeries: Emitter{
     }
     
     func startInterval(){
-        intervalTimer  = NSTimer.scheduledTimerWithTimeInterval(0.005, target: self, selector: #selector(TimeSeries.timerIntervalCallback), userInfo: nil, repeats: true)
+        intervalTimer  = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: #selector(TimeSeries.timerIntervalCallback), userInfo: nil, repeats: true)
     }
     
     override func destroy(){
         super.destroy();
         intervalTimer.invalidate();
     }
-
-  @objc func timerIntervalCallback()
+    
+    @objc func timerIntervalCallback()
     {
         let currentTime = NSDate();
         let t = Float(currentTime.timeIntervalSinceDate(timer))
-
+        
         self.timerTime.set(t)
-        //print("executed timer callback =\(t,self.name))")
-        if(t>1){
-           // print("listeners on time increment\(keyStorage["TIME_INCREMENT"], self.name)")
         for key in keyStorage["TIME_INCREMENT"]!
-{
-    //print("executed time increment \(key.0,self.name)")
-
-    NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INCREMENT"])
+        {
+            print("listeners on time increment\(keyStorage["TIME_INCREMENT"], key)")
+ 
+            if(key.1 != nil){
+                let condition = key.1;
+                if(condition.evaluate()){
+                    print("condition true, posted time increment \(key.0,self.name)")
+                    
+                    NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INCREMENT"])
+                }
+                else{
+                    print("condition false, not posting time increment, \((self["time"]! as! Emitter).get())")
+                }
+            }
+            else{
+                print("no condition, posted time increment \(key.0,self.name)")
+                
+                NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INCREMENT"])
+            }
             
         }
-        }
-
-    }
         
-
-
+        
+    }
+    
+    
+    
 }

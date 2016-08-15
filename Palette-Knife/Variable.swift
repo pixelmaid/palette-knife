@@ -14,6 +14,27 @@ class Variable:Emitter{
     
 }
 
+class Interval:Variable{
+    var val = [Float]();
+    var index = 0;
+    init(inc:Float,times:Int){
+        for i in 0..<times{
+            val.append(Float(i)*inc)
+        }
+        super.init();
+    }
+    
+    
+    
+    override func get() -> Float {
+        let v = val[index]
+       
+        return v;
+    }
+
+ 
+}
+
 class RangeVariable:Variable{
     var val = [Float]();
     var index = 0;

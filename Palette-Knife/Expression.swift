@@ -25,7 +25,7 @@ class Expression: Emitter{
     
     func createMapping(reference:Emitter){
         let key = NSUUID().UUIDString;
-        reference.assignKey("CHANGE",key: key,eventCondition: nil)
+        reference.assignKey("CHANGE",key: key,condition: nil)
         let selector = Selector("setHandler"+":");
         NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:key, object: reference)
  

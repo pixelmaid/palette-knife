@@ -122,7 +122,7 @@ class Stylus: TimeSeries, WebTransmitter {
         for key in self.keyStorage["STYLUS_DOWN"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
-                eventCondition.validate(self)
+                eventCondition.evaluate()
             }
             else{
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_DOWN"])
@@ -141,7 +141,7 @@ class Stylus: TimeSeries, WebTransmitter {
         for key in keyStorage["STYLUS_MOVE"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
-                if(eventCondition.validate(self)){
+                if(eventCondition.evaluate()){
                     NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE"])
                     
                 }

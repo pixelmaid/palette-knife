@@ -5,7 +5,6 @@
 //  Created by JENNIFER MARY JACOBS on 5/5/16.
 //  Copyright © 2016 pixelmaid. All rights reserved.
 //
-
 import Foundation
 
 class Brush: Factory, WebTransmitter, Hashable{
@@ -25,18 +24,18 @@ class Brush: Factory, WebTransmitter, Hashable{
     var strokeColor = Color(r:0,g:0,b:0);
     var fillColor = Color(r:0,g:0,b:0);
     var weight = FloatEmitter(val: 5.0)
-    var reflect = false;
+    var reflectY = false;
+    var reflectX = false;
     var position = PointEmitter(x:0,y:0)
-    var positionBuffer = [(Float,Float)]()
-    var origin: PointEmitter?
+    var delta = PointEmitter(x:0,y:0)
+    var xBuffer = Buffer()
+    var yBuffer = Buffer()
+    var weightBuffer = Buffer()
+    var origin = PointEmitter(x:0,y:0)
     var x:FloatEmitter
     var y:FloatEmitter
-    
-    //stores current position, rotated. Need to fix this
-    var rotatedPosition = PointEmitter(x:0,y:0)
-    var rX: FloatEmitter
-    var rY: FloatEmitter
-    
+    var dx:FloatEmitter
+    var dy:FloatEmitter
     var penDown = false;
     var scaling = PointEmitter(x:1,y:1)
     var angle = FloatEmitter(val:0)
@@ -48,15 +47,16 @@ class Brush: Factory, WebTransmitter, Hashable{
     var geometryModified = Event<(Geometry,String,String)>()
     var transmitEvent = Event<(String)>()
     let removeMappingEvent = Event<(Brush,String,Emitter)>()
-    let positionKey = NSUUID().UUIDString;
+    let deltaKey = NSUUID().UUIDString;
     var time = FloatEmitter(val:0)
     var id = NSUUID().UUIDString;
+    var matrix = Matrix();
     
-    required init(behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
+    init(behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
         self.x = self.position.x;
         self.y = self.position.y;
-        self.rX = self.rotatedPosition.x;
-        self.rY = self.rotatedPosition.y;
+        self.dx = delta.x;
+        self.dy = delta.y
         
         self.currentState = "default"
         
@@ -79,11 +79,12 @@ class Brush: Factory, WebTransmitter, Hashable{
         
         
         self.setCanvasTarget(canvas)
-        let selector = Selector("positionChange"+":");
+        let selector = Selector("deltaChange"+":");
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:positionKey, object: self.position)
-        self.position.assignKey("CHANGE",key: positionKey,condition: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:deltaKey, object: self.delta)
+        self.delta.assignKey("CHANGE",key: deltaKey,condition: nil)
         self.parent = parent
+    
         
         if(behaviorDef != nil){
             behaviorDef?.createBehavior(self)
@@ -147,25 +148,52 @@ class Brush: Factory, WebTransmitter, Hashable{
     }
     
     
-    dynamic func positionChange(notification: NSNotification){
-        print("position change called\(position.x.get(),position.y.get())")
-        if(origin == nil){
-            origin = self.position.clone();
+    dynamic func deltaChange(notification: NSNotification){
+        print("delta change called for \(self.name) delta:\(delta.x.get(),delta.y.get(),angle.get())")
+        
+        let centerX = origin.x.get();
+        let centerY = origin.y.get();
+        
+        self.matrix.reset();
+        if(self.parent != nil){
+            self.matrix.prepend(self.parent!.matrix)
         }
+        var xScale = self.scaling.x.get();
+        print("reflection on the x axis \(self.reflectX),reflection on the y axis \(self.reflectY), \(self.name)")
+
+        if(self.reflectX){
+            xScale *= -1.0;
+        }
+        var yScale = self.scaling.y.get();
+        if(self.reflectY){
+            yScale *= -1.0;
+        }
+        self.matrix.scale(xScale, y: yScale, centerX: centerX, centerY: centerY);
         
-        let delta = self.position.sub(self.origin!);
-        self.transformDelta(delta)
-        //let rpos = self.position.rotate(self.angle.get(),origin:self.origin!)
-        //  print("angle = \(self.angle.get()) rpos =\( self.rotatedPosition.x.get(), self.rotatedPosition.y.get()) pos= \(self.position.x.get(),self.position.y.get())")
+        self.matrix.rotate(self.angle.get(), centerX: centerX, centerY: centerY)
+        let _dx = self.position.x.get()+delta.x.get();
+        let _dy = self.position.y.get()+delta.y.get();
+        
+        let transformedCoords = self.matrix.transformPoint(_dx, y: _dy)
+                 print("brush position currently is \(transformedCoords.0,transformedCoords.1)")
        
-        
-        positionBuffer.append((rotatedPosition.x.get(),rotatedPosition.y.get()));
-        print("position buffer \(positionBuffer)")
-        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:self.rotatedPosition.clone(),weight: self.weight.get());
-        
+        xBuffer.push(delta.x.get());
+        yBuffer.push(delta.y.get());
+        weightBuffer.push(weight.get());
+        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:PointEmitter(x:transformedCoords.0,y:transformedCoords.1),weight: self.weight.get());
+        self.position.set(_dx,y:_dy);
+
     }
     
-    func transformDelta(delta:PointEmitter)->PointEmitter{
+    
+    func setOrigin(p:PointEmitter){
+        origin = p.clone();
+        self.position.set(origin)
+       
+    }
+    
+    
+   /* func transformDelta(delta:PointEmitter)->PointEmitter{
         var _delta:PointEmitter
         if(self.parent != nil){
             _delta = self.parent!.transformDelta(delta);
@@ -187,7 +215,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         self.rotatedPosition.set(_delta.rotate(self.angle.get(),origin: self.origin!).add(self.origin!));
         
         return _delta;
-    };
+    };*/
     
     dynamic func stateTransitionHandler(notification: NSNotification){
         
@@ -209,8 +237,7 @@ class Brush: Factory, WebTransmitter, Hashable{
         print("transition to state called for \(self.name) to state: \(state) \n\n\n\n")
         var constraint_mappings =  states[currentState]!.constraint_mappings
         //print("position change called constraint_mappings \(constraint_mappings.count,state,currentState)")
-        for (key, value) in constraint_mappings{
-            
+        for (_, value) in constraint_mappings{
             
             self.setConstraint(value)
             //print("clearing constraints on old state \(self.currentState,value.relativeProperty.constrained)")
@@ -256,20 +283,28 @@ class Brush: Factory, WebTransmitter, Hashable{
             //check to see if there's a conditional on the method, 
             //and return if it evaluates to false
             if(methods[i].2 != nil){
+                print("condition to evaluate for method \(methodName.0)");
                 if(!methods[i].2!.evaluate()){
+                    print("condition to evaluate for method \(methodName.0) is false");
+
                     return;
                 }
+                print("condition to evaluate for method \(methodName) is true");
+
             }
             switch (methodName.0){
             case "newStroke":
                 self.newStroke();
                 break;
+            case "setOrigin":
+                self.setOrigin(methodName.1![0] as! PointEmitter)
             case "destroy":
                 print("executed destroy for \(self.name)")
                 self.destroy();
                 break;
             case "spawn":
-                self.spawn((methodName.1![0] as! BehaviorDefinition),num:(methodName.1![1] as! Int));
+                self.spawn((methodName.1![0] as! BehaviorDefinition),num:(methodName.1![1] as! Int),reflectX:methodName.1![2] as! [Bool], reflectY:methodName.1![3] as! [Bool]);
+                
                 break;
             default:
                 break;
@@ -303,7 +338,8 @@ class Brush: Factory, WebTransmitter, Hashable{
     func clone()->Brush{
         let clone = Brush.create(self.name) as! Brush;
         
-        clone.reflect = self.reflect;
+        clone.reflectX = self.reflectX;
+        clone.reflectY = self.reflectY;
         clone.penDown = self.penDown;
         clone.position = self.position;
         clone.scaling = self.scaling;
@@ -341,26 +377,22 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     
     func newStroke(){
-        //print("creating new stroke")
+        print("creating new stroke for \(self.name)")
         self.startInterval()
         
-        if(origin != nil){
-            var oldOriginX = origin!.x.get();
-            var oldOriginY = origin!.y.get();
-            print("retiring origin for \(self.name, oldOriginX,oldOriginY)")
-            self.origin = nil
-            
-        }
         currentCanvas!.currentDrawing!.retireCurrentStrokes(self.id)
         currentCanvas!.currentDrawing!.newStroke(self.id);
     }
     
     //creates number of clones specified by num and adds them as children
-    func spawn(behavior:BehaviorDefinition,num:Int) {
+    func spawn(behavior:BehaviorDefinition,num:Int,reflectX:[Bool], reflectY:[Bool]) {
         lastSpawned.removeAll()
         //print("SPAWN change called \(self.children.count)")
-        for _ in 0...num-1{
+        for i in 0...num-1{
             let child = Brush(behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
+            child.setOrigin(self.position)
+            child.reflectX = reflectX[i]
+            child.reflectY = reflectY[i]
             self.children.append(child);
             let handler = self.children.last!.geometryModified.addHandler(self,handler: Brush.brushDrawHandler)
             childHandlers[child]=[Disposable]();

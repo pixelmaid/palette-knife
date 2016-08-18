@@ -258,21 +258,54 @@ class ViewController: UIViewController {
         
                
         let rootBehavior = BehaviorDefinition()
-        
-        
+        //TODO: Figure out why increment never reaches final value...
+        rootBehavior.addInterval("rootTimeIncrement", inc:0.1, times:100)
+        rootBehavior.addState("pause")
+
         rootBehavior.addState("grow")
         rootBehavior.addState("die")
         
-             rootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "default", toState: "grow", condition:nil)
-        rootBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "grow", toState: "die", condition:nil)
+        rootBehavior.addCondition("rootTimeCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: nil, relativeName: "rootTimeIncrement", relativeParentFlag: false, relational: "within")
+        
+        
+        rootBehavior.addCondition("rootTimeComplete", reference: nil, referenceName: "time", referenceParentFlag: false, relative: FloatEmitter(val:9), relativeName: nil, relativeParentFlag: false, relational: ">")
+        
+        rootBehavior.addExpression("xScale",  emitter1: nil, operand1Name: "xBuffer", parentFlag1: true, emitter2: FloatEmitter(val: 1.0), operand2Name: nil, parentFlag2: false, type: "mult")
+        
+        rootBehavior.addExpression("yScale",  emitter1: nil, operand1Name: "yBuffer", parentFlag1: true, emitter2: FloatEmitter(val: 1.0), operand2Name: nil, parentFlag2: false, type: "mult")
+     
+        
+        
+         rootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "default", toState: "pause", condition:nil)
+        
+       
+        
+        rootBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "pause", toState: "grow", condition:"rootTimeCondition")
+        
+        
+        
+         rootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "grow", toState: "pause", condition:nil)
+        
 
-        rootBehavior.addMethod("die", targetMethod:"destroy", arguments: nil, condition: nil)
+        rootBehavior.addMethod("default", targetMethod:"newStroke", arguments: nil, condition: nil)
+
+        rootBehavior.addMethod("pause", targetMethod:"spawn", arguments: [rootBehavior,2,[false,false],[false,true]], condition: "rootTimeComplete")
+        
+        rootBehavior.addMethod("pause", targetMethod:"destroy", arguments: nil, condition: "rootTimeComplete")
+        
+        
+        
+        rootBehavior.addMapping(FloatEmitter(val:20), referenceName: nil, parentFlag:false, relativePropertyName: "angle", targetState: "default")
+        rootBehavior.addMapping(nil, referenceName: "xScale", parentFlag: false, relativePropertyName: "dx", targetState: "grow")
+        rootBehavior.addMapping(nil, referenceName: "yScale", parentFlag: false,relativePropertyName: "dy", targetState: "grow")
+         rootBehavior.addMapping(nil, referenceName: "weightBuffer", parentFlag: true,relativePropertyName: "weight", targetState: "grow")
         
        
         
         
+        
         let tapRootBehavior = BehaviorDefinition();
-        let timeIncrement = Interval(inc:4,times:10)
+        let timeIncrement = Interval(inc:2,times:10)
 
         tapRootBehavior.addCondition("timeCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: timeIncrement, relativeName: nil, relativeParentFlag: false, relational: "within")
         
@@ -281,17 +314,19 @@ class ViewController: UIViewController {
         tapRootBehavior.addState("branch")
         tapRootBehavior.addState("initStroke")
         tapRootBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil, condition: nil)
-        tapRootBehavior.addMethod("branch", targetMethod: "spawn", arguments:[rootBehavior,1],condition:nil)
+         tapRootBehavior.addMethod("initStroke", targetMethod: "setOrigin",arguments: [stylus.position], condition: nil)
+       //tapRootBehavior.addMethod("branch", targetMethod: "spawn", arguments:[rootBehavior,2,[false,false],[false,true]],condition:nil)
         
         tapRootBehavior.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke",condition:nil)
         tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default",condition:nil)
         
         tapRootBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "default", toState: "branch", condition:"timeCondition")
+        tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "branch", toState: "default", condition:nil)
+
         
-        
-        tapRootBehavior.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
-        tapRootBehavior.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
-        //tapRootBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
+        tapRootBehavior.addMapping(stylus.dy, referenceName:nil, parentFlag: false,relativePropertyName: "dy",targetState: "default");
+        tapRootBehavior.addMapping(stylus.dx, referenceName:nil, parentFlag: false,relativePropertyName: "dx",targetState: "default");
+        //tapRootBehavior.addMapping(stylus.force, referenceName:nil,parentFlag: false, relativePropertyName: "weight",targetState: "default");
         
         
         let tapRootBrush = Brush(behaviorDef: tapRootBehavior, parent: nil, canvas:self.currentCanvas!)

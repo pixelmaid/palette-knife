@@ -59,6 +59,16 @@ class AddExpression:Expression{
 }
 
 
+class MultExpression:Expression{
+    
+    override func get()->Float{
+        print("multiplying:\(operand1.get() , operand2.get())")
+        return operand1.get() * operand2.get();
+    }
+    
+ 
+}
+
 class LogExpression:Expression{
     
     override func get()->Float{

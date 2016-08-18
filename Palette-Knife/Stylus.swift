@@ -18,20 +18,24 @@ class Stylus: TimeSeries, WebTransmitter {
     var speed = Float(0)
     var prevAngle: Float
     var position = PointEmitter(x:0,y:0);
+    var origin = PointEmitter(x:0,y:0);
+    var delta = PointEmitter(x:0,y:0);
+    var deltaChangeBuffer = [PointEmitter]();
     var x:FloatEmitter
     var y:FloatEmitter
+    var dx:FloatEmitter
+    var dy:FloatEmitter
     var prevTime = Float(0);
     var penDown = false;
     var distance = Float(0);
     var forceSub = Float(1);
     var id = NSUUID().UUIDString;
     var transmitEvent = Event<(String)>()
-    var dataQueue = [(Float,Float)]()
     var constraintTransmitComplete = true;
     var time = FloatEmitter(val:0)
     var moveDist = Float(0);
     var moveLimit = Float(20);
-
+    // var testCount = 4;
     init(x:Float,y:Float,angle:Float,force:Float){
         prevPosition = PointEmitter(x:0, y:0)
         self.force.set(force*1.5);
@@ -40,25 +44,27 @@ class Stylus: TimeSeries, WebTransmitter {
         self.prevAngle = angle;
         self.x = position.x;
         self.y = position.y
+        self.dx = delta.x;
+        self.dy = delta.y
         super.init()
         self.name = "stylus"
         self.time = self.timerTime
-
+        
         position.set(x, y:y)
         self.events =  ["STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE"]
         self.createKeyStorage();
-
+        
         //self.startInterval();
         
     }
     
-
+    
     
     @objc override func timerIntervalCallback()
     {
         self.transmitData();
     }
-
+    
     func transmitData(){
         var string = "{\"type\":\"stylus_data\",\"canvas_id\":\""+self.id;
         string += "\",\"stylusData\":{"
@@ -70,11 +76,11 @@ class Stylus: TimeSeries, WebTransmitter {
         string+="\"position\":{\"x\":"+String(self.position.x)+",\"y\":"+String(self.position.y)+"}"
         // string+="\"delta\":{\"x\":"+String(delta.x)+",\"y\":"+String(delta.y)+"}"
         string+="}}"
-
+        
         transmitEvent.raise(string)
     }
     
-     func get(targetProp:String)->Any?{
+    func get(targetProp:String)->Any?{
         switch targetProp{
         case "force":
             return force
@@ -89,7 +95,7 @@ class Stylus: TimeSeries, WebTransmitter {
         }
         
     }
-
+    
     func resetDistance(){
         self.distance=0;
     }
@@ -100,7 +106,7 @@ class Stylus: TimeSeries, WebTransmitter {
     
     func onStylusUp(){
         //print("stylus up transitions \(self.keyStorage["STYLUS_UP"]!.count)")
-
+        
         for key in keyStorage["STYLUS_UP"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
@@ -110,15 +116,17 @@ class Stylus: TimeSeries, WebTransmitter {
                 
             }
         }
-
+        
         self.penDown = false
         self.speed = 0;
         self.transmitData();
-
+        
     }
     
     func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
-        //print("stylus down transitions \(self.keyStorage["STYLUS_DOWN"]!.count)")
+        //TODO: silent set, need to make more robust/ readable
+        self.position.x.val = x;
+        self.position.y.val = y;
         for key in self.keyStorage["STYLUS_DOWN"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
@@ -129,15 +137,16 @@ class Stylus: TimeSeries, WebTransmitter {
             }
             
         }
-        self.position.set(x, y:y)
+        self.delta.set(0,y:0)
         self.penDown = true
         self.prevTime = self.getTimeElapsed();
         self.speed = 0;
         self.transmitData();
-
+        
     }
     
     func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
+        
         for key in keyStorage["STYLUS_MOVE"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
@@ -151,18 +160,21 @@ class Stylus: TimeSeries, WebTransmitter {
                 
             }
             else{
-//print("move limit: \(moveDist)")
-
+                //print("move limit: \(moveDist)")
+                
                 if(moveDist>moveLimit){
                     //print("move limit reached \(moveDist)")
                     moveDist = 0;
                     moveLimit = Float(arc4random_uniform(10) + 60)
-                NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE"])
+                    NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE"])
                 }
             }
         }
         self.prevPosition.set(position);
+        
         self.position.set(x,y:y)
+        deltaChangeBuffer.append(self.position.sub(self.prevPosition));
+        print("stylus position currently is \(x,y)")
         self.distance += prevPosition.dist(position)
         moveDist += prevPosition.dist(position)
         self.prevForce = self.force.get()
@@ -172,9 +184,16 @@ class Stylus: TimeSeries, WebTransmitter {
         let currentTime = self.getTimeElapsed();
         self.speed = prevPosition.dist(position)/(currentTime-prevTime)
         self.prevTime = currentTime;
-       
+        
     }
     
-  
+    
+    func shiftDeltaBuffer(){
+        self.delta.set(self.position.sub(self.prevPosition))
+
+    }
+    
+    
+    
     
 }

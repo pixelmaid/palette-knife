@@ -95,7 +95,7 @@ class PointEmitter: Emitter, Geometry{
         self.y.set(y);
         for i in 0..<events.count{
 let event = events[i]
-            //print("set called from constraints \(self.x.get(),self.y.get(),keyStorage[event]!.count,event)")
+            print("set called from constraints \(self.x.get(),self.y.get(),keyStorage[event]!.count,event)")
         for key in keyStorage[event]!  {
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":event])
         

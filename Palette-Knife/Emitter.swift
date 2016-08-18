@@ -18,16 +18,16 @@ class Emitter: Model, Equatable  {
     var name = "default"
     func set(value:Emitter){
     }
-      func createKeyStorage(){
+    func createKeyStorage(){
         for e in events{
             self.keyStorage[e] = [(String,Condition!)]();
         }
-
+        
     }
     
     dynamic func propertyInvalidated(notification: NSNotification){
         self.invalidated = true;
-
+        
         //print("property invalidated \(reference.get(),reference)")
         for key in keyStorage["INVALIDATED"]!  {
             NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0, "event":"INVALIDATED"])
@@ -36,8 +36,8 @@ class Emitter: Model, Equatable  {
         
     }
     
-    func assignKey(eventType:String,key:String,condition:Condition!){       
-            keyStorage[eventType]?.append((key,condition))
+    func assignKey(eventType:String,key:String,condition:Condition!){
+        keyStorage[eventType]?.append((key,condition))
     }
     
     func removeKey(key:String){
@@ -62,5 +62,4 @@ class Emitter: Model, Equatable  {
 func ==(lhs:Emitter, rhs:Emitter) -> Bool {
     return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
 }
-
 

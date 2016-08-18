@@ -18,21 +18,54 @@ class Interval:Variable{
     var val = [Float]();
     var index = 0;
     init(inc:Float,times:Int){
-        for i in 0..<times{
+        for i in 1..<times{
             val.append(Float(i)*inc)
         }
         super.init();
     }
     
-    
+    func incrementIndex(){
+                   index += 1;
+        
+    }
     
     override func get() -> Float {
+        if(index < val.count){
         let v = val[index]
        
         return v;
+        }
+        return -1;
     }
 
  
+}
+
+class Buffer:Variable{
+    var val = [Float]();
+    var index = 0;
+    
+   override init(){
+        
+    }
+    
+    func push(v: Float){
+        val.append(v)
+    }
+
+    func incrementIndex(){
+        if(index<val.count-1){
+                index += 1;
+        }
+    }
+    
+    override func get() -> Float {
+        print("accessing buffer, \(val.count,index)")
+        let v = val[index]
+        self.incrementIndex();
+        return v;
+    }
+    
 }
 
 class RangeVariable:Variable{
@@ -54,7 +87,6 @@ class RangeVariable:Variable{
         }
     }
     override func get() -> Float {
-        let old_index = index;
        let v = val[index]
         self.incrementIndex();
         return v;

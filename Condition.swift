@@ -26,13 +26,21 @@ class Condition {
             return referenceA.get() < referenceB.get();
             
         case ">":
+            print ("condition to evaluate < \(referenceA.get(),referenceB.get())")
             return referenceA.get() > referenceB.get();
             
         case "==":
             return referenceA.get() == referenceB.get();
         case "within":
             let interval = self.referenceB as! Interval
-            return interval.val.contains(round(10 * referenceA.get()) / 10)
+            let value = interval.get();
+            if(value > 0){
+                if(referenceA.get()>value){
+                    interval.incrementIndex();
+                    return true;
+                }
+            }
+            return false;
             
         default:
             return false;

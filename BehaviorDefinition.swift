@@ -12,13 +12,14 @@ import Foundation
 class BehaviorDefinition {
     
     var states = [String]()
-    var expressions = [String:(String,Emitter?,String?,Emitter?,String?,Bool)]()
+    var expressions = [String:(Emitter?,String?,Bool,Emitter?,String?,Bool,String)]()
     var conditions = [String:(Emitter?,String?,Bool,Emitter?,String?,Bool,String)]()
-
-    var methods = [(String,String,[Any]?,Condition?)]()
+    var variables = [String:(String,[Any])]()
+    var storedVariables = [String:Variable]()
+    var methods = [(String,String,[Any]?,String?)]()
     var transitions = [(Emitter?,String,String,String,String?)]()
     var behaviorMapper = BehaviorMapper()
-    var mappings = [(Emitter?,String?,String,String)]()
+    var mappings = [(Emitter?,String?,Bool,String,String)]()
     var storedExpressions = [String:Expression]()
     var storedConditions = [String:Condition]()
     
@@ -29,11 +30,14 @@ class BehaviorDefinition {
         
     }
     
+    func addInterval(name:String,inc:Float,times:Int){
+        variables[name] = ("interval",[inc,times]);
+    }
     func addState(stateName:String){
         states.append(stateName)
     }
 
-    func addMethod(targetState:String, targetMethod:String, arguments:[Any]?,condition:Condition?){
+    func addMethod(targetState:String, targetMethod:String, arguments:[Any]?,condition:String?){
         methods.append((targetState,targetMethod,arguments,condition))
     }
     
@@ -41,19 +45,29 @@ class BehaviorDefinition {
         transitions.append((eventEmitter, event, fromState,toState,condition))
     }
     
-    func addMapping(referenceProperty:Emitter?, referenceName:String?, relativePropertyName:String,targetState:String){
-        mappings.append((referenceProperty,referenceName,relativePropertyName,targetState))
+    func addMapping(referenceProperty:Emitter?, referenceName:String?, parentFlag:Bool, relativePropertyName:String,targetState:String){
+        mappings.append((referenceProperty,referenceName,parentFlag,relativePropertyName,targetState))
     }
     
-    func addExpression(name:String, type:String, emitter1:Emitter?, operand1Name:String?,emitter2:Emitter?,operand2Name:String?,parentFlag:Bool){
-        expressions[name]=(type,emitter1, operand1Name, emitter2, operand2Name,parentFlag);
+    func addExpression(name:String, emitter1:Emitter?, operand1Name:String?, parentFlag1:Bool, emitter2:Emitter?,operand2Name:String?,parentFlag2:Bool,type:String){
+        expressions[name]=(emitter1, operand1Name, parentFlag1, emitter2, operand2Name,parentFlag2,type);
     }
     
+    
+    func generateVariable(name:String, data:(String,[Any])){
+        switch(data.0){
+            case "interval":
+                let interval = Interval(inc:data.1[0] as! Float,times:data.1[1] as! Int)
+                storedVariables[name] = interval;
+                break;
+        default:
+            break;
+        }
+    }
 
-    func generateCondition(targetBrush:Brush, name:String,data:(Emitter?,String?,Bool,Emitter?,String?,Bool,String)){
+    func generateOperands(targetBrush:Brush,data:(Emitter?,String?,Bool,Emitter?,String?,Bool,String))->(Emitter,Emitter){
         var emitter1:Emitter;
         var emitter2:Emitter
-        
         
         let operand1:Emitter
         let operand2: Emitter
@@ -83,106 +97,95 @@ class BehaviorDefinition {
         }
         
         if(data.1 != nil){
-            operand1 = emitter1[data.1!]! as! Emitter
+            if(variables[data.1!]) != nil{
+                operand1 = storedVariables[data.1!]!;
+            }
+            else{
+                operand1 = emitter1[data.1!]! as! Emitter
+            }
         }
         else{
             operand1 = emitter1;
         }
         
         if(data.4 != nil){
+            if(variables[data.4!]) != nil{
+                operand2 = storedVariables[data.4!]!;
+            }
+            else{
             operand2 = emitter2[data.4!]! as! Emitter
+            }
         }
         else{
             operand2 = emitter2;
         }
         
-        let condition = Condition(a: operand1, b: operand2, relational: data.6)
-        storedConditions[name] = condition;
+        return(operand1,operand2)
         
         
     }
     
+    func generateCondition(targetBrush:Brush, name:String,data:(Emitter?,String?,Bool,Emitter?,String?,Bool,String)){
+        let operands = generateOperands(targetBrush, data:data)
+        let operand1 = operands.0;
+        let operand2 = operands.1;
+
+        let condition = Condition(a: operand1, b: operand2, relational: data.6)
+        storedConditions[name] = condition;
+
+    }
+    
+    func generateExpression(targetBrush:Brush, name:String,data:(Emitter?,String?,Bool,Emitter?,String?,Bool,String)){
+        let operands = generateOperands(targetBrush, data:data)
+        let operand1 = operands.0;
+        let operand2 = operands.1;
+        let expression:Expression;
+        switch(data.6){
+        case "add":
+            expression = AddExpression(operand1: operand1,operand2: operand2)
+        case "mult":
+            expression = MultExpression(operand1: operand1,operand2: operand2)
+      
+            break;
+        case "log":
+            expression = LogExpression(operand1: operand1,operand2: operand2)
+            
+            break;
+        case "exp":
+            expression = ExpExpression(operand1: operand1,operand2: operand2)
+            
+            break;
+        case "logigrowth":
+            expression = LogiGrowthExpression(operand1: operand1,operand2: operand2)
+            
+            break;
+        case "sub":
+            expression = SubExpression(operand1: operand1,operand2: operand2)
+            
+            break;
+        default:
+            expression = AddExpression(operand1: operand1,operand2: operand2)
+            
+            break;
+        }
+        self.storedExpressions[name] = expression;
+    }
+    
     func createBehavior(targetBrush:Brush){
        print("creating behavior, conditions \(conditions)")
+        
+        for (key, variable_data) in variables{
+            self.generateVariable(key,data:variable_data)
+        }
+
         for (key, condition_data) in conditions{
             self.generateCondition(targetBrush,name:key,data:condition_data)
         }
         
         for (key,expression_data) in expressions{
-            let name = key
-            var emitter1:Emitter;
-            var emitter2:Emitter
+           self.generateExpression(targetBrush,name:key,data:expression_data)
 
             
-            var operand1:Emitter
-            var operand2: Emitter
-            
-            if(expression_data.1 == nil){
-               
-                emitter1 = targetBrush;
-                
-            }
-            else{
-                emitter1 = expression_data.1!
-            }
-
-            if (expression_data.3 == nil){
-                if(expression_data.5){
-                    print("name,parent \(targetBrush.name,targetBrush.parent)")
-                    emitter2 = targetBrush.parent!;
-                    
-                }
-                else{
-                    emitter2 = targetBrush;
-                }
-
-            }
-            else{
-                emitter2 = expression_data.3!
-            }
-            
-            if(expression_data.2 == nil){
-                operand1 = emitter1
-            }
-            else{
-                operand1 = emitter1[expression_data.2!] as! Emitter
-            }
-            
-            if(expression_data.4  == nil){
-                operand2 = emitter2
-            }
-            else{
-                operand2 = emitter2[expression_data.4!] as! Emitter
-            }
-
-            let expression:Expression;
-            switch(expression_data.0){
-                case "add":
-                   expression = AddExpression(operand1: operand1,operand2: operand2)
-
-                break;
-            case "log":
-                expression = LogExpression(operand1: operand1,operand2: operand2)
-                
-                break;
-            case "exp":
-                expression = ExpExpression(operand1: operand1,operand2: operand2)
-                
-                break;
-            case "logigrowth":
-                expression = LogiGrowthExpression(operand1: operand1,operand2: operand2)
-                
-                break;
-            case "sub":
-                expression = SubExpression(operand1: operand1,operand2: operand2)
-                
-                break;
-            default:
-                expression = AddExpression(operand1: operand1,operand2: operand2)
-
-                    break;
-            }
-            self.storedExpressions[name] = expression;
 
         }
         
@@ -191,9 +194,14 @@ class BehaviorDefinition {
 
         }
          for method in methods{
-         
-            //todo: add condition for methods
-            behaviorMapper.addMethod(targetBrush,state:method.0,methodName:method.1,arguments:method.2,condition:nil);
+            let condition:Condition?
+            if((method.3) != nil){
+                condition = storedConditions[method.3!]!
+            }
+            else{
+                condition = nil
+            }
+            behaviorMapper.addMethod(targetBrush,state:method.0,methodName:method.1,arguments:method.2,condition:condition);
         }
         
         for transition in transitions{
@@ -219,13 +227,18 @@ class BehaviorDefinition {
         for mapping in mappings{
             var referenceProperty:Emitter
             if(mapping.0 == nil){
+                if(mapping.2 == true){
+                   referenceProperty = targetBrush.parent![mapping.1!]! as! Emitter
+                }
+                else{
                 referenceProperty = storedExpressions[mapping.1!]! as Emitter
+                }
             }
             else{
                 referenceProperty = mapping.0!
             }
-            let relativeProperty = (targetBrush[mapping.2]) as! Emitter
-            behaviorMapper.createMapping(referenceProperty, relative: targetBrush, relativeProperty:relativeProperty, targetState: mapping.3)
+            let relativeProperty = (targetBrush[mapping.3]) as! Emitter
+            behaviorMapper.createMapping(referenceProperty, relative: targetBrush, relativeProperty:relativeProperty, targetState: mapping.4)
         }
 
         

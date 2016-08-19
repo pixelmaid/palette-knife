@@ -9,20 +9,20 @@
 import Foundation
 class Line: Geometry{
     
-    var p: PointEmitter
-    var v: PointEmitter
+    var p: Point
+    var v: Point
     
     init(px:Float,py:Float,vx:Float,vy:Float, asVector:Bool) {
         
-        self.p = PointEmitter(x:px,y:py)
-        self.v = PointEmitter(x:vx,y:vy)
+        self.p = Point(x:px,y:py)
+        self.v = Point(x:vx,y:vy)
     
         if (!asVector) {
             self.v = self.v.sub(self.p)
         }
     }
     
-    init(p:PointEmitter,v:PointEmitter, asVector:Bool) {
+    init(p:Point,v:Point, asVector:Bool) {
         
         self.p = p
         self.v = v
@@ -32,7 +32,7 @@ class Line: Geometry{
         }
     }
     
-    init(p:PointEmitter,length:Float,angle:Float, asVector:Bool) {
+    init(p:Point,length:Float,angle:Float, asVector:Bool) {
         
         self.p = p;
         self.v = p.pointAtDistance(length, a: angle)
@@ -50,14 +50,14 @@ class Line: Geometry{
     /**
      * The starting point of the line.
      */
-    func getPoint()->PointEmitter{
+    func getPoint()->Point{
         return self.p
     }
     
     /**
      * The direction of the line as a vector.
      */
-    func getVector()->PointEmitter {
+    func getVector()->Point {
         return self.v
     }
     
@@ -73,7 +73,7 @@ class Line: Geometry{
      * @return {Point} the intersection point of the lines, `undefined` if the
      *     two lines are collinear, or `null` if they don't intersect.
      */
-    func intersect(line:Line,  isInfinite:Bool)->PointEmitter?{
+    func intersect(line:Line,  isInfinite:Bool)->Point?{
         return Line.intersect(self.p.x.get(), p1y: self.p.y.get(), v1x: self.v.x.get(), v1y: self.v.y.get(),p2x: line.p.x.get(), p2y: line.p.y.get(), v2x: line.v.x.get(), v2y: line.v.y.get(), asVector:true, isInfinite: isInfinite);
     }
     
@@ -81,7 +81,7 @@ class Line: Geometry{
     /**
      * @return {Number}
      */
-    func getSide(point:PointEmitter, isInfinite:Bool)->Int? {
+    func getSide(point:Point, isInfinite:Bool)->Int? {
         return Line.getSide(self.p.x.get(), py: self.p.y.get(), vx: self.v.x.get(), vy: self.v.y.get(), x: point.x.get(), y: point.y.get(), isInfinite: isInfinite);
     }
     
@@ -89,16 +89,16 @@ class Line: Geometry{
      * @param {Point} point
      * @return {Number}
      */
-    func getDistance(point:PointEmitter)->Float {
+    func getDistance(point:Point)->Float {
         return abs(Line.getSignedDistance(self.p.x.get(), py: self.p.y.get(), vx: self.v.x.get(), vy: self.v.y.get(), x: point.x.get(), y: point.y.get()));
     }
     
     func isCollinear(line:Line)->Bool {
-        return PointEmitter.isCollinear(self.v.x.get(), y1: self.v.y.get(), x2: line.v.x.get(), y2: line.v.y.get());
+        return Point.isCollinear(self.v.x.get(), y1: self.v.y.get(), x2: line.v.x.get(), y2: line.v.y.get());
     }
     
     func isOrthogonal(line:Line)->Bool {
-        return PointEmitter.isOrthoganal(self.v.x.get(), y1: self.v.y.get(), x2: line.v.x.get(), y2: line.v.y.get());
+        return Point.isOrthoganal(self.v.x.get(), y1: self.v.y.get(), x2: line.v.x.get(), y2: line.v.y.get());
     }
     
     func getSlope()->Float{
@@ -109,14 +109,14 @@ class Line: Geometry{
         return -getSlope()*p.x.get()+p.y.get()
     }
     
-    func getMidpoint()->PointEmitter{
-        return PointEmitter(x:(p.x.get()+v.x.get())/2,y:(p.y.get()+v.y.get())/2)
+    func getMidpoint()->Point{
+        return Point(x:(p.x.get()+v.x.get())/2,y:(p.y.get()+v.y.get())/2)
     }
     
     
     
     //statics: /** @lends Line */{
-    static func intersect(p1x:Float, p1y:Float, var v1x:Float, var v1y:Float, p2x:Float, p2y:Float, var v2x:Float, var v2y:Float, asVector:Bool, isInfinite:Bool)->PointEmitter? {
+    static func intersect(p1x:Float, p1y:Float, var v1x:Float, var v1y:Float, p2x:Float, p2y:Float, var v2x:Float, var v2y:Float, asVector:Bool, isInfinite:Bool)->Point? {
            
         if (!asVector) {
             v1x -= p1x;
@@ -144,7 +144,7 @@ class Line: Geometry{
                         // the actual range.
                         u1 = u1 <= 0 ? 0 : u1 >= 1 ? 1 : u1;
                     }
-                    return PointEmitter(x:p1x + u1 * v1x,y:p1y + u1 * v1y);
+                    return Point(x:p1x + u1 * v1x,y:p1y + u1 * v1y);
                 }
             }
             return nil

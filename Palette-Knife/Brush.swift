@@ -7,7 +7,7 @@
 //
 import Foundation
 
-class Brush: Factory, WebTransmitter, Hashable{
+class Brush: TimeSeries, WebTransmitter, Hashable{
     
     //hierarcical data
     var children = [Brush]();
@@ -23,32 +23,35 @@ class Brush: Factory, WebTransmitter, Hashable{
     //geometric/stylistic properties
     var strokeColor = Color(r:0,g:0,b:0);
     var fillColor = Color(r:0,g:0,b:0);
-    var weight = FloatEmitter(val: 5.0)
+    var weight = Observable<Float>(5.0)
     var reflectY = false;
     var reflectX = false;
-    var position = PointEmitter(x:0,y:0)
-    var delta = PointEmitter(x:0,y:0)
+    var position = Point(x:0,y:0)
+    var delta = Point(x:0,y:0)
+    var deltaKey = NSUUID().UUIDString;
+
     var xBuffer = Buffer()
     var yBuffer = Buffer()
     var weightBuffer = Buffer()
-    var origin = PointEmitter(x:0,y:0)
-    var x:FloatEmitter
-    var y:FloatEmitter
-    var dx:FloatEmitter
-    var dy:FloatEmitter
-    var penDown = false;
-    var scaling = PointEmitter(x:1,y:1)
-    var angle = FloatEmitter(val:0)
-    var n1:Float!
-    var n2:Float!
+    var origin = Point(x:0,y:0)
+    var x:Observable<Float>
+    var y:Observable<Float>
+    var dx:Observable<Float>
+    var dy:Observable<Float>
+    var scaling = Point(x:1,y:1)
+    var angle = Observable<Float>(0)
     var length:Float!
     
+    //event Handler wrapper for draw updates
+    var drawKey = NSUUID().UUIDString;
+
     var currentCanvas:Canvas?
     var geometryModified = Event<(Geometry,String,String)>()
     var transmitEvent = Event<(String)>()
-    let removeMappingEvent = Event<(Brush,String,Emitter)>()
-    let deltaKey = NSUUID().UUIDString;
-    var time = FloatEmitter(val:0)
+    let removeMappingEvent = Event<(Brush,String,Observable<Float>)>()
+    let removeTransitionEvent = Event<(Brush,String,Emitter)>()
+
+    var time = Observable<Float>(0)
     var id = NSUUID().UUIDString;
     var matrix = Matrix();
     
@@ -72,30 +75,20 @@ class Brush: Factory, WebTransmitter, Hashable{
         //add in default state
         self.createState(currentState);
         
-        //add in default stop state with destroy method
-        //self.createState("stop");
-        //let destroy_key = NSUUID().UUIDString;
-        //self.addMethod(destroy_key, state: "stop", methodName: "destroy", arguments: nil)
-        
+        //setup listener for delta observable
+        self.delta.didChange.addHandler(self, handler:Brush.deltaChange, key:deltaKey)
         
         self.setCanvasTarget(canvas)
-        let selector = Selector("deltaChange"+":");
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:deltaKey, object: self.delta)
-        self.delta.assignKey("CHANGE",key: deltaKey,condition: nil)
         self.parent = parent
     
-        
+        //setup behavior
         if(behaviorDef != nil){
             behaviorDef?.createBehavior(self)
         }
         _  = NSTimer.scheduledTimerWithTimeInterval(0.00001, target: self, selector: #selector(Brush.defaultCallback), userInfo: nil, repeats: false)
     }
     
-    required init() {
-        fatalError("init() has not been implemented")
-    }
-    
+
     @objc func defaultCallback(){
         self.transitionToState(currentState)
         
@@ -111,7 +104,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     //Event handlers
     //chains communication between brushes and view controller
-    func brushDrawHandler(data:(Geometry,String,String)){
+    func brushDrawHandler(data:(Geometry,String,String),key:String){
         self.geometryModified.raise(data)
     }
     
@@ -123,32 +116,7 @@ class Brush: Factory, WebTransmitter, Hashable{
     
     
     
-    //NS Notification handlers
-    // communication between emitter and brush
-    //setHandler: recieves  expression in the form of "propertyA:propertyB" which is used to determine mapping for set action
-    dynamic func setHandler(notification: NSNotification){
-        
-        // let reference = notification.userInfo?["emitter"] as! Emitter
-        
-        let key = notification.userInfo?["key"] as! String
-        let mapping = states[currentState]?.getConstraintMapping(key)
-        print("set handler change called for state \(self.currentState), self.name and mapping: \(self.name,key,mapping != nil,notification.userInfo?["event"])")
-        
-        if(mapping != nil){
-            print("set handler change initiated for state \(self.currentState)")
-            
-            let constraint = mapping as! Constraint
-            self.setConstraint(constraint)
-        }
-    }
-    
-    func setConstraint(constraint:Constraint){
-        constraint.relativeProperty.set(constraint.reference);
-        
-    }
-    
-    
-    dynamic func deltaChange(notification: NSNotification){
+    func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
         print("delta change called for \(self.name) delta:\(delta.x.get(),delta.y.get(),angle.get())")
         
         let centerX = origin.x.get();
@@ -180,42 +148,17 @@ class Brush: Factory, WebTransmitter, Hashable{
         xBuffer.push(delta.x.get());
         yBuffer.push(delta.y.get());
         weightBuffer.push(weight.get());
-        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:PointEmitter(x:transformedCoords.0,y:transformedCoords.1),weight: self.weight.get());
+        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight: self.weight.get());
         self.position.set(_dx,y:_dy);
 
     }
     
     
-    func setOrigin(p:PointEmitter){
+    func setOrigin(p:Point){
         origin = p.clone();
         self.position.set(origin)
        
     }
-    
-    
-   /* func transformDelta(delta:PointEmitter)->PointEmitter{
-        var _delta:PointEmitter
-        if(self.parent != nil){
-            _delta = self.parent!.transformDelta(delta);
-        }
-        else{
-            _delta = delta
-        }
-        if(self.reflect){
-            var n:PointEmitter
-            if(self.parent != nil){
-               n = PointEmitter.normalize((self.parent?.rotatedPosition.sub((self.parent?.origin)!))!);
-            }
-            else{
-                n = PointEmitter(x:0,y:1)
-            }
-                _delta = n.mul(_delta.dot(n)*2).sub(_delta);
-            
-        }
-        self.rotatedPosition.set(_delta.rotate(self.angle.get(),origin: self.origin!).add(self.origin!));
-        
-        return _delta;
-    };*/
     
     dynamic func stateTransitionHandler(notification: NSNotification){
         
@@ -224,11 +167,11 @@ class Brush: Factory, WebTransmitter, Hashable{
         print("\n\ntransition to state called for mapping =\(mapping != nil), from state:\(currentState), for object named:\(self.name), from notifcation \(notification.userInfo?["event"])\n\n")
         
         if(mapping != nil){
-            let stateTransition = mapping as! StateTransition
+            let stateTransition = mapping
           
-            print("\n\n making transition \(self.name, stateTransition.toState)")
+            print("\n\n making transition \(self.name, stateTransition!.toState)")
             
-            self.transitionToState(stateTransition.toState)
+            self.transitionToState(stateTransition!.toState)
             
         }
     }
@@ -245,7 +188,7 @@ class Brush: Factory, WebTransmitter, Hashable{
             
             
         }
-        print("\(self.name) current position at transition to \(state) = \(self.position.x.val,self.position.y.val)")
+        print("\(self.name) current position at transition to \(state) = \(self.position.x,self.position.y)")
         self.currentState = state
         constraint_mappings =  states[currentState]!.constraint_mappings
         for (_, value) in constraint_mappings{
@@ -297,7 +240,7 @@ class Brush: Factory, WebTransmitter, Hashable{
                 self.newStroke();
                 break;
             case "setOrigin":
-                self.setOrigin(methodName.1![0] as! PointEmitter)
+                self.setOrigin(methodName.1![0] as! Point)
             case "destroy":
                 print("executed destroy for \(self.name)")
                 self.destroy();
@@ -318,8 +261,39 @@ class Brush: Factory, WebTransmitter, Hashable{
         self.currentCanvas = canvas;
     }
     
-    func addConstraint(key:String, reference:Emitter, relative:Emitter, targetState:String){
-        states[targetState]!.addConstraintMapping(key,reference:reference,relativeProperty: relative)
+    func addConstraint(reference:Observable<Float>, relative:Observable<Float>, targetState:String){
+        let stateKey = NSUUID().UUIDString;
+        reference.didChange.addHandler(self, handler:  Brush.setHandler, key:stateKey)
+        self.removeMappingEvent.addHandler(self, handler: Brush.removeConstraint,key:stateKey)
+
+        states[targetState]!.addConstraintMapping(stateKey,reference:reference,relativeProperty: relative)
+    }
+    
+    func removeConstraint(data:(Brush, String, Observable<Float>),key:String){
+        data.2.didChange.removeHandler(key)
+    }
+    
+   
+    
+    
+    //setHandler: triggered when constraint is changed, evaluates if brush is in correct state to encact constraint
+    func setHandler(data:(String,Float,Float),stateKey:String){
+     
+     // let reference = notification.userInfo?["emitter"] as! Emitter
+     
+     let mapping = states[currentState]?.getConstraintMapping(stateKey)
+     //print("set handler change called for state \(self.currentState), self.name and mapping: \(self.name,key,mapping != nil,notification.userInfo?["event"])")
+     
+     if(mapping != nil){
+     //print("set handler change initiated for state \(self.currentState)")
+     
+     //let constraint = mapping as! Constraint
+        self.setConstraint(mapping!)
+     }
+     }
+    
+    func setConstraint(constraint:Constraint){
+        constraint.relativeProperty.set(constraint.reference.get());
     }
     
     func addStateTransition(key:String, reference:Emitter, fromState: String, toState:String){
@@ -329,25 +303,30 @@ class Brush: Factory, WebTransmitter, Hashable{
         
     }
     
+    func removeStateTransition(data:(Brush, String, Emitter),key:String){
+        NSNotificationCenter.defaultCenter().removeObserver(data.0, name: data.1, object: data.2)
+        data.2.removeKey(data.1)
+    }
+    
     func addMethod(key:String,state:String, methodName:String, arguments:[Any]?, condition:Condition?){
         states[state]!.addMethod(key,methodName:methodName,arguments:arguments,condition:condition)
     }
     
     
-    
+   /*
+     TODO: Finish implementing clone
     func clone()->Brush{
-        let clone = Brush.create(self.name) as! Brush;
+        let clone = Brush(behaviorDef: nil, parent: self.parent, canvas: self.currentCanvas)
         
         clone.reflectX = self.reflectX;
         clone.reflectY = self.reflectY;
-        clone.penDown = self.penDown;
-        clone.position = self.position;
-        clone.scaling = self.scaling;
+        clone.position = self.position.clone();
+        clone.scaling = self.scaling.clone();
         clone.strokeColor = self.strokeColor;
         clone.fillColor = self.fillColor;
         return clone;
         
-    }
+    }*/
     
     
     func removeConstraint(key:String){
@@ -366,7 +345,7 @@ class Brush: Factory, WebTransmitter, Hashable{
             if(val.hasTransitionKey(key)){
                 let removal =  val.removeTransitionMapping(key)!
                 let data = (self, key, removal.reference)
-                removeMappingEvent.raise(data)
+                removeTransitionEvent.raise(data)
                 break
             }
         }
@@ -394,7 +373,7 @@ class Brush: Factory, WebTransmitter, Hashable{
             child.reflectX = reflectX[i]
             child.reflectY = reflectY[i]
             self.children.append(child);
-            let handler = self.children.last!.geometryModified.addHandler(self,handler: Brush.brushDrawHandler)
+            let handler = self.children.last!.geometryModified.addHandler(self,handler: Brush.brushDrawHandler, key:child.drawKey)
             childHandlers[child]=[Disposable]();
             childHandlers[child]?.append(handler)
             lastSpawned.append(child)

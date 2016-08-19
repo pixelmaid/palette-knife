@@ -20,6 +20,11 @@ class Canvas: WebTransmitter, Hashable{
 
     var geometryModified = Event<(Geometry,String,String)>()
 
+    let drawKey = NSUUID().UUIDString;
+    let  dataKey = NSUUID().UUIDString;
+
+    
+    
     //MARK: - Hashable
     var hashValue : Int {
         get {
@@ -35,8 +40,8 @@ class Canvas: WebTransmitter, Hashable{
     func initDrawing(){
         currentDrawing = Drawing();
         drawings.append(currentDrawing!)
-        currentDrawing!.transmitEvent.addHandler(self,handler: Canvas.drawingDataGenerated);
-        currentDrawing!.geometryModified.addHandler(self,handler: Canvas.drawHandler);
+        currentDrawing!.transmitEvent.addHandler(self,handler: Canvas.drawingDataGenerated, key:drawKey);
+        currentDrawing!.geometryModified.addHandler(self,handler: Canvas.drawHandler, key:dataKey);
 
         var string = "{\"canvas_id\":\""+self.id+"\","
         string += "\"drawing_id\":\""+currentDrawing!.id+"\","
@@ -45,7 +50,7 @@ class Canvas: WebTransmitter, Hashable{
 
     }
     
-    func drawingDataGenerated(data:(String)){
+    func drawingDataGenerated(data:(String), key:String){
         var string = "{\"canvas_id\":\""+self.id+"\","
         string += data;
         string += "}"
@@ -57,7 +62,7 @@ class Canvas: WebTransmitter, Hashable{
     
     //Event handlers
     //chains communication between brushes and view controller
-    func drawHandler(data:(Geometry,String,String)){
+    func drawHandler(data:(Geometry,String,String), key:String){
         self.geometryModified.raise(data)
     }
     

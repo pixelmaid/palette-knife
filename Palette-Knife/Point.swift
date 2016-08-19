@@ -11,34 +11,28 @@ import UIKit
 
 import SwiftKVC
 
-class PointEmitter: Emitter, Geometry{
+class Point:Observable<(Float,Float)>,Geometry{
   
-    var x = FloatEmitter(val: 0);
-    var y = FloatEmitter(val: 0);
+    var x = Observable<Float>(0)
+    var y = Observable<Float>(0)
     var prevX = Float(0);
     var prevY = Float(0);
     var angle = Float(0);
     let xKey = NSUUID().UUIDString;
     let yKey = NSUUID().UUIDString;
-    
+    var storedValue = Float(0);
     
     init(x:Float,y:Float) {
-        super.init()
+        super.init((x, y))
         self.x.set(x);
         self.y.set(y);
-        self.events =  ["CHANGE","INVALIDATED"]
-        self.createKeyStorage();
         self.angle = atan2(y, x) * Float(180 / M_PI);
-        let selector = Selector("propertyInvalidated"+":");
 
-       NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:xKey, object: self.x)
-        self.x.assignKey("INVALIDATED",key:xKey,condition: nil);
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:selector, name:yKey, object: self.y)
-        self.y.assignKey("INVALIDATED",key:yKey,condition: nil);
-        
         self.x.name = "x"
         self.y.name = "y"
+        self.name = "point"
+        self.x.didChange.addHandler(self, handler: Point.coordinateChange,key:xKey)
+        self.y.didChange.addHandler(self, handler: Point.coordinateChange,key:yKey)
 
     }
     
@@ -47,96 +41,91 @@ class PointEmitter: Emitter, Geometry{
         return string;
     }
     
-    override func set(val:Emitter){
-        let point = val as! PointEmitter
-        self.set(point.x.get(),y:point.y.get())
-    }
     
-    
-    override dynamic func propertyInvalidated(notification: NSNotification) {
-       super.propertyInvalidated(notification)
-       let reference = notification.userInfo?["emitter"] as! FloatEmitter
-        //print("validated attempt,\(x.constrained,y.constrained, reference.name,reference == self.y )")
+    //coordinateChange
+    //handler that only triggers when both x and y have been updated (assuming they're both constrained)
+    func coordinateChange(data:(String, Float,Float),key:String){
+        let name = data.0;
+        let oldValue = data.1;
+        _ = data.2;
+        
         if(!x.constrained && !y.constrained){
             return;
         }
-        else if(x.constrained && !y.constrained && reference == self.x){
-            //print("constraints validated no y");
-
-            self.set(self.x.get(),y:self.y.get());
+        else if(x.constrained && !y.constrained && name == "x"){
+              didChange.raise((name, (oldValue,self.y.get()), (self.x.get(),self.y.get())))
         }
-        else if(!x.constrained && y.constrained && reference == self.y){
-            //print("constraints validated no x");
-
-            self.set(self.x.get(),y:self.y.get());
+        else if(!x.constrained && y.constrained && name == "x"){
+            didChange.raise((name, (self.x.get(),oldValue), (self.x.get(),self.y.get())))
         }
         else{
             // print("both constrained x:\(x.invalidated) y:\(y.invalidated)");
+       
             if(self.x.invalidated && self.y.invalidated){
-               // print("constraints validated x:\(x.invalidated) y:\(y.invalidated)");
-
-                self.set(self.x.get(),y:self.y.get());
-
+                // print("constraints validated x:\(x.invalidated) y:\(y.invalidated)");
+                if(name == "x"){
+                    didChange.raise((name, (oldValue,storedValue),(self.x.get(),self.y.get())));
+                }
+                else if(name == "y"){
+                    didChange.raise((name, (storedValue,oldValue),(self.x.get(),self.y.get())));
+                }
+                
+            }
+            else{
+                storedValue = oldValue;
             }
         }
-        //self.set(self.x.get(),y:self.y.get());
     }
     
-     func get()->(Float,Float){
-       super.get()
-        return (self.x.get(),self.y.get())
+     func set(val:Point){
+        let point = val 
+        self.set(point.x.get(),y:point.y.get())
     }
     
-    
-    func set(x:Float, y:Float){
-        prevX = self.x.get();
-        prevY = self.y.get();
+    func set(x:Float,y:Float){
         self.x.set(x);
         self.y.set(y);
-        for i in 0..<events.count{
-let event = events[i]
-            print("set called from constraints \(self.x.get(),self.y.get(),keyStorage[event]!.count,event)")
-        for key in keyStorage[event]!  {
-                NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":event])
-        
-        }
-        }
     }
     
-    func clone()->PointEmitter{
-        return PointEmitter(x:self.x.get(),y:self.y.get())
+    override func get()->(Float,Float){
+        return (self.x.get(),self.y.get())
+    }
+
+    
+    func clone()->Point{
+        return Point(x:self.x.get(),y:self.y.get())
     }
     
-    func add(point:PointEmitter)->PointEmitter{
-        return PointEmitter(x:self.x.get()+point.x.get(),y:self.y.get()+point.y.get());
+    func add(point:Point)->Point{
+        return Point(x:self.x.get()+point.x.get(),y:self.y.get()+point.y.get());
     }
     
-    func sub(point:PointEmitter)->PointEmitter {
-        return PointEmitter(x:self.x.get()-point.x.get(),y:self.y.get()-point.y.get());
+    func sub(point:Point)->Point {
+        return Point(x:self.x.get()-point.x.get(),y:self.y.get()-point.y.get());
     }
     
-    func div(val:Float) ->PointEmitter{
-        return PointEmitter(x: self.x.get() / val, y: self.y.get() / val);
+    func div(val:Float) ->Point{
+        return Point(x: self.x.get() / val, y: self.y.get() / val);
     }
     
-    func mul(val:Float)->PointEmitter {
-        return PointEmitter(x: self.x.get() * val, y: self.y.get() * val);
+    func mul(val:Float)->Point {
+        return Point(x: self.x.get() * val, y: self.y.get() * val);
     }
     
-    func div(point:PointEmitter) ->PointEmitter{
-        return PointEmitter(x:self.x.get() / point.x.get(), y: self.y.get() / point.y.get());
+    func div(point:Point) ->Point{
+        return Point(x:self.x.get() / point.x.get(), y: self.y.get() / point.y.get());
     }
     
-    func mul(point:PointEmitter) ->PointEmitter{
-        return PointEmitter(x:self.x.get() * point.x.get(), y:self.y.get() * point.y.get());
+    func mul(point:Point) ->Point{
+        return Point(x:self.x.get() * point.x.get(), y:self.y.get() * point.y.get());
     }
     
-    func dist(point:PointEmitter)->Float{
+    func dist(point:Point)->Float{
         return sqrtf(distanceSqrd(self,p2: point));
         
     }
     
-    func distanceSqrd(p1:PointEmitter, p2:PointEmitter)->Float{
+    func distanceSqrd(p1:Point, p2:Point)->Float{
         return powf((p1.x.get()-p2.x.get()), 2.0)+powf((p1.y.get()-p2.y.get()), 2.0)
     }
     
@@ -155,17 +144,17 @@ let event = events[i]
 
     
     //Returns the length of a vector sqaured. Faster than Length(), but only marginally
-    static func lengthSqrd(vec:PointEmitter)->Float {
+    static func lengthSqrd(vec:Point)->Float {
     return pow(vec.x.get(), 2) + pow(vec.y.get(), 2);
     }
     
     //Returns the length of vector'
     func length()->Float {
-    return sqrtf(PointEmitter.lengthSqrd(self));
+    return sqrtf(Point.lengthSqrd(self));
     }
     
     //Returns a new vector that has the same direction as vec, but has a length of one.
-    static func normalize(vec:PointEmitter)->PointEmitter {
+    static func normalize(vec:Point)->Point {
     if (vec.x.get() == 0 && vec.y.get() == 0) {
         return vec;
     }
@@ -174,29 +163,29 @@ let event = events[i]
     }
     
     //Computes the dot product of a and b'
-    func dot(b:PointEmitter)->Float {
+    func dot(b:Point)->Float {
     return (self.x.get() * b.x.get()) + (self.y.get() * b.y.get());
     }
     
-    func cross(point:PointEmitter)->Float {
+    func cross(point:Point)->Float {
         return self.x.get() * point.y.get() - self.y.get() * point.x.get();
     }
     
-    static func projectOnto(v:PointEmitter, w:PointEmitter)->PointEmitter{
+    static func projectOnto(v:Point, w:Point)->Point{
     //'Projects w onto v.'
-    return v.mul(w.dot(v) / PointEmitter.lengthSqrd(v));
+    return v.mul(w.dot(v) / Point.lengthSqrd(v));
     }
     
     
-    func pointAtDistance(d:Float,a:Float)->PointEmitter{
+    func pointAtDistance(d:Float,a:Float)->Point{
         let x = self.x.get() + (d * cos(a*Float(M_PI/180)))
         let y = self.y.get() + (d * sin(a*Float(M_PI/180)))
-        return PointEmitter(x: x,y: y)
+        return Point(x: x,y: y)
     }
     
     //returns new rotated point, original point is unaffected
-    func rotate(angle:Float, origin:PointEmitter)->PointEmitter{
-        var a = angle * Float(M_PI)/180;
+    func rotate(angle:Float, origin:Point)->Point{
+        let a = angle * Float(M_PI)/180;
         let centerX = origin.x.get();
         let centerY = origin.y.get();
         let x = self.x.get();
@@ -204,14 +193,14 @@ let event = events[i]
         let newX = centerX + (x-centerX)*cos(a) - (y-centerY)*sin(a);
         
         let newY = centerY + (x-centerX)*sin(a) + (y-centerY)*cos(a);
-        return PointEmitter(x:newX,y:newY)
+        return Point(x:newX,y:newY)
     }
     
 
     
     
      
-     func getDirectedAngle(point:PointEmitter)->Float {
+     func getDirectedAngle(point:Point)->Float {
      return atan2(self.cross(point), self.dot(point)) * 180 / Float(M_PI);
      }
      
@@ -225,41 +214,8 @@ let event = events[i]
     
     
 }
-func ==(lhs: PointEmitter, rhs: PointEmitter) -> Bool {
+func ==(lhs: Point, rhs: Point) -> Bool {
     return lhs.x.get() == rhs.x.get() && lhs.y.get() == rhs.y.get()
 }
-
-
-/*struct Point:Equatable, Geometry{
-        
-        var x = Float(0);
-        var y = Float(0);
-    
-        init(x:Float,y:Float) {
-            self.x = x
-            self.y = y
-           
-        }
-        
-        func toJSON()->String{
-            let string = "\"x\":"+String(self.x)+",\"y\":"+String(self.y)
-            return string;
-        }
-    
-    func dist(point:Point)->Float{
-        return sqrtf(distanceSqrd(self,p2: point));
-        
-    }
-    
-    func distanceSqrd(p1:Point, p2:Point)->Float{
-        return powf((p1.x-p2.x), 2.0)+powf((p1.y-p2.y), 2.0)
-    }
-    
-}
-
-func ==(lhs: Point, rhs: Point) -> Bool {
-    return lhs.x == rhs.x && lhs.y == rhs.y
-}*/
-
 
 

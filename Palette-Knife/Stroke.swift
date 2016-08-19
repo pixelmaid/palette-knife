@@ -17,10 +17,10 @@ protocol Geometry {
 
 struct StoredDrawing:Geometry{
     var angle:Float
-    var scaling:PointEmitter
-    var position:PointEmitter
+    var scaling:Point
+    var position:Point
     
-    init(position:PointEmitter,scaling:PointEmitter,angle:Float){
+    init(position:Point,scaling:Point,angle:Float){
         self.angle = angle
         self.scaling = scaling
         self.position = position
@@ -35,9 +35,9 @@ struct StoredDrawing:Geometry{
 // Segment: line segement described as two points
 struct Segment:Geometry, Equatable {
     
-    var point:PointEmitter;
-    var handleIn: PointEmitter;
-    var handleOut: PointEmitter;
+    var point:Point;
+    var handleIn: Point;
+    var handleOut: Point;
     var parent:Stroke?;
     var index:Int?
     var diameter = Float(1);
@@ -48,19 +48,19 @@ struct Segment:Geometry, Equatable {
         self.init(x:x,y:y,hi_x:0,hi_y:0,ho_x:0,ho_y:0)
     }
     
-    init(point:PointEmitter){
-        self.init(point:point,handleIn:PointEmitter(x: 0, y: 0),handleOut:PointEmitter(x: 0, y: 0))
+    init(point:Point){
+        self.init(point:point,handleIn:Point(x: 0, y: 0),handleOut:Point(x: 0, y: 0))
     }
     
     init(x:Float,y:Float,hi_x:Float,hi_y:Float,ho_x:Float,ho_y:Float){
-        let point = PointEmitter(x:x,y:y)
-        let hI = PointEmitter(x: hi_x,y: hi_y)
-        let hO = PointEmitter(x: ho_x,y: ho_y)
+        let point = Point(x:x,y:y)
+        let hI = Point(x: hi_x,y: hi_y)
+        let hO = Point(x: ho_x,y: ho_y)
         self.init(point:point,handleIn:hI,handleOut:hO)
 
     }
     
-    init(point:PointEmitter,handleIn:PointEmitter,handleOut:PointEmitter) {
+    init(point:Point,handleIn:Point,handleOut:Point) {
         self.point = point
         self.handleIn = handleIn
         self.handleOut = handleOut
@@ -188,7 +188,7 @@ class Stroke:TimeSeries, Geometry {
         return segment
     }
     
-    func addSegment(point:PointEmitter)->Segment{
+    func addSegment(point:Point)->Segment{
         let segment = Segment(point:point)
         return self.addSegment(segment)
     }
@@ -240,7 +240,7 @@ class Stroke:TimeSeries, Geometry {
         self.clockwise = clockwise
     }*/
     
-   func lineTo(to:PointEmitter) {
+   func lineTo(to:Point) {
         // Let's not be picky about calling moveTo() first:
         let seg = Segment(point:to)
         self.addSegment(seg);

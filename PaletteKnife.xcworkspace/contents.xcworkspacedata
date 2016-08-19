@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Palette-Knife/Event.swift">
+   </FileRef>
+   <FileRef
       location = "group:PaletteKnife.xcodeproj">
    </FileRef>
    <FileRef

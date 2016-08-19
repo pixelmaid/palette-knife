@@ -13,7 +13,7 @@ class TimeSeries: Emitter{
     var timer:NSDate
     var intervalTimer = NSTimer()
     //TODO: this is duplication to facilitate KVC- should be removed/fixed
-    var timerTime = FloatEmitter(val:0);
+    var timerTime = Observable<Float>(0);
     override init(){
         timer = NSDate()
         super.init()
@@ -53,12 +53,12 @@ class TimeSeries: Emitter{
             if(key.1 != nil){
                 let condition = key.1;
                 if(condition.evaluate()){
-                    print("condition true, posted time increment \(key.0,(self["time"]! as! Emitter).get(), self.name)")
+                    print("condition true, posted time increment \(key.0,(self["time"]! as! Observable<Float>).get(), self.name)")
                     
                     NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INCREMENT"])
                 }
                 else{
-                    print("condition false, not posting time increment, \((self["time"]! as! Emitter).get(), self.name)")
+                    print("condition false, not posting time increment, \((self["time"]! as! Observable<Float>).get(), self.name)")
                 }
             }
             else{

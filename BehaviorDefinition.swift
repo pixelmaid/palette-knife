@@ -12,26 +12,26 @@ import Foundation
 class BehaviorDefinition {
     
     var states = [String]()
-    var expressions = [String:(Emitter?,String?,Bool,Emitter?,String?,Bool,String)]()
-    var conditions = [String:(Emitter?,String?,Bool,Emitter?,String?,Bool,String)]()
-    var variables = [String:(String,[Any])]()
-    var storedVariables = [String:Variable]()
+    var expressions = [String:(Any?,String?,Bool,Any?,String?,Bool,String)]()
+    var conditions = [String:(Any?,String?,Bool,Any?,String?,Bool,String)]()
+    var generators = [String:(String,[Any])]()
+    var storedGenerators = [String:Generator]()
     var methods = [(String,String,[Any]?,String?)]()
     var transitions = [(Emitter?,String,String,String,String?)]()
     var behaviorMapper = BehaviorMapper()
-    var mappings = [(Emitter?,String?,Bool,String,String)]()
+    var mappings = [(Any?,String?,Bool,String,String)]()
     var storedExpressions = [String:Expression]()
     var storedConditions = [String:Condition]()
     
     
-    func addCondition(name:String, reference:Emitter?, referenceName:String?,referenceParentFlag:Bool, relative:Emitter?, relativeName:String?, relativeParentFlag:Bool, relational:String){
+    func addCondition(name:String, reference:Any?, referenceName:String?,referenceParentFlag:Bool, relative:Any?, relativeName:String?, relativeParentFlag:Bool, relational:String){
         
         conditions[name] = (reference,referenceName,referenceParentFlag,relative,relativeName,relativeParentFlag,relational)
         
     }
     
     func addInterval(name:String,inc:Float,times:Int){
-        variables[name] = ("interval",[inc,times]);
+        generators[name] = ("interval",[inc,times]);
     }
     func addState(stateName:String){
         states.append(stateName)
@@ -45,32 +45,34 @@ class BehaviorDefinition {
         transitions.append((eventEmitter, event, fromState,toState,condition))
     }
     
-    func addMapping(referenceProperty:Emitter?, referenceName:String?, parentFlag:Bool, relativePropertyName:String,targetState:String){
+    func addMapping(referenceProperty:Any?, referenceName:String?, parentFlag:Bool, relativePropertyName:String,targetState:String){
         mappings.append((referenceProperty,referenceName,parentFlag,relativePropertyName,targetState))
     }
     
-    func addExpression(name:String, emitter1:Emitter?, operand1Name:String?, parentFlag1:Bool, emitter2:Emitter?,operand2Name:String?,parentFlag2:Bool,type:String){
+    func addExpression(name:String, emitter1:Any?, operand1Name:String?, parentFlag1:Bool, emitter2:Any?,operand2Name:String?,parentFlag2:Bool,type:String){
         expressions[name]=(emitter1, operand1Name, parentFlag1, emitter2, operand2Name,parentFlag2,type);
     }
     
     
-    func generateVariable(name:String, data:(String,[Any])){
+    
+    //TODO: add in cases for other generators
+    func generateGenerator(name:String, data:(String,[Any])){
         switch(data.0){
             case "interval":
                 let interval = Interval(inc:data.1[0] as! Float,times:data.1[1] as! Int)
-                storedVariables[name] = interval;
+                storedGenerators[name] = interval;
                 break;
         default:
             break;
         }
     }
 
-    func generateOperands(targetBrush:Brush,data:(Emitter?,String?,Bool,Emitter?,String?,Bool,String))->(Emitter,Emitter){
-        var emitter1:Emitter;
-        var emitter2:Emitter
+    func generateOperands(targetBrush:Brush,data:(Any?,String?,Bool,Any?,String?,Bool,String))->(Observable<Float>,Observable<Float>){
+        var emitter1:Any
+        var emitter2:Any
         
-        let operand1:Emitter
-        let operand2: Emitter
+        let operand1:Observable<Float>
+        let operand2: Observable<Float>
         
         if(data.0 == nil){
             if(data.2 == false){
@@ -97,27 +99,27 @@ class BehaviorDefinition {
         }
         
         if(data.1 != nil){
-            if(variables[data.1!]) != nil{
-                operand1 = storedVariables[data.1!]!;
+            if(storedGenerators[data.1!]) != nil{
+                operand1 = storedGenerators[data.1!]!;
             }
             else{
-                operand1 = emitter1[data.1!]! as! Emitter
+                operand1 = (emitter1 as! Emitter)[data.1!]! as! Observable<Float>
             }
         }
         else{
-            operand1 = emitter1;
+            operand1 = emitter1 as! Observable<Float>
         }
         
         if(data.4 != nil){
-            if(variables[data.4!]) != nil{
-                operand2 = storedVariables[data.4!]!;
+            if(storedGenerators[data.4!]) != nil{
+                operand2 = storedGenerators[data.4!]!;
             }
             else{
-            operand2 = emitter2[data.4!]! as! Emitter
+            operand2 = (emitter2 as! Emitter)[data.4!]! as! Observable<Float>
             }
         }
         else{
-            operand2 = emitter2;
+            operand2 = emitter2  as! Observable<Float>
         }
         
         return(operand1,operand2)
@@ -125,7 +127,7 @@ class BehaviorDefinition {
         
     }
     
-    func generateCondition(targetBrush:Brush, name:String,data:(Emitter?,String?,Bool,Emitter?,String?,Bool,String)){
+    func generateCondition(targetBrush:Brush, name:String,data:(Any?,String?,Bool,Any?,String?,Bool,String)){
         let operands = generateOperands(targetBrush, data:data)
         let operand1 = operands.0;
         let operand2 = operands.1;
@@ -135,7 +137,7 @@ class BehaviorDefinition {
 
     }
     
-    func generateExpression(targetBrush:Brush, name:String,data:(Emitter?,String?,Bool,Emitter?,String?,Bool,String)){
+    func generateExpression(targetBrush:Brush, name:String,data:(Any?,String?,Bool,Any?,String?,Bool,String)){
         let operands = generateOperands(targetBrush, data:data)
         let operand1 = operands.0;
         let operand2 = operands.1;
@@ -174,8 +176,8 @@ class BehaviorDefinition {
     func createBehavior(targetBrush:Brush){
        print("creating behavior, conditions \(conditions)")
         
-        for (key, variable_data) in variables{
-            self.generateVariable(key,data:variable_data)
+        for (key, generator_data) in generators{
+            self.generateGenerator(key,data:generator_data)
         }
 
         for (key, condition_data) in conditions{
@@ -205,7 +207,7 @@ class BehaviorDefinition {
         }
         
         for transition in transitions{
-            var reference:Emitter
+            var reference:Any
             if(transition.0 == nil){
                 reference = targetBrush
             }
@@ -220,24 +222,24 @@ class BehaviorDefinition {
                 condition = nil
             }
             print("creating transition,condition = \(condition,transition.4,storedConditions)")
-            behaviorMapper.createStateTransition(reference, relative: targetBrush, eventName: transition.1, fromState:transition.2,toState:transition.3, condition: condition)
+            behaviorMapper.createStateTransition(reference as! Emitter, relative: targetBrush, eventName: transition.1, fromState:transition.2,toState:transition.3, condition: condition)
 
         }
         //referenceProperty!,referenceName!,relativePropertyName,targetState
         for mapping in mappings{
-            var referenceProperty:Emitter
+            var referenceProperty:Observable<Float>
             if(mapping.0 == nil){
                 if(mapping.2 == true){
-                   referenceProperty = targetBrush.parent![mapping.1!]! as! Emitter
+                   referenceProperty = targetBrush.parent![mapping.1!]! as! Observable<Float>
                 }
                 else{
-                referenceProperty = storedExpressions[mapping.1!]! as Emitter
+                referenceProperty = storedExpressions[mapping.1!]!
                 }
             }
             else{
-                referenceProperty = mapping.0!
+                referenceProperty = mapping.0! as! Observable<Float>
             }
-            let relativeProperty = (targetBrush[mapping.3]) as! Emitter
+            let relativeProperty = (targetBrush[mapping.3]) as! Observable<Float>
             behaviorMapper.createMapping(referenceProperty, relative: targetBrush, relativeProperty:relativeProperty, targetState: mapping.4)
         }
 

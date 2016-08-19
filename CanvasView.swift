@@ -21,7 +21,7 @@ class CanvasView:  UIImageView {
     override func drawRect(rect: CGRect) {
     }
     
-    func drawPath(fP: PointEmitter, tP: PointEmitter, w:Float, c:Color) {
+    func drawPath(fP: Point, tP: Point, w:Float, c:Color) {
         UIGraphicsBeginImageContext(self.frame.size)
         let context = UIGraphicsGetCurrentContext()!
         self.image?.drawInRect(CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))
@@ -44,7 +44,7 @@ class CanvasView:  UIImageView {
 
         }
     
-    func drawArc(center:PointEmitter, radius:Float,startAngle:Float,endAngle:Float, w:Float, c:Color){
+    func drawArc(center:Point, radius:Float,startAngle:Float,endAngle:Float, w:Float, c:Color){
         UIGraphicsBeginImageContext(self.frame.size)
         let context = UIGraphicsGetCurrentContext()!
         self.image?.drawInRect(CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))
@@ -81,7 +81,7 @@ class CanvasView:  UIImageView {
         self.image = nil
     }
     
-    func drawFlower(position:PointEmitter){
+    func drawFlower(position:Point){
         UIGraphicsBeginImageContext(self.frame.size)
         
         let context = UIGraphicsGetCurrentContext()
@@ -102,7 +102,7 @@ class CanvasView:  UIImageView {
     }
     
     
-    func drawLeaf(position:PointEmitter,angle:Float,scale:Float){
+    func drawLeaf(position:Point,angle:Float,scale:Float){
         //// General Declarations
         UIGraphicsBeginImageContext(self.frame.size)
 

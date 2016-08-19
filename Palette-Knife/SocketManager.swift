@@ -18,7 +18,8 @@ class SocketManager: WebSocketDelegate{
     var startTime:NSDate?
     var dataQueue = [String]();
     var transmitComplete = true;
-    
+    let dataKey = NSUUID().UUIDString;
+
      init(){
         socket.delegate = self;
     }
@@ -98,19 +99,19 @@ class SocketManager: WebSocketDelegate{
         string+="\"position\":{\"x\":"+String(stylus.position.x)+",\"y\":"+String(stylus.position.y)+"}"
        // string+="\"delta\":{\"x\":"+String(delta.x)+",\"y\":"+String(delta.y)+"}"
         string+="}}"
-        drawingDataGenerated(string)
+        drawingDataGenerated(string,key:"_")
     }
     
     func initAction(target:WebTransmitter){
         let data = "{\"type\":\"new_canvas\",\"canvas_id\":\""+target.id+"\",\"canvas_name\":\""+target.name+"\"}";
         targets.append(target);
-        target.transmitEvent.addHandler(self,handler: SocketManager.drawingDataGenerated);
-        drawingDataGenerated(data);
+        target.transmitEvent.addHandler(self,handler: SocketManager.drawingDataGenerated, key:dataKey);
+        drawingDataGenerated(data,key:"_");
 
         
     }
     
-    func drawingDataGenerated(data:(String)){
+    func drawingDataGenerated(data:(String), key:String){
         if(transmitComplete){
             transmitComplete = false;
             socket.writeString(data)

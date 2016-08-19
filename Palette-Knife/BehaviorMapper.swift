@@ -14,27 +14,9 @@ typealias BehaviorConfig = (target: Brush, action: String, emitter:Emitter, even
 // creates mappings between brushes and behaviors
 class BehaviorMapper{
     
-    /*func createMapping (config:BehaviorConfig){
-        let key = NSUUID().UUIDString;
-        let selector = Selector(config.action+":");
-        config.emitter.assignKey(config.eventType,key: key,eventCondition: config.eventCondition)
-        NSNotificationCenter.defaultCenter().addObserver(config.target, selector:selector, name:key, object: config.emitter)
-        config.target.addBehavior(key, selector: config.action, emitter: config.emitter, expression: config.expression)
-        config.target.removeMappingEvent.addHandler(self, handler: BehaviorMapper.removeMapping)
-    }*/
-    
-    func removeMapping(data:(Brush, String, Emitter)){
-        NSNotificationCenter.defaultCenter().removeObserver(data.0, name: data.1, object: data.2)
-        data.2.removeKey(data.1)
-    }
-    
-    func createMapping(reference:Emitter, relative:Brush, relativeProperty:Emitter,targetState:String){
-        let key = NSUUID().UUIDString;
-        reference.assignKey("CHANGE",key: key,condition: nil)
-        let selector = Selector("setHandler"+":");
-        NSNotificationCenter.defaultCenter().addObserver(relative, selector:selector, name:key, object: reference)
-        relative.addConstraint(key, reference: reference, relative: relativeProperty, targetState: targetState)
-        relative.removeMappingEvent.addHandler(self, handler: BehaviorMapper.removeMapping)
+      
+    func createMapping(reference:Observable<Float>, relative:Brush, relativeProperty:Observable<Float>,targetState:String){
+        relative.addConstraint(reference, relative: relativeProperty, targetState: targetState)
     
     }
     
@@ -48,7 +30,7 @@ class BehaviorMapper{
         let selector = Selector("stateTransitionHandler"+":");
         NSNotificationCenter.defaultCenter().addObserver(relative, selector:selector, name:key, object: reference)
         relative.addStateTransition(key, reference: reference, fromState:fromState, toState:toState)
-        relative.removeMappingEvent.addHandler(self, handler: BehaviorMapper.removeMapping)
+        relative.removeTransitionEvent.addHandler(relative, handler: Brush.removeStateTransition, key:key)
         
     }
     

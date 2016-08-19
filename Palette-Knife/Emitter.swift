@@ -6,6 +6,8 @@
 //  Copyright © 2016 pixelmaid. All rights reserved.
 //
 
+
+
 import Foundation
 import SwiftKVC
 
@@ -16,8 +18,7 @@ class Emitter: Model, Equatable  {
     var invalidated = false;
     var constrained = false;
     var name = "default"
-    func set(value:Emitter){
-    }
+  
     func createKeyStorage(){
         for e in events{
             self.keyStorage[e] = [(String,Condition!)]();
@@ -47,10 +48,7 @@ class Emitter: Model, Equatable  {
         }
     }
     
-    func get()->Float{
-        invalidated = false;
-        return 0;
-    }
+   
     
     func destroy(){
         NSNotificationCenter.defaultCenter().removeObserver(self);

@@ -25,6 +25,8 @@ class ViewController: UIViewController {
     var brushes = [String:Brush]()
     var socketManager = SocketManager();
     var currentCanvas: Canvas?
+    let socketKey = NSUUID().UUIDString
+    let drawKey = NSUUID().UUIDString
 
     override func viewDidLoad() {
         
@@ -39,7 +41,7 @@ class ViewController: UIViewController {
         
 
 
-        socketManager.socketEvent.addHandler(self,handler: ViewController.socketHandler)
+        socketManager.socketEvent.addHandler(self,handler: ViewController.socketHandler, key:socketKey)
         socketManager.connect();
         
         self.initCanvas();
@@ -48,7 +50,7 @@ class ViewController: UIViewController {
     }
     
     //event handler for socket connections
-    func socketHandler(data:(String)){
+    func socketHandler(data:(String), key:String){
         switch(data){
             case "first_connection":
                 //self.initCanvas();
@@ -81,7 +83,7 @@ class ViewController: UIViewController {
         socketManager.initAction(currentCanvas!);
         socketManager.initAction(stylus);
         currentCanvas!.initDrawing();
-        currentCanvas!.geometryModified.addHandler(self,handler: ViewController.canvasDrawHandler)
+        currentCanvas!.geometryModified.addHandler(self,handler: ViewController.canvasDrawHandler, key:drawKey)
 
     }
     
@@ -268,11 +270,11 @@ class ViewController: UIViewController {
         rootBehavior.addCondition("rootTimeCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: nil, relativeName: "rootTimeIncrement", relativeParentFlag: false, relational: "within")
         
         
-        rootBehavior.addCondition("rootTimeComplete", reference: nil, referenceName: "time", referenceParentFlag: false, relative: FloatEmitter(val:9), relativeName: nil, relativeParentFlag: false, relational: ">")
+        rootBehavior.addCondition("rootTimeComplete", reference: nil, referenceName: "time", referenceParentFlag: false, relative: Observable<Float>(9.0), relativeName: nil, relativeParentFlag: false, relational: ">")
         
-        rootBehavior.addExpression("xScale",  emitter1: nil, operand1Name: "xBuffer", parentFlag1: true, emitter2: FloatEmitter(val: 1.0), operand2Name: nil, parentFlag2: false, type: "mult")
+        rootBehavior.addExpression("xScale",  emitter1: nil, operand1Name: "xBuffer", parentFlag1: true, emitter2: Observable<Float>(1.0), operand2Name: nil, parentFlag2: false, type: "mult")
         
-        rootBehavior.addExpression("yScale",  emitter1: nil, operand1Name: "yBuffer", parentFlag1: true, emitter2: FloatEmitter(val: 1.0), operand2Name: nil, parentFlag2: false, type: "mult")
+        rootBehavior.addExpression("yScale",  emitter1: nil, operand1Name: "yBuffer", parentFlag1: true, emitter2: Observable<Float>(1.0), operand2Name: nil, parentFlag2: false, type: "mult")
      
         
         
@@ -295,7 +297,7 @@ class ViewController: UIViewController {
         
         
         
-        rootBehavior.addMapping(FloatEmitter(val:20), referenceName: nil, parentFlag:false, relativePropertyName: "angle", targetState: "default")
+        rootBehavior.addMapping(Observable<Float>(20.0), referenceName: nil, parentFlag:false, relativePropertyName: "angle", targetState: "default")
         rootBehavior.addMapping(nil, referenceName: "xScale", parentFlag: false, relativePropertyName: "dx", targetState: "grow")
         rootBehavior.addMapping(nil, referenceName: "yScale", parentFlag: false,relativePropertyName: "dy", targetState: "grow")
          rootBehavior.addMapping(nil, referenceName: "weightBuffer", parentFlag: true,relativePropertyName: "weight", targetState: "grow")
@@ -338,7 +340,7 @@ class ViewController: UIViewController {
     
 
     
-    func canvasDrawHandler(data:(Geometry,String,String)){
+    func canvasDrawHandler(data:(Geometry,String,String), key:String){
         switch data.2{
             case "DRAW":
                 switch data.1{

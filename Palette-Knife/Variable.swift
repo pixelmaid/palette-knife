@@ -9,19 +9,22 @@
 import Foundation
 
 
-class Variable:Emitter{
+class Generator:Observable<Float>{
     
+    init(){
+        super.init(0)
+    }
     
 }
 
-class Interval:Variable{
+class Interval:Generator{
     var val = [Float]();
     var index = 0;
+    
     init(inc:Float,times:Int){
         for i in 1..<times{
             val.append(Float(i)*inc)
         }
-        super.init();
     }
     
     func incrementIndex(){
@@ -41,13 +44,9 @@ class Interval:Variable{
  
 }
 
-class Buffer:Variable{
+class Buffer:Generator{
     var val = [Float]();
     var index = 0;
-    
-   override init(){
-        
-    }
     
     func push(v: Float){
         val.append(v)
@@ -68,7 +67,7 @@ class Buffer:Variable{
     
 }
 
-class RangeVariable:Variable{
+class Range:Generator{
     var val = [Float]();
     var index = 0;
     init(min:Int,max:Int,start:Float,stop:Float){
@@ -77,7 +76,6 @@ class RangeVariable:Variable{
             print(i)
             val.append(start+increment*Float(i))
         }
-        super.init();
     }
     
     func incrementIndex(){
@@ -97,12 +95,12 @@ class RangeVariable:Variable{
 }
 
 
-class AlternateVariable:Variable{
+class Alternate:Generator{
     var val = [Float]();
     var index = 0;
+   
     init(values:[Float]){
         val = values;
-        super.init();
     }
     
     func incrementIndex(){
@@ -112,7 +110,6 @@ class AlternateVariable:Variable{
         }
     }
     override func get() -> Float {
-        let old_index = index;
         let v = val[index]
         self.incrementIndex();
         return v;

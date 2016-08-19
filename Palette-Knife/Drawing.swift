@@ -53,7 +53,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         self.transmitEvent.raise((data))
     }
     
-    func addSegmentToStroke(parentID:String, point:PointEmitter, weight:Float){
+    func addSegmentToStroke(parentID:String, point:Point, weight:Float){
          if (self.activeStrokes[parentID] == nil){
             //print("tried to add segment to strokes, but no strokes exist")
            return

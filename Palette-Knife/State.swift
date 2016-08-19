@@ -17,7 +17,7 @@ struct State {
     
     }
     
-    mutating func addConstraintMapping(key:String, reference:Emitter, relativeProperty:Emitter){
+    mutating func addConstraintMapping(key:String, reference:Observable<Float>, relativeProperty:Observable<Float>){
         let mapping = Constraint(reference: reference, relativeProperty:relativeProperty)
         constraint_mappings[key] = mapping;
         
@@ -45,12 +45,12 @@ struct State {
     
     
     
-    mutating func removeTransitionMapping(key:String)->Mapping?{
+    mutating func removeTransitionMapping(key:String)->StateTransition?{
         return transition_mappings.removeValueForKey(key)
         
     }
  
-    func getConstraintMapping(key:String)->Mapping?{
+    func getConstraintMapping(key:String)->Constraint?{
              if let _ = constraint_mappings[key] {
             return  constraint_mappings[key]
         }
@@ -61,7 +61,7 @@ struct State {
         }
     }
     
-    func getTransitionMapping(key:String)->Mapping?{
+    func getTransitionMapping(key:String)->StateTransition?{
         if let _ = transition_mappings[key] {
             return  transition_mappings[key]
         }
@@ -91,17 +91,17 @@ struct State {
   
 }
 
-struct Constraint: Mapping{
-    var reference:Emitter
-    var relativeProperty:Emitter
-    init(reference:Emitter, relativeProperty:Emitter){
+struct Constraint{
+    var reference:Observable<Float>
+    var relativeProperty:Observable<Float>
+    init(reference:Observable<Float>, relativeProperty:Observable<Float>){
         self.reference = reference
         self.relativeProperty = relativeProperty
     }
 
 }
 
-struct StateTransition: Mapping{
+struct StateTransition{
     var reference:Emitter
     var toState: String
     init(reference:Emitter, toState:String){
@@ -111,7 +111,4 @@ struct StateTransition: Mapping{
     
 }
 
-protocol Mapping{
-    var reference:Emitter { get set }
 
-}

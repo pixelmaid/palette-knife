@@ -11,20 +11,20 @@ import Foundation
 
 // manages stylus data, notifies behaviors of stylus events
 class Stylus: TimeSeries, WebTransmitter {
-    var prevPosition: PointEmitter
-    var force = FloatEmitter(val: 0)
+    var prevPosition: Point
+    var force = Observable<Float>(0)
     var prevForce: Float
-    var angle = FloatEmitter(val:0)
+    var angle = Observable<Float>(0)
     var speed = Float(0)
     var prevAngle: Float
-    var position = PointEmitter(x:0,y:0);
-    var origin = PointEmitter(x:0,y:0);
-    var delta = PointEmitter(x:0,y:0);
-    var deltaChangeBuffer = [PointEmitter]();
-    var x:FloatEmitter
-    var y:FloatEmitter
-    var dx:FloatEmitter
-    var dy:FloatEmitter
+    var position = Point(x:0,y:0);
+    var origin = Point(x:0,y:0);
+    var delta = Point(x:0,y:0);
+    var deltaChangeBuffer = [Point]();
+    var x:Observable<Float>
+    var y:Observable<Float>
+    var dx:Observable<Float>
+    var dy:Observable<Float>
     var prevTime = Float(0);
     var penDown = false;
     var distance = Float(0);
@@ -32,12 +32,12 @@ class Stylus: TimeSeries, WebTransmitter {
     var id = NSUUID().UUIDString;
     var transmitEvent = Event<(String)>()
     var constraintTransmitComplete = true;
-    var time = FloatEmitter(val:0)
+    var time = Observable<Float>(0)
     var moveDist = Float(0);
     var moveLimit = Float(20);
     // var testCount = 4;
     init(x:Float,y:Float,angle:Float,force:Float){
-        prevPosition = PointEmitter(x:0, y:0)
+        prevPosition = Point(x:0, y:0)
         self.force.set(force*1.5);
         self.prevForce = force
         self.angle.set(angle)
@@ -125,8 +125,9 @@ class Stylus: TimeSeries, WebTransmitter {
     
     func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
         //TODO: silent set, need to make more robust/ readable
-        self.position.x.val = x;
-        self.position.y.val = y;
+        self.position.x.setSilent(x)
+        self.position.y.setSilent(y)
+
         for key in self.keyStorage["STYLUS_DOWN"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;

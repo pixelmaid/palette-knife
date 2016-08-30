@@ -7,8 +7,9 @@
 //
 
 import Foundation
+import SwiftKVC
 
-class Observable<T> {
+class Observable<T>:Model  {
     
     var name = "observable"
     var invalidated = false;

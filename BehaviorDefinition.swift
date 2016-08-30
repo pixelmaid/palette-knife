@@ -103,6 +103,7 @@ class BehaviorDefinition {
                 operand1 = storedGenerators[data.1!]!;
             }
             else{
+                print("data 1 =\(data.1!, (emitter1 as! Emitter)[data.1!])")
                 operand1 = (emitter1 as! Emitter)[data.1!]! as! Observable<Float>
             }
         }
@@ -233,11 +234,16 @@ class BehaviorDefinition {
                    referenceProperty = targetBrush.parent![mapping.1!]! as! Observable<Float>
                 }
                 else{
-                referenceProperty = storedExpressions[mapping.1!]!
+                referenceProperty = storedExpressions[mapping.1!]! as! Observable<Float>
                 }
             }
             else{
-                referenceProperty = mapping.0! as! Observable<Float>
+                if(mapping.1 != nil){
+                referenceProperty = (mapping.0! as! Emitter)[mapping.1!] as! Observable<Float>
+                }
+                else{
+                    referenceProperty = mapping.0! as! Observable<Float>
+                }
             }
             let relativeProperty = (targetBrush[mapping.3]) as! Observable<Float>
             behaviorMapper.createMapping(referenceProperty, relative: targetBrush, relativeProperty:relativeProperty, targetState: mapping.4)

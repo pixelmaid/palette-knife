@@ -21,7 +21,7 @@ class Point:Observable<(Float,Float)>,Geometry{
     let xKey = NSUUID().UUIDString;
     let yKey = NSUUID().UUIDString;
     var storedValue = Float(0);
-    
+    var parentName = "stylus"
     init(x:Float,y:Float) {
         super.init((x, y))
         self.x.set(x);
@@ -45,21 +45,24 @@ class Point:Observable<(Float,Float)>,Geometry{
     //coordinateChange
     //handler that only triggers when both x and y have been updated (assuming they're both constrained)
     func coordinateChange(data:(String, Float,Float),key:String){
+        
+
         let name = data.0;
         let oldValue = data.1;
         _ = data.2;
-        
+             print("coordinate change \(parentName,name,x.constrained,y.constrained)");
         if(!x.constrained && !y.constrained){
+            print("neither coordinate constrained")
             return;
         }
         else if(x.constrained && !y.constrained && name == "x"){
               didChange.raise((name, (oldValue,self.y.get()), (self.x.get(),self.y.get())))
         }
-        else if(!x.constrained && y.constrained && name == "x"){
+        else if(!x.constrained && y.constrained && name == "y"){
             didChange.raise((name, (self.x.get(),oldValue), (self.x.get(),self.y.get())))
         }
         else{
-            // print("both constrained x:\(x.invalidated) y:\(y.invalidated)");
+             print("coordinate both constrained x:\(x.invalidated) y:\(y.invalidated)");
        
             if(self.x.invalidated && self.y.invalidated){
                 // print("constraints validated x:\(x.invalidated) y:\(y.invalidated)");

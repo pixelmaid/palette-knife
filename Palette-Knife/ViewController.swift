@@ -7,11 +7,12 @@
 //
 
 import UIKit
+import MessageUI
 
 let behaviorMapper = BehaviorMapper()
 var stylus = Stylus(x: 0,y:0,angle:0,force:0)
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     
     // MARK: Properties
     
@@ -19,8 +20,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var new_canvas: UIButton!
     @IBOutlet weak var new_drawing: UIButton!
     @IBOutlet weak var clearAll: UIButton!
-    
-    
+    @IBOutlet weak var gcodeExport: UIButton!
     
     var brushes = [String:Brush]()
     var socketManager = SocketManager();
@@ -38,7 +38,8 @@ class ViewController: UIViewController {
        clearAll.addTarget(self, action: #selector(ViewController.clearClicked(_:)), forControlEvents: .TouchUpInside)
 
         
-        
+        gcodeExport.addTarget(self, action: #selector(ViewController.gcodeExportClicked(_:)), forControlEvents: .TouchUpInside)
+
 
 
         socketManager.socketEvent.addHandler(self,handler: ViewController.socketHandler, key:socketKey)
@@ -70,6 +71,39 @@ class ViewController: UIViewController {
         canvasView.clear()
     }
     
+    func gcodeExportClicked(sender: AnyObject?){
+       let gcode = (currentCanvas?.currentDrawing?.getGcode())! as NSString;
+        let gcode_data = gcode.dataUsingEncoding(NSUTF8StringEncoding)!
+        let mailComposeViewController = configuredMailComposeViewController()
+       mailComposeViewController.addAttachmentData(gcode_data, mimeType:"sbp" , fileName: "drawing.sbp")
+
+        if MFMailComposeViewController.canSendMail() {
+            self.presentViewController(mailComposeViewController, animated: true, completion: nil)
+        } else {
+            self.showSendMailErrorAlert()
+        }
+    }
+    
+    func configuredMailComposeViewController() -> MFMailComposeViewController {
+        let mailComposerVC = MFMailComposeViewController()
+        mailComposerVC.mailComposeDelegate = self // Extremely important to set the --mailComposeDelegate-- property, NOT the --delegate-- property
+        
+        mailComposerVC.setToRecipients(["jenniferj.net@gmail.com"])
+        mailComposerVC.setSubject("GCODE")
+        mailComposerVC.setMessageBody("gcode", isHTML: false)
+        
+        return mailComposerVC
+    }
+    
+    func showSendMailErrorAlert() {
+        let sendMailErrorAlert = UIAlertView(title: "Could Not Send Email", message: "Your device could not send e-mail.  Please check e-mail configuration and try again.", delegate: self, cancelButtonTitle: "OK")
+        sendMailErrorAlert.show()
+    }
+    
+    // MARK: MFMailComposeViewControllerDelegate Method
+    func mailComposeController(controller: MFMailComposeViewController!, didFinishWithResult result: MFMailComposeResult, error: NSError!) {
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
     func newCanvasClicked(sender: AnyObject?){
         self.initCanvas();
     }
@@ -84,6 +118,7 @@ class ViewController: UIViewController {
         socketManager.initAction(stylus);
         currentCanvas!.initDrawing();
         currentCanvas!.geometryModified.addHandler(self,handler: ViewController.canvasDrawHandler, key:drawKey)
+        
 
     }
     
@@ -309,11 +344,11 @@ class ViewController: UIViewController {
         let tapRootBehavior = BehaviorDefinition();
         let timeIncrement = Interval(inc:2,times:10)
 
-        tapRootBehavior.addCondition("timeCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: timeIncrement, relativeName: nil, relativeParentFlag: false, relational: "within")
+        //tapRootBehavior.addCondition("timeCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: timeIncrement, relativeName: nil, relativeParentFlag: false, relational: "within")
         
 
         
-        tapRootBehavior.addState("branch")
+        //tapRootBehavior.addState("branch")
         tapRootBehavior.addState("initStroke")
         tapRootBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil, condition: nil)
          tapRootBehavior.addMethod("initStroke", targetMethod: "setOrigin",arguments: [stylus.position], condition: nil)
@@ -322,15 +357,17 @@ class ViewController: UIViewController {
         tapRootBehavior.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke",condition:nil)
         tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default",condition:nil)
         
-        tapRootBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "default", toState: "branch", condition:"timeCondition")
-        tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "branch", toState: "default", condition:nil)
+        //tapRootBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "default", toState: "branch", condition:"timeCondition")
+        //tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "branch", toState: "default", condition:nil)
 
         
-        tapRootBehavior.addMapping(stylus.dy, referenceName:nil, parentFlag: false,relativePropertyName: "dy",targetState: "default");
-        tapRootBehavior.addMapping(stylus.dx, referenceName:nil, parentFlag: false,relativePropertyName: "dx",targetState: "default");
-        //tapRootBehavior.addMapping(stylus.force, referenceName:nil,parentFlag: false, relativePropertyName: "weight",targetState: "default");
+        tapRootBehavior.addMapping(stylus, referenceName:"dy", parentFlag: false,relativePropertyName: "dy",targetState: "default");
+        tapRootBehavior.addMapping(stylus, referenceName:"dx", parentFlag: false,relativePropertyName: "dx",targetState: "default");
+        tapRootBehavior.addMapping(stylus.force, referenceName:nil,parentFlag: false, relativePropertyName: "weight",targetState: "default");
         
         
+        
+
         let tapRootBrush = Brush(behaviorDef: tapRootBehavior, parent: nil, canvas:self.currentCanvas!)
         tapRootBrush.name = "tapRootBrush"
         
@@ -353,6 +390,8 @@ class ViewController: UIViewController {
  print("seg, prev seg \(seg.point.x.get(),seg.point.y.get(),prevSeg!.point.x.get(),prevSeg!.point.y.get())")
                             canvasView.drawPath(prevSeg!.point,tP: seg.point, w:seg.diameter, c:Color(r:0,g:0,b:0))
                         }
+                        print("diameter = \(seg.diameter)")
+
                     break
                     /*case "ARC":
                         let arc = data.0 as! Arc
@@ -442,6 +481,7 @@ class ViewController: UIViewController {
            // socketManager.sendStylusData();
         }
     }
+    
     
 
 

@@ -17,11 +17,11 @@ public protocol Disposable {
 public class Event<T> {
     
     public typealias EventHandler = (T,String) -> ()
-
+    
     private var eventHandlers = [Invocable]()
     
     public init() {
-    
+        
     }
     
     /// Raises the event, invoking all handlers
@@ -41,11 +41,14 @@ public class Event<T> {
     /// removes the given handler that matches the key
     //TODO: UNTESTED!!!!
     public func removeHandler(key:String){
-        for i in eventHandlers.count-1...0{
-            if((eventHandlers[i] as! EventHandlerWrapper).key == key){
+        /*for i in 0..<eventHandlers.count{
+            var e = eventHandlers[i]
+            let eW = e as! EventHandlerWrapper
+            if eW.key == key{
                 eventHandlers.removeAtIndex(i);
+                return;
             }
-        }
+        }*/
     }
     
 }

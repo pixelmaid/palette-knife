@@ -38,7 +38,7 @@ class Stylus: TimeSeries, WebTransmitter {
     // var testCount = 4;
     init(x:Float,y:Float,angle:Float,force:Float){
         prevPosition = Point(x:0, y:0)
-        self.force.set(force*1.5);
+        self.force.set(force);
         self.prevForce = force
         self.angle.set(angle)
         self.prevAngle = angle;
@@ -147,7 +147,7 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
-        
+        print("stylus position moving to:\(x,y)")
         for key in keyStorage["STYLUS_MOVE"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
@@ -163,23 +163,27 @@ class Stylus: TimeSeries, WebTransmitter {
             else{
                 //print("move limit: \(moveDist)")
                 
-                if(moveDist>moveLimit){
+               
                     //print("move limit reached \(moveDist)")
                     moveDist = 0;
                     moveLimit = Float(arc4random_uniform(10) + 60)
                     NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE"])
-                }
+                
             }
         }
         self.prevPosition.set(position);
         
         self.position.set(x,y:y)
+        print("setting stylus position to:\(x,y)")
+        self.delta.set(self.position.sub(self.prevPosition))
+
         deltaChangeBuffer.append(self.position.sub(self.prevPosition));
         print("stylus position currently is \(x,y)")
         self.distance += prevPosition.dist(position)
         moveDist += prevPosition.dist(position)
         self.prevForce = self.force.get()
-        self.force.set(force*1.5)
+        self.force.set(force*10)
+        print("force = \(self.force.get())")
         self.prevAngle = self.angle.get();
         self.angle.set(angle)
         let currentTime = self.getTimeElapsed();

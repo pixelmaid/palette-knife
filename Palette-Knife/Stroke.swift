@@ -175,16 +175,25 @@ func ==(lhs: Segment, rhs: Segment) -> Bool {
 class Stroke:TimeSeries, Geometry {
     var segments = [Segment]();
     let id = NSUUID().UUIDString;
-   
+    let gCodeGenerator = GCodeGenerator();
     
-    func addSegment(var segment:Segment)->Segment{
+    override init(){
+        super.init();
+        gCodeGenerator.startNewStroke();
+    }
+    
+    func addSegment(_segment:Segment)->Segment{
+        var segment = _segment;
         segment.parent = self
         segment.index = self.segments.count;
         segment.time = Float(0-timer.timeIntervalSinceNow);
         segments.append(segment)
         if(segment.getPreviousSegment() != nil){
-        print("seg being added \(segment.point.x.get(),segment.point.y.get(),segment.getPreviousSegment()!.point.x.get(),segment.getPreviousSegment()!.point.y.get())")
+        print("seg being added \(segment.diameter, segment.point.x.get(),segment.point.y.get(),segment.getPreviousSegment()!.point.x.get(),segment.getPreviousSegment()!.point.y.get())")
+            
         }
+        gCodeGenerator.drawSegment(segment)
+
         return segment
     }
     
@@ -192,6 +201,13 @@ class Stroke:TimeSeries, Geometry {
         let segment = Segment(point:point)
         return self.addSegment(segment)
     }
+    
+    func addSegment(point:Point, d:Float)->Segment{
+        var segment = Segment(point:point)
+        segment.diameter = d
+        return self.addSegment(segment)
+    }
+    
     
     func addSegment(segments:[Segment])->[Segment]{
         for i in 0...segments.count-1{

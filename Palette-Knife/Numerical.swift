@@ -17,4 +17,8 @@ class Numerical{
     static func isZero (val:Float)->Bool {
         return val >= -EPSILON && val <= EPSILON;
     }
+    
+    static func map (value:Float, istart:Float, istop:Float, ostart:Float, ostop:Float)->Float {
+    return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
+    }
 }

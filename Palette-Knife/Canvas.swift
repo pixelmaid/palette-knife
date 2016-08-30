@@ -24,7 +24,6 @@ class Canvas: WebTransmitter, Hashable{
     let  dataKey = NSUUID().UUIDString;
 
     
-    
     //MARK: - Hashable
     var hashValue : Int {
         get {

@@ -60,7 +60,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.y = self.position.y;
         self.dx = delta.x;
         self.dy = delta.y
-        
+        delta.parentName="brush"
         self.currentState = "default"
         
         super.init()
@@ -185,14 +185,16 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             self.setConstraint(value)
             //print("clearing constraints on old state \(self.currentState,value.relativeProperty.constrained)")
             value.relativeProperty.constrained = false;
-            
+                        print("toggling constraint off for \(value.relativeProperty.name, value.relativeProperty.constrained)")
             
         }
         print("\(self.name) current position at transition to \(state) = \(self.position.x,self.position.y)")
         self.currentState = state
         constraint_mappings =  states[currentState]!.constraint_mappings
         for (_, value) in constraint_mappings{
+
             value.relativeProperty.constrained = true;
+                        print("toggling constraint for \(value.relativeProperty.name, value.relativeProperty.constrained)")
             
             //self.setConstraint(value)
             
@@ -278,7 +280,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     //setHandler: triggered when constraint is changed, evaluates if brush is in correct state to encact constraint
     func setHandler(data:(String,Float,Float),stateKey:String){
-     
+        print("self handler called for \(data.0)")
      // let reference = notification.userInfo?["emitter"] as! Emitter
      
      let mapping = states[currentState]?.getConstraintMapping(stateKey)

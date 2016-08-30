@@ -54,6 +54,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var time = Observable<Float>(0)
     var id = NSUUID().UUIDString;
     var matrix = Matrix();
+    var index = -1; //stores index of child
     
     init(behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
         self.x = self.position.x;
@@ -137,7 +138,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             yScale *= -1.0;
         }
         self.matrix.scale(xScale, y: yScale, centerX: centerX, centerY: centerY);
-        
+        print("angle = \(self.angle.get(), self.index)")
         self.matrix.rotate(self.angle.get(), centerX: centerX, centerY: centerY)
         let _dx = self.position.x.get()+delta.x.get();
         let _dy = self.position.y.get()+delta.y.get();
@@ -372,9 +373,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         for i in 0...num-1{
             let child = Brush(behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
             child.setOrigin(self.position)
-            child.reflectX = reflectX[i]
-            child.reflectY = reflectY[i]
+           // child.reflectX = reflectX[i]
+            //child.reflectY = reflectY[i]
             self.children.append(child);
+            child.index = self.children.count-1;
             let handler = self.children.last!.geometryModified.addHandler(self,handler: Brush.brushDrawHandler, key:child.drawKey)
             childHandlers[child]=[Disposable]();
             childHandlers[child]?.append(handler)

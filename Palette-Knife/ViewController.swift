@@ -293,54 +293,28 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         
         //ROOT BRUSH (TAKE 2)
         
-               
-        let rootBehavior = BehaviorDefinition()
-        //TODO: Figure out why increment never reaches final value...
-        rootBehavior.addInterval("rootTimeIncrement", inc:0.1, times:100)
-        rootBehavior.addState("pause")
+//RADIAL BRUSH
+ let radialCount = 10;
+ let radialBehavior = BehaviorDefinition()
+ 
+        let rotationMap = Range(min:0, max:radialCount,start:0,stop:360)
+//radialBehavior.addRange("rotationMap",min: 0,max: radialCount, start: 0,stop: 360)
+ radialBehavior.addState("stop")
+ 
+        radialBehavior.addMethod("default", targetMethod: "newStroke",arguments: nil,condition:nil)
+        radialBehavior.addMethod("stop", targetMethod: "destroy",arguments: nil, condition:nil)
+ 
+        radialBehavior.addTransition(stylus, event: "STYLUS_UP", fromState: "default", toState: "stop",condition:nil)
+ 
+ 
+        radialBehavior.addMapping(rotationMap, referenceName:nil, parentFlag:false, relativePropertyName: "angle", targetState: "default")
+        
+        radialBehavior.addMapping(stylus, referenceName:"dy", parentFlag: false,relativePropertyName: "dy",targetState: "default");
+        radialBehavior.addMapping(stylus, referenceName:"dx", parentFlag: false,relativePropertyName: "dx",targetState: "default");
+ 
+  radialBehavior.addMapping(stylus.force, referenceName:nil,parentFlag: false, relativePropertyName: "weight",targetState: "default");
 
-        rootBehavior.addState("grow")
-        rootBehavior.addState("die")
-        
-        rootBehavior.addCondition("rootTimeCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: nil, relativeName: "rootTimeIncrement", relativeParentFlag: false, relational: "within")
-        
-        
-        rootBehavior.addCondition("rootTimeComplete", reference: nil, referenceName: "time", referenceParentFlag: false, relative: Observable<Float>(9.0), relativeName: nil, relativeParentFlag: false, relational: ">")
-        
-        rootBehavior.addExpression("xScale",  emitter1: nil, operand1Name: "xBuffer", parentFlag1: true, emitter2: Observable<Float>(1.0), operand2Name: nil, parentFlag2: false, type: "mult")
-        
-        rootBehavior.addExpression("yScale",  emitter1: nil, operand1Name: "yBuffer", parentFlag1: true, emitter2: Observable<Float>(1.0), operand2Name: nil, parentFlag2: false, type: "mult")
-     
-        
-        
-         rootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "default", toState: "pause", condition:nil)
-        
-       
-        
-        rootBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "pause", toState: "grow", condition:"rootTimeCondition")
-        
-        
-        
-         rootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "grow", toState: "pause", condition:nil)
-        
 
-        rootBehavior.addMethod("default", targetMethod:"newStroke", arguments: nil, condition: nil)
-
-        rootBehavior.addMethod("pause", targetMethod:"spawn", arguments: [rootBehavior,2,[false,false],[false,true]], condition: "rootTimeComplete")
-        
-        rootBehavior.addMethod("pause", targetMethod:"destroy", arguments: nil, condition: "rootTimeComplete")
-        
-        
-        
-        rootBehavior.addMapping(Observable<Float>(20.0), referenceName: nil, parentFlag:false, relativePropertyName: "angle", targetState: "default")
-        rootBehavior.addMapping(nil, referenceName: "xScale", parentFlag: false, relativePropertyName: "dx", targetState: "grow")
-        rootBehavior.addMapping(nil, referenceName: "yScale", parentFlag: false,relativePropertyName: "dy", targetState: "grow")
-         rootBehavior.addMapping(nil, referenceName: "weightBuffer", parentFlag: true,relativePropertyName: "weight", targetState: "grow")
-        
-       
-        
-        
-        
         let tapRootBehavior = BehaviorDefinition();
         let timeIncrement = Interval(inc:2,times:10)
 
@@ -350,9 +324,11 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         
         //tapRootBehavior.addState("branch")
         tapRootBehavior.addState("initStroke")
-        tapRootBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil, condition: nil)
+       // tapRootBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil, condition: nil)
          tapRootBehavior.addMethod("initStroke", targetMethod: "setOrigin",arguments: [stylus.position], condition: nil)
        //tapRootBehavior.addMethod("branch", targetMethod: "spawn", arguments:[rootBehavior,2,[false,false],[false,true]],condition:nil)
+        tapRootBehavior.addMethod("initStroke", targetMethod: "spawn", arguments:[radialBehavior,radialCount,[false,false],[false,false]], condition: nil)
+
         
         tapRootBehavior.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke",condition:nil)
         tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default",condition:nil)

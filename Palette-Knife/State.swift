@@ -12,7 +12,7 @@ struct State {
     var transition_mappings = [String:StateTransition]()
     var constraint_mappings = [String:Constraint]()
 
-    var methods = [(String,[Any]?,Condition?)]()
+    var methods = [(String,[Any]?)]()
     init(){
     
     }
@@ -39,8 +39,8 @@ struct State {
         
     }
     
-    mutating func addMethod(key:String, methodName:String, arguments:[Any]?, condition:Condition?){
-        methods.append((methodName,arguments,condition));
+    mutating func addMethod(key:String, methodName:String, arguments:[Any]?){
+        methods.append((methodName,arguments));
     }
     
     

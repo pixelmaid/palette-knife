@@ -301,8 +301,8 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
 //radialBehavior.addRange("rotationMap",min: 0,max: radialCount, start: 0,stop: 360)
  radialBehavior.addState("stop")
  
-        radialBehavior.addMethod("default", targetMethod: "newStroke",arguments: nil,condition:nil)
-        radialBehavior.addMethod("stop", targetMethod: "destroy",arguments: nil, condition:nil)
+        radialBehavior.addMethod("default", targetMethod: "newStroke",arguments: nil)
+        radialBehavior.addMethod("stop", targetMethod: "destroy",arguments: nil)
  
         radialBehavior.addTransition(stylus, event: "STYLUS_UP", fromState: "default", toState: "stop",condition:nil)
  
@@ -325,9 +325,9 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         //tapRootBehavior.addState("branch")
         tapRootBehavior.addState("initStroke")
        // tapRootBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil, condition: nil)
-         tapRootBehavior.addMethod("initStroke", targetMethod: "setOrigin",arguments: [stylus.position], condition: nil)
+         tapRootBehavior.addMethod("initStroke", targetMethod: "setOrigin",arguments: [stylus.position])
        //tapRootBehavior.addMethod("branch", targetMethod: "spawn", arguments:[rootBehavior,2,[false,false],[false,true]],condition:nil)
-        tapRootBehavior.addMethod("initStroke", targetMethod: "spawn", arguments:[radialBehavior,radialCount,[false,false],[false,false]], condition: nil)
+        tapRootBehavior.addMethod("initStroke", targetMethod: "spawn", arguments:[radialBehavior,radialCount,[false,false],[false,false]])
 
         
         tapRootBehavior.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke",condition:nil)

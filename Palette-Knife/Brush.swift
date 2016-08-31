@@ -29,7 +29,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var position = Point(x:0,y:0)
     var delta = Point(x:0,y:0)
     var deltaKey = NSUUID().UUIDString;
-
+    
     var xBuffer = Buffer()
     var yBuffer = Buffer()
     var weightBuffer = Buffer()
@@ -44,13 +44,13 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     //event Handler wrapper for draw updates
     var drawKey = NSUUID().UUIDString;
-
+    
     var currentCanvas:Canvas?
     var geometryModified = Event<(Geometry,String,String)>()
     var transmitEvent = Event<(String)>()
     let removeMappingEvent = Event<(Brush,String,Observable<Float>)>()
     let removeTransitionEvent = Event<(Brush,String,Emitter)>()
-
+    
     var time = Observable<Float>(0)
     var id = NSUUID().UUIDString;
     var matrix = Matrix();
@@ -81,7 +81,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         self.setCanvasTarget(canvas)
         self.parent = parent
-    
+        
         //setup behavior
         if(behaviorDef != nil){
             behaviorDef?.createBehavior(self)
@@ -89,7 +89,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         _  = NSTimer.scheduledTimerWithTimeInterval(0.00001, target: self, selector: #selector(Brush.defaultCallback), userInfo: nil, repeats: false)
     }
     
-
+    
     @objc func defaultCallback(){
         self.transitionToState(currentState)
         
@@ -129,7 +129,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         }
         var xScale = self.scaling.x.get();
         print("reflection on the x axis \(self.reflectX),reflection on the y axis \(self.reflectY), \(self.name)")
-
+        
         if(self.reflectX){
             xScale *= -1.0;
         }
@@ -144,21 +144,21 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         let _dy = self.position.y.get()+delta.y.get();
         
         let transformedCoords = self.matrix.transformPoint(_dx, y: _dy)
-                 print("brush position currently is \(transformedCoords.0,transformedCoords.1)")
-       
+        print("brush position currently is \(transformedCoords.0,transformedCoords.1)")
+        
         xBuffer.push(delta.x.get());
         yBuffer.push(delta.y.get());
         weightBuffer.push(weight.get());
         self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight: self.weight.get());
         self.position.set(_dx,y:_dy);
-
+        
     }
     
     
     func setOrigin(p:Point){
         origin = p.clone();
         self.position.set(origin)
-       
+        
     }
     
     dynamic func stateTransitionHandler(notification: NSNotification){
@@ -169,7 +169,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         if(mapping != nil){
             let stateTransition = mapping
-          
+            
             print("\n\n making transition \(self.name, stateTransition!.toState)")
             
             self.transitionToState(stateTransition!.toState)
@@ -186,16 +186,16 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             self.setConstraint(value)
             //print("clearing constraints on old state \(self.currentState,value.relativeProperty.constrained)")
             value.relativeProperty.constrained = false;
-                        print("toggling constraint off for \(value.relativeProperty.name, value.relativeProperty.constrained)")
+            print("toggling constraint off for \(value.relativeProperty.name, value.relativeProperty.constrained)")
             
         }
         print("\(self.name) current position at transition to \(state) = \(self.position.x,self.position.y)")
         self.currentState = state
         constraint_mappings =  states[currentState]!.constraint_mappings
         for (_, value) in constraint_mappings{
-
+            
             value.relativeProperty.constrained = true;
-                        print("toggling constraint for \(value.relativeProperty.name, value.relativeProperty.constrained)")
+            print("toggling constraint for \(value.relativeProperty.name, value.relativeProperty.constrained)")
             
             //self.setConstraint(value)
             
@@ -226,18 +226,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         for i in 0..<methods.count{
             let methodName = methods[i];
-            //check to see if there's a conditional on the method, 
-            //and return if it evaluates to false
-            if(methods[i].2 != nil){
-                print("condition to evaluate for method \(methodName.0)");
-                if(!methods[i].2!.evaluate()){
-                    print("condition to evaluate for method \(methodName.0) is false");
-
-                    return;
-                }
-                print("condition to evaluate for method \(methodName) is true");
-
-            }
             switch (methodName.0){
             case "newStroke":
                 self.newStroke();
@@ -268,7 +256,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         let stateKey = NSUUID().UUIDString;
         reference.didChange.addHandler(self, handler:  Brush.setHandler, key:stateKey)
         self.removeMappingEvent.addHandler(self, handler: Brush.removeConstraint,key:stateKey)
-
+        
         states[targetState]!.addConstraintMapping(stateKey,reference:reference,relativeProperty: relative)
     }
     
@@ -276,24 +264,24 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         data.2.didChange.removeHandler(key)
     }
     
-   
+    
     
     
     //setHandler: triggered when constraint is changed, evaluates if brush is in correct state to encact constraint
     func setHandler(data:(String,Float,Float),stateKey:String){
         print("self handler called for \(data.0)")
-     // let reference = notification.userInfo?["emitter"] as! Emitter
-     
-     let mapping = states[currentState]?.getConstraintMapping(stateKey)
-     //print("set handler change called for state \(self.currentState), self.name and mapping: \(self.name,key,mapping != nil,notification.userInfo?["event"])")
-     
-     if(mapping != nil){
-     //print("set handler change initiated for state \(self.currentState)")
-     
-     //let constraint = mapping as! Constraint
-        self.setConstraint(mapping!)
-     }
-     }
+        // let reference = notification.userInfo?["emitter"] as! Emitter
+        
+        let mapping = states[currentState]?.getConstraintMapping(stateKey)
+        //print("set handler change called for state \(self.currentState), self.name and mapping: \(self.name,key,mapping != nil,notification.userInfo?["event"])")
+        
+        if(mapping != nil){
+            //print("set handler change initiated for state \(self.currentState)")
+            
+            //let constraint = mapping as! Constraint
+            self.setConstraint(mapping!)
+        }
+    }
     
     func setConstraint(constraint:Constraint){
         constraint.relativeProperty.set(constraint.reference.get());
@@ -311,25 +299,25 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         data.2.removeKey(data.1)
     }
     
-    func addMethod(key:String,state:String, methodName:String, arguments:[Any]?, condition:Condition?){
-        states[state]!.addMethod(key,methodName:methodName,arguments:arguments,condition:condition)
+    func addMethod(key:String,state:String, methodName:String, arguments:[Any]?){
+        states[state]!.addMethod(key,methodName:methodName,arguments:arguments)
     }
     
     
-   /*
+    /*
      TODO: Finish implementing clone
-    func clone()->Brush{
-        let clone = Brush(behaviorDef: nil, parent: self.parent, canvas: self.currentCanvas)
-        
-        clone.reflectX = self.reflectX;
-        clone.reflectY = self.reflectY;
-        clone.position = self.position.clone();
-        clone.scaling = self.scaling.clone();
-        clone.strokeColor = self.strokeColor;
-        clone.fillColor = self.fillColor;
-        return clone;
-        
-    }*/
+     func clone()->Brush{
+     let clone = Brush(behaviorDef: nil, parent: self.parent, canvas: self.currentCanvas)
+     
+     clone.reflectX = self.reflectX;
+     clone.reflectY = self.reflectY;
+     clone.position = self.position.clone();
+     clone.scaling = self.scaling.clone();
+     clone.strokeColor = self.strokeColor;
+     clone.fillColor = self.fillColor;
+     return clone;
+     
+     }*/
     
     
     func removeConstraint(key:String){
@@ -373,7 +361,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         for i in 0...num-1{
             let child = Brush(behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
             child.setOrigin(self.position)
-           // child.reflectX = reflectX[i]
+            // child.reflectX = reflectX[i]
             //child.reflectY = reflectY[i]
             self.children.append(child);
             child.index = self.children.count-1;
@@ -400,7 +388,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         return child
     }
     
-  
+    
     
     func destroyChildren(){
         for child in self.children as [Brush] {

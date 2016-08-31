@@ -34,9 +34,9 @@ class BehaviorMapper{
         
     }
     
-    func addMethod(relative:Brush,state:String,methodName:String, arguments:[Any]?, condition:Condition?){
+    func addMethod(relative:Brush,state:String,methodName:String, arguments:[Any]?){
         let key = NSUUID().UUIDString;
-        relative.addMethod(key,state:state,methodName:methodName, arguments:arguments, condition:condition)
+        relative.addMethod(key,state:state,methodName:methodName, arguments:arguments)
     }
 }
 

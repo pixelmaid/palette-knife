@@ -16,7 +16,7 @@ class BehaviorDefinition {
     var conditions = [String:(Any?,String?,Bool,Any?,String?,Bool,String)]()
     var generators = [String:(String,[Any])]()
     var storedGenerators = [String:Generator]()
-    var methods = [(String,String,[Any]?,String?)]()
+    var methods = [(String,String,[Any]?)]()
     var transitions = [(Emitter?,String,String,String,String?)]()
     var behaviorMapper = BehaviorMapper()
     var mappings = [(Any?,String?,Bool,String,String)]()
@@ -46,8 +46,8 @@ class BehaviorDefinition {
         states.append(stateName)
     }
 
-    func addMethod(targetState:String, targetMethod:String, arguments:[Any]?,condition:String?){
-        methods.append((targetState,targetMethod,arguments,condition))
+    func addMethod(targetState:String, targetMethod:String, arguments:[Any]?){
+        methods.append((targetState,targetMethod,arguments))
     }
     
     func addTransition(eventEmitter:Emitter?,event:String, fromState:String,toState:String, condition:String?){
@@ -226,14 +226,7 @@ class BehaviorDefinition {
 
         }
          for method in methods{
-            let condition:Condition?
-            if((method.3) != nil){
-                condition = storedConditions[method.3!]!
-            }
-            else{
-                condition = nil
-            }
-            behaviorMapper.addMethod(targetBrush,state:method.0,methodName:method.1,arguments:method.2,condition:condition);
+            behaviorMapper.addMethod(targetBrush,state:method.0,methodName:method.1,arguments:method.2);
         }
         
         for transition in transitions{

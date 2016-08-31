@@ -127,13 +127,13 @@ class Stylus: TimeSeries, WebTransmitter {
         //TODO: silent set, need to make more robust/ readable
         self.position.x.setSilent(x)
         self.position.y.setSilent(y)
-
         for key in self.keyStorage["STYLUS_DOWN"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
                 eventCondition.evaluate()
             }
             else{
+                print("posting stylus down notification \(key)")
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_DOWN"])
             }
             

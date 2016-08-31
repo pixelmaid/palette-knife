@@ -12,7 +12,7 @@ struct State {
     var transition_mappings = [String:StateTransition]()
     var constraint_mappings = [String:Constraint]()
 
-    var methods = [(String,[Any]?,Condition?)]()
+    
     init(){
     
     }
@@ -31,19 +31,23 @@ struct State {
         
     }
     
+    func addMethod(key:String, transitionName:String, methodName:String, arguments:[Any]?){
+        for (key,var value) in transition_mappings{
+            if(value.name == transitionName){
+                value.addMethod(key, methodName:methodName, arguments:arguments)
+                return;
+            }
+        }
     
-    mutating func addStateTransitionMapping(key:String,reference:Emitter,toState:String){
-        let mapping = StateTransition(reference:reference,toState:toState)
+    }
+    
+    
+    mutating func addStateTransitionMapping(key:String,transitionName:String,reference:Emitter,toState:String){
+        let mapping = StateTransition(name:transitionName,reference:reference,toState:toState)
         transition_mappings[key] = mapping;
         
         
     }
-    
-    mutating func addMethod(key:String, methodName:String, arguments:[Any]?, condition:Condition?){
-        methods.append((methodName,arguments,condition));
-    }
-    
-    
     
     mutating func removeTransitionMapping(key:String)->StateTransition?{
         return transition_mappings.removeValueForKey(key)
@@ -104,10 +108,18 @@ struct Constraint{
 struct StateTransition{
     var reference:Emitter
     var toState: String
-    init(reference:Emitter, toState:String){
+    var methods = [(String,[Any]?)]()
+    let name:String
+    init(name:String, reference:Emitter, toState:String){
         self.reference = reference
         self.toState = toState
+        self.name = name
     }
+    
+    mutating func addMethod(key:String, methodName:String, arguments:[Any]?){
+        methods.append((methodName,arguments));
+    }
+    
     
 }
 

@@ -56,7 +56,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var matrix = Matrix();
     var index = -1; //stores index of child
     
-    init(behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
+    init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
         self.x = self.position.x;
         self.y = self.position.y;
         self.dx = delta.x;
@@ -65,7 +65,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.currentState = "default"
         
         super.init()
-        self.name = "brush"
+        self.name = name
         self.time = self.timerTime
         
         //setup events and create listener storage
@@ -91,7 +91,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
 
     @objc func defaultCallback(){
-        self.transitionToState(currentState)
+        self.transitionToState(currentState,transition:"")
         
     }
     
@@ -163,22 +163,23 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     dynamic func stateTransitionHandler(notification: NSNotification){
         
+        print("state transition handler called for \(self.name)")
         let key = notification.userInfo?["key"] as! String
         let mapping = states[currentState]?.getTransitionMapping(key)
-        print("\n\ntransition to state called for mapping =\(mapping != nil), from state:\(currentState), for object named:\(self.name), from notifcation \(notification.userInfo?["event"])\n\n")
+        
         
         if(mapping != nil){
             let stateTransition = mapping
           
             print("\n\n making transition \(self.name, stateTransition!.toState)")
             
-            self.transitionToState(stateTransition!.toState)
+            self.transitionToState(stateTransition!.toState,transition:mapping!.name)
             
         }
     }
     
-    func transitionToState(state:String){
-        print("transition to state called for \(self.name) to state: \(state) \n\n\n\n")
+    func transitionToState(state:String, transition:String){
+        //print("transition to state called for \(self.name) to state: \(state) \n\n\n\n")
         var constraint_mappings =  states[currentState]!.constraint_mappings
         //print("position change called constraint_mappings \(constraint_mappings.count,state,currentState)")
         for (_, value) in constraint_mappings{
@@ -202,7 +203,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         }
         //execute methods
         print("executed methods, name \(self.name) state \(self.currentState))")
-        self.executeStateMethods()
+        self.executeStateMethods(transition)
         //check constraints
         
         //trigger state complete after functions are executed
@@ -220,24 +221,14 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     
-    func executeStateMethods(){
-        let methods = self.states[currentState]!.methods
+    func executeStateMethods(transitionName:String){
+        print("execute state methods \(transitionName, self.states[currentState]?.transition_mappings[transitionName])")
+        if( self.states[currentState]?.transition_mappings[transitionName] != nil){
+        let methods = self.states[currentState]?.transition_mappings[transitionName]!.methods
         print("transition made, methods to execute \(self.name, methods)")
         
-        for i in 0..<methods.count{
-            let methodName = methods[i];
-            //check to see if there's a conditional on the method, 
-            //and return if it evaluates to false
-            if(methods[i].2 != nil){
-                print("condition to evaluate for method \(methodName.0)");
-                if(!methods[i].2!.evaluate()){
-                    print("condition to evaluate for method \(methodName.0) is false");
-
-                    return;
-                }
-                print("condition to evaluate for method \(methodName) is true");
-
-            }
+        for i in 0..<methods!.count{
+            let methodName = methods![i];
             switch (methodName.0){
             case "newStroke":
                 self.newStroke();
@@ -255,6 +246,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             default:
                 break;
             }
+        }
         }
         
     }
@@ -299,10 +291,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         constraint.relativeProperty.set(constraint.reference.get());
     }
     
-    func addStateTransition(key:String, reference:Emitter, fromState: String, toState:String){
-        //print("adding state transition \(key) from \(reference) from \(fromState) to \(toState)")
+    func addStateTransition(key:String, transitionName:String, reference:Emitter, fromState: String, toState:String){
+    
         
-        states[fromState]!.addStateTransitionMapping(key,reference: reference, toState:toState)
+        states[fromState]!.addStateTransitionMapping(key,transitionName:transitionName,reference: reference, toState:toState)
         
     }
     
@@ -311,8 +303,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         data.2.removeKey(data.1)
     }
     
-    func addMethod(key:String,state:String, methodName:String, arguments:[Any]?, condition:Condition?){
-        states[state]!.addMethod(key,methodName:methodName,arguments:arguments,condition:condition)
+    func addMethod(key:String,stateName:String, transitionName:String, methodName:String, arguments:[Any]?){
+        states[stateName]!.addMethod(key,transitionName:transitionName,methodName:methodName,arguments:arguments)
     }
     
     
@@ -371,7 +363,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         lastSpawned.removeAll()
         //print("SPAWN change called \(self.children.count)")
         for i in 0...num-1{
-            let child = Brush(behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
+            //TODO: enable name passing via argument
+            let child = Brush(name:(self.name+"_child"),behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
             child.setOrigin(self.position)
            // child.reflectX = reflectX[i]
             //child.reflectY = reflectY[i]

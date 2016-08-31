@@ -294,59 +294,21 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         //ROOT BRUSH (TAKE 2)
         
 //RADIAL BRUSH
- let radialCount = 10;
- let radialBehavior = BehaviorDefinition()
  
-        let rotationMap = Range(min:0, max:radialCount,start:0,stop:360)
-//radialBehavior.addRange("rotationMap",min: 0,max: radialCount, start: 0,stop: 360)
- radialBehavior.addState("stop")
- 
-        radialBehavior.addMethod("default", targetMethod: "newStroke",arguments: nil,condition:nil)
-        radialBehavior.addMethod("stop", targetMethod: "destroy",arguments: nil, condition:nil)
- 
-        radialBehavior.addTransition(stylus, event: "STYLUS_UP", fromState: "default", toState: "stop",condition:nil)
- 
- 
-        radialBehavior.addMapping(rotationMap, referenceName:nil, parentFlag:false, relativePropertyName: "angle", targetState: "default")
+        let b1 = BehaviorDefinition();
         
-        radialBehavior.addMapping(stylus, referenceName:"dy", parentFlag: false,relativePropertyName: "dy",targetState: "default");
-        radialBehavior.addMapping(stylus, referenceName:"dx", parentFlag: false,relativePropertyName: "dx",targetState: "default");
- 
-  radialBehavior.addMapping(stylus.force, referenceName:nil,parentFlag: false, relativePropertyName: "weight",targetState: "default");
+        // rootGenerator.addTransition(stylus, event: "STYLUS_UP", fromState: "default", toState: "spawn")
 
 
-        let tapRootBehavior = BehaviorDefinition();
-        let timeIncrement = Interval(inc:2,times:10)
-
-        //tapRootBehavior.addCondition("timeCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: timeIncrement, relativeName: nil, relativeParentFlag: false, relational: "within")
+        b1.addTransition("strokeCreation", eventEmitter: stylus, event: "STYLUS_DOWN", fromState: "default", toState: "foo", condition: nil)
         
-
+        b1.addMethod("default", targetTransition: "strokeCreation", targetMethod: "newStroke", arguments: nil)
+        b1.addMapping(stylus, referenceName: "dx", parentFlag: false, relativePropertyName: "dx", targetState: "default")
+        b1.addMapping(stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
+        b1.addMapping(stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default");
         
-        //tapRootBehavior.addState("branch")
-        tapRootBehavior.addState("initStroke")
-       // tapRootBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil, condition: nil)
-         tapRootBehavior.addMethod("initStroke", targetMethod: "setOrigin",arguments: [stylus.position], condition: nil)
-       //tapRootBehavior.addMethod("branch", targetMethod: "spawn", arguments:[rootBehavior,2,[false,false],[false,true]],condition:nil)
-        tapRootBehavior.addMethod("initStroke", targetMethod: "spawn", arguments:[radialBehavior,radialCount,[false,false],[false,false]], condition: nil)
-
-        
-        tapRootBehavior.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke",condition:nil)
-        tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default",condition:nil)
-        
-        //tapRootBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "default", toState: "branch", condition:"timeCondition")
-        //tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "branch", toState: "default", condition:nil)
-
-        
-        tapRootBehavior.addMapping(stylus, referenceName:"dy", parentFlag: false,relativePropertyName: "dy",targetState: "default");
-        tapRootBehavior.addMapping(stylus, referenceName:"dx", parentFlag: false,relativePropertyName: "dx",targetState: "default");
-        tapRootBehavior.addMapping(stylus.force, referenceName:nil,parentFlag: false, relativePropertyName: "weight",targetState: "default");
-        
-        
-        
-
-        let tapRootBrush = Brush(behaviorDef: tapRootBehavior, parent: nil, canvas:self.currentCanvas!)
-        tapRootBrush.name = "tapRootBrush"
-        
+               
+        let b1_brush = Brush(name:"b1",behaviorDef: b1, parent: nil, canvas: self.currentCanvas!)
         
         
     }

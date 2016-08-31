@@ -29,7 +29,6 @@ class Emitter: Model, Equatable  {
     dynamic func propertyInvalidated(notification: NSNotification){
         self.invalidated = true;
         
-        //print("property invalidated \(reference.get(),reference)")
         for key in keyStorage["INVALIDATED"]!  {
             NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0, "event":"INVALIDATED"])
             

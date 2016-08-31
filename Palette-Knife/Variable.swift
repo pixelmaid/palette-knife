@@ -59,7 +59,6 @@ class Buffer:Generator{
     }
     
     override func get() -> Float {
-        print("accessing buffer, \(val.count,index)")
         let v = val[index]
         self.incrementIndex();
         return v;
@@ -73,7 +72,6 @@ class Range:Generator{
     init(min:Int,max:Int,start:Float,stop:Float){
         let increment = (stop-start)/Float(max-min)
         for i in min...max-1{
-            print(i)
             val.append(start+increment*Float(i))
         }
     }

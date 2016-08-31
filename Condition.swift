@@ -26,7 +26,6 @@ class Condition {
             return referenceA.get() < referenceB.get();
             
         case ">":
-            print ("condition to evaluate < \(referenceA.get(),referenceB.get())")
             return referenceA.get() > referenceB.get();
             
         case "==":

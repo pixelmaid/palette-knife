@@ -31,7 +31,6 @@ class TimeSeries: Emitter{
     }
     
     func startInterval(){
-        print("starting timer for \(self.name)");
         intervalTimer  = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: #selector(TimeSeries.timerIntervalCallback), userInfo: nil, repeats: true)
     }
     
@@ -48,21 +47,15 @@ class TimeSeries: Emitter{
         self.timerTime.set(t)
         for key in keyStorage["TIME_INCREMENT"]!
         {
-            print("listeners on time increment\(keyStorage["TIME_INCREMENT"], key)")
  
             if(key.1 != nil){
                 let condition = key.1;
                 if(condition.evaluate()){
-                    print("condition true, posted time increment \(key.0,(self["time"]! as! Observable<Float>).get(), self.name)")
                     
                     NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INCREMENT"])
                 }
-                else{
-                    print("condition false, not posting time increment, \((self["time"]! as! Observable<Float>).get(), self.name)")
-                }
             }
             else{
-                print("no condition, posted time increment \(key.0,self.name)")
                 
                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INCREMENT"])
             }

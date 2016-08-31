@@ -9,10 +9,9 @@
 import Foundation
 
 struct State {
-    var transition_mappings = [String:StateTransition]()
+    var transitions = [String:StateTransition]()
     var constraint_mappings = [String:Constraint]()
-
-    var methods = [(String,[Any]?)]()
+    
     init(){
     
     }
@@ -20,33 +19,22 @@ struct State {
     mutating func addConstraintMapping(key:String, reference:Observable<Float>, relativeProperty:Observable<Float>){
         let mapping = Constraint(reference: reference, relativeProperty:relativeProperty)
         constraint_mappings[key] = mapping;
-        
-
     }
     
     mutating func removeConstraintMapping(key:String)->Constraint?{
         constraint_mappings[key]!.relativeProperty.constrained = false;
        return constraint_mappings.removeValueForKey(key)
-        
-        
     }
     
     
-    mutating func addStateTransitionMapping(key:String,reference:Emitter,toState:String){
-        let mapping = StateTransition(reference:reference,toState:toState)
-        transition_mappings[key] = mapping;
-        
-        
+    mutating func addStateTransitionMapping(name:String, key:String,reference:Emitter,toState:String)->StateTransition{
+        let mapping = StateTransition(name:name, reference:reference,toState:toState)
+        transitions[key] = mapping;
+        return mapping;
     }
-    
-    mutating func addMethod(key:String, methodName:String, arguments:[Any]?){
-        methods.append((methodName,arguments));
-    }
-    
-    
     
     mutating func removeTransitionMapping(key:String)->StateTransition?{
-        return transition_mappings.removeValueForKey(key)
+        return transitions.removeValueForKey(key)
         
     }
  
@@ -55,18 +43,16 @@ struct State {
             return  constraint_mappings[key]
         }
         else {
-            //print("constraint mapping not found for state:\(key)")
 
             return nil
         }
     }
     
     func getTransitionMapping(key:String)->StateTransition?{
-        if let _ = transition_mappings[key] {
-            return  transition_mappings[key]
+        if let _ = transitions[key] {
+            return  transitions[key]
         }
         else {
-           // print("transition mapping not found for state:\(key)")
             
             return nil
         }
@@ -74,7 +60,7 @@ struct State {
 
     
     func hasTransitionKey(key:String)->Bool{
-        if(transition_mappings[key] != nil){
+        if(transitions[key] != nil){
             return true
         }
         return false
@@ -101,14 +87,22 @@ struct Constraint{
 
 }
 
-struct StateTransition{
+class StateTransition{
     var reference:Emitter
     var toState: String
-    init(reference:Emitter, toState:String){
+    var methods = [(String,[Any]?)]()
+    let name: String
+    
+    init(name:String, reference:Emitter, toState:String){
         self.reference = reference
         self.toState = toState
+        self.name = name
     }
     
+    func addMethod(methodName:String, arguments:[Any]?){
+        methods.append((methodName,arguments));
+    }
+
 }
 
 

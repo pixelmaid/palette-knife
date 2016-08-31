@@ -57,7 +57,6 @@ class SocketManager: WebSocketDelegate{
     func websocketDidReceiveMessage(ws: WebSocket, text: String) {
 
         if(dataQueue.count>0){
-           // print("websocket revieved message, sending next of \(dataQueue.count)")
 
             socket.writeString(dataQueue.removeAtIndex(0));
         }
@@ -66,7 +65,6 @@ class SocketManager: WebSocketDelegate{
 
             transmitComplete = true;
         }
-        //print("ifconfig text: \(text)")
     }
     
     func websocketDidReceiveData(ws: WebSocket, data: NSData) {

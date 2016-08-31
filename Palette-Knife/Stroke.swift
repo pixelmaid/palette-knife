@@ -189,7 +189,6 @@ class Stroke:TimeSeries, Geometry {
         segment.time = Float(0-timer.timeIntervalSinceNow);
         segments.append(segment)
         if(segment.getPreviousSegment() != nil){
-        print("seg being added \(segment.diameter, segment.point.x.get(),segment.point.y.get(),segment.getPreviousSegment()!.point.x.get(),segment.getPreviousSegment()!.point.y.get())")
             
         }
         gCodeGenerator.drawSegment(segment)

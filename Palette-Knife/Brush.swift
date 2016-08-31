@@ -16,6 +16,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     //dictionary to store expressions for emitter->action handlers
     var states = [String:State]();
+    var transitions = [String:StateTransition]();
     var currentState:String
     //dictionary for storing arrays of handlers for children (for later removal)
     var childHandlers = [Brush:[Disposable]]()
@@ -76,6 +77,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         //add in default state
         self.createState(currentState);
         
+        self.addStateTransition("start", key: NSUUID().UUIDString, reference: self, fromState: nil, toState: "default")
+       
         //setup listener for delta observable
         self.delta.didChange.addHandler(self, handler:Brush.deltaChange, key:deltaKey)
         
@@ -91,7 +94,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     @objc func defaultCallback(){
-        self.transitionToState(currentState)
+        self.transitionToState(self.transitions["start"]!)
         
     }
     
@@ -118,7 +121,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
-        print("delta change called for \(self.name) delta:\(delta.x.get(),delta.y.get(),angle.get())")
         
         let centerX = origin.x.get();
         let centerY = origin.y.get();
@@ -128,7 +130,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             self.matrix.prepend(self.parent!.matrix)
         }
         var xScale = self.scaling.x.get();
-        print("reflection on the x axis \(self.reflectX),reflection on the y axis \(self.reflectY), \(self.name)")
         
         if(self.reflectX){
             xScale *= -1.0;
@@ -138,13 +139,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             yScale *= -1.0;
         }
         self.matrix.scale(xScale, y: yScale, centerX: centerX, centerY: centerY);
-        print("angle = \(self.angle.get(), self.index)")
         self.matrix.rotate(self.angle.get(), centerX: centerX, centerY: centerY)
         let _dx = self.position.x.get()+delta.x.get();
         let _dy = self.position.y.get()+delta.y.get();
         
         let transformedCoords = self.matrix.transformPoint(_dx, y: _dy)
-        print("brush position currently is \(transformedCoords.0,transformedCoords.1)")
         
         xBuffer.push(delta.x.get());
         yBuffer.push(delta.y.get());
@@ -165,44 +164,35 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         let key = notification.userInfo?["key"] as! String
         let mapping = states[currentState]?.getTransitionMapping(key)
-        print("\n\ntransition to state called for mapping =\(mapping != nil), from state:\(currentState), for object named:\(self.name), from notifcation \(notification.userInfo?["event"])\n\n")
         
         if(mapping != nil){
             let stateTransition = mapping
             
-            print("\n\n making transition \(self.name, stateTransition!.toState)")
             
-            self.transitionToState(stateTransition!.toState)
+            self.transitionToState(stateTransition!)
             
         }
     }
     
-    func transitionToState(state:String){
-        print("transition to state called for \(self.name) to state: \(state) \n\n\n\n")
+    func transitionToState(transition:StateTransition){
         var constraint_mappings =  states[currentState]!.constraint_mappings
-        //print("position change called constraint_mappings \(constraint_mappings.count,state,currentState)")
         for (_, value) in constraint_mappings{
             
             self.setConstraint(value)
-            //print("clearing constraints on old state \(self.currentState,value.relativeProperty.constrained)")
             value.relativeProperty.constrained = false;
-            print("toggling constraint off for \(value.relativeProperty.name, value.relativeProperty.constrained)")
             
         }
-        print("\(self.name) current position at transition to \(state) = \(self.position.x,self.position.y)")
-        self.currentState = state
+        self.currentState = transition.toState;
         constraint_mappings =  states[currentState]!.constraint_mappings
         for (_, value) in constraint_mappings{
             
             value.relativeProperty.constrained = true;
-            print("toggling constraint for \(value.relativeProperty.name, value.relativeProperty.constrained)")
             
             //self.setConstraint(value)
             
         }
         //execute methods
-        print("executed methods, name \(self.name) state \(self.currentState))")
-        self.executeStateMethods()
+        self.executeTransitionMethods(transition.methods)
         //check constraints
         
         //trigger state complete after functions are executed
@@ -220,9 +210,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     
-    func executeStateMethods(){
-        let methods = self.states[currentState]!.methods
-        print("transition made, methods to execute \(self.name, methods)")
+    func executeTransitionMethods(methods:[(String,[Any]?)]){
         
         for i in 0..<methods.count{
             let methodName = methods[i];
@@ -233,7 +221,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             case "setOrigin":
                 self.setOrigin(methodName.1![0] as! Point)
             case "destroy":
-                print("executed destroy for \(self.name)")
                 self.destroy();
                 break;
             case "spawn":
@@ -269,14 +256,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     //setHandler: triggered when constraint is changed, evaluates if brush is in correct state to encact constraint
     func setHandler(data:(String,Float,Float),stateKey:String){
-        print("self handler called for \(data.0)")
         // let reference = notification.userInfo?["emitter"] as! Emitter
         
         let mapping = states[currentState]?.getConstraintMapping(stateKey)
-        //print("set handler change called for state \(self.currentState), self.name and mapping: \(self.name,key,mapping != nil,notification.userInfo?["event"])")
         
         if(mapping != nil){
-            //print("set handler change initiated for state \(self.currentState)")
             
             //let constraint = mapping as! Constraint
             self.setConstraint(mapping!)
@@ -287,11 +271,16 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         constraint.relativeProperty.set(constraint.reference.get());
     }
     
-    func addStateTransition(key:String, reference:Emitter, fromState: String, toState:String){
-        //print("adding state transition \(key) from \(reference) from \(fromState) to \(toState)")
+    func addStateTransition(name:String, key:String, reference:Emitter, fromState: String?, toState:String){
         
-        states[fromState]!.addStateTransitionMapping(key,reference: reference, toState:toState)
-        
+        let transition:StateTransition
+        if(fromState != nil){
+         transition = states[fromState!]!.addStateTransitionMapping(name, key:key,reference: reference, toState:toState)
+        }
+        else{
+            transition = StateTransition(name: name, reference: reference, toState: toState)
+        }
+        self.transitions[name] = transition;
     }
     
     func removeStateTransition(data:(Brush, String, Emitter),key:String){
@@ -299,8 +288,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         data.2.removeKey(data.1)
     }
     
-    func addMethod(key:String,state:String, methodName:String, arguments:[Any]?){
-        states[state]!.addMethod(key,methodName:methodName,arguments:arguments)
+    func addMethod(transitionName:String, methodName:String, arguments:[Any]?){
+        transitions[transitionName]!.addMethod(methodName,arguments:arguments)
     }
     
     
@@ -347,7 +336,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func newStroke(){
-        print("creating new stroke for \(self.name)")
         self.startInterval()
         
         currentCanvas!.currentDrawing!.retireCurrentStrokes(self.id)
@@ -357,7 +345,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     //creates number of clones specified by num and adds them as children
     func spawn(behavior:BehaviorDefinition,num:Int,reflectX:[Bool], reflectY:[Bool]) {
         lastSpawned.removeAll()
-        //print("SPAWN change called \(self.children.count)")
         for i in 0...num-1{
             let child = Brush(behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
             child.setOrigin(self.position)
@@ -379,7 +366,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     //removes child at an index and returns it
     // removes listener on child, but does not destroy it
     func removeChildAt(index:Int)->Brush{
-        print("destroying \(self.name)")
         let child = self.children.removeAtIndex(index)
         for h in childHandlers[child]!{
             h.dispose()

@@ -301,10 +301,10 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
 //radialBehavior.addRange("rotationMap",min: 0,max: radialCount, start: 0,stop: 360)
  radialBehavior.addState("stop")
  
-        radialBehavior.addMethod("default", targetMethod: "newStroke",arguments: nil)
-        radialBehavior.addMethod("stop", targetMethod: "destroy",arguments: nil)
+        radialBehavior.addMethod("start", targetMethod: "newStroke",arguments: nil)
+        radialBehavior.addMethod("stylusUpT", targetMethod: "destroy",arguments: nil)
  
-        radialBehavior.addTransition(stylus, event: "STYLUS_UP", fromState: "default", toState: "stop",condition:nil)
+        radialBehavior.addTransition("stylusUpT", eventEmitter:stylus, event: "STYLUS_UP", fromState: "default", toState: "stop",condition:nil)
  
  
         radialBehavior.addMapping(rotationMap, referenceName:nil, parentFlag:false, relativePropertyName: "angle", targetState: "default")
@@ -325,13 +325,13 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         //tapRootBehavior.addState("branch")
         tapRootBehavior.addState("initStroke")
        // tapRootBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil, condition: nil)
-         tapRootBehavior.addMethod("initStroke", targetMethod: "setOrigin",arguments: [stylus.position])
+         tapRootBehavior.addMethod("stylusDownT", targetMethod: "setOrigin",arguments: [stylus.position])
        //tapRootBehavior.addMethod("branch", targetMethod: "spawn", arguments:[rootBehavior,2,[false,false],[false,true]],condition:nil)
-        tapRootBehavior.addMethod("initStroke", targetMethod: "spawn", arguments:[radialBehavior,radialCount,[false,false],[false,false]])
+        tapRootBehavior.addMethod("stylusDownT", targetMethod: "spawn", arguments:[radialBehavior,radialCount,[false,false],[false,false]])
 
         
-        tapRootBehavior.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke",condition:nil)
-        tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default",condition:nil)
+        tapRootBehavior.addTransition("stylusDownT", eventEmitter:stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke",condition:nil)
+        tapRootBehavior.addTransition("completeT", eventEmitter:nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default",condition:nil)
         
         //tapRootBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "default", toState: "branch", condition:"timeCondition")
         //tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "branch", toState: "default", condition:nil)
@@ -363,10 +363,8 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
                         let prevSeg = seg.getPreviousSegment()
                        
                         if(prevSeg != nil){
- print("seg, prev seg \(seg.point.x.get(),seg.point.y.get(),prevSeg!.point.x.get(),prevSeg!.point.y.get())")
                             canvasView.drawPath(prevSeg!.point,tP: seg.point, w:seg.diameter, c:Color(r:0,g:0,b:0))
                         }
-                        print("diameter = \(seg.diameter)")
 
                     break
                     /*case "ARC":

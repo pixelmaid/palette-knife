@@ -84,7 +84,6 @@ class GCodeGenerator {
             self.newStroke = false;
         }
                source += self.move3(_x, y: _y, z: _z);
-        print("gcode \(_z,source)")
         return source;
     }
     

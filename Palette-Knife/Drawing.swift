@@ -78,16 +78,11 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     
     func addSegmentToStroke(parentID:String, point:Point, weight:Float){
         if (self.activeStrokes[parentID] == nil){
-            //print("tried to add segment to strokes, but no strokes exist")
             return
         }
         for i in 0..<self.activeStrokes[parentID]!.count{
             let currentStroke = self.activeStrokes[parentID]![i]
-            var seg = currentStroke.addSegment(point,d:weight)
-            if(seg.getPreviousSegment() != nil){
-                print("added segment to stroke \(seg.point.x.get(),seg.point.y.get(),seg.getPreviousSegment()!.point.x.get(),seg.getPreviousSegment()!.point.y.get())")
-            }
-            
+            let seg = currentStroke.addSegment(point,d:weight)
             
             var data = "\"drawing_id\":\""+self.id+"\","
             data += "\"stroke_id\":\""+currentStroke.id+"\","

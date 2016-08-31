@@ -17,7 +17,7 @@ class BehaviorDefinition {
     var generators = [String:(String,[Any])]()
     var storedGenerators = [String:Generator]()
     var methods = [(String,String,[Any]?)]()
-    var transitions = [(Emitter?,String,String,String,String?)]()
+    var transitions = [String:(Emitter?,String,String,String,String?)]()
     var behaviorMapper = BehaviorMapper()
     var mappings = [(Any?,String?,Bool,String,String)]()
     var storedExpressions = [String:Expression]()
@@ -46,12 +46,12 @@ class BehaviorDefinition {
         states.append(stateName)
     }
 
-    func addMethod(targetState:String, targetMethod:String, arguments:[Any]?){
-        methods.append((targetState,targetMethod,arguments))
+    func addMethod(targetTransition:String, targetMethod:String, arguments:[Any]?){
+        methods.append((targetTransition,targetMethod,arguments))
     }
     
-    func addTransition(eventEmitter:Emitter?,event:String, fromState:String,toState:String, condition:String?){
-        transitions.append((eventEmitter, event, fromState,toState,condition))
+    func addTransition(name:String, eventEmitter:Emitter?,event:String, fromState:String,toState:String, condition:String?){
+        transitions[name]=((eventEmitter, event, fromState,toState,condition))
     }
     
     func addMapping(referenceProperty:Any?, referenceName:String?, parentFlag:Bool, relativePropertyName:String,targetState:String){
@@ -120,7 +120,6 @@ class BehaviorDefinition {
                 operand1 = storedGenerators[data.1!]!;
             }
             else{
-                print("data 1 =\(data.1!, (emitter1 as! Emitter)[data.1!])")
                 operand1 = (emitter1 as! Emitter)[data.1!]! as! Observable<Float>
             }
         }
@@ -204,7 +203,6 @@ class BehaviorDefinition {
     }
     
     func createBehavior(targetBrush:Brush){
-       print("creating behavior, conditions \(conditions)")
         
         for (key, generator_data) in generators{
             self.generateGenerator(key,data:generator_data)
@@ -225,11 +223,8 @@ class BehaviorDefinition {
             behaviorMapper.createState(targetBrush,stateName:state)
 
         }
-         for method in methods{
-            behaviorMapper.addMethod(targetBrush,state:method.0,methodName:method.1,arguments:method.2);
-        }
         
-        for transition in transitions{
+        for (key,transition) in transitions{
             var reference:Any
             if(transition.0 == nil){
                 reference = targetBrush
@@ -244,10 +239,14 @@ class BehaviorDefinition {
             else{
                 condition = nil
             }
-            print("creating transition,condition = \(condition,transition.4,storedConditions)")
-            behaviorMapper.createStateTransition(reference as! Emitter, relative: targetBrush, eventName: transition.1, fromState:transition.2,toState:transition.3, condition: condition)
+            behaviorMapper.createStateTransition(key,reference:reference as! Emitter, relative: targetBrush, eventName: transition.1, fromState:transition.2,toState:transition.3, condition: condition)
 
         }
+        
+        for method in methods{
+            behaviorMapper.addMethod(targetBrush,transitionName:method.0,methodName:method.1,arguments:method.2);
+        }
+        
         //referenceProperty!,referenceName!,relativePropertyName,targetState
         for mapping_data in mappings{
             self.generateMapping(targetBrush,data:mapping_data);

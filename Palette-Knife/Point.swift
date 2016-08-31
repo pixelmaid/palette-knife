@@ -50,9 +50,7 @@ class Point:Observable<(Float,Float)>,Geometry{
         let name = data.0;
         let oldValue = data.1;
         _ = data.2;
-             print("coordinate change \(parentName,name,x.constrained,y.constrained)");
         if(!x.constrained && !y.constrained){
-            print("neither coordinate constrained")
             return;
         }
         else if(x.constrained && !y.constrained && name == "x"){
@@ -62,10 +60,8 @@ class Point:Observable<(Float,Float)>,Geometry{
             didChange.raise((name, (self.x.get(),oldValue), (self.x.get(),self.y.get())))
         }
         else{
-             print("coordinate both constrained x:\(x.invalidated) y:\(y.invalidated)");
        
             if(self.x.invalidated && self.y.invalidated){
-                // print("constraints validated x:\(x.invalidated) y:\(y.invalidated)");
                 if(name == "x"){
                     didChange.raise((name, (oldValue,storedValue),(self.x.get(),self.y.get())));
                 }

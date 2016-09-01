@@ -294,7 +294,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         //ROOT BRUSH (TAKE 2)
         
 //RADIAL BRUSH
- let radialCount = 10;
+ let radialCount = 40;
  let radialBehavior = BehaviorDefinition()
  
         let rotationMap = Range(min:0, max:radialCount,start:0,stop:360)
@@ -321,17 +321,14 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         //tapRootBehavior.addCondition("timeCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: timeIncrement, relativeName: nil, relativeParentFlag: false, relational: "within")
         
 
-        
-        //tapRootBehavior.addState("branch")
-        tapRootBehavior.addState("initStroke")
+       
        // tapRootBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil, condition: nil)
          tapRootBehavior.addMethod("stylusDownT", targetMethod: "setOrigin",arguments: [stylus.position])
        //tapRootBehavior.addMethod("branch", targetMethod: "spawn", arguments:[rootBehavior,2,[false,false],[false,true]],condition:nil)
         tapRootBehavior.addMethod("stylusDownT", targetMethod: "spawn", arguments:[radialBehavior,radialCount,[false,false],[false,false]])
 
         
-        tapRootBehavior.addTransition("stylusDownT", eventEmitter:stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke",condition:nil)
-        tapRootBehavior.addTransition("completeT", eventEmitter:nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default",condition:nil)
+        tapRootBehavior.addTransition("stylusDownT", eventEmitter:stylus, event: "STYLUS_DOWN", fromState: "default", toState: "default",condition:nil)
         
         //tapRootBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "default", toState: "branch", condition:"timeCondition")
         //tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "branch", toState: "default", condition:nil)

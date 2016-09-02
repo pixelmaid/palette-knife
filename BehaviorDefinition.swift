@@ -17,7 +17,7 @@ class BehaviorDefinition {
     var generators = [String:(String,[Any])]()
     var storedGenerators = [String:Generator]()
     var methods = [(String,String,[Any]?)]()
-    var transitions = [String:(Emitter?,String,String,String,String?)]()
+    var transitions = [String:(Emitter?,Bool,String,String,String,String?)]()
     var behaviorMapper = BehaviorMapper()
     var mappings = [(Any?,String?,Bool,String,String)]()
     var storedExpressions = [String:Expression]()
@@ -30,7 +30,7 @@ class BehaviorDefinition {
         
     }
     
-    func addInterval(name:String,inc:Float,times:Int){
+    func addInterval(name:String,inc:Float,times:Int?){
         generators[name] = ("interval",[inc,times]);
     }
     
@@ -54,8 +54,8 @@ class BehaviorDefinition {
         methods.append((targetTransition,targetMethod,arguments))
     }
     
-    func addTransition(name:String, eventEmitter:Emitter?,event:String, fromState:String,toState:String, condition:String?){
-        transitions[name]=((eventEmitter, event, fromState,toState,condition))
+    func addTransition(name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String, fromState:String,toState:String, condition:String?){
+        transitions[name]=((eventEmitter, parentFlag, event, fromState,toState,condition))
     }
     
     func addMapping(referenceProperty:Any?, referenceName:String?, parentFlag:Bool, relativePropertyName:String,targetState:String){
@@ -127,6 +127,7 @@ class BehaviorDefinition {
                 operand1 = storedGenerators[data.1!]!;
             }
             else{
+                print("data 1 = \(data.1)")
                 operand1 = (emitter1 as! Emitter)[data.1!]! as! Observable<Float>
             }
         }
@@ -234,19 +235,26 @@ class BehaviorDefinition {
         for (key,transition) in transitions{
             var reference:Any
             if(transition.0 == nil){
-                reference = targetBrush
+                if(transition.1){
+                    reference = targetBrush.parent!
+                }
+                else{
+                    reference = targetBrush
+                }
             }
             else{
                 reference = transition.0!;
             }
             let condition:Condition?
-            if((transition.4) != nil){
-                condition = storedConditions[transition.4!]
+            if((transition.5) != nil){
+                condition = storedConditions[transition.5!]
             }
             else{
                 condition = nil
             }
-            behaviorMapper.createStateTransition(key,reference:reference as! Emitter, relative: targetBrush, eventName: transition.1, fromState:transition.2,toState:transition.3, condition: condition)
+            
+            //(Emitter?,Bool,String,String,String,String?)
+            behaviorMapper.createStateTransition(key,reference:reference as! Emitter, relative: targetBrush, eventName: transition.2, fromState:transition.3,toState:transition.4, condition: condition)
 
         }
         

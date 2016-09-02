@@ -29,7 +29,15 @@ class Condition {
             return referenceA.get() > referenceB.get();
             
         case "==":
-            return referenceA.get() == referenceB.get();
+            let a = referenceA.get()
+            let b = referenceB.get()
+            print("checking equality \(a,b)")
+            return a == b;
+        case "!=":
+            let a = referenceA.get()
+            let b = referenceB.get()
+            print("checking inequality \(a,b)")
+            return a != b;
         case "within":
             let interval = self.referenceB as! Interval
             let value = interval.get();

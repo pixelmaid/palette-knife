@@ -123,40 +123,52 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     }
     
     func initTestBrushes(){
-        let b2TimeInterval = Interval(inc:0.05,times:nil)
+        let falseConstant = Observable<Float>(0)
         let b2 = BehaviorDefinition()
+        
+        
+        b2.addInterval("timeInterval",inc:0.05,times:nil)
+        
         b2.addMethod("setup", targetMethod: "newStroke", arguments: nil)
        b2.addMapping(nil, referenceName: "ox", parentFlag: true, relativePropertyName: "ox", targetState: "default")
         b2.addMapping(nil, referenceName: "oy", parentFlag: true, relativePropertyName: "oy", targetState: "default")
        b2.addMapping(nil, referenceName: "ox", parentFlag: true, relativePropertyName: "x", targetState: "default")
         b2.addMapping(nil, referenceName: "oy", parentFlag: true, relativePropertyName: "y", targetState: "default")
         
-        b2.addTransition("defaultEndTransition", eventEmitter: nil, event:
-            "STATE_COMPLETE", fromState: "default", toState: "delay", condition: nil)
+        b2.addState("spawn")
+
+        b2.addTransition("defaultDelayTransition", eventEmitter: nil, parentFlag:false, event:"STATE_COMPLETE", fromState: "default", toState: "delay", condition: nil)
 
         
-        
         b2.addState("delay")
-        
-        b2.addCondition("endCondition", reference: nil, referenceName: <#T##String?#>, referenceParentFlag: <#T##Bool#>, relative: <#T##Any?#>, relativeName: <#T##String?#>, relativeParentFlag: <#T##Bool#>, relational: <#T##String#>)
-        
         b2.addState("grow")
         b2.addIncrement("angleIncrememt", inc:1, start:0)
         
         b2.addMapping(nil, referenceName: "xBuffer", parentFlag: true, relativePropertyName: "dx", targetState: "grow")
         b2.addMapping(nil, referenceName: "yBuffer", parentFlag: true, relativePropertyName: "dy", targetState: "grow")
+        b2.addMapping(nil, referenceName: "weightBuffer", parentFlag: true, relativePropertyName: "weight", targetState: "grow")
+
         b2.addMapping(nil, referenceName: "angleIncrememt", parentFlag: false, relativePropertyName: "angle", targetState: "grow")
         
-        b2.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: b2TimeInterval, relativeName: nil, relativeParentFlag: false, relational: "within")
+        b2.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
         
-        b2.addTransition("intervalTransition", eventEmitter: nil, event:
+        b2.addTransition("intervalTransition", eventEmitter: nil, parentFlag:false, event:
             "TIME_INCREMENT", fromState: "delay", toState: "grow", condition: "incrementCondition")
         
-        b2.addTransition("growEndTransition", eventEmitter: nil, event:
-            "STATE_COMPLETE", fromState: "grow", toState: "delay", condition: nil)
+      b2.addCondition("growCompleteCondition", reference: nil, referenceName: "bufferLimitX", referenceParentFlag: true, relative: falseConstant, relativeName:nil, relativeParentFlag: false, relational: "==")
+        
+        b2.addCondition("growSpawnCondition", reference: nil, referenceName: "bufferLimitX", referenceParentFlag: true, relative: falseConstant, relativeName:nil, relativeParentFlag: false, relational: "!=")
+
+        
+        b2.addTransition("growEndTransition", eventEmitter: nil, parentFlag:false, event:
+            "STATE_COMPLETE", fromState: "grow", toState: "delay", condition: "growCompleteCondition")
+        b2.addTransition("growSpawnTransition", eventEmitter: nil, parentFlag:false, event:
+            "STATE_COMPLETE", fromState: "grow", toState: "spawn", condition: "growSpawnCondition")
+        b2.addMethod("growSpawnTransition", targetMethod: "spawn", arguments: ["b3",b2,1])
+
 
         let b1 = BehaviorDefinition()
-    b1.addTransition("stylusDownT", eventEmitter: stylus, event: "STYLUS_DOWN", fromState: "default", toState: "default", condition:nil)
+    b1.addTransition("stylusDownT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromState: "default", toState: "default", condition:nil)
         b1.addMethod("stylusDownT", targetMethod: "setOrigin", arguments: [stylus.position])
         b1.addMethod("stylusDownT", targetMethod: "newStroke", arguments: nil)
 
@@ -164,16 +176,16 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         b1.addMapping(stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
     b1.addMapping(stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
        
-        b1.addTransition("stylusUpT", eventEmitter: stylus, event: "STYLUS_UP", fromState: "default", toState: "default", condition:nil)
+        b1.addTransition("stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromState: "default", toState: "default", condition:nil)
         
        
-    b1.addTransition("stylusUpT",eventEmitter: stylus, event: "STYLUS_UP", fromState: "default", toState: "default", condition:nil)
+    b1.addTransition("stylusUpT",eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromState: "default", toState: "default", condition:nil)
         
     b1.addMethod("stylusUpT", targetMethod: "spawn", arguments: ["b2",b2,1])
 
     
         
-        let b1_brush = Brush(name:"b1",behaviorDef: b1, parent:nil, canvas:self.currentCanvas!)
+    let b1_brush = Brush(name:"b1",behaviorDef: b1, parent:nil, canvas:self.currentCanvas!)
     }
     
 

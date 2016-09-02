@@ -31,8 +31,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var delta = Point(x:0,y:0)
     var deltaKey = NSUUID().UUIDString;
     
-    var xBuffer = Buffer()
-    var yBuffer = Buffer()
+    var xBuffer = CircularBuffer()
+    var yBuffer = CircularBuffer()
+    var bufferKey = NSUUID().UUIDString;
+
     var weightBuffer = Buffer()
     var origin = Point(x:0,y:0)
     var x:Observable<Float>
@@ -43,8 +45,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var oy:Observable<Float>
     var scaling = Point(x:1,y:1)
     var angle = Observable<Float>(0)
-    
-    
+    var bufferLimitX = Observable<Float>(0)
+    var bufferLimitY = Observable<Float>(0)
+
     //event Handler wrapper for draw updates
     var drawKey = NSUUID().UUIDString;
     
@@ -74,7 +77,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.time = self.timerTime
         
         //setup events and create listener storage
-        self.events =  ["SPAWN", "STATE_COMPLETE"]
+        self.events =  ["SPAWN", "STATE_COMPLETE", "DELTA_BUFFER_LIMIT_REACHED"]
         self.createKeyStorage();
         
         
@@ -85,6 +88,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
        
         //setup listener for delta observable
         self.delta.didChange.addHandler(self, handler:Brush.deltaChange, key:deltaKey)
+        self.xBuffer.bufferEvent.addHandler(self, handler: Brush.deltaBufferLimitReached, key: bufferKey)
+        
         
         self.setCanvasTarget(canvas)
         self.parent = parent
@@ -122,6 +127,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     
+    func deltaBufferLimitReached(data:(String), key:String){
+        print("delta buffer limit reached")
+        bufferLimitX.set(1)
+    }
+    
     
     
     func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
@@ -151,6 +161,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         xBuffer.push(delta.x.get());
         yBuffer.push(delta.y.get());
+        bufferLimitX.set(0)
+        bufferLimitY.set(0)
+
         weightBuffer.push(weight.get());
         self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight: self.weight.get());
         self.position.set(_dx,y:_dy);
@@ -169,7 +182,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         let key = notification.userInfo?["key"] as! String
         let mapping = states[currentState]?.getTransitionMapping(key)
-        
+
         if(mapping != nil){
             let stateTransition = mapping
             
@@ -182,7 +195,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     func transitionToState(transition:StateTransition){
         var constraint_mappings =  states[currentState]!.constraint_mappings
         for (_, value) in constraint_mappings{
-            
+        
             self.setConstraint(value)
             value.relativeProperty.constrained = false;
             
@@ -209,7 +222,15 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     @objc func completeCallback(){
         for key in self.keyStorage["STATE_COMPLETE"]!  {
-            NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STATE_COMPLETE"])
+            if(key.1 != nil){
+                let condition = key.1;
+                if(condition.evaluate()){
+                    NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STATE_COMPLETE"])
+                }
+            }
+            else{
+                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STATE_COMPLETE"])
+            }
             
         }
     }
@@ -230,6 +251,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 self.destroy();
                 break;
             case "spawn":
+                print("spawn called")
                 self.spawn((methodName.1![0] as! String), behavior:(methodName.1![1] as! BehaviorDefinition),num:(methodName.1![2] as! Int));
                 
                 break;
@@ -275,6 +297,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     func setConstraint(constraint:Constraint){
         constraint.relativeProperty.set(constraint.reference.get());
+  
+        
+        
     }
     
     func addStateTransition(name:String, key:String, reference:Emitter, fromState: String?, toState:String){

@@ -92,7 +92,7 @@ class CircularBuffer:Generator{
             index += 1;
         }
         else{
-            index = 0;
+            //index = 0;
             bufferEvent.raise("BUFFER_LIMIT_REACHED");
         }
     }

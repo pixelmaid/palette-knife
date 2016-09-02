@@ -21,7 +21,7 @@ struct Color {
     }
     
     func toCGColor()->CGColor{
-        return UIColor(red:CGFloat(self.r),green:CGFloat(self.g),blue:CGFloat(self.b), alpha:CGFloat(0.25)).CGColor;
+        return UIColor(red:CGFloat(self.r),green:CGFloat(self.g),blue:CGFloat(self.b), alpha:CGFloat(0.2)).CGColor;
     }
     
 }

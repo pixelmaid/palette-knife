@@ -124,12 +124,12 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     
     func initTestBrushes(){
         let falseConstant = Observable<Float>(0)
-        let angleRange = Range(min: 0, max: 10, start: 0.5, stop: -0.5)
+        let angleRange = Range(min: 0, max: 20, start: 0.1, stop: -0.1)
         let reflectConstant = Observable<Float>(1)
         let b2 = BehaviorDefinition()
         
         
-        b2.addInterval("timeInterval",inc:0.05,times:nil)
+        b2.addInterval("timeInterval",inc:0.1,times:nil)
         
         b2.addMethod("setup", targetMethod: "newStroke", arguments: nil)
         b2.addMapping(nil, referenceName: "ox", parentFlag: true, relativePropertyName: "ox", targetState: "default")
@@ -137,21 +137,25 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         b2.addMapping(nil, referenceName: "ox", parentFlag: true, relativePropertyName: "x", targetState: "default")
         b2.addMapping(nil, referenceName: "oy", parentFlag: true, relativePropertyName: "y", targetState: "default")
         
+        b2.addState("delay")
+        b2.addState("grow")
+        b2.addState("spawn")
         b2.addState("die")
         b2.addState("reflect")
-        b2.addCondition("indexCondition", reference: nil, referenceName: "index", referenceParentFlag: false, relative: Observable<Float>(6), relativeName: nil, relativeParentFlag: false, relational: "==")
+        
+        
+        b2.addCondition("indexCondition", reference: angleRange, referenceName: "index", referenceParentFlag: false, relative: Observable<Float>(10), relativeName: nil, relativeParentFlag: false, relational: "==")
         
         b2.addTransition("defaultDelayTransition", eventEmitter: nil, parentFlag:false, event:"STATE_COMPLETE", fromState: "default", toState: "delay", condition: nil)
         
         b2.addTransition("reflectTransition", eventEmitter: nil, parentFlag:false, event:"STATE_COMPLETE", fromState: "default", toState: "reflect", condition: "indexCondition")
-        b2.addMapping(reflectConstant, referenceName: nil, parentFlag: false, relativePropertyName: "reflectX", targetState: "reflect")
+        
+        
+       b2.addMapping(reflectConstant, referenceName: nil, parentFlag: false, relativePropertyName: "reflectY", targetState: "reflect")
+      
         b2.addTransition("reflectEndTransition", eventEmitter: nil, parentFlag:false, event:
             "STATE_COMPLETE", fromState: "reflect", toState: "default", condition: nil)
 
-        
-        
-        b2.addState("delay")
-        b2.addState("grow")
         b2.addIncrement("angleIncrememt", inc:angleRange, start:Observable<Float>(0))
         
         b2.addMapping(nil, referenceName: "xBuffer", parentFlag: true, relativePropertyName: "dx", targetState: "grow")
@@ -169,11 +173,16 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         
         b2.addCondition("growSpawnCondition", reference: nil, referenceName: "bufferLimitX", referenceParentFlag: true, relative: falseConstant, relativeName:nil, relativeParentFlag: false, relational: "!=")
         
+        b2.addCondition("limitCondition", reference: angleRange, referenceName: "index", referenceParentFlag: false, relative: Observable<Float>(19), relativeName: nil, relativeParentFlag: false, relational: "<")
         
         b2.addTransition("growEndTransition", eventEmitter: nil, parentFlag:false, event:
             "STATE_COMPLETE", fromState: "grow", toState: "delay", condition: "growCompleteCondition")
+        
+        b2.addTransition("startSpawnTransition", eventEmitter: nil, parentFlag:false, event:
+            "STATE_COMPLETE", fromState: "grow", toState: "spawn", condition: "limitCondition")
+
         b2.addTransition("growSpawnTransition", eventEmitter: nil, parentFlag:false, event:
-            "STATE_COMPLETE", fromState: "grow", toState: "die", condition: "growSpawnCondition")
+            "STATE_COMPLETE", fromState: "spawn", toState: "die", condition: "growSpawnCondition")
         
         
         b2.addMethod("growSpawnTransition", targetMethod: "spawn", arguments: ["b3",b2,1])

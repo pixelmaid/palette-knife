@@ -23,7 +23,10 @@ class Condition {
     func evaluate()->Bool{
         switch (relational){
         case "<":
-            return referenceA.get() < referenceB.get();
+            let a = referenceA.get()
+            let b = referenceB.get()
+            print("checking less than \(a,b)")
+            return a < b;
             
         case ">":
             return referenceA.get() > referenceB.get();

@@ -146,10 +146,13 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         var xScale = self.scaling.x.get();
         
         if(self.reflectX.get()==1){
+            print("reflecting x axis")
+
             xScale *= -1.0;
         }
         var yScale = self.scaling.y.get();
-        if(self.reflectX.get()==1){
+        if(self.reflectY.get()==1){
+            print("reflecting y axis")
             yScale *= -1.0;
         }
         self.matrix.scale(xScale, y: yScale, centerX: centerX, centerY: centerY);

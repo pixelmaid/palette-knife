@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import SwiftKVC
 
 class BehaviorDefinition {
     
@@ -128,7 +128,7 @@ class BehaviorDefinition {
             }
             else{
                 print("data 1 = \(data.1)")
-                operand1 = (emitter1 as! Emitter)[data.1!]! as! Observable<Float>
+                operand1 = (emitter1 as! Model)[data.1!]! as! Observable<Float>
             }
         }
         else{
@@ -140,7 +140,7 @@ class BehaviorDefinition {
                 operand2 = storedGenerators[data.4!]!;
             }
             else{
-            operand2 = (emitter2 as! Emitter)[data.4!]! as! Observable<Float>
+                operand2 = (emitter2 as! Model)[data.4!]! as! Observable<Float>
             }
         }
         else{

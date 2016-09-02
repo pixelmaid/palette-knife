@@ -107,7 +107,7 @@ class CircularBuffer:Generator{
 
 class Range:Generator{
     var val = [Float]();
-    var index = 0;
+    var index = Observable<Float>(0);
     init(min:Int,max:Int,start:Float,stop:Float){
         let increment = (stop-start)/Float(max-min)
         for i in min...max-1{
@@ -116,13 +116,13 @@ class Range:Generator{
     }
     
     func incrementIndex(){
-        index += 1;
-        if(index>=val.count){
-            index=0;
+        index.set(Float(index.get() + 1));
+        if(index.get()>=Float(val.count)){
+            index.set(0);
         }
     }
     override func get() -> Float {
-        let v = val[index]
+        let v = val[Int(index.get())]
         self.incrementIndex();
         return v;
     }

@@ -27,21 +27,21 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     var currentCanvas: Canvas?
     let socketKey = NSUUID().UUIDString
     let drawKey = NSUUID().UUIDString
-
+    
     override func viewDidLoad() {
         
         
         
         super.viewDidLoad()
-
         
-       clearAll.addTarget(self, action: #selector(ViewController.clearClicked(_:)), forControlEvents: .TouchUpInside)
-
+        
+        clearAll.addTarget(self, action: #selector(ViewController.clearClicked(_:)), forControlEvents: .TouchUpInside)
+        
         
         gcodeExport.addTarget(self, action: #selector(ViewController.gcodeExportClicked(_:)), forControlEvents: .TouchUpInside)
-
-
-
+        
+        
+        
         socketManager.socketEvent.addHandler(self,handler: ViewController.socketHandler, key:socketKey)
         socketManager.connect();
         
@@ -53,13 +53,13 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     //event handler for socket connections
     func socketHandler(data:(String), key:String){
         switch(data){
-            case "first_connection":
-                //self.initCanvas();
-                //self.initTestBrushes();
-                break;
-            case "disconnected":
-                break;
-            case "connected":
+        case "first_connection":
+            //self.initCanvas();
+            //self.initTestBrushes();
+            break;
+        case "disconnected":
+            break;
+        case "connected":
             break
         default:
             break
@@ -72,11 +72,11 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     }
     
     func gcodeExportClicked(sender: AnyObject?){
-       let gcode = (currentCanvas?.currentDrawing?.getGcode())! as NSString;
+        let gcode = (currentCanvas?.currentDrawing?.getGcode())! as NSString;
         let gcode_data = gcode.dataUsingEncoding(NSUTF8StringEncoding)!
         let mailComposeViewController = configuredMailComposeViewController()
-       mailComposeViewController.addAttachmentData(gcode_data, mimeType:"sbp" , fileName: "drawing.sbp")
-
+        mailComposeViewController.addAttachmentData(gcode_data, mimeType:"sbp" , fileName: "drawing.sbp")
+        
         if MFMailComposeViewController.canSendMail() {
             self.presentViewController(mailComposeViewController, animated: true, completion: nil)
         } else {
@@ -119,35 +119,45 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         currentCanvas!.initDrawing();
         currentCanvas!.geometryModified.addHandler(self,handler: ViewController.canvasDrawHandler, key:drawKey)
         
-
+        
     }
     
     func initTestBrushes(){
         let falseConstant = Observable<Float>(0)
+        let angleRange = Range(min: 0, max: 10, start: 0.5, stop: -0.5)
+        let reflectConstant = Observable<Float>(1)
         let b2 = BehaviorDefinition()
         
         
         b2.addInterval("timeInterval",inc:0.05,times:nil)
         
         b2.addMethod("setup", targetMethod: "newStroke", arguments: nil)
-       b2.addMapping(nil, referenceName: "ox", parentFlag: true, relativePropertyName: "ox", targetState: "default")
+        b2.addMapping(nil, referenceName: "ox", parentFlag: true, relativePropertyName: "ox", targetState: "default")
         b2.addMapping(nil, referenceName: "oy", parentFlag: true, relativePropertyName: "oy", targetState: "default")
-       b2.addMapping(nil, referenceName: "ox", parentFlag: true, relativePropertyName: "x", targetState: "default")
+        b2.addMapping(nil, referenceName: "ox", parentFlag: true, relativePropertyName: "x", targetState: "default")
         b2.addMapping(nil, referenceName: "oy", parentFlag: true, relativePropertyName: "y", targetState: "default")
         
-        b2.addState("spawn")
-
+        b2.addState("die")
+        b2.addState("reflect")
+        b2.addCondition("indexCondition", reference: nil, referenceName: "index", referenceParentFlag: false, relative: Observable<Float>(6), relativeName: nil, relativeParentFlag: false, relational: "==")
+        
         b2.addTransition("defaultDelayTransition", eventEmitter: nil, parentFlag:false, event:"STATE_COMPLETE", fromState: "default", toState: "delay", condition: nil)
+        
+        b2.addTransition("reflectTransition", eventEmitter: nil, parentFlag:false, event:"STATE_COMPLETE", fromState: "default", toState: "reflect", condition: "indexCondition")
+        b2.addMapping(reflectConstant, referenceName: nil, parentFlag: false, relativePropertyName: "reflectX", targetState: "reflect")
+        b2.addTransition("reflectEndTransition", eventEmitter: nil, parentFlag:false, event:
+            "STATE_COMPLETE", fromState: "reflect", toState: "default", condition: nil)
 
+        
         
         b2.addState("delay")
         b2.addState("grow")
-        b2.addIncrement("angleIncrememt", inc:1, start:0)
+        b2.addIncrement("angleIncrememt", inc:angleRange, start:Observable<Float>(0))
         
         b2.addMapping(nil, referenceName: "xBuffer", parentFlag: true, relativePropertyName: "dx", targetState: "grow")
         b2.addMapping(nil, referenceName: "yBuffer", parentFlag: true, relativePropertyName: "dy", targetState: "grow")
         b2.addMapping(nil, referenceName: "weightBuffer", parentFlag: true, relativePropertyName: "weight", targetState: "grow")
-
+        
         b2.addMapping(nil, referenceName: "angleIncrememt", parentFlag: false, relativePropertyName: "angle", targetState: "grow")
         
         b2.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
@@ -155,93 +165,96 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         b2.addTransition("intervalTransition", eventEmitter: nil, parentFlag:false, event:
             "TIME_INCREMENT", fromState: "delay", toState: "grow", condition: "incrementCondition")
         
-      b2.addCondition("growCompleteCondition", reference: nil, referenceName: "bufferLimitX", referenceParentFlag: true, relative: falseConstant, relativeName:nil, relativeParentFlag: false, relational: "==")
+        b2.addCondition("growCompleteCondition", reference: nil, referenceName: "bufferLimitX", referenceParentFlag: true, relative: falseConstant, relativeName:nil, relativeParentFlag: false, relational: "==")
         
         b2.addCondition("growSpawnCondition", reference: nil, referenceName: "bufferLimitX", referenceParentFlag: true, relative: falseConstant, relativeName:nil, relativeParentFlag: false, relational: "!=")
-
+        
         
         b2.addTransition("growEndTransition", eventEmitter: nil, parentFlag:false, event:
             "STATE_COMPLETE", fromState: "grow", toState: "delay", condition: "growCompleteCondition")
         b2.addTransition("growSpawnTransition", eventEmitter: nil, parentFlag:false, event:
-            "STATE_COMPLETE", fromState: "grow", toState: "spawn", condition: "growSpawnCondition")
+            "STATE_COMPLETE", fromState: "grow", toState: "die", condition: "growSpawnCondition")
+        
+        
         b2.addMethod("growSpawnTransition", targetMethod: "spawn", arguments: ["b3",b2,1])
-
-
+        b2.addMethod("growSpawnTransition", targetMethod: "destroy", arguments: nil)
+        
+        
         let b1 = BehaviorDefinition()
-    b1.addTransition("stylusDownT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromState: "default", toState: "default", condition:nil)
+        b1.addTransition("stylusDownT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromState: "default", toState: "default", condition:nil)
         b1.addMethod("stylusDownT", targetMethod: "setOrigin", arguments: [stylus.position])
         b1.addMethod("stylusDownT", targetMethod: "newStroke", arguments: nil)
-
-    b1.addMapping(stylus, referenceName: "dx", parentFlag: false, relativePropertyName: "dx", targetState: "default")
+        
+        b1.addMapping(stylus, referenceName: "dx", parentFlag: false, relativePropertyName: "dx", targetState: "default")
         b1.addMapping(stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
-    b1.addMapping(stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
-       
+        b1.addMapping(stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
+        
         b1.addTransition("stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromState: "default", toState: "default", condition:nil)
         
-       
-    b1.addTransition("stylusUpT",eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromState: "default", toState: "default", condition:nil)
         
-    b1.addMethod("stylusUpT", targetMethod: "spawn", arguments: ["b2",b2,1])
-
-    
+        b1.addTransition("stylusUpT",eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromState: "default", toState: "default", condition:nil)
         
-    let b1_brush = Brush(name:"b1",behaviorDef: b1, parent:nil, canvas:self.currentCanvas!)
+        b1.addMethod("stylusUpT", targetMethod: "spawn", arguments: ["b2",b2,1])
+        
+        
+        
+        let b1_brush = Brush(name:"b1",behaviorDef: b1, parent:nil, canvas:self.currentCanvas!)
     }
     
-
+    
     
     func canvasDrawHandler(data:(Geometry,String,String), key:String){
         switch data.2{
-            case "DRAW":
-                switch data.1{
-                    case "SEGMENT":
-                        let seg = data.0 as! Segment
+        case "DRAW":
+            switch data.1{
+            case "SEGMENT":
+                let seg = data.0 as! Segment
                 
-                        let prevSeg = seg.getPreviousSegment()
-                       
-                        if(prevSeg != nil){
-                            canvasView.drawPath(prevSeg!.point,tP: seg.point, w:seg.diameter, c:Color(r:0,g:0,b:0))
-                        }
-
-                    break
-                    /*case "ARC":
-                        let arc = data.0 as! Arc
-                        canvasView.drawArc(arc.center, radius: arc.radius, startAngle: arc.startAngle, endAngle: arc.endAngle, w: 10, c: Color(r:0,g:0,b:0))
-                    break*/
-                    
-                    case "LINE":
-                    let line = data.0 as! Line
-
-                    canvasView.drawPath(line.p, tP:line.v, w: 10, c: Color(r:0,g:0,b:0))
-                    break
-                    
-                case "LEAF":
-                    let leaf = data.0 as! StoredDrawing
-                    
-                    canvasView.drawLeaf(leaf.position, angle:leaf.angle, scale:leaf.scaling.x.get())
-                    break
-                    
-                case "FLOWER":
-                    let flower = data.0 as! StoredDrawing
-                    canvasView.drawFlower(flower.position)
-                    
-                    break
-    
-                    case "POLYGON":
-                        //canvasView.drawPath(stylus.prevPosition, tP:stylus.position, w:10, c:Color(r:0,g:0,b:0))
-                    break
-                default:
-                    break
-
+                let prevSeg = seg.getPreviousSegment()
+                
+                if(prevSeg != nil){
+                    canvasView.drawPath(prevSeg!.point,tP: seg.point, w:seg.diameter, c:Color(r:0,g:0,b:0))
                 }
-            break
-            case "DELETE":
                 
+                break
+                /*case "ARC":
+                 let arc = data.0 as! Arc
+                 canvasView.drawArc(arc.center, radius: arc.radius, startAngle: arc.startAngle, endAngle: arc.endAngle, w: 10, c: Color(r:0,g:0,b:0))
+                 break*/
+                
+            case "LINE":
+                let line = data.0 as! Line
+                
+                canvasView.drawPath(line.p, tP:line.v, w: 10, c: Color(r:0,g:0,b:0))
+                break
+                
+            case "LEAF":
+                let leaf = data.0 as! StoredDrawing
+                
+                canvasView.drawLeaf(leaf.position, angle:leaf.angle, scale:leaf.scaling.x.get())
+                break
+                
+            case "FLOWER":
+                let flower = data.0 as! StoredDrawing
+                canvasView.drawFlower(flower.position)
+                
+                break
+                
+            case "POLYGON":
+                //canvasView.drawPath(stylus.prevPosition, tP:stylus.position, w:10, c:Color(r:0,g:0,b:0))
+                break
+            default:
+                break
+                
+            }
             break
-            default : break
+        case "DELETE":
+            
+            break
+        default : break
         }
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -254,9 +267,9 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             let force = Float(touch.force);
             let angle = Float(touch.azimuthAngleInView(view))
             stylus.onStylusUp()
-           // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
+            // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
             //socketManager.sendStylusData();
-
+            
         }
         
     }
@@ -269,19 +282,19 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             let point = touch.locationInView(view)
             let x = Float(point.x)
             let y = Float(point.y)
-;
+            ;
             let force = Float(touch.force);
             let angle = Float(touch.azimuthAngleInView(view))
             stylus.onStylusDown(x, y:y, force:force, angle:angle)
-           // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
-           // socketManager.sendStylusData();
- 
+            // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
+            // socketManager.sendStylusData();
+            
         }
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first  {
-           
+            
             let point = touch.locationInView(view);
             let x = Float(point.x)
             let y = Float(point.y)
@@ -289,12 +302,12 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             let angle = Float(touch.azimuthAngleInView(view))
             stylus.onStylusMove(x, y:y, force:force, angle:angle)
             // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
-           // socketManager.sendStylusData();
+            // socketManager.sendStylusData();
         }
     }
     
     
-
-
+    
+    
 }
 

@@ -25,8 +25,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var strokeColor = Color(r:0,g:0,b:0);
     var fillColor = Color(r:0,g:0,b:0);
     var weight = Observable<Float>(5.0)
-    var reflectY = false;
-    var reflectX = false;
+    var reflectY = Observable<Float>(0)
+    var reflectX = Observable<Float>(0)
     var position = Point(x:0,y:0)
     var delta = Point(x:0,y:0)
     var deltaKey = NSUUID().UUIDString;
@@ -60,7 +60,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var time = Observable<Float>(0)
     var id = NSUUID().UUIDString;
     var matrix = Matrix();
-    var index = -1; //stores index of child
+    var index = Observable<Float>(0) //stores index of child
     
     init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
         self.x = self.position.x;
@@ -145,11 +145,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         }
         var xScale = self.scaling.x.get();
         
-        if(self.reflectX){
+        if(self.reflectX.get()==1){
             xScale *= -1.0;
         }
         var yScale = self.scaling.y.get();
-        if(self.reflectY){
+        if(self.reflectX.get()==1){
             yScale *= -1.0;
         }
         self.matrix.scale(xScale, y: yScale, centerX: centerX, centerY: centerY);
@@ -377,9 +377,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     func spawn(name:String,behavior:BehaviorDefinition,num:Int) {
         lastSpawned.removeAll()
         for i in 0...num-1{
+            print("at spawn, buffer length = \(self.xBuffer.val.count)")
             let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
             self.children.append(child);
-            child.index = self.children.count-1;
+            child.index.set(Float(self.children.count-1));
             let handler = self.children.last!.geometryModified.addHandler(self,handler: Brush.brushDrawHandler, key:child.drawKey)
             childHandlers[child]=[Disposable]();
             childHandlers[child]?.append(handler)

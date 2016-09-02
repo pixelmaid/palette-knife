@@ -133,21 +133,21 @@ class Range:Generator{
 
 //returns an incremental value updating to infinity;
 class Increment:Generator{
-    var inc:Float
-    var start:Float
-    var index = 0;
+    var inc:Observable<Float>
+    var start:Observable<Float>
+    var index = Observable<Int>(0)
     
-    init(inc:Float, start:Float){
-        self.inc = inc;
+    init(inc:Observable<Float>, start:Observable<Float>){
+        self.inc = Observable<Float>(inc.get());
         self.start = start;
     }
     
     func incrementIndex(){
-        index += 1;
+        index.set(index.get()+1);
         
     }
     override func get() -> Float {
-        let v = (Float(index)*inc) + start;
+        let v = ((Float(index.get())*inc.get()) + start.get());
         self.incrementIndex();
         return v;
     }

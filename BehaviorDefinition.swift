@@ -34,7 +34,7 @@ class BehaviorDefinition {
         generators[name] = ("interval",[inc,times]);
     }
     
-    func addIncrement(name:String,inc:Float,start:Float){
+    func addIncrement(name:String,inc:Observable<Float>,start:Observable<Float>){
         generators[name] = ("increment",[inc,start]);
     }
     
@@ -83,7 +83,7 @@ class BehaviorDefinition {
                 let alternate = Alternate(values:data.1[0] as! [Float])
                 storedGenerators[name] = alternate;
             case "increment":
-                let increment = Increment(inc:data.1[0] as! Float, start:data.1[1] as! Float)
+                let increment = Increment(inc:data.1[0] as! Observable<Float>, start:data.1[1] as! Observable<Float>)
                 storedGenerators[name] = increment;
 
         default:

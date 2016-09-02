@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5F0C97231D6BD726001FC228 /* GCodeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0C97221D6BD726001FC228 /* GCodeGenerator.swift */; };
-		5F1896771D4A856F00AEF5F1 /* Variable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F1896761D4A856F00AEF5F1 /* Variable.swift */; };
+		5F1896771D4A856F00AEF5F1 /* Generator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F1896761D4A856F00AEF5F1 /* Generator.swift */; };
 		5F451BF31CF7928E0037EA88 /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F451BF21CF7928E0037EA88 /* Line.swift */; };
 		5F6A07EE1D63DCD80047FF56 /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6A07ED1D63DCD80047FF56 /* Matrix.swift */; };
 		5F8FEFC91CF5F4E600D2CB0C /* Stylus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFC81CF5F4E600D2CB0C /* Stylus.swift */; };
@@ -66,7 +66,7 @@
 		0C025956B67C44E5D9B3D8E3 /* Pods_PaletteKnife.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PaletteKnife.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5EBFC69578F7678EA1BBD757 /* Pods-PaletteKnifeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeTests/Pods-PaletteKnifeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5F0C97221D6BD726001FC228 /* GCodeGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCodeGenerator.swift; sourceTree = "<group>"; };
-		5F1896761D4A856F00AEF5F1 /* Variable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Variable.swift; sourceTree = "<group>"; };
+		5F1896761D4A856F00AEF5F1 /* Generator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Generator.swift; sourceTree = "<group>"; };
 		5F1E15891F199E478AB56B38 /* Pods-PaletteKnife.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnife.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife.debug.xcconfig"; sourceTree = "<group>"; };
 		5F451BF21CF7928E0037EA88 /* Line.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		5F6A07E71D63D4550047FF56 /* Surge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Surge.framework; path = "../Surge/build/Debug-iphoneos/Surge.framework"; sourceTree = "<group>"; };
@@ -285,7 +285,7 @@
 				5F8FEFCB1CF5F51900D2CB0C /* BehaviorMapper.swift */,
 				5FA4C75F1CDBC5F7004A728C /* Behavior.swift */,
 				5FFF818D1D42EC8600C1349B /* Expression.swift */,
-				5F1896761D4A856F00AEF5F1 /* Variable.swift */,
+				5F1896761D4A856F00AEF5F1 /* Generator.swift */,
 			);
 			name = behavior;
 			sourceTree = "<group>";
@@ -588,7 +588,7 @@
 			files = (
 				5F6A07EE1D63DCD80047FF56 /* Matrix.swift in Sources */,
 				5FFF81921D49219700C1349B /* BehaviorDefinition.swift in Sources */,
-				5F1896771D4A856F00AEF5F1 /* Variable.swift in Sources */,
+				5F1896771D4A856F00AEF5F1 /* Generator.swift in Sources */,
 				5FA4C75A1CDBA1FA004A728C /* Stroke.swift in Sources */,
 				5FFDAB0D1D234B6100632A26 /* TimeSeries.swift in Sources */,
 				5F451BF31CF7928E0037EA88 /* Line.swift in Sources */,

@@ -50,7 +50,7 @@ class CanvasView:  UIImageView {
         self.image?.drawInRect(CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))
         
         let color = c.toCGColor();
-        
+    
         let _center = center.toCGPoint()
         let _radius = CGFloat(radius);
         let _startAngle = CGFloat(Float(M_PI/180)*startAngle)
@@ -62,6 +62,7 @@ class CanvasView:  UIImageView {
         CGContextSetLineCap(context, CGLineCap.Round)
         CGContextSetLineWidth(context, CGFloat(w))
         CGContextSetStrokeColorWithColor(context, color)
+        
         CGContextSetBlendMode(context, CGBlendMode.Normal)
         CGContextAddPath(context, path)
         CGContextStrokePath(context)

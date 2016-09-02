@@ -34,6 +34,10 @@ class BehaviorDefinition {
         generators[name] = ("interval",[inc,times]);
     }
     
+    func addIncrement(name:String,inc:Float,start:Float){
+        generators[name] = ("increment",[inc,start]);
+    }
+    
     func addRange(name:String,min:Int,max:Int,start:Float,stop:Float){
         generators[name] = ("range",[min,max,start,stop]);
     }
@@ -68,17 +72,20 @@ class BehaviorDefinition {
     func generateGenerator(name:String, data:(String,[Any])){
         switch(data.0){
             case "interval":
-                let interval = Interval(inc:data.1[0] as! Float,times:data.1[1] as! Int)
+                let interval = Interval(inc:data.1[0] as! Float,times:data.1[1] as? Int)
                 storedGenerators[name] = interval;
                 break;
             case "range":
                 let range = Range(min:data.1[0] as! Int, max:data.1[1] as! Int, start: data.1[2] as! Float, stop:data.1[3] as! Float)
                 storedGenerators[name] = range;
-
                 break;
             case "alternate":
                 let alternate = Alternate(values:data.1[0] as! [Float])
                 storedGenerators[name] = alternate;
+            case "increment":
+                let increment = Increment(inc:data.1[0] as! Float, start:data.1[1] as! Float)
+                storedGenerators[name] = increment;
+
         default:
             break;
         }

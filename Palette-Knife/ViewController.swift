@@ -123,229 +123,57 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     }
     
     func initTestBrushes(){
-        //DRIP BRUSH
-     /*  let dripBehavior = BehaviorDefinition()
+        let b2TimeInterval = Interval(inc:0.05,times:nil)
+        let b2 = BehaviorDefinition()
+        b2.addMethod("setup", targetMethod: "newStroke", arguments: nil)
+       b2.addMapping(nil, referenceName: "ox", parentFlag: true, relativePropertyName: "ox", targetState: "default")
+        b2.addMapping(nil, referenceName: "oy", parentFlag: true, relativePropertyName: "oy", targetState: "default")
+       b2.addMapping(nil, referenceName: "ox", parentFlag: true, relativePropertyName: "x", targetState: "default")
+        b2.addMapping(nil, referenceName: "oy", parentFlag: true, relativePropertyName: "y", targetState: "default")
         
-        dripBehavior.addExpression("timeExpression", type:"add", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "y", parentFlag: false)
-     dripBehavior.addExpression("timeWeightExpression",type:"logigrowth", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "weight", parentFlag: false)
-    dripBehavior.addExpression("stylusYExpression", type:"add",emitter1: stylus, operand1Name: "y", emitter2: FloatEmitter(val:0), operand2Name: nil, parentFlag: false)
-        dripBehavior.addExpression("stylusXExpression", type:"add",emitter1: stylus, operand1Name: "x", emitter2: FloatEmitter(val:0), operand2Name: nil, parentFlag: false)
-        dripBehavior.addExpression("xExpression", type:"add",emitter1: nil, operand1Name: "x", emitter2: FloatEmitter(val:0), operand2Name: nil, parentFlag: false)
-
-
-
-       dripBehavior.addState("drip")
-      dripBehavior.addState("stop")
-        
-       dripBehavior.addMethod("default", targetMethod: "newStroke", arguments: nil)
-      dripBehavior.addMethod("stop", targetMethod:"destroy", arguments: nil)
-        
-        dripBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "default", toState: "drip")
-       dripBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "drip", toState: "stop")
+        b2.addTransition("defaultEndTransition", eventEmitter: nil, event:
+            "STATE_COMPLETE", fromState: "default", toState: "delay", condition: nil)
 
         
-       dripBehavior.addMapping(nil, referenceName:"stylusYExpression", relativePropertyName: "y",targetState: "default");
-        dripBehavior.addMapping(nil, referenceName:"stylusXExpression", relativePropertyName: "x",targetState: "default");
-        dripBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
-
-        dripBehavior.addMapping(nil, referenceName:"timeExpression", relativePropertyName: "y",targetState: "drip");
         
-
-   dripBehavior.addMapping(nil, referenceName:"timeWeightExpression", relativePropertyName: "weight",targetState: "drip");
+        b2.addState("delay")
         
-
-
-         let dripGeneratorBehavior = BehaviorDefinition()
-        dripGeneratorBehavior.addState("spawnDrip")
-        dripGeneratorBehavior.addState("initStroke")
+        b2.addCondition("endCondition", reference: nil, referenceName: <#T##String?#>, referenceParentFlag: <#T##Bool#>, relative: <#T##Any?#>, relativeName: <#T##String?#>, relativeParentFlag: <#T##Bool#>, relational: <#T##String#>)
         
-        dripGeneratorBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil)
-        dripGeneratorBehavior.addMethod("spawnDrip", targetMethod: "spawn", arguments:[dripBehavior,1])
-
-        dripGeneratorBehavior.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "initStroke")
-        dripGeneratorBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "initStroke", toState: "default")
-        dripGeneratorBehavior.addTransition(stylus, event: "STYLUS_MOVE", fromState: "default", toState: "spawnDrip")
-        dripGeneratorBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "spawnDrip", toState: "default")
-
+        b2.addState("grow")
+        b2.addIncrement("angleIncrememt", inc:1, start:0)
         
-        dripGeneratorBehavior.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
-        dripGeneratorBehavior.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
-        //dripGeneratorBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
-
-
-        let dripGenerator = Brush(behaviorDef: dripGeneratorBehavior, parent: nil, canvas:self.currentCanvas!)
-        dripGenerator.name = "dripGenerator"*/
+        b2.addMapping(nil, referenceName: "xBuffer", parentFlag: true, relativePropertyName: "dx", targetState: "grow")
+        b2.addMapping(nil, referenceName: "yBuffer", parentFlag: true, relativePropertyName: "dy", targetState: "grow")
+        b2.addMapping(nil, referenceName: "angleIncrememt", parentFlag: false, relativePropertyName: "angle", targetState: "grow")
         
-        //RADIAL BRUSH
-        /*let radialGeneratorCount = 4;
-        let radialCount = 7;
-        let radialBehavior = BehaviorDefinition()
-        let rotationMap = RangeVariable(min: 0,max: radialCount, start: 0,stop: 40)
-        let rotationMap2 = RangeVariable(min: 0,max: radialGeneratorCount, start: 0,stop: 360)
-        let xpositionMap = AlternateVariable(values:[0,-75,-150,-75]);
-        let ypositionMap = AlternateVariable(values:[0,75,0,-75]);
-
-
-        radialBehavior.addExpression("rotationAdd", type: "add", emitter1: rotationMap, operand1Name: nil, emitter2: nil, operand2Name: "angle", parentFlag: false)
+        b2.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: b2TimeInterval, relativeName: nil, relativeParentFlag: false, relational: "within")
         
-        radialBehavior.addExpression("parentAdd", type: "add", emitter1: rotationMap, operand1Name: nil, emitter2: nil, operand2Name: "angle", parentFlag: true)
-       radialBehavior.addExpression("xpositionAdd", type: "add", emitter1: stylus, operand1Name: "x", emitter2: nil, operand2Name: "x", parentFlag: true)
-        radialBehavior.addExpression("ypositionAdd", type: "add", emitter1: stylus, operand1Name: "y", emitter2: nil, operand2Name: "y", parentFlag: true)
-
-        radialBehavior.addState("stop")
+        b2.addTransition("intervalTransition", eventEmitter: nil, event:
+            "TIME_INCREMENT", fromState: "delay", toState: "grow", condition: "incrementCondition")
         
-        radialBehavior.addMethod("default", targetMethod: "newStroke",arguments: nil)
-        radialBehavior.addMethod("stop", targetMethod: "destroy",arguments: nil)
+        b2.addTransition("growEndTransition", eventEmitter: nil, event:
+            "STATE_COMPLETE", fromState: "grow", toState: "delay", condition: nil)
 
-        radialBehavior.addTransition(stylus, event: "STYLUS_UP", fromState: "default", toState: "stop")
+        let b1 = BehaviorDefinition()
+    b1.addTransition("stylusDownT", eventEmitter: stylus, event: "STYLUS_DOWN", fromState: "default", toState: "default", condition:nil)
+        b1.addMethod("stylusDownT", targetMethod: "setOrigin", arguments: [stylus.position])
+        b1.addMethod("stylusDownT", targetMethod: "newStroke", arguments: nil)
 
-        
-        radialBehavior.addMapping(nil, referenceName:"parentAdd",relativePropertyName: "angle", targetState: "default")
-        radialBehavior.addMapping(nil, referenceName:"ypositionAdd", relativePropertyName: "y",targetState: "default");
-        radialBehavior.addMapping(nil, referenceName:"xpositionAdd", relativePropertyName: "x",targetState: "default");
-        
-       radialBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
-
+    b1.addMapping(stylus, referenceName: "dx", parentFlag: false, relativePropertyName: "dx", targetState: "default")
+        b1.addMapping(stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
+    b1.addMapping(stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
        
+        b1.addTransition("stylusUpT", eventEmitter: stylus, event: "STYLUS_UP", fromState: "default", toState: "default", condition:nil)
         
-        let radialGenerator = BehaviorDefinition()
        
-        radialGenerator.addState("stop")
+    b1.addTransition("stylusUpT",eventEmitter: stylus, event: "STYLUS_UP", fromState: "default", toState: "default", condition:nil)
         
-       radialGenerator.addMethod("default", targetMethod: "spawn", arguments:[radialBehavior,radialCount])
-        radialGenerator.addMethod("stop", targetMethod: "destroy",arguments: nil)
+    b1.addMethod("stylusUpT", targetMethod: "spawn", arguments: ["b2",b2,1])
 
-        radialGenerator.addTransition(nil, event: "STATE_COMPLETE", fromState: "default", toState: "stop")
-        radialGenerator.addMapping(rotationMap2, referenceName:nil,relativePropertyName: "angle", targetState: "default")
-        radialGenerator.addMapping(xpositionMap, referenceName:nil,relativePropertyName: "x", targetState: "default")
-        radialGenerator.addMapping(ypositionMap, referenceName:nil,relativePropertyName: "y", targetState: "default")
-
+    
         
-        let multiWaveGenerator = BehaviorDefinition()
-        multiWaveGenerator.addState("spawn")
-        
-        multiWaveGenerator.addMethod("spawn", targetMethod: "spawn", arguments:[radialGenerator,radialGeneratorCount])
-
-        
-        multiWaveGenerator.addTransition(stylus, event: "STYLUS_DOWN", fromState: "default", toState: "spawn")
-        multiWaveGenerator.addTransition(nil, event: "STATE_COMPLETE", fromState: "spawn", toState: "default")
-
-        
-        //radialGenerator.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
-        //radialGenerator.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
-        //dripGeneratorBehavior.addMapping(stylus.force, referenceName:nil, relativePropertyName: "weight",targetState: "default");
-        
-        
-        var multiWaveGeneratorBrush = Brush(behaviorDef: multiWaveGenerator, parent:nil, canvas:self.currentCanvas!)
-        multiWaveGeneratorBrush.name = "multiwave"*/
-        
-        
-        //FRACTAL BRUSH
-        
-       /* let root = BehaviorDefinition();
-       let constAdd = FloatEmitter(val: 0)
-        let angleConst = FloatEmitter(val: 30)
-
-        //TODO: this is dumb- time change drives constraint update, can't have time set as second operand and therefore can't do negative changes in y
-        root.addExpression("timeExpression", type:"add", emitter1: nil, operand1Name: "time", emitter2: nil, operand2Name: "y", parentFlag: false)
-       
-        root.addExpression("xpositionAdd", type: "add", emitter1: constAdd, operand1Name: nil, emitter2: nil, operand2Name: "rX", parentFlag: true)
-        root.addExpression("ypositionAdd", type: "add", emitter1: constAdd, operand1Name: nil, emitter2: nil, operand2Name: "rY", parentFlag: true)
-        
-        root.addExpression("angleAdd", type: "add", emitter1: angleConst, operand1Name: nil, emitter2: nil, operand2Name: "angle", parentFlag: true)
-        
-        
-        
-        root.addState("grow")
-        root.addState("stop")
-        
-        root.addMethod("default", targetMethod: "newStroke", arguments: nil)
-        root.addMethod("stop", targetMethod: "spawn", arguments:[root,1])
-        root.addMethod("stop", targetMethod:"destroy", arguments: nil)
-
-
-        root.addTransition(nil, event: "STATE_COMPLETE", fromState: "default", toState: "grow")
-        root.addTransition(nil, event: "TIME_INCREMENT", fromState: "grow", toState: "stop")
-        
-        root.addMapping(nil, referenceName:"angleAdd", relativePropertyName: "angle",targetState: "default");
-
-        root.addMapping(nil, referenceName:"ypositionAdd", relativePropertyName: "y",targetState: "default");
-        root.addMapping(nil, referenceName:"xpositionAdd", relativePropertyName: "x",targetState: "default");
-      
-        
-        root.addMapping(nil, referenceName:"timeExpression", relativePropertyName: "y",targetState: "grow");
-
-        
-        let rootGenerator = BehaviorDefinition();
-        
-        rootGenerator.addState("spawn")
-        rootGenerator.addMethod("spawn", targetMethod: "spawn", arguments:[root,1])
-        
-        rootGenerator.addTransition(stylus, event: "STYLUS_UP", fromState: "default", toState: "spawn")
-
-        rootGenerator.addTransition(nil, event: "STATE_COMPLETE", fromState: "spawn", toState: "default")
-
-        rootGenerator.addMapping(stylus.position.y, referenceName:nil, relativePropertyName: "y",targetState: "default");
-        rootGenerator.addMapping(stylus.position.x, referenceName:nil, relativePropertyName: "x",targetState: "default");
-
-        let rootGeneratorBrush = Brush(behaviorDef: rootGenerator, parent:nil, canvas:self.currentCanvas!)
-        rootGeneratorBrush.name = "rootGenerator"*/
-        
-        //ROOT BRUSH (TAKE 2)
-        
-//RADIAL BRUSH
- let radialCount = 40;
- let radialBehavior = BehaviorDefinition()
- 
-        let rotationMap = Range(min:0, max:radialCount,start:0,stop:360)
-//radialBehavior.addRange("rotationMap",min: 0,max: radialCount, start: 0,stop: 360)
- radialBehavior.addState("stop")
- 
-        radialBehavior.addMethod("start", targetMethod: "newStroke",arguments: nil)
-        radialBehavior.addMethod("stylusUpT", targetMethod: "destroy",arguments: nil)
- 
-        radialBehavior.addTransition("stylusUpT", eventEmitter:stylus, event: "STYLUS_UP", fromState: "default", toState: "stop",condition:nil)
- 
- 
-        radialBehavior.addMapping(rotationMap, referenceName:nil, parentFlag:false, relativePropertyName: "angle", targetState: "default")
-        
-        radialBehavior.addMapping(stylus, referenceName:"dy", parentFlag: false,relativePropertyName: "dy",targetState: "default");
-        radialBehavior.addMapping(stylus, referenceName:"dx", parentFlag: false,relativePropertyName: "dx",targetState: "default");
- 
-  radialBehavior.addMapping(stylus.force, referenceName:nil,parentFlag: false, relativePropertyName: "weight",targetState: "default");
-
-
-        let tapRootBehavior = BehaviorDefinition();
-        let timeIncrement = Interval(inc:2,times:10)
-
-        //tapRootBehavior.addCondition("timeCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: timeIncrement, relativeName: nil, relativeParentFlag: false, relational: "within")
-        
-
-       
-       // tapRootBehavior.addMethod("initStroke", targetMethod: "newStroke",arguments: nil, condition: nil)
-         tapRootBehavior.addMethod("stylusDownT", targetMethod: "setOrigin",arguments: [stylus.position])
-       //tapRootBehavior.addMethod("branch", targetMethod: "spawn", arguments:[rootBehavior,2,[false,false],[false,true]],condition:nil)
-        tapRootBehavior.addMethod("stylusDownT", targetMethod: "spawn", arguments:[radialBehavior,radialCount,[false,false],[false,false]])
-
-        
-        tapRootBehavior.addTransition("stylusDownT", eventEmitter:stylus, event: "STYLUS_DOWN", fromState: "default", toState: "default",condition:nil)
-        
-        //tapRootBehavior.addTransition(nil, event: "TIME_INCREMENT", fromState: "default", toState: "branch", condition:"timeCondition")
-        //tapRootBehavior.addTransition(nil, event: "STATE_COMPLETE", fromState: "branch", toState: "default", condition:nil)
-
-        
-        tapRootBehavior.addMapping(stylus, referenceName:"dy", parentFlag: false,relativePropertyName: "dy",targetState: "default");
-        tapRootBehavior.addMapping(stylus, referenceName:"dx", parentFlag: false,relativePropertyName: "dx",targetState: "default");
-        tapRootBehavior.addMapping(stylus.force, referenceName:nil,parentFlag: false, relativePropertyName: "weight",targetState: "default");
-        
-        
-        
-
-        let tapRootBrush = Brush(behaviorDef: tapRootBehavior, parent: nil, canvas:self.currentCanvas!)
-        tapRootBrush.name = "tapRootBrush"
-        
-        
-        
+        let b1_brush = Brush(name:"b1",behaviorDef: b1, parent:nil, canvas:self.currentCanvas!)
     }
     
 

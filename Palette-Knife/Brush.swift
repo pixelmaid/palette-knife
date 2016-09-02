@@ -39,9 +39,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var y:Observable<Float>
     var dx:Observable<Float>
     var dy:Observable<Float>
+    var ox:Observable<Float>
+    var oy:Observable<Float>
     var scaling = Point(x:1,y:1)
     var angle = Observable<Float>(0)
-    var length:Float!
+    
     
     //event Handler wrapper for draw updates
     var drawKey = NSUUID().UUIDString;
@@ -57,16 +59,18 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var matrix = Matrix();
     var index = -1; //stores index of child
     
-    init(behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
+    init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
         self.x = self.position.x;
         self.y = self.position.y;
         self.dx = delta.x;
         self.dy = delta.y
-        delta.parentName="brush"
+        self.ox = origin.x;
+        self.oy = origin.y;
+        delta.parentName = "brush"
         self.currentState = "default"
         
         super.init()
-        self.name = "brush"
+        self.name = name;
         self.time = self.timerTime
         
         //setup events and create listener storage
@@ -77,7 +81,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         //add in default state
         self.createState(currentState);
         
-        self.addStateTransition("start", key: NSUUID().UUIDString, reference: self, fromState: nil, toState: "default")
+        self.addStateTransition("setup", key: NSUUID().UUIDString, reference: self, fromState: nil, toState: "default")
        
         //setup listener for delta observable
         self.delta.didChange.addHandler(self, handler:Brush.deltaChange, key:deltaKey)
@@ -94,7 +98,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     @objc func defaultCallback(){
-        self.transitionToState(self.transitions["start"]!)
+        self.transitionToState(self.transitions["setup"]!)
         
     }
     
@@ -155,7 +159,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func setOrigin(p:Point){
-        origin = p.clone();
+        print("setting origin for \(self.name) to \(p.get())")
+        self.origin.set(p);
         self.position.set(origin)
         
     }
@@ -183,6 +188,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             
         }
         self.currentState = transition.toState;
+        print("transitioning \(self.name) to \(transition.toState)")
         constraint_mappings =  states[currentState]!.constraint_mappings
         for (_, value) in constraint_mappings{
             
@@ -224,7 +230,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 self.destroy();
                 break;
             case "spawn":
-                self.spawn((methodName.1![0] as! BehaviorDefinition),num:(methodName.1![1] as! Int),reflectX:methodName.1![2] as! [Bool], reflectY:methodName.1![3] as! [Bool]);
+                self.spawn((methodName.1![0] as! String), behavior:(methodName.1![1] as! BehaviorDefinition),num:(methodName.1![2] as! Int));
                 
                 break;
             default:
@@ -343,13 +349,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     //creates number of clones specified by num and adds them as children
-    func spawn(behavior:BehaviorDefinition,num:Int,reflectX:[Bool], reflectY:[Bool]) {
+    func spawn(name:String,behavior:BehaviorDefinition,num:Int) {
         lastSpawned.removeAll()
         for i in 0...num-1{
-            let child = Brush(behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
-            child.setOrigin(self.position)
-            // child.reflectX = reflectX[i]
-            //child.reflectY = reflectY[i]
+            let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
             self.children.append(child);
             child.index = self.children.count-1;
             let handler = self.children.last!.geometryModified.addHandler(self,handler: Brush.brushDrawHandler, key:child.drawKey)

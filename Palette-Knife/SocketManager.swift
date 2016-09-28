@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Starscream
+//import Starscream
 
 //central manager for all requests to web socket
 class SocketManager: WebSocketDelegate{
@@ -110,6 +110,18 @@ class SocketManager: WebSocketDelegate{
     }
     
     func drawingDataGenerated(data:(String), key:String){
+        if(transmitComplete){
+            transmitComplete = false;
+            socket.writeString(data)
+            
+        }
+        else{
+            dataQueue.append(data)
+        }
+    }
+    
+    
+    func sendBehaviorData(data:(String)){
         if(transmitComplete){
             transmitComplete = false;
             socket.writeString(data)

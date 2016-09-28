@@ -18,7 +18,7 @@ class GCodeGenerator {
     let retractHeight = Float(0.59)
     let clearanceHeight = Float(0.6)
     let feedHeight = Float(0)
-    let cuttingFeedRate = Float(0.500)
+    let cuttingFeedRate = Float(0.800)
     let leadInOutFeedRate = Float(0.6562)
     let depthLimit = Float(-0.31)
     let inX = Float(10.35);

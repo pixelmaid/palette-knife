@@ -8,7 +8,7 @@ target 'PaletteKnife' do
   # Pods for PaletteKnife
   pod 'SwiftKVC'
 
-  pod 'Starscream'
+  pod 'Starscream', '2.0.0'
 
   target 'PaletteKnifeTests' do
     inherit! :search_paths
@@ -19,5 +19,8 @@ target 'PaletteKnife' do
     inherit! :search_paths
     # Pods for testing
   end
+  
+  pod 'SwiftyJSON', '2.4.0'
+
 
 end

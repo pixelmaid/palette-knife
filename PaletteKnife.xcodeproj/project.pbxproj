@@ -28,6 +28,7 @@
 		5FA4C75C1CDBA47D004A728C /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75B1CDBA47D004A728C /* Point.swift */; };
 		5FA4C75E1CDBA530004A728C /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75D1CDBA530004A728C /* Color.swift */; };
 		5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75F1CDBC5F7004A728C /* Behavior.swift */; };
+		5FCDCF821D908153002BB5B4 /* SVGgenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCDCF811D908153002BB5B4 /* SVGgenerator.swift */; };
 		5FCFDED51CF79B2400CE296B /* Numerical.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCFDED41CF79B2400CE296B /* Numerical.swift */; };
 		5FF5EFAB1D664F22001E1616 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF5EFAA1D664F22001E1616 /* Observable.swift */; };
 		5FF5EFAD1D6661EC001E1616 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF5EFAC1D6661EC001E1616 /* Event.swift */; };
@@ -96,6 +97,7 @@
 		5FA4C75B1CDBA47D004A728C /* Point.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		5FA4C75D1CDBA530004A728C /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		5FA4C75F1CDBC5F7004A728C /* Behavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Behavior.swift; sourceTree = "<group>"; };
+		5FCDCF811D908153002BB5B4 /* SVGgenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SVGgenerator.swift; sourceTree = "<group>"; };
 		5FCFDED41CF79B2400CE296B /* Numerical.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Numerical.swift; sourceTree = "<group>"; };
 		5FF5EFAA1D664F22001E1616 /* Observable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		5FF5EFAC1D6661EC001E1616 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 			isa = PBXGroup;
 			children = (
 				5F0C97221D6BD726001FC228 /* GCodeGenerator.swift */,
+				5FCDCF811D908153002BB5B4 /* SVGgenerator.swift */,
 				5FF5EFAC1D6661EC001E1616 /* Event.swift */,
 				5FFDAB0C1D234B6100632A26 /* TimeSeries.swift */,
 				5FFDAB0A1D21B7EC00632A26 /* WebTransmitter.swift */,
@@ -587,6 +590,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F6A07EE1D63DCD80047FF56 /* Matrix.swift in Sources */,
+				5FCDCF821D908153002BB5B4 /* SVGgenerator.swift in Sources */,
 				5FFF81921D49219700C1349B /* BehaviorDefinition.swift in Sources */,
 				5F1896771D4A856F00AEF5F1 /* Generator.swift in Sources */,
 				5FA4C75A1CDBA1FA004A728C /* Stroke.swift in Sources */,

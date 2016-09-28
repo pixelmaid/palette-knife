@@ -18,7 +18,8 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     // var geometry = [Geometry]();
     var transmitEvent = Event<(String)>()
     let gCodeGenerator = GCodeGenerator();
-    
+    let svgGenerator = SVGGenerator();
+
     var geometryModified = Event<(Geometry,String,String)>()
     
     override init(){
@@ -38,6 +39,17 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         }
         source += gCodeGenerator.end();
         return source
+    }
+    
+    func getSVG()->String{
+        var orderedStrokes = [Stroke]()
+        for list in self.allStrokes{
+            for i in 0..<list.1.count{
+               orderedStrokes.append(list.1[i])
+            }
+        }
+        return svgGenerator.generate(orderedStrokes)
+
     }
     
     //MARK: - Hashable

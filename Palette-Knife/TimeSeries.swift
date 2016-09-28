@@ -20,8 +20,6 @@ class TimeSeries: Emitter{
         self.events =  ["TIME_INCREMENT"]
         self.createKeyStorage();
         timerTime.name = "time";
-        
-        
     }
     
     func getTimeElapsed()->Float{

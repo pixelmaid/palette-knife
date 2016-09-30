@@ -74,8 +74,14 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     func gcodeExportClicked(sender: AnyObject?){
         let gcode = (currentCanvas?.currentDrawing?.getGcode())! as NSString;
         let gcode_data = gcode.dataUsingEncoding(NSUTF8StringEncoding)!
+        
+        let svg = (currentCanvas?.currentDrawing?.getSVG())! as NSString;
+        let svg_data = svg.dataUsingEncoding(NSUTF8StringEncoding)!
+        
         let mailComposeViewController = configuredMailComposeViewController()
         mailComposeViewController.addAttachmentData(gcode_data, mimeType:"sbp" , fileName: "drawing.sbp")
+        
+        mailComposeViewController.addAttachmentData(svg_data, mimeType:"svg" , fileName: "drawing.svg")
         
         if MFMailComposeViewController.canSendMail() {
             self.presentViewController(mailComposeViewController, animated: true, completion: nil)
@@ -123,13 +129,15 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     }
     
     func initTestBrushes(){
+        let num = 30
+        
         let falseConstant = Observable<Float>(0)
-        let angleRange = Range(min: 0, max: 20, start: 0.1, stop: -0.1)
+        let angleRange = Range(min: 0, max: num, start: 0, stop: 1)
         let reflectConstant = Observable<Float>(1)
-        let b2 = BehaviorDefinition()
+        let b2 = BehaviorDefinition(name:"b2")
         
         
-        b2.addInterval("timeInterval",inc:0.1,times:nil)
+        b2.addInterval("timeInterval",inc:0.005,times:nil)
         
         b2.addMethod("setup", targetMethod: "newStroke", arguments: nil)
         b2.addMapping(nil, referenceName: "ox", parentFlag: true, relativePropertyName: "ox", targetState: "default")
@@ -144,19 +152,19 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         b2.addState("reflect")
         
         
-        b2.addCondition("indexCondition", reference: angleRange, referenceName: "index", referenceParentFlag: false, relative: Observable<Float>(10), relativeName: nil, relativeParentFlag: false, relational: "==")
+        b2.addCondition("indexCondition", reference: angleRange, referenceName: "index", referenceParentFlag: false, relative: Observable<Float>(Float(num/2)), relativeName: nil, relativeParentFlag: false, relational: "==")
         
         b2.addTransition("defaultDelayTransition", eventEmitter: nil, parentFlag:false, event:"STATE_COMPLETE", fromState: "default", toState: "delay", condition: nil)
         
         b2.addTransition("reflectTransition", eventEmitter: nil, parentFlag:false, event:"STATE_COMPLETE", fromState: "default", toState: "reflect", condition: "indexCondition")
         
         
-       b2.addMapping(reflectConstant, referenceName: nil, parentFlag: false, relativePropertyName: "reflectY", targetState: "reflect")
-      
+        b2.addMapping(reflectConstant, referenceName: nil, parentFlag: false, relativePropertyName: "reflectX", targetState: "default")
+        
         b2.addTransition("reflectEndTransition", eventEmitter: nil, parentFlag:false, event:
             "STATE_COMPLETE", fromState: "reflect", toState: "default", condition: nil)
-
-        b2.addIncrement("angleIncrememt", inc:angleRange, start:Observable<Float>(0))
+        
+        b2.addIncrement("angleIncrememt", inc:angleRange, start:Observable<Float>(-1))
         
         b2.addMapping(nil, referenceName: "xBuffer", parentFlag: true, relativePropertyName: "dx", targetState: "grow")
         b2.addMapping(nil, referenceName: "yBuffer", parentFlag: true, relativePropertyName: "dy", targetState: "grow")
@@ -173,14 +181,14 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         
         b2.addCondition("growSpawnCondition", reference: nil, referenceName: "bufferLimitX", referenceParentFlag: true, relative: falseConstant, relativeName:nil, relativeParentFlag: false, relational: "!=")
         
-        b2.addCondition("limitCondition", reference: angleRange, referenceName: "index", referenceParentFlag: false, relative: Observable<Float>(19), relativeName: nil, relativeParentFlag: false, relational: "<")
+        b2.addCondition("limitCondition", reference: angleRange, referenceName: "index", referenceParentFlag: false, relative: Observable<Float>(Float(num-1)), relativeName: nil, relativeParentFlag: false, relational: "<")
         
         b2.addTransition("growEndTransition", eventEmitter: nil, parentFlag:false, event:
             "STATE_COMPLETE", fromState: "grow", toState: "delay", condition: "growCompleteCondition")
         
         b2.addTransition("startSpawnTransition", eventEmitter: nil, parentFlag:false, event:
             "STATE_COMPLETE", fromState: "grow", toState: "spawn", condition: "limitCondition")
-
+        
         b2.addTransition("growSpawnTransition", eventEmitter: nil, parentFlag:false, event:
             "STATE_COMPLETE", fromState: "spawn", toState: "die", condition: "growSpawnCondition")
         
@@ -188,8 +196,10 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         b2.addMethod("growSpawnTransition", targetMethod: "spawn", arguments: ["b3",b2,1])
         b2.addMethod("growSpawnTransition", targetMethod: "destroy", arguments: nil)
         
+        print(b2.toJSON());
         
-        let b1 = BehaviorDefinition()
+        
+        let b1 = BehaviorDefinition(name:"b1")
         b1.addTransition("stylusDownT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromState: "default", toState: "default", condition:nil)
         b1.addMethod("stylusDownT", targetMethod: "setOrigin", arguments: [stylus.position])
         b1.addMethod("stylusDownT", targetMethod: "newStroke", arguments: nil)
@@ -319,4 +329,3 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     
     
 }
-

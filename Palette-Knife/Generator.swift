@@ -33,7 +33,7 @@ class Interval:Generator{
         else{
             infinite = true;
             self.incrementIndex();
-
+            
         }
     }
     
@@ -153,7 +153,34 @@ class Increment:Generator{
     }
     
     
+    
+    
+}
 
+class easeInOut:Generator{
+    var start:Observable<Float>
+    var stop:Observable<Float>
+    var max:Observable<Float>
+    var range:Observable<Float>
+    var index = Observable<Float>(0)
+    
+    
+    init(start:Observable<Float>,stop:Observable<Float>,max:Observable<Float>){
+        self.start = Observable<Float>(start.get());
+        self.stop = Observable<Float>(stop.get());
+        self.max = Observable<Float>(max.get());
+        self.range = Observable<Float>(stop.get()-start.get());
+    }
+    
+    func incrementIndex(){
+        index.set(index.get()+1);
+        
+    }
+    /*override func get() -> Float {
+     let v = ((Float(index.get())*inc.get()) + start.get());
+     self.incrementIndex();
+     return v;
+     }*/
     
 }
 

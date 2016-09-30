@@ -11,7 +11,7 @@ import SwiftKVC
 
 class BehaviorDefinition {
     
-    var states = [String]()
+    var states = [String:String]()
     var expressions = [String:(Any?,String?,Bool,Any?,String?,Bool,String)]()
     var conditions = [String:(Any?,String?,Bool,Any?,String?,Bool,String)]()
     var generators = [String:(String,[Any])]()
@@ -22,7 +22,40 @@ class BehaviorDefinition {
     var mappings = [(Any?,String?,Bool,String,String)]()
     var storedExpressions = [String:Expression]()
     var storedConditions = [String:Condition]()
+    var name:String;
+   
+    init(name:String){
+        self.name = name;
+    }
     
+    func toJSON()->String{
+        var json_string = "{\"states\":["
+        
+        for (key,name) in states {
+            json_string += "{"
+            json_string += "\"id\":"+key+","
+
+            json_string += "\"name\":"+name+","
+            json_string += "\"mappings\":["
+           
+            //referenceProperty:Any?, referenceName:String?, parentFlag:Bool, relativePropertyName:String,targetState:String
+            for m in mappings {
+                if(m.4 == name){
+                    json_string += "{"
+                    json_string += "\"id\":"+m+","
+                    json_string += "\"name\":"+","
+                    json_string += "}"
+                }
+            }
+            json_string += "]}"
+        }
+        json_string+="]"
+        
+        
+        
+        
+        return json_string
+    }
     
     func addCondition(name:String, reference:Any?, referenceName:String?,referenceParentFlag:Bool, relative:Any?, relativeName:String?, relativeParentFlag:Bool, relational:String){
         

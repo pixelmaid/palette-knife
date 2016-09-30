@@ -22,6 +22,7 @@ class SocketManager: WebSocketDelegate{
 
      init(){
         socket.delegate = self;
+        let json: JSON = "I'm a json"
     }
     
     func connect(){

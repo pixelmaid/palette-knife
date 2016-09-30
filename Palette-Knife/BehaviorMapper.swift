@@ -15,8 +15,8 @@ typealias BehaviorConfig = (target: Brush, action: String, emitter:Emitter, even
 class BehaviorMapper{
     
       
-    func createMapping(reference:Observable<Float>, relative:Brush, relativeProperty:Observable<Float>,targetState:String){
-        relative.addConstraint(reference, relative: relativeProperty, targetState: targetState)
+    func createMapping(id:String, reference:Observable<Float>, relative:Brush, relativeProperty:Observable<Float>,targetState:String){
+        relative.addConstraint(id, reference:reference, relative: relativeProperty, targetState: targetState)
     
     }
     
@@ -24,13 +24,12 @@ class BehaviorMapper{
         target.createState(stateName);
     }
     
-    func createStateTransition(name:String,reference:Emitter,relative:Brush, eventName:String, fromState:String, toState:String, condition:Condition!){
-        let key = NSUUID().UUIDString;
-        reference.assignKey(eventName,key:key,condition: condition)
+    func createStateTransition(id:String,name:String,reference:Emitter,relative:Brush, eventName:String, fromState:String, toState:String, condition:Condition!){
+        reference.assignKey(eventName,key:id,condition: condition)
         let selector = Selector("stateTransitionHandler"+":");
-        NSNotificationCenter.defaultCenter().addObserver(relative, selector:selector, name:key, object: reference)
-        relative.addStateTransition(name,key:key, reference: reference, fromState:fromState, toState:toState)
-        relative.removeTransitionEvent.addHandler(relative, handler: Brush.removeStateTransition, key:key)
+        NSNotificationCenter.defaultCenter().addObserver(relative, selector:selector, name:id, object: reference)
+        relative.addStateTransition(id, name:name,reference: reference, fromState:fromState, toState:toState)
+        relative.removeTransitionEvent.addHandler(relative, handler: Brush.removeStateTransition, key:id)
         
     }
     

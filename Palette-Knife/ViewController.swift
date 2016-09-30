@@ -45,8 +45,8 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         socketManager.socketEvent.addHandler(self,handler: ViewController.socketHandler, key:socketKey)
         socketManager.connect();
         
-        self.initCanvas();
-        self.initTestBrushes();
+        //self.initCanvas();
+        //self.initTestBrushes();
         
     }
     
@@ -54,8 +54,8 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     func socketHandler(data:(String), key:String){
         switch(data){
         case "first_connection":
-            //self.initCanvas();
-            //self.initTestBrushes();
+            self.initCanvas();
+           self.initTestBrushes();
             break;
         case "disconnected":
             break;
@@ -120,8 +120,8 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     
     func initCanvas(){
         currentCanvas = Canvas();
-        socketManager.initAction(currentCanvas!);
-        socketManager.initAction(stylus);
+        //socketManager.initAction(currentCanvas!);
+        //socketManager.initAction(stylus);
         currentCanvas!.initDrawing();
         currentCanvas!.geometryModified.addHandler(self,handler: ViewController.canvasDrawHandler, key:drawKey)
         
@@ -129,52 +129,53 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     }
     
     func initTestBrushes(){
-        let num = 30
+        let num = 60
         
         let falseConstant = Observable<Float>(0)
-        let angleRange = Range(min: 0, max: num, start: 0, stop: 1)
+        let angleRange = Range(min: 0, max: num, start: -4, stop: 0)
         let reflectConstant = Observable<Float>(1)
+        reflectConstant.name = "reflectConstant";
         let b2 = BehaviorDefinition(name:"b2")
         
         
         b2.addInterval("timeInterval",inc:0.005,times:nil)
         
         b2.addMethod("setup", targetMethod: "newStroke", arguments: nil)
-        b2.addMapping(nil, referenceName: "ox", parentFlag: true, relativePropertyName: "ox", targetState: "default")
-        b2.addMapping(nil, referenceName: "oy", parentFlag: true, relativePropertyName: "oy", targetState: "default")
-        b2.addMapping(nil, referenceName: "ox", parentFlag: true, relativePropertyName: "x", targetState: "default")
-        b2.addMapping(nil, referenceName: "oy", parentFlag: true, relativePropertyName: "y", targetState: "default")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "ox", parentFlag: true, relativePropertyName: "ox", targetState: "default")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "oy", parentFlag: true, relativePropertyName: "oy", targetState: "default")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "ox", parentFlag: true, relativePropertyName: "x", targetState: "default")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "oy", parentFlag: true, relativePropertyName: "y", targetState: "default")
         
-        b2.addState("delay")
-        b2.addState("grow")
-        b2.addState("spawn")
-        b2.addState("die")
-        b2.addState("reflect")
+        b2.addState(NSUUID().UUIDString,stateName:"delay")
+        b2.addState(NSUUID().UUIDString,stateName:"grow")
+        b2.addState(NSUUID().UUIDString,stateName:"spawn")
+        b2.addState(NSUUID().UUIDString,stateName:"die")
+        b2.addState(NSUUID().UUIDString,stateName:"reflect")
         
         
         b2.addCondition("indexCondition", reference: angleRange, referenceName: "index", referenceParentFlag: false, relative: Observable<Float>(Float(num/2)), relativeName: nil, relativeParentFlag: false, relational: "==")
         
-        b2.addTransition("defaultDelayTransition", eventEmitter: nil, parentFlag:false, event:"STATE_COMPLETE", fromState: "default", toState: "delay", condition: nil)
+        b2.addTransition(NSUUID().UUIDString, name:"defaultDelayTransition", eventEmitter: nil, parentFlag:false, event:"STATE_COMPLETE", fromState: "default", toState: "delay", condition: nil)
         
-        b2.addTransition("reflectTransition", eventEmitter: nil, parentFlag:false, event:"STATE_COMPLETE", fromState: "default", toState: "reflect", condition: "indexCondition")
+        b2.addTransition(NSUUID().UUIDString, name:"reflectTransition", eventEmitter: nil, parentFlag:false, event:"STATE_COMPLETE", fromState: "default", toState: "reflect", condition: "indexCondition")
         
         
-        b2.addMapping(reflectConstant, referenceName: nil, parentFlag: false, relativePropertyName: "reflectX", targetState: "default")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:reflectConstant, referenceName: nil, parentFlag: false, relativePropertyName: "reflectX", targetState: "default")
         
-        b2.addTransition("reflectEndTransition", eventEmitter: nil, parentFlag:false, event:
+        b2.addTransition(NSUUID().UUIDString, name:"reflectEndTransition", eventEmitter: nil, parentFlag:false, event:
             "STATE_COMPLETE", fromState: "reflect", toState: "default", condition: nil)
         
         b2.addIncrement("angleIncrememt", inc:angleRange, start:Observable<Float>(-1))
         
-        b2.addMapping(nil, referenceName: "xBuffer", parentFlag: true, relativePropertyName: "dx", targetState: "grow")
-        b2.addMapping(nil, referenceName: "yBuffer", parentFlag: true, relativePropertyName: "dy", targetState: "grow")
-        b2.addMapping(nil, referenceName: "weightBuffer", parentFlag: true, relativePropertyName: "weight", targetState: "grow")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "xBuffer", parentFlag: true, relativePropertyName: "dx", targetState: "grow")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "yBuffer", parentFlag: true, relativePropertyName: "dy", targetState: "grow")
+       // b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "weightBuffer", parentFlag: true, relativePropertyName: "weight", targetState: "grow")
         
-        b2.addMapping(nil, referenceName: "angleIncrememt", parentFlag: false, relativePropertyName: "angle", targetState: "grow")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "angleIncrememt", parentFlag: false, relativePropertyName: "angle", targetState: "grow")
         
         b2.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
         
-        b2.addTransition("intervalTransition", eventEmitter: nil, parentFlag:false, event:
+        b2.addTransition(NSUUID().UUIDString, name:"intervalTransition", eventEmitter: nil, parentFlag:false, event:
             "TIME_INCREMENT", fromState: "delay", toState: "grow", condition: "incrementCondition")
         
         b2.addCondition("growCompleteCondition", reference: nil, referenceName: "bufferLimitX", referenceParentFlag: true, relative: falseConstant, relativeName:nil, relativeParentFlag: false, relational: "==")
@@ -183,39 +184,37 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         
         b2.addCondition("limitCondition", reference: angleRange, referenceName: "index", referenceParentFlag: false, relative: Observable<Float>(Float(num-1)), relativeName: nil, relativeParentFlag: false, relational: "<")
         
-        b2.addTransition("growEndTransition", eventEmitter: nil, parentFlag:false, event:
+        b2.addTransition(NSUUID().UUIDString, name:"growEndTransition", eventEmitter: nil, parentFlag:false, event:
             "STATE_COMPLETE", fromState: "grow", toState: "delay", condition: "growCompleteCondition")
         
-        b2.addTransition("startSpawnTransition", eventEmitter: nil, parentFlag:false, event:
+        b2.addTransition(NSUUID().UUIDString, name:"startSpawnTransition", eventEmitter: nil, parentFlag:false, event:
             "STATE_COMPLETE", fromState: "grow", toState: "spawn", condition: "limitCondition")
         
-        b2.addTransition("growSpawnTransition", eventEmitter: nil, parentFlag:false, event:
+        b2.addTransition(NSUUID().UUIDString, name:"growSpawnTransition", eventEmitter: nil, parentFlag:false, event:
             "STATE_COMPLETE", fromState: "spawn", toState: "die", condition: "growSpawnCondition")
         
         
         b2.addMethod("growSpawnTransition", targetMethod: "spawn", arguments: ["b3",b2,1])
         b2.addMethod("growSpawnTransition", targetMethod: "destroy", arguments: nil)
         
-        print(b2.toJSON());
+        self.socketManager.sendBehaviorData(b2.toJSON());
         
         
         let b1 = BehaviorDefinition(name:"b1")
-        b1.addTransition("stylusDownT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromState: "default", toState: "default", condition:nil)
+        b1.addTransition(NSUUID().UUIDString, name:"stylusDownT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromState: "default", toState: "default", condition:nil)
         b1.addMethod("stylusDownT", targetMethod: "setOrigin", arguments: [stylus.position])
         b1.addMethod("stylusDownT", targetMethod: "newStroke", arguments: nil)
         
-        b1.addMapping(stylus, referenceName: "dx", parentFlag: false, relativePropertyName: "dx", targetState: "default")
-        b1.addMapping(stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
-        b1.addMapping(stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
+        b1.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dx", parentFlag: false, relativePropertyName: "dx", targetState: "default")
+        b1.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
+     //   b1.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
         
-        b1.addTransition("stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromState: "default", toState: "default", condition:nil)
+        b1.addTransition(NSUUID().UUIDString, name:"stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromState: "default", toState: "default", condition:nil)
         
         
-        b1.addTransition("stylusUpT",eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromState: "default", toState: "default", condition:nil)
+        b1.addTransition(NSUUID().UUIDString, name:"stylusUpT",eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromState: "default", toState: "default", condition:nil)
         
         b1.addMethod("stylusUpT", targetMethod: "spawn", arguments: ["b2",b2,1])
-        
-        
         
         let b1_brush = Brush(name:"b1",behaviorDef: b1, parent:nil, canvas:self.currentCanvas!)
     }

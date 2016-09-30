@@ -27,9 +27,9 @@ struct State {
     }
     
     
-    mutating func addStateTransitionMapping(name:String, key:String,reference:Emitter,toState:String)->StateTransition{
-        let mapping = StateTransition(name:name, reference:reference,toState:toState)
-        transitions[key] = mapping;
+    mutating func addStateTransitionMapping(id:String, name:String, reference:Emitter,toState:String)->StateTransition{
+        let mapping = StateTransition(id:id, name:name, reference:reference,toState:toState)
+        transitions[id] = mapping;
         return mapping;
     }
     
@@ -92,11 +92,13 @@ class StateTransition{
     var toState: String
     var methods = [(String,[Any]?)]()
     let name: String
+    let id: String
     
-    init(name:String, reference:Emitter, toState:String){
+    init(id:String, name:String, reference:Emitter, toState:String){
         self.reference = reference
         self.toState = toState
         self.name = name
+        self.id = id;
     }
     
     func addMethod(methodName:String, arguments:[Any]?){

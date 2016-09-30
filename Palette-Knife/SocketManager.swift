@@ -22,7 +22,6 @@ class SocketManager: WebSocketDelegate{
 
      init(){
         socket.delegate = self;
-        let json: JSON = "I'm a json"
     }
     
     func connect(){
@@ -118,6 +117,22 @@ class SocketManager: WebSocketDelegate{
         }
         else{
             dataQueue.append(data)
+        }
+    }
+    
+    func sendBehaviorData(data:(String)){
+        let string = "{\"type\":\"behavior_data\",\"data\":"+data+"}"
+        if(transmitComplete){
+            transmitComplete = false;
+            print("sending data")
+            socket.writeString(string)
+            
+        }
+        else{
+            print("appending data")
+
+            
+            dataQueue.append(string)
         }
     }
     

@@ -84,7 +84,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         //add in default state
         self.createState(currentState);
         
-        self.addStateTransition("setup", key: NSUUID().UUIDString, reference: self, fromState: nil, toState: "default")
+        self.addStateTransition(NSUUID().UUIDString, name:"setup", reference: self, fromState: nil, toState: "default")
        
         //setup listener for delta observable
         self.delta.didChange.addHandler(self, handler:Brush.deltaChange, key:deltaKey)
@@ -103,7 +103,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     @objc func defaultCallback(){
-        self.transitionToState(self.transitions["setup"]!)
+        self.transitionToState(self.getTransitionByName("setup")!)
         
     }
     
@@ -270,12 +270,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.currentCanvas = canvas;
     }
     
-    func addConstraint(reference:Observable<Float>, relative:Observable<Float>, targetState:String){
-        let stateKey = NSUUID().UUIDString;
-        reference.didChange.addHandler(self, handler:  Brush.setHandler, key:stateKey)
-        self.removeMappingEvent.addHandler(self, handler: Brush.removeConstraint,key:stateKey)
-        
-        states[targetState]!.addConstraintMapping(stateKey,reference:reference,relativeProperty: relative)
+    func addConstraint(id:String,reference:Observable<Float>, relative:Observable<Float>, targetState:String){
+        //let stateKey = NSUUID().UUIDString;
+        reference.didChange.addHandler(self, handler:  Brush.setHandler, key:id)
+        self.removeMappingEvent.addHandler(self, handler: Brush.removeConstraint,key:id)
+        states[targetState]!.addConstraintMapping(id,reference:reference,relativeProperty: relative)
     }
     
     func removeConstraint(data:(Brush, String, Observable<Float>),key:String){
@@ -305,16 +304,16 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
     }
     
-    func addStateTransition(name:String, key:String, reference:Emitter, fromState: String?, toState:String){
+    func addStateTransition(id:String, name:String, reference:Emitter, fromState: String?, toState:String){
         
         let transition:StateTransition
         if(fromState != nil){
-         transition = states[fromState!]!.addStateTransitionMapping(name, key:key,reference: reference, toState:toState)
+            transition = states[fromState!]!.addStateTransitionMapping(id,name:name,reference: reference, toState:toState)
         }
         else{
-            transition = StateTransition(name: name, reference: reference, toState: toState)
+            transition = StateTransition(id:id, name: name, reference: reference, toState: toState)
         }
-        self.transitions[name] = transition;
+        self.transitions[id] = transition;
     }
     
     func removeStateTransition(data:(Brush, String, Emitter),key:String){
@@ -323,7 +322,20 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func addMethod(transitionName:String, methodName:String, arguments:[Any]?){
-        transitions[transitionName]!.addMethod(methodName,arguments:arguments)
+        let transition = self.getTransitionByName(transitionName);
+        if(transition != nil){
+               transition!.addMethod(methodName,arguments:arguments)
+        }
+        
+    }
+    
+    func getTransitionByName(name:String)->StateTransition?{
+        for(_,transition) in self.transitions{
+            if(transition.name == name){
+                return transition;
+            }
+        }
+        return nil
     }
     
     

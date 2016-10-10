@@ -20,22 +20,22 @@ class BehaviorMapper{
     
     }
     
-    func createState(target:Brush,stateName:String){
-        target.createState(stateName);
+    func createState(target:Brush,stateId:String,stateName:String){
+        target.createState(stateId, name:stateName);
     }
     
-    func createStateTransition(id:String,name:String,reference:Emitter,relative:Brush, eventName:String, fromState:String, toState:String, condition:Condition!){
+    func createStateTransition(id:String,name:String,reference:Emitter,relative:Brush, eventName:String, fromStateName:String, toStateName:String, condition:Condition!){
         reference.assignKey(eventName,key:id,condition: condition)
         let selector = Selector("stateTransitionHandler"+":");
         NSNotificationCenter.defaultCenter().addObserver(relative, selector:selector, name:id, object: reference)
-        relative.addStateTransition(id, name:name,reference: reference, fromState:fromState, toState:toState)
+        relative.addStateTransition(id, name:name,reference: reference, fromStateName:fromStateName, toStateName:toStateName)
         relative.removeTransitionEvent.addHandler(relative, handler: Brush.removeStateTransition, key:id)
         
     }
     
-    func addMethod(relative:Brush,transitionName:String,methodName:String, arguments:[Any]?){
+    func addMethod(relative:Brush,transitionName:String,methodId:String,methodName:String, arguments:[Any]?){
        
-        relative.addMethod(transitionName,methodName:methodName, arguments:arguments)
+        relative.addMethod(transitionName,methodId:methodId,methodName:methodName, arguments:arguments)
     }
 }
 

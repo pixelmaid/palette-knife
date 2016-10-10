@@ -11,7 +11,8 @@ import Starscream
 
 //central manager for all requests to web socket
 class SocketManager: WebSocketDelegate{
-    var socket = WebSocket(url: NSURL(string: "ws://10.8.0.205:8080/")!, protocols: ["ipad_client"])
+    //var socket = WebSocket(url: NSURL(string: "ws://pure-beach-75578.herokuapp.com/")!, protocols: ["ipad_client"])
+    var socket = WebSocket(url: NSURL(string: "ws://localhost:5000")!, protocols: ["ipad_client"])
     var socketEvent = Event<(String)>();
     var firstConnection = true;
     var targets = [WebTransmitter](); //objects which can send or recieve data
@@ -34,7 +35,7 @@ class SocketManager: WebSocketDelegate{
     func websocketDidConnect(ws: WebSocket) {
         print("websocket is connected")
         //send name of client
-        socket.writeString("ipad")
+        socket.writeString("{\"name\":\"ipad\"}")
         if(firstConnection){
             socketEvent.raise(("first_connection"));
         }
@@ -61,7 +62,7 @@ class SocketManager: WebSocketDelegate{
             socket.writeString(dataQueue.removeAtIndex(0));
         }
         else{
-            print("all messages sent")
+            print("all messages sent \(text)")
 
             transmitComplete = true;
         }
@@ -97,19 +98,20 @@ class SocketManager: WebSocketDelegate{
         string+="\"position\":{\"x\":"+String(stylus.position.x)+",\"y\":"+String(stylus.position.y)+"}"
        // string+="\"delta\":{\"x\":"+String(delta.x)+",\"y\":"+String(delta.y)+"}"
         string+="}}"
-        drawingDataGenerated(string,key:"_")
+        dataGenerated(string,key:"_")
     }
     
-    func initAction(target:WebTransmitter){
-        let data = "{\"type\":\"new_canvas\",\"canvas_id\":\""+target.id+"\",\"canvas_name\":\""+target.name+"\"}";
+    func initAction(target:WebTransmitter, type:String){
+        let data = "{\"type\":\""+type+"\",\"id\":\""+target.id+"\",\"name\":\""+target.name+"\"}";
         targets.append(target);
-        target.transmitEvent.addHandler(self,handler: SocketManager.drawingDataGenerated, key:dataKey);
-        drawingDataGenerated(data,key:"_");
+        target.transmitEvent.addHandler(self,handler: SocketManager.dataGenerated, key:dataKey);
+        self.dataGenerated(data,key:"_");
 
         
     }
     
-    func drawingDataGenerated(data:(String), key:String){
+    func dataGenerated(data:(String), key:String){
+        print("data generated \(data)")
         if(transmitComplete){
             transmitComplete = false;
             socket.writeString(data)

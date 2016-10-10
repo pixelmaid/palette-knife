@@ -207,6 +207,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         }
         self.currentState = transition.toState;
         self.raiseBehaviorEvent(states[currentState]!.toJSON(), event: "state")
+        self.executeTransitionMethods(transition.methods)
 
         
         print("transitioning \(self.name) to \(transition.toState)")
@@ -219,7 +220,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             
         }
         //execute methods
-        self.executeTransitionMethods(transition.methods)
         //check constraints
         
         //trigger state complete after functions are executed
@@ -264,7 +264,14 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 self.newStroke();
                 break;
             case "setOrigin":
-                self.setOrigin(method.arguments![0] as! Point)
+                let arg = method.arguments![0];
+                if  let arg_string = arg as? String {
+                    if(arg_string  == "parent"){
+                        self.setOrigin(self.parent!.position)
+                    }
+                }else {
+                    self.setOrigin(method.arguments![0] as! Point)
+                }
             case "destroy":
                 self.destroy();
                 break;

@@ -57,8 +57,9 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         switch(data){
         case "first_connection":
             self.initCanvas();
-            self.initStandardBrush();
+            //self.initStandardBrush();
             //self.initTestBrushes();
+            self.initFractalBrush();
             break;
         case "disconnected":
             break;
@@ -132,12 +133,9 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     }
     
     func initStandardBrush(){
-        let b1 = BehaviorDefinition(name:"b1")
+        let b1 = BehaviorDefinition(id:NSUUID().UUIDString, name:"b1")
         
-        b1.addState(NSUUID().UUIDString,stateName:"start")
-        b1.addState(NSUUID().UUIDString,stateName:"default")
-        
-        b1.addTransition(NSUUID().UUIDString, name: "setup", eventEmitter: nil, parentFlag: false, event: "STATE_COMPLETE", fromStateName: "start", toStateName:"default", condition: nil)
+        defaultSetup(b1);
         
         b1.addTransition(NSUUID().UUIDString, name:"stylusDownT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromStateName: "default", toStateName: "default", condition:nil)
         
@@ -161,6 +159,77 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         
     }
     
+    func initFractalBrush(){
+        
+        let branchBehavior = BehaviorDefinition(id:NSUUID().UUIDString,name:"branch")
+        defaultSetup(branchBehavior);
+        branchBehavior.addInterval("timeInterval",inc:0.005,times:nil)
+
+        branchBehavior.addState(NSUUID().UUIDString,stateName: "die");
+        
+        branchBehavior.addCondition("timeLimitCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: Observable<Float>(1), relativeName: nil, relativeParentFlag: false, relational: ">")
+        
+        branchBehavior.addTransition(NSUUID().UUIDString, name: "destroyTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "die", condition: "timeLimitCondition")
+        
+        branchBehavior.addMethod("destroyTransition", methodId: NSUUID().UUIDString, targetMethod: "destroy", arguments: nil)
+        
+        branchBehavior.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments:nil)
+        branchBehavior.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: ["parent"])
+        
+        
+        
+        branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "xBuffer", parentFlag: true, relativePropertyName: "dx", targetState: "default")
+       branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "yBuffer", parentFlag: true, relativePropertyName: "dy", targetState: "default")
+        
+        branchBehavior.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
+
+        
+        branchBehavior.addTransition(NSUUID().UUIDString, name: "tickTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "default", condition: "incrementCondition")
+        
+        
+        
+        
+        let rootBehavior = BehaviorDefinition(id:NSUUID().UUIDString,name:"root");
+        defaultSetup(rootBehavior);
+        
+        rootBehavior.addInterval("timeInterval",inc:1,times:nil)
+
+       
+        rootBehavior.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
+
+        
+        rootBehavior.addTransition(NSUUID().UUIDString, name:"stylusDownT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromStateName: "default", toStateName: "default", condition:nil)
+        
+        rootBehavior.addTransition(NSUUID().UUIDString, name:"stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateName: "default", toStateName: "default", condition:nil)
+        
+        rootBehavior.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
+        rootBehavior.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments: nil)
+        
+        
+        rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dx", parentFlag: false, relativePropertyName: "dx", targetState: "default")
+       
+        rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
+        
+        rootBehavior.addTransition(NSUUID().UUIDString, name: "spawnTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "default", condition: "incrementCondition")
+        
+        rootBehavior.addMethod("spawnTransition", methodId: NSUUID().UUIDString, targetMethod: "spawn", arguments: ["branchBehavior",branchBehavior,1])
+        
+        // rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
+        
+        let rootBehaviorBrush = Brush(name:"rootBehaviorBrush",behaviorDef: rootBehavior, parent:nil, canvas:self.currentCanvas!)
+        
+        
+    }
+    
+    func defaultSetup(behavior:BehaviorDefinition){
+        
+        behavior.addState(NSUUID().UUIDString,stateName:"start")
+        behavior.addState(NSUUID().UUIDString,stateName:"default")
+        
+        behavior.addTransition(NSUUID().UUIDString, name: "setup", eventEmitter: nil, parentFlag: false, event: "STATE_COMPLETE", fromStateName: "start", toStateName:"default", condition: nil)
+
+    }
+    
     func initTestBrushes(){
         let num = 60
         
@@ -168,7 +237,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         let angleRange = Range(min: 0, max: num, start: -4, stop: 0)
         let reflectConstant = Observable<Float>(1)
         reflectConstant.name = "reflectConstant";
-        let b2 = BehaviorDefinition(name:"b2")
+        let b2 = BehaviorDefinition(id:NSUUID().UUIDString,name:"b2")
         
         //start state should be invisible to user
         b2.addState(NSUUID().UUIDString,stateName:"start")
@@ -238,7 +307,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         self.socketManager.sendBehaviorData(b2.toJSON());
         
         
-        let b1 = BehaviorDefinition(name:"b1")
+        let b1 = BehaviorDefinition(id:NSUUID().UUIDString, name:"b1")
         
         b1.addState(NSUUID().UUIDString,stateName:"start")
         b1.addState(NSUUID().UUIDString,stateName:"default")

@@ -23,9 +23,11 @@ class BehaviorDefinition {
     var storedExpressions = [String:Expression]()
     var storedConditions = [String:Condition]()
     var name:String;
+    var id: String;
    
-    init(name:String){
+    init(id:String, name:String){
         self.name = name;
+        self.id = id;
     }
     
     func toJSON()->String{

@@ -8,32 +8,35 @@
 
 import Foundation
 
-struct State {
+class State {
     var transitions = [String:StateTransition]()
     var constraint_mappings = [String:Constraint]()
+    let name: String
+    let id: String
     
-    init(){
-    
+    init(id:String,name:String){
+        self.id = id;
+        self.name = name;
     }
     
-    mutating func addConstraintMapping(key:String, reference:Observable<Float>, relativeProperty:Observable<Float>){
-        let mapping = Constraint(reference: reference, relativeProperty:relativeProperty)
+     func addConstraintMapping(key:String, reference:Observable<Float>, relativeProperty:Observable<Float>){
+        let mapping = Constraint(id:key,reference: reference, relativeProperty:relativeProperty)
         constraint_mappings[key] = mapping;
     }
     
-    mutating func removeConstraintMapping(key:String)->Constraint?{
+     func removeConstraintMapping(key:String)->Constraint?{
         constraint_mappings[key]!.relativeProperty.constrained = false;
        return constraint_mappings.removeValueForKey(key)
     }
     
     
-    mutating func addStateTransitionMapping(name:String, key:String,reference:Emitter,toState:String)->StateTransition{
-        let mapping = StateTransition(name:name, reference:reference,toState:toState)
-        transitions[key] = mapping;
+     func addStateTransitionMapping(id:String, name:String, reference:Emitter,toState:String)->StateTransition{
+        let mapping = StateTransition(id:id, name:name, reference:reference,toState:toState)
+        transitions[id] = mapping;
         return mapping;
     }
     
-    mutating func removeTransitionMapping(key:String)->StateTransition?{
+     func removeTransitionMapping(key:String)->StateTransition?{
         return transitions.removeValueForKey(key)
         
     }
@@ -72,6 +75,25 @@ struct State {
         }
         return false
     }
+    
+    func toJSON()->String{
+        var data = "{\"id\":\""+(self.id)+"\","
+        data += "\"name\":\""+self.name+"\","
+        data += "\"mappings\":[";
+        var count = 0;
+        for (_, mapping) in constraint_mappings{
+            if(count>0){
+                data += ","
+            }
+            data += mapping.toJSON();
+            count += 1;
+        }
+        data += "]"
+        data += "}"
+        return data;
+    }
+
+
 
     
   
@@ -80,27 +102,69 @@ struct State {
 struct Constraint{
     var reference:Observable<Float>
     var relativeProperty:Observable<Float>
-    init(reference:Observable<Float>, relativeProperty:Observable<Float>){
+    var id:String
+    init(id:String, reference:Observable<Float>, relativeProperty:Observable<Float>){
         self.reference = reference
         self.relativeProperty = relativeProperty
+        self.id = id;
     }
+    
+    func toJSON()->String{
+        var data = "{\"id\":\""+(self.id)+"\"}"
+        return data;
+    }
+}
 
+class Method{
+    var name: String;
+    var id: String;
+    var arguments: [Any]?
+    
+    init(id:String,name:String,arguments:[Any]?){
+        self.name = name;
+        self.id = id;
+        self.arguments = arguments;
+    }
+    
+    func toJSON()->String{
+        var data = "{\"id\":\""+(self.id)+"\","
+        data += "\"name\":\""+(self.name)+"\"}"
+        return data;
+    }
+    
 }
 
 class StateTransition{
     var reference:Emitter
     var toState: String
-    var methods = [(String,[Any]?)]()
+    var methods = [Method]()
     let name: String
+    let id: String
     
-    init(name:String, reference:Emitter, toState:String){
+    init(id:String, name:String, reference:Emitter, toState:String){
         self.reference = reference
         self.toState = toState
         self.name = name
+        self.id = id;
     }
     
-    func addMethod(methodName:String, arguments:[Any]?){
-        methods.append((methodName,arguments));
+    func addMethod(id:String, name:String, arguments:[Any]?){
+        methods.append(Method(id:id, name:name,arguments:arguments));
+    }
+    
+    func toJSON()->String{
+        var data = "{\"id\":\""+(self.id)+"\","
+        data += "\"name\":\""+self.name+"\","
+        data += "\"methods\":[";
+        for i in 0..<methods.count{
+            if(i>0){
+                data += ","
+            }
+            data += methods[i].toJSON();
+        }
+        data += "]"
+        data += "}"
+        return data;
     }
 
 }

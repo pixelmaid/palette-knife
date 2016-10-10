@@ -11,18 +11,128 @@ import SwiftKVC
 
 class BehaviorDefinition {
     
-    var states = [String]()
+    var states = [String:String]()
     var expressions = [String:(Any?,String?,Bool,Any?,String?,Bool,String)]()
     var conditions = [String:(Any?,String?,Bool,Any?,String?,Bool,String)]()
     var generators = [String:(String,[Any])]()
     var storedGenerators = [String:Generator]()
-    var methods = [(String,String,[Any]?)]()
-    var transitions = [String:(Emitter?,Bool,String,String,String,String?)]()
+    var methods = [(String,String,String,[Any]?)]()
+    var transitions = [String:(String,Emitter?,Bool,String,String,String,String?)]()
     var behaviorMapper = BehaviorMapper()
-    var mappings = [(Any?,String?,Bool,String,String)]()
+    var mappings = [String:(Any?,String?,Bool,String,String)]()
     var storedExpressions = [String:Expression]()
     var storedConditions = [String:Condition]()
+    var name:String;
+   
+    init(name:String){
+        self.name = name;
+    }
     
+    func toJSON()->String{
+        var json_string = "{\"states\":["
+        
+        for (key,name) in states {
+            json_string += "{"
+            json_string += "\"id\":\""+key+"\","
+
+            json_string += "\"name\":\""+name+"\","
+            json_string += "\"mappings\":["
+           
+                var hasMapping = false;
+            for (id,data) in mappings {
+                if(data.4 == name){
+                    hasMapping = true;
+                    json_string += "{"
+                    json_string += "\"id\":\""+id+"\","
+                    var refName = ""
+                    if(data.0 != nil){
+                       refName = (data.0 as! Observable<Float>).name;
+                    }
+                    if(data.2){
+                        refName = "parent."+refName;
+                    }
+                   
+                    if(data.1 != nil){
+                        refName += data.1!
+                        
+                    }
+                    json_string += "\"reference\":\""+refName+"\","
+                    json_string += "\"relative\":\""+data.3+"\","
+                    json_string += "\"state\":\""+data.4+"\""
+
+                    json_string += "},"
+                }
+            }
+            if(hasMapping){
+            json_string.removeAtIndex(json_string.endIndex.predecessor())
+            }
+            json_string += "]},"
+        }
+         if(states.count > 0){
+            json_string.removeAtIndex(json_string.endIndex.predecessor())
+        }
+        json_string += "],"
+        json_string += "\"transitions\":["
+        
+        
+        for(key, data) in transitions{
+            
+            var methods = getMethodsByTransition(data.0);
+            json_string += "{"
+            json_string += "\"id\":\""+key+"\","
+            json_string += "\"name\":\""+data.3+"\","
+            json_string += "\"fromState\":\""+self.getStateByName(data.4)!+"\","
+            json_string += "\"toState\":\""+self.getStateByName(data.5)!+"\","
+            json_string += "\"methods\":["
+            for i in 0..<methods.count{
+               
+                if(i>0){
+                    json_string += ","
+                }
+                 json_string += "{"
+                json_string += "\"id\":\""+methods[i].1+"\","
+                json_string += "\"name\":\""+methods[i].2+"\""
+                json_string+="}"
+            }
+            json_string += "]"
+            if(data.6 != nil){
+                json_string += ",\"condition_name\":\""+data.6!+"\""
+            }
+            json_string += "},"
+        }
+        
+
+        
+        if(transitions.count > 0){
+            json_string.removeAtIndex(json_string.endIndex.predecessor())
+        }
+       
+        
+        //debugPrint("++++JSON STRING = \(json_string) \nJSON STRING++++");
+         json_string+="]}"
+        
+        return json_string
+    }
+    
+    //TODO: remove eventually- this is bad
+    func getStateByName(name:String)->String?{
+        for(id,state) in self.states{
+            if(state == name){
+                return id;
+            }
+        }
+        return nil
+    }
+    
+    func getMethodsByTransition(name:String)->[(String,String,String,[Any]?)]{
+        var tmethods = [(String,String,String,[Any]?)]();
+        for m in methods {
+            if m.0 == name{
+                tmethods.append(m)
+            }
+        }
+        return tmethods;
+    }
     
     func addCondition(name:String, reference:Any?, referenceName:String?,referenceParentFlag:Bool, relative:Any?, relativeName:String?, relativeParentFlag:Bool, relational:String){
         
@@ -46,20 +156,20 @@ class BehaviorDefinition {
         generators[name] = ("alternate",[values]);
     }
     
-    func addState(stateName:String){
-        states.append(stateName)
+    func addState(stateId:String, stateName:String){
+        states[stateId] = stateName;
     }
 
-    func addMethod(targetTransition:String, targetMethod:String, arguments:[Any]?){
-        methods.append((targetTransition,targetMethod,arguments))
+    func addMethod(targetTransition:String, methodId: String, targetMethod:String, arguments:[Any]?){
+        methods.append((targetTransition,methodId,targetMethod,arguments))
     }
     
-    func addTransition(name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String, fromState:String,toState:String, condition:String?){
-        transitions[name]=((eventEmitter, parentFlag, event, fromState,toState,condition))
+    func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String, fromStateName:String,toStateName:String, condition:String?){
+        transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateName,toStateName,condition))
     }
     
-    func addMapping(referenceProperty:Any?, referenceName:String?, parentFlag:Bool, relativePropertyName:String,targetState:String){
-        mappings.append((referenceProperty,referenceName,parentFlag,relativePropertyName,targetState))
+    func addMapping(id:String, referenceProperty:Any?, referenceName:String?, parentFlag:Bool, relativePropertyName:String,targetState:String){
+        mappings[id] = ((referenceProperty,referenceName,parentFlag,relativePropertyName,targetState))
     }
     
     func addExpression(name:String, emitter1:Any?, operand1Name:String?, parentFlag1:Bool, emitter2:Any?,operand2Name:String?,parentFlag2:Bool,type:String){
@@ -198,7 +308,7 @@ class BehaviorDefinition {
         self.storedExpressions[name] = expression;
     }
     
-    func generateMapping(targetBrush:Brush, data:(Any?,String?,Bool,String,String)){
+    func generateMapping(targetBrush:Brush, id:String, data:(Any?,String?,Bool,String,String)){
         
        // expression (name:String, reference:Any?, referenceName:String?,referenceParentFlag:Bool, relative:Any?, relativeName:String?, relativeParentFlag:Bool, relational:String)
         //mapping (referenceProperty:Any?, referenceName:String?, parentFlag:Bool, relativePropertyName:String,targetState:String)
@@ -207,7 +317,7 @@ class BehaviorDefinition {
         let referenceOperand = operands.0;
         let relativeOperand = operands.1;
         
-        behaviorMapper.createMapping(referenceOperand, relative: targetBrush, relativeProperty: relativeOperand, targetState: data.4)
+        behaviorMapper.createMapping(id, reference: referenceOperand, relative: targetBrush, relativeProperty: relativeOperand, targetState: data.4)
     }
     
     func createBehavior(targetBrush:Brush){
@@ -227,15 +337,15 @@ class BehaviorDefinition {
 
         }
         
-        for state in states{
-            behaviorMapper.createState(targetBrush,stateName:state)
+        for (id,state) in states{
+            behaviorMapper.createState(targetBrush,stateId:id, stateName:state)
 
         }
         
         for (key,transition) in transitions{
             var reference:Any
-            if(transition.0 == nil){
-                if(transition.1){
+            if(transition.1 == nil){
+                if(transition.2){
                     reference = targetBrush.parent!
                 }
                 else{
@@ -243,28 +353,28 @@ class BehaviorDefinition {
                 }
             }
             else{
-                reference = transition.0!;
+                reference = transition.1!;
             }
             let condition:Condition?
-            if((transition.5) != nil){
-                condition = storedConditions[transition.5!]
+            if((transition.6) != nil){
+                condition = storedConditions[transition.6!]
             }
             else{
                 condition = nil
             }
             
-            //(Emitter?,Bool,String,String,String,String?)
-            behaviorMapper.createStateTransition(key,reference:reference as! Emitter, relative: targetBrush, eventName: transition.2, fromState:transition.3,toState:transition.4, condition: condition)
+            
+            behaviorMapper.createStateTransition(key,name: transition.0,reference:reference as! Emitter, relative: targetBrush, eventName: transition.3, fromStateName:transition.4,toStateName:transition.5, condition: condition)
 
         }
         
         for method in methods{
-            behaviorMapper.addMethod(targetBrush,transitionName:method.0,methodName:method.1,arguments:method.2);
+            behaviorMapper.addMethod(targetBrush,transitionName:method.0,methodId:method.1,methodName:method.2,arguments:method.3);
         }
         
         //referenceProperty!,referenceName!,relativePropertyName,targetState
-        for mapping_data in mappings{
-            self.generateMapping(targetBrush,data:mapping_data);
+        for (id, mapping_data) in mappings{
+            self.generateMapping(targetBrush,id:id, data:mapping_data);
         }
 
         

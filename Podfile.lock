@@ -1,18 +1,15 @@
 PODS:
-  - Starscream (2.0.0)
+  - Starscream (1.1.3)
   - SwiftKVC (1.0.0)
-  - SwiftyJSON (2.4.0)
 
 DEPENDENCIES:
-  - Starscream (= 2.0.0)
+  - Starscream
   - SwiftKVC
-  - SwiftyJSON (= 2.4.0)
 
 SPEC CHECKSUMS:
-  Starscream: 947c865596f0d6bb3f0203fee23228ed2d471468
+  Starscream: d662732354b40dd19ed1ece3e3c44c80b536b83c
   SwiftKVC: a431fcc7a809c7a535a472381fdb8b3e8998796c
-  SwiftyJSON: 96918c1bf505efa50c4f72957018dd3452090c9c
 
-PODFILE CHECKSUM: 719de1b8abd581ac7aa288ce6630754eee832326
+PODFILE CHECKSUM: 60b33de9183f7ab68823143591742d29d0f5caa9
 
 COCOAPODS: 1.0.1

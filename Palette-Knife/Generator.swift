@@ -33,7 +33,7 @@ class Interval:Generator{
         else{
             infinite = true;
             self.incrementIndex();
-
+            
         }
     }
     
@@ -153,7 +153,7 @@ class Increment:Generator{
     }
     
     
-
+    
     
 }
 
@@ -177,11 +177,11 @@ class easeInOut:Generator{
         
     }
     /*override func get() -> Float {
-        let v = ((Float(index.get())*inc.get()) + start.get());
-        self.incrementIndex();
-        return v;
-    }*/
-
+     let v = ((Float(index.get())*inc.get()) + start.get());
+     self.incrementIndex();
+     return v;
+     }*/
+    
 }
 
 

@@ -11,14 +11,16 @@
 import Foundation
 import SwiftKVC
 
-class Emitter: Model, Equatable  {
+class Emitter: Observable<Float>, Equatable  {
     
     var events =  [String]()
     var keyStorage=[String:[(String,Condition!)]]()
-    var invalidated = false;
-    var constrained = false;
-    var name = "default"
-  
+
+    init(){
+        super.init(0);
+        self.name = "default"
+    }
+    
     func createKeyStorage(){
         for e in events{
             self.keyStorage[e] = [(String,Condition!)]();

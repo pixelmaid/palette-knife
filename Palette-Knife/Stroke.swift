@@ -95,9 +95,6 @@ struct Segment:Geometry, Equatable {
         return string
     }
     
-    
-    
-    
 }
 
 func ==(lhs: Segment, rhs: Segment) -> Bool {
@@ -176,8 +173,10 @@ class Stroke:TimeSeries, Geometry {
     var segments = [Segment]();
     let id = NSUUID().UUIDString;
     let gCodeGenerator = GCodeGenerator();
+    var parentID: String;
     
-    override init(){
+    init(parentID:String){
+        self.parentID = parentID;
         super.init();
         gCodeGenerator.startNewStroke();
     }

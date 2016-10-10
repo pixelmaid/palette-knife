@@ -14,12 +14,15 @@ class TimeSeries: Emitter{
     var intervalTimer = NSTimer()
     //TODO: this is duplication to facilitate KVC- should be removed/fixed
     var timerTime = Observable<Float>(0);
+    
     override init(){
         timer = NSDate()
         super.init()
         self.events =  ["TIME_INCREMENT"]
         self.createKeyStorage();
         timerTime.name = "time";
+        
+        
     }
     
     func getTimeElapsed()->Float{

@@ -11,6 +11,8 @@
 		5F1896771D4A856F00AEF5F1 /* Generator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F1896761D4A856F00AEF5F1 /* Generator.swift */; };
 		5F451BF31CF7928E0037EA88 /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F451BF21CF7928E0037EA88 /* Line.swift */; };
 		5F6A07EE1D63DCD80047FF56 /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6A07ED1D63DCD80047FF56 /* Matrix.swift */; };
+		5F8454F21D9C50880056C15E /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8454F11D9C50880056C15E /* SwiftyJSON.swift */; };
+		5F8454F71D9C53C50056C15E /* SVGGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8454F61D9C53C50056C15E /* SVGGenerator.swift */; };
 		5F8FEFC91CF5F4E600D2CB0C /* Stylus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFC81CF5F4E600D2CB0C /* Stylus.swift */; };
 		5F8FEFCC1CF5F51900D2CB0C /* BehaviorMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFCB1CF5F51900D2CB0C /* BehaviorMapper.swift */; };
 		5F8FEFD01CF6264A00D2CB0C /* BrushManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFCF1CF6264A00D2CB0C /* BrushManager.swift */; };
@@ -28,7 +30,6 @@
 		5FA4C75C1CDBA47D004A728C /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75B1CDBA47D004A728C /* Point.swift */; };
 		5FA4C75E1CDBA530004A728C /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75D1CDBA530004A728C /* Color.swift */; };
 		5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75F1CDBC5F7004A728C /* Behavior.swift */; };
-		5FCDCF821D908153002BB5B4 /* SVGgenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCDCF811D908153002BB5B4 /* SVGgenerator.swift */; };
 		5FCFDED51CF79B2400CE296B /* Numerical.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCFDED41CF79B2400CE296B /* Numerical.swift */; };
 		5FF5EFAB1D664F22001E1616 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF5EFAA1D664F22001E1616 /* Observable.swift */; };
 		5FF5EFAD1D6661EC001E1616 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF5EFAC1D6661EC001E1616 /* Event.swift */; };
@@ -74,6 +75,8 @@
 		5F6A07E91D63D7B70047FF56 /* Surge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Surge.framework; path = "../Surge/build/Debug-iphoneos/Surge.framework"; sourceTree = "<group>"; };
 		5F6A07EB1D63D8C80047FF56 /* Surge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Surge.framework; path = "../../../../Library/Developer/Xcode/DerivedData/PaletteKnife-arutrzbvctyrwdejkitmjhajtcsj/Build/Products/Debug-iphonesimulator/Surge.framework"; sourceTree = "<group>"; };
 		5F6A07ED1D63DCD80047FF56 /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
+		5F8454F11D9C50880056C15E /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftyJSON.swift; path = "../../../../Downloads/SwiftyJSON-swift2/Source/SwiftyJSON.swift"; sourceTree = "<group>"; };
+		5F8454F61D9C53C50056C15E /* SVGGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SVGGenerator.swift; sourceTree = "<group>"; };
 		5F8FEFC81CF5F4E600D2CB0C /* Stylus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylus.swift; sourceTree = "<group>"; };
 		5F8FEFCB1CF5F51900D2CB0C /* BehaviorMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorMapper.swift; sourceTree = "<group>"; };
 		5F8FEFCF1CF6264A00D2CB0C /* BrushManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrushManager.swift; sourceTree = "<group>"; };
@@ -97,7 +100,6 @@
 		5FA4C75B1CDBA47D004A728C /* Point.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		5FA4C75D1CDBA530004A728C /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		5FA4C75F1CDBC5F7004A728C /* Behavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Behavior.swift; sourceTree = "<group>"; };
-		5FCDCF811D908153002BB5B4 /* SVGgenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SVGgenerator.swift; sourceTree = "<group>"; };
 		5FCFDED41CF79B2400CE296B /* Numerical.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Numerical.swift; sourceTree = "<group>"; };
 		5FF5EFAA1D664F22001E1616 /* Observable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		5FF5EFAC1D6661EC001E1616 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -174,8 +176,8 @@
 		5F8FEFD31CF62F1300D2CB0C /* base */ = {
 			isa = PBXGroup;
 			children = (
+				5F8454F61D9C53C50056C15E /* SVGGenerator.swift */,
 				5F0C97221D6BD726001FC228 /* GCodeGenerator.swift */,
-				5FCDCF811D908153002BB5B4 /* SVGgenerator.swift */,
 				5FF5EFAC1D6661EC001E1616 /* Event.swift */,
 				5FFDAB0C1D234B6100632A26 /* TimeSeries.swift */,
 				5FFDAB0A1D21B7EC00632A26 /* WebTransmitter.swift */,
@@ -190,6 +192,7 @@
 		5FA4C7171CDA7B5B004A728C = {
 			isa = PBXGroup;
 			children = (
+				5F8454F11D9C50880056C15E /* SwiftyJSON.swift */,
 				5FA4C7221CDA7B5B004A728C /* PaletteKnife */,
 				5FA4C7371CDA7B5B004A728C /* PaletteKnifeTests */,
 				5FA4C7421CDA7B5B004A728C /* PaletteKnifeUITests */,
@@ -590,7 +593,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F6A07EE1D63DCD80047FF56 /* Matrix.swift in Sources */,
-				5FCDCF821D908153002BB5B4 /* SVGgenerator.swift in Sources */,
 				5FFF81921D49219700C1349B /* BehaviorDefinition.swift in Sources */,
 				5F1896771D4A856F00AEF5F1 /* Generator.swift in Sources */,
 				5FA4C75A1CDBA1FA004A728C /* Stroke.swift in Sources */,
@@ -610,12 +612,14 @@
 				5F8FEFD21CF62F0700D2CB0C /* Emitter.swift in Sources */,
 				5FFF818E1D42EC8700C1349B /* Expression.swift in Sources */,
 				5FFDAB051D1DFA2500632A26 /* Canvas.swift in Sources */,
+				5F8454F71D9C53C50056C15E /* SVGGenerator.swift in Sources */,
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
 				5FFDAB0B1D21B7EC00632A26 /* WebTransmitter.swift in Sources */,
 				5FCFDED51CF79B2400CE296B /* Numerical.swift in Sources */,
 				5FF5EFAB1D664F22001E1616 /* Observable.swift in Sources */,
 				5F0C97231D6BD726001FC228 /* GCodeGenerator.swift in Sources */,
 				5FA4C7581CDB9EF8004A728C /* Brush.swift in Sources */,
+				5F8454F21D9C50880056C15E /* SwiftyJSON.swift in Sources */,
 				5F8FEFD01CF6264A00D2CB0C /* BrushManager.swift in Sources */,
 				5FA4C7521CDA7C1B004A728C /* CanvasView.swift in Sources */,
 			);

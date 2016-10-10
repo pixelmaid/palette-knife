@@ -13,7 +13,7 @@ class BehaviorDefinition {
     
     var states = [String:String]()
     var expressions = [String:(Any?,String?,Bool,Any?,String?,Bool,String)]()
-    var conditions = [String:(Any?,String?,Bool,Any?,String?,Bool,String)]()
+    var conditions = [(String,Any?,String?,Bool,Any?,String?,Bool,String)]()
     var generators = [String:(String,[Any])]()
     var storedGenerators = [String:Generator]()
     var methods = [(String,String,String,[Any]?)]()
@@ -31,7 +31,12 @@ class BehaviorDefinition {
     }
     
     func toJSON()->String{
-        var json_string = "{\"states\":["
+        var json_string = "{"
+        
+        json_string+="\"name\":\""+self.name+"\","
+        json_string+="\"id\":\""+self.id+"\","
+
+        json_string+="\"states\":["
         
         for (key,name) in states {
             json_string += "{"
@@ -138,7 +143,7 @@ class BehaviorDefinition {
     
     func addCondition(name:String, reference:Any?, referenceName:String?,referenceParentFlag:Bool, relative:Any?, relativeName:String?, relativeParentFlag:Bool, relational:String){
         
-        conditions[name] = (reference,referenceName,referenceParentFlag,relative,relativeName,relativeParentFlag,relational)
+        conditions.append(name,reference,referenceName,referenceParentFlag,relative,relativeName,relativeParentFlag,relational)
         
     }
     
@@ -238,6 +243,14 @@ class BehaviorDefinition {
             if(storedGenerators[data.1!]) != nil{
                 operand1 = storedGenerators[data.1!]!;
             }
+            else if(storedExpressions[data.1!] != nil){
+                operand1 = storedExpressions[data.1!]!;
+
+            }
+            else if(storedConditions[data.1!] != nil){
+                operand1 = storedConditions[data.1!]!;
+
+            }
             else{
                 print("data 1 = \(data.1)")
                 operand1 = (emitter1 as! Model)[data.1!]! as! Observable<Float>
@@ -250,6 +263,14 @@ class BehaviorDefinition {
         if(data.4 != nil){
             if(storedGenerators[data.4!]) != nil{
                 operand2 = storedGenerators[data.4!]!;
+            }
+            else if(storedExpressions[data.4!] != nil){
+                operand2 = storedExpressions[data.4!]!;
+                
+            }
+            else if(storedConditions[data.4!] != nil){
+                operand2 = storedConditions[data.4!]!;
+                
             }
             else{
                 operand2 = (emitter2 as! Model)[data.4!]! as! Observable<Float>
@@ -264,12 +285,14 @@ class BehaviorDefinition {
         
     }
     
-    func generateCondition(targetBrush:Brush, name:String, data:(Any?,String?,Bool,Any?,String?,Bool,String)){
-        let operands = generateOperands(targetBrush, data:data)
+    func generateCondition(targetBrush:Brush, data:(String, Any?,String?,Bool,Any?,String?,Bool,String)){
+        let name = data.0;
+        //TODO: THIS IS GARBAGE CODE. Find a better solution
+        let operands = generateOperands(targetBrush, data:(data.1,data.2,data.3,data.4,data.5,data.6,data.7))
         let operand1 = operands.0;
         let operand2 = operands.1;
 
-        let condition = Condition(a: operand1, b: operand2, relational: data.6)
+        let condition = Condition(a: operand1, b: operand2, relational: data.7)
         storedConditions[name] = condition;
 
     }
@@ -328,8 +351,8 @@ class BehaviorDefinition {
             self.generateGenerator(key,data:generator_data)
         }
 
-        for (key, condition_data) in conditions{
-            self.generateCondition(targetBrush,name:key,data:condition_data)
+        for i in 0..<conditions.count{
+            self.generateCondition(targetBrush,data:conditions[i])
         }
         
         for (key,expression_data) in expressions{

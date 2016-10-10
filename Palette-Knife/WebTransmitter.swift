@@ -13,4 +13,5 @@ protocol WebTransmitter{
     var name: String { get set }
     var id:String { get set }
     var transmitEvent:Event<(String)>{get set}
+    var initEvent:Event<(WebTransmitter,String)>{get set}
 }

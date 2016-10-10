@@ -26,11 +26,13 @@ class Stylus: TimeSeries, WebTransmitter {
     var dx:Observable<Float>
     var dy:Observable<Float>
     var prevTime = Float(0);
-    var penDown = false;
+    var penDown = Observable<Float>(0);
     var distance = Float(0);
     var forceSub = Float(1);
     var id = NSUUID().UUIDString;
     var transmitEvent = Event<(String)>()
+    var initEvent = Event<(WebTransmitter,String)>()
+
     var constraintTransmitComplete = true;
     var time = Observable<Float>(0)
     var moveDist = Float(0);
@@ -116,7 +118,7 @@ class Stylus: TimeSeries, WebTransmitter {
             }
         }
         
-        self.penDown = false
+        self.penDown.set(0);
         self.speed = 0;
         self.transmitData();
         
@@ -138,7 +140,7 @@ class Stylus: TimeSeries, WebTransmitter {
             
         }
         self.delta.set(0,y:0)
-        self.penDown = true
+        self.penDown.set(1);
         self.prevTime = self.getTimeElapsed();
         self.speed = 0;
         self.transmitData();

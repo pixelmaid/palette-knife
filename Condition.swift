@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Condition {
+class Condition:Observable<Float> {
     var referenceA:Observable<Float>
     var referenceB:Observable<Float>
     var relational:String
@@ -18,6 +18,7 @@ class Condition {
         self.referenceA = a
         self.referenceB = b
         self.relational  = relational;
+        super.init(0);
     }
     
     func evaluate()->Bool{
@@ -44,14 +45,23 @@ class Condition {
         case "within":
             let interval = self.referenceB as! Interval
             let value = interval.get();
+            print("interval val =\(value), time val = \(referenceA.get())")
             if(value > 0){
                 if(referenceA.get()>value){
                     interval.incrementIndex();
+                    print("interval returning true")
                     return true;
                 }
             }
             return false;
-            
+          case "&&":
+            let a = (referenceA as! Condition).evaluate();
+            let b = (referenceB as! Condition).evaluate();
+            print("&& eval \(a,b)");
+            if(a && b){
+                return true;
+            }
+            return false;
         default:
             return false;
         }

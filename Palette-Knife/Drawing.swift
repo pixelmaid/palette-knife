@@ -19,6 +19,8 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     var bakedStrokes = [Stroke]();
     // var geometry = [Geometry]();
     var transmitEvent = Event<(String)>()
+    var initEvent = Event<(WebTransmitter,String)>()
+
     let gCodeGenerator = GCodeGenerator();
     let svgGenerator = SVGGenerator();
     

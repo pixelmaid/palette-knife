@@ -63,8 +63,23 @@ class SubExpression:Expression{
 class MultExpression:Expression{
     
     override func setHandler(data:(String,Float,Float),key:String){
-        self.set(operand1.get() * operand2.get())
+        let a = operand1.get();
+        let b = operand2.get();
+        let c = a*b
+        self.set(c)
     }
+    
+    override func get()->Float{
+        let a = operand1.get();
+        let b = operand2.get();
+        let c = a*b
+
+        print("returning mult value = \(a), * \(b) = \(c)")
+
+        return c;
+    }
+    
+    
     
  
 }
@@ -95,6 +110,8 @@ class LogiGrowthExpression:Expression{
         let val = a/(1+b*pow(2.7182818284590451,x*k))
         self.set(val + operand2.get());
     }
+    
+    
     
 }
 

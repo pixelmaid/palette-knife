@@ -163,28 +163,40 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         
         let branchBehavior = BehaviorDefinition(id:NSUUID().UUIDString,name:"branch")
         defaultSetup(branchBehavior);
-        branchBehavior.addInterval("timeInterval",inc:0.005,times:nil)
+        
+        branchBehavior.addState(NSUUID().UUIDString,stateName:"pause");
+        branchBehavior.addInterval("timeInterval",inc:0.1,times:nil)
 
-        branchBehavior.addState(NSUUID().UUIDString,stateName: "die");
+        //branchBehavior.addState(NSUUID().UUIDString,stateName: "die");
         
-        branchBehavior.addCondition("timeLimitCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: Observable<Float>(1), relativeName: nil, relativeParentFlag: false, relational: ">")
+        //branchBehavior.addCondition("timeLimitCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: Observable<Float>(2.25), relativeName: nil, relativeParentFlag: false, relational: ">")
         
-        branchBehavior.addTransition(NSUUID().UUIDString, name: "destroyTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "die", condition: "timeLimitCondition")
+        //branchBehavior.addTransition(NSUUID().UUIDString, name: "destroyTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "die", condition: "timeLimitCondition")
         
-        branchBehavior.addMethod("destroyTransition", methodId: NSUUID().UUIDString, targetMethod: "destroy", arguments: nil)
+       // branchBehavior.addMethod("destroyTransition", methodId: NSUUID().UUIDString, targetMethod: "destroy", arguments: nil)
         
         branchBehavior.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments:nil)
         branchBehavior.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: ["parent"])
         
         
+   branchBehavior.addExpression("xDeltaExp", emitter1: nil, operand1Name: "xBuffer", parentFlag1: true, emitter2: Observable<Float>(0.85), operand2Name: nil, parentFlag2: false, type: "mult")
         
-        branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "xBuffer", parentFlag: true, relativePropertyName: "dx", targetState: "default")
-       branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "yBuffer", parentFlag: true, relativePropertyName: "dy", targetState: "default")
         
-        branchBehavior.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
-
+    branchBehavior.addExpression("yDeltaExp", emitter1: nil, operand1Name: "yBuffer", parentFlag1: true, emitter2: Observable<Float>(0.85), operand2Name: nil, parentFlag2: false, type: "mult")
         
-        branchBehavior.addTransition(NSUUID().UUIDString, name: "tickTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "default", condition: "incrementCondition")
+        //branchBehavior.addExpression("weightDeltaExp", emitter1: nil, operand1Name: "weightBuffer", parentFlag1: true, emitter2: Observable<Float>(0.85), operand2Name: nil, parentFlag2: false, type: "mult")
+        
+        
+    branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "xDeltaExp", parentFlag: false, relativePropertyName: "dx", targetState: "default")
+    branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "yDeltaExp", parentFlag: false, relativePropertyName: "dy", targetState: "default")
+        
+      // branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "weightDeltaExp", parentFlag: false, relativePropertyName: "weight", targetState: "default")
+        
+    branchBehavior.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
+        
+       branchBehavior.addTransition(NSUUID().UUIDString, name: "completeTransition", eventEmitter: nil, parentFlag: false, event: "STATE_COMPLETE", fromStateName: "default", toStateName: "pause", condition: nil)
+        
+        branchBehavior.addTransition(NSUUID().UUIDString, name: "tickTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "pause", toStateName: "default", condition: "incrementCondition")
         
         
         
@@ -192,31 +204,38 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         let rootBehavior = BehaviorDefinition(id:NSUUID().UUIDString,name:"root");
         defaultSetup(rootBehavior);
         
-        rootBehavior.addInterval("timeInterval",inc:1,times:nil)
+        rootBehavior.addInterval("timeInterval",inc:2,times:nil)
 
        
+        rootBehavior.addCondition("stylusDownCondition", reference:stylus, referenceName: "penDown",referenceParentFlag: false, relative:Observable<Float>(1), relativeName:nil,relativeParentFlag: false, relational: "==")
+        
         rootBehavior.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
 
+        rootBehavior.addCondition("stylusANDIncrement",reference: nil, referenceName: "stylusDownCondition",referenceParentFlag: false, relative:nil, relativeName: "incrementCondition",relativeParentFlag: false, relational: "&&");
         
         rootBehavior.addTransition(NSUUID().UUIDString, name:"stylusDownT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromStateName: "default", toStateName: "default", condition:nil)
         
-        rootBehavior.addTransition(NSUUID().UUIDString, name:"stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateName: "default", toStateName: "default", condition:nil)
-        
         rootBehavior.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
         rootBehavior.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments: nil)
-        
-        
+    
         rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dx", parentFlag: false, relativePropertyName: "dx", targetState: "default")
        
         rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
         
-        rootBehavior.addTransition(NSUUID().UUIDString, name: "spawnTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "default", condition: "incrementCondition")
+       
+        
+        rootBehavior.addTransition(NSUUID().UUIDString, name: "spawnTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "default", condition: "stylusANDIncrement")
         
         rootBehavior.addMethod("spawnTransition", methodId: NSUUID().UUIDString, targetMethod: "spawn", arguments: ["branchBehavior",branchBehavior,1])
-        
-        // rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
+       
+       // rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
         
         let rootBehaviorBrush = Brush(name:"rootBehaviorBrush",behaviorDef: rootBehavior, parent:nil, canvas:self.currentCanvas!)
+        
+        self.socketManager.sendBehaviorData(branchBehavior.toJSON());
+       self.socketManager.sendBehaviorData(rootBehavior.toJSON());
+
+     socketManager.initAction(rootBehaviorBrush,type:"brush_init");
         
         
     }

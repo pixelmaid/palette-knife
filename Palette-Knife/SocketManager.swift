@@ -11,8 +11,8 @@ import Starscream
 
 //central manager for all requests to web socket
 class SocketManager: WebSocketDelegate{
-    //var socket = WebSocket(url: NSURL(string: "ws://pure-beach-75578.herokuapp.com/")!, protocols: ["ipad_client"])
-    var socket = WebSocket(url: NSURL(string: "ws://localhost:5000")!, protocols: ["ipad_client"])
+  //  var socket = WebSocket(url: NSURL(string: "ws://pure-beach-75578.herokuapp.com/")!, protocols: ["ipad_client"])
+var socket = WebSocket(url: NSURL(string: "ws://localhost:5000")!, protocols: ["ipad_client"])
     var socketEvent = Event<(String)>();
     var firstConnection = true;
     var targets = [WebTransmitter](); //objects which can send or recieve data
@@ -57,6 +57,7 @@ class SocketManager: WebSocketDelegate{
     
     func websocketDidReceiveMessage(ws: WebSocket, text: String) {
 
+      
         if(dataQueue.count>0){
 
             socket.writeString(dataQueue.removeAtIndex(0));
@@ -105,9 +106,21 @@ class SocketManager: WebSocketDelegate{
         let data = "{\"type\":\""+type+"\",\"id\":\""+target.id+"\",\"name\":\""+target.name+"\"}";
         targets.append(target);
         target.transmitEvent.addHandler(self,handler: SocketManager.dataGenerated, key:dataKey);
+        
+        target.initEvent.addHandler(self,handler: SocketManager.initEvent, key:dataKey);
+        
         self.dataGenerated(data,key:"_");
+        if(type == "brush_init"){
+            let b = target as! Brush
+            b.setupTransition();
+        }
 
         
+    }
+    
+    func initEvent(data:(WebTransmitter,String), key:String){
+        print("init event raised for \(data.0.name)");
+        self.initAction(data.0, type: data.1)
     }
     
     func dataGenerated(data:(String), key:String){
@@ -126,7 +139,7 @@ class SocketManager: WebSocketDelegate{
         let string = "{\"type\":\"behavior_data\",\"data\":"+data+"}"
         if(transmitComplete){
             transmitComplete = false;
-            print("sending data")
+            print("sending data \(data)")
             socket.writeString(string)
             
         }

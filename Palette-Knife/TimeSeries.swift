@@ -48,10 +48,12 @@ class TimeSeries: Emitter{
         self.timerTime.set(t)
         for key in keyStorage["TIME_INCREMENT"]!
         {
- 
+            
             if(key.1 != nil){
                 let condition = key.1;
-                if(condition.evaluate()){
+                var evaluation = condition.evaluate();
+                print("timer evaluation \(evaluation, self.name)");
+                if(evaluation){
                     
                     NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INCREMENT"])
                 }

@@ -85,6 +85,7 @@ class CircularBuffer:Generator{
     var bufferEvent = Event<(String)>()
     func push(v: Float){
         val.append(v)
+        
     }
     
     func incrementIndex(){

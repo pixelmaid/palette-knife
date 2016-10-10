@@ -17,6 +17,7 @@ class Canvas: WebTransmitter, Hashable{
     var drawings = [Drawing]()
     var currentDrawing:Drawing?
     var transmitEvent = Event<(String)>()
+    var initEvent = Event<(WebTransmitter,String)>()
 
     var geometryModified = Event<(Geometry,String,String)>()
 

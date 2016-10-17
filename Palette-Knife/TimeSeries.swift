@@ -10,13 +10,14 @@ import Foundation
 
 class TimeSeries: Emitter{
     
-    var timer:NSDate
-    var intervalTimer = NSTimer()
+    var timer:NSDate!
+    var intervalTimer:NSTimer!
     //TODO: this is duplication to facilitate KVC- should be removed/fixed
     var timerTime = Observable<Float>(0);
     
     override init(){
         timer = NSDate()
+
         super.init()
         self.events =  ["TIME_INCREMENT"]
         self.createKeyStorage();
@@ -32,7 +33,11 @@ class TimeSeries: Emitter{
     }
     
     func startInterval(){
-        intervalTimer  = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: #selector(TimeSeries.timerIntervalCallback), userInfo: nil, repeats: true)
+        if(intervalTimer == nil){
+        timer = NSDate()
+        intervalTimer  = NSTimer.scheduledTimerWithTimeInterval(0.0001, target: self, selector: #selector(TimeSeries.timerIntervalCallback), userInfo: nil, repeats: true)
+        }
+        
     }
     
     override func destroy(){
@@ -44,7 +49,7 @@ class TimeSeries: Emitter{
     {
         let currentTime = NSDate();
         let t = Float(currentTime.timeIntervalSinceDate(timer))
-        
+        print("timer interval callback")
         self.timerTime.set(t)
         for key in keyStorage["TIME_INCREMENT"]!
         {

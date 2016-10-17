@@ -15,17 +15,25 @@ class GCodeGenerator {
     var x = Float(0)
     var y = Float(0)
     var z = Float(0)
-    let retractHeight = Float(0.59)
+    static let retractHeight = Float(0.59)
     let clearanceHeight = Float(0.6)
     let feedHeight = Float(0)
-    let cuttingFeedRate = Float(7)
+    let cuttingFeedRate = Float(8)
     let plungingFeedRate = Float(2)
     let leadInOutFeedRate = Float(0.6562)
     let depthLimit = Float(-0.31)
-    let inX = Float(10.35);
-    let pX = Float(1366);
-    let inY = Float(7.76);
-    let pY = Float(1024);
+    static let inX = Float(10.35);
+    static let pX = Float(1366);
+    static let inY = Float(7.76);
+    static let pY = Float(1024);
+    
+    
+    static var fabricatorX: Float!
+    static var fabricatorY: Float!
+    static var fabricatorZ: Float!
+    static var fabricatorStatus = Observable<Float>(32)
+    
+    
     var newStroke = false;
     init(){
         //TODO: set vc here
@@ -36,7 +44,7 @@ class GCodeGenerator {
     }
     
     func end()->String{
-        var s = jog3(self.x,y: self.y,z: self.retractHeight);
+        var s = jog3(self.x,y: self.y,z: GCodeGenerator.retractHeight);
         s += self.jogHome()+"END"
         return s
     }
@@ -71,14 +79,14 @@ class GCodeGenerator {
     }
     
     func drawSegment(segment:Segment)->[String]{
-        let _x = Numerical.map(segment.point.x.get(), istart:0, istop: self.pX, ostart: self.inX, ostop: 0)
+        let _x = Numerical.map(segment.point.x.get(), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
         
-        let _y = Numerical.map(segment.point.y.get(), istart:0, istop:self.pY, ostart:  self.inY, ostop: 0 )
+        let _y = Numerical.map(segment.point.y.get(), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
         
         let _z = Numerical.map(segment.diameter, istart: 0.2, istop: 42, ostart: 0, ostop: self.depthLimit)
 
         if(self.newStroke){
-            source.append(jog3(_x,y:_y,z: self.retractHeight));
+            source.append(jog3(_x,y:_y,z: GCodeGenerator.retractHeight));
             source.append(jog3(_x,y:_y,z: 0));
             source.append(moveSpeedSet(self.cuttingFeedRate,z:self.plungingFeedRate))
             self.newStroke = false;
@@ -91,11 +99,11 @@ class GCodeGenerator {
     func endSegment(segment:Segment)->String{
         var s = ""
         
-        let _x = Numerical.map(segment.point.x.get(), istart:0, istop: self.pX, ostart: self.inX, ostop: 0)
+        let _x = Numerical.map(segment.point.x.get(), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
         
-        let _y = Numerical.map(segment.point.y.get(), istart:0, istop:self.pY, ostart:  self.inY, ostop: 0 )
+        let _y = Numerical.map(segment.point.y.get(), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
         
-        s += jog3(_x,y:_y,z: self.retractHeight);
+        s += jog3(_x,y:_y,z: GCodeGenerator.retractHeight);
         
         
         return s

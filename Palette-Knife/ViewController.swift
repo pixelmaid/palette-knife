@@ -15,12 +15,22 @@ var stylus = Stylus(x: 0,y:0,angle:0,force:0)
 class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     
     // MARK: Properties
+
     
+    @IBOutlet weak var fabricatorView: FabricatorView!
     @IBOutlet weak var canvasView: CanvasView!
-    @IBOutlet weak var new_canvas: UIButton!
-    @IBOutlet weak var new_drawing: UIButton!
+    //@IBOutlet weak var new_canvas: UIButton!
+    //@IBOutlet weak var new_drawing: UIButton!
     @IBOutlet weak var clearAll: UIButton!
-    @IBOutlet weak var gcodeExport: UIButton!
+    //@IBOutlet weak var gcodeExport: UIButton!
+    
+    @IBOutlet weak var xOutput: UITextField!
+    
+    @IBOutlet weak var yOutput: UITextField!
+   
+    @IBOutlet weak var zOutput: UITextField!
+    
+    @IBOutlet weak var statusOutput: UITextField!
     
     var brushes = [String:Brush]()
     var socketManager = SocketManager();
@@ -38,7 +48,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         clearAll.addTarget(self, action: #selector(ViewController.clearClicked(_:)), forControlEvents: .TouchUpInside)
         
         
-        gcodeExport.addTarget(self, action: #selector(ViewController.gcodeExportClicked(_:)), forControlEvents: .TouchUpInside)
+        //gcodeExport.addTarget(self, action: #selector(ViewController.gcodeExportClicked(_:)), forControlEvents: .TouchUpInside)
         
         
         
@@ -53,23 +63,47 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     }
     
     //event handler for socket connections
-    func socketHandler(data:(String), key:String){
-        switch(data){
+    func socketHandler(data:(String,JSON?), key:String){
+        switch(data.0){
         case "first_connection":
             self.initCanvas();
             //self.initStandardBrush();
             //self.initTestBrushes();
-            self.initFractalBrush();
+            //self.initFractalBrush();
+            self.initBakeBrush();
             break;
         case "disconnected":
             break;
         case "connected":
             break
+        case "fabricator_data":
+            let json = data.1! as JSON;
+            let x = json["x"].stringValue;
+            let y = json["y"].stringValue;
+
+            let z = json["z"].stringValue;
+
+            let status = json["status"].stringValue;
+
+            self.xOutput.text = x;
+            self.yOutput.text = y;
+            self.zOutput.text = z;
+            self.statusOutput.text = status;
+            self.fabricatorView.drawFabricatorPosition(Float(x)!, y: Float(y)!, z: Float(z)!)
+            
+            GCodeGenerator.fabricatorX = Float(x);
+            GCodeGenerator.fabricatorY = Float(y);
+            GCodeGenerator.fabricatorZ = Float(z);
+            GCodeGenerator.fabricatorStatus.set(Float(status)!);
+
+
+            break;
         default:
             break
         }
         
     }
+
     
     func clearClicked(sender: AnyObject?) {
         canvasView.clear()
@@ -132,31 +166,70 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         
     }
     
-    func initStandardBrush(){
-        let b1 = BehaviorDefinition(id:NSUUID().UUIDString, name:"b1")
+    func initStandardTemplate(name:String)->BehaviorDefinition{
+        let b = BehaviorDefinition(id:NSUUID().UUIDString, name:name)
         
-        defaultSetup(b1);
+        defaultSetup(b);
         
-        b1.addTransition(NSUUID().UUIDString, name:"stylusDownT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromStateName: "default", toStateName: "default", condition:nil)
+        b.addTransition(NSUUID().UUIDString, name:"stylusDownT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromStateName: "default", toStateName: "default", condition:nil)
         
-          b1.addTransition(NSUUID().UUIDString, name:"stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateName: "default", toStateName: "default", condition:nil)
+        b.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
+        b.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments: nil)
         
-        b1.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
-        b1.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments: nil)
+        b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dx", parentFlag: false, relativePropertyName: "dx", targetState: "default")
+        b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
+        b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
+        
+        return b;
+
+    }
+    
+    func initSpawnTemplate(name:String)->BehaviorDefinition{
+        let b = BehaviorDefinition(id:NSUUID().UUIDString,name: name)
+        defaultSetup(b);
+   
+        b.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments:nil)
+        b.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: ["parent"])
+        return b;
+    }
+    
+    func initBakeBrush(){
+        let b1 = initStandardTemplate("b1");
+        
+        
+        b1.addTransition(NSUUID().UUIDString, name:"stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateName: "default", toStateName: "default", condition:nil)
+        
         
         b1.addMethod("stylusUpT", methodId:NSUUID().UUIDString, targetMethod: "bake", arguments: nil)
 
-        b1.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dx", parentFlag: false, relativePropertyName: "dx", targetState: "default")
-        b1.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
-       // b1.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
+        b1.addMethod("stylusDownT",methodId:NSUUID().UUIDString,targetMethod: "jogTo", arguments: [stylus.position])
         
         let b1_brush = Brush(name:"b1",behaviorDef: b1, parent:nil, canvas:self.currentCanvas!)
         
         
         self.socketManager.sendBehaviorData(b1.toJSON());
+
         socketManager.initAction(b1_brush,type:"brush_init");
 
         
+    }
+    
+    func initDripBrush(){
+        let b1 = initStandardTemplate("b1");
+        
+        b1.addInterval("timeInterval",inc:1,times:nil)
+        b1.addTransition(NSUUID().UUIDString, name:"spawnTransition", eventEmitter: stylus, parentFlag:false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "default", condition:"nil")
+        
+        var b2 = initSpawnTemplate("b2");
+        
+        let b1_brush = Brush(name:"b1",behaviorDef: b1, parent:nil, canvas:self.currentCanvas!)
+        
+        
+        self.socketManager.sendBehaviorData(b1.toJSON());
+        self.socketManager.sendBehaviorData(b2.toJSON());
+        
+        socketManager.initAction(b1_brush,type:"brush_init");
+
     }
     
     func initFractalBrush(){
@@ -165,32 +238,50 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         defaultSetup(branchBehavior);
         
         branchBehavior.addState(NSUUID().UUIDString,stateName:"pause");
-        branchBehavior.addInterval("timeInterval",inc:0.1,times:nil)
+        branchBehavior.addState(NSUUID().UUIDString,stateName:"spawnEnd");
+        
+        
+        branchBehavior.addCondition("spawnCondition", reference: nil, referenceName: "ancestors", referenceParentFlag: false, relative: Observable<Float>(2), relativeName: nil, relativeParentFlag: false, relational: "<")
 
-        //branchBehavior.addState(NSUUID().UUIDString,stateName: "die");
+        branchBehavior.addInterval("timeInterval",inc:0.00008,times:nil)
+
+        branchBehavior.addState(NSUUID().UUIDString,stateName: "die");
         
-        //branchBehavior.addCondition("timeLimitCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: Observable<Float>(2.25), relativeName: nil, relativeParentFlag: false, relational: ">")
+        branchBehavior.addCondition("timeLimitCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: Observable<Float>(1.5), relativeName: nil, relativeParentFlag: false, relational: ">")
         
-        //branchBehavior.addTransition(NSUUID().UUIDString, name: "destroyTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "die", condition: "timeLimitCondition")
         
-       // branchBehavior.addMethod("destroyTransition", methodId: NSUUID().UUIDString, targetMethod: "destroy", arguments: nil)
+        branchBehavior.addTransition(NSUUID().UUIDString, name: "destroyTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "pause", toStateName: "die", condition: "timeLimitCondition")
+        
+        branchBehavior.addTransition(NSUUID().UUIDString, name: "defaultdestroyTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "die", condition: "timeLimitCondition")
+
+        
+      // branchBehavior.addMethod("destroyTransition", methodId: NSUUID().UUIDString, targetMethod: "destroy", arguments: nil)
+        
+       // branchBehavior.addMethod("defaultdestroyTransition", methodId: NSUUID().UUIDString, targetMethod: "destroy", arguments: nil)
+
+
+        branchBehavior.addTransition(NSUUID().UUIDString, name:"spawnTransition" , eventEmitter: nil, parentFlag: false, event: "STATE_COMPLETE", fromStateName: "die", toStateName: "spawnEnd", condition: "spawnCondition")
+        
+        branchBehavior.addMethod("spawnTransition", methodId: NSUUID().UUIDString, targetMethod: "spawn", arguments: ["branchBehavior",branchBehavior,2])
         
         branchBehavior.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments:nil)
         branchBehavior.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: ["parent"])
+        branchBehavior.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "startInterval", arguments:nil)
+
         
         
-   branchBehavior.addExpression("xDeltaExp", emitter1: nil, operand1Name: "xBuffer", parentFlag1: true, emitter2: Observable<Float>(0.85), operand2Name: nil, parentFlag2: false, type: "mult")
+   branchBehavior.addExpression("xDeltaExp", emitter1: nil, operand1Name: "xBuffer", parentFlag1: true, emitter2: Observable<Float>(0.999), operand2Name: nil, parentFlag2: false, type: "mult")
         
         
-    branchBehavior.addExpression("yDeltaExp", emitter1: nil, operand1Name: "yBuffer", parentFlag1: true, emitter2: Observable<Float>(0.85), operand2Name: nil, parentFlag2: false, type: "mult")
+    branchBehavior.addExpression("yDeltaExp", emitter1: nil, operand1Name: "yBuffer", parentFlag1: true, emitter2: Observable<Float>(0.999), operand2Name: nil, parentFlag2: false, type: "mult")
         
-        //branchBehavior.addExpression("weightDeltaExp", emitter1: nil, operand1Name: "weightBuffer", parentFlag1: true, emitter2: Observable<Float>(0.85), operand2Name: nil, parentFlag2: false, type: "mult")
+branchBehavior.addExpression("weightDeltaExp", emitter1: nil, operand1Name: "weightBuffer", parentFlag1: true, emitter2: Observable<Float>(0.65), operand2Name: nil, parentFlag2: false, type: "mult")
         
         
     branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "xDeltaExp", parentFlag: false, relativePropertyName: "dx", targetState: "default")
     branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "yDeltaExp", parentFlag: false, relativePropertyName: "dy", targetState: "default")
         
-      // branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "weightDeltaExp", parentFlag: false, relativePropertyName: "weight", targetState: "default")
+     // branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "weightDeltaExp", parentFlag: false, relativePropertyName: "weight", targetState: "default")
         
     branchBehavior.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
         
@@ -204,7 +295,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         let rootBehavior = BehaviorDefinition(id:NSUUID().UUIDString,name:"root");
         defaultSetup(rootBehavior);
         
-        rootBehavior.addInterval("timeInterval",inc:2,times:nil)
+        rootBehavior.addInterval("timeInterval",inc:3,times:nil)
 
        
         rootBehavior.addCondition("stylusDownCondition", reference:stylus, referenceName: "penDown",referenceParentFlag: false, relative:Observable<Float>(1), relativeName:nil,relativeParentFlag: false, relational: "==")
@@ -217,20 +308,23 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         
         rootBehavior.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
         rootBehavior.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments: nil)
+         rootBehavior.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "startInterval", arguments: nil)
     
         rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dx", parentFlag: false, relativePropertyName: "dx", targetState: "default")
        
         rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
         
-       
+        //rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
+
         
         rootBehavior.addTransition(NSUUID().UUIDString, name: "spawnTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "default", condition: "stylusANDIncrement")
         
-        rootBehavior.addMethod("spawnTransition", methodId: NSUUID().UUIDString, targetMethod: "spawn", arguments: ["branchBehavior",branchBehavior,1])
+        rootBehavior.addMethod("spawnTransition", methodId: NSUUID().UUIDString, targetMethod: "spawn", arguments: ["branchBehavior",branchBehavior,2])
        
-       // rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
         
         let rootBehaviorBrush = Brush(name:"rootBehaviorBrush",behaviorDef: rootBehavior, parent:nil, canvas:self.currentCanvas!)
+       
+        rootBehaviorBrush.strokeColor.g = 255;
         
         self.socketManager.sendBehaviorData(branchBehavior.toJSON());
        self.socketManager.sendBehaviorData(rootBehavior.toJSON());
@@ -364,7 +458,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
                 let prevSeg = seg.getPreviousSegment()
                 
                 if(prevSeg != nil){
-                    canvasView.drawPath(prevSeg!.point,tP: seg.point, w:seg.diameter, c:Color(r:0,g:0,b:0))
+                    canvasView.drawPath(prevSeg!.point,tP: seg.point, w:seg.diameter, c:seg.color)
                 }
                 
                 break

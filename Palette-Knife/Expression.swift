@@ -69,6 +69,7 @@ class MultExpression:Expression{
         self.set(c)
     }
     
+    //TODO: need to fix this- expressions should either be push or pull but not both...
     override func get()->Float{
         let a = operand1.get();
         let b = operand2.get();

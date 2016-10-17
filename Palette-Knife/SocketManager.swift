@@ -11,9 +11,9 @@ import Starscream
 
 //central manager for all requests to web socket
 class SocketManager: WebSocketDelegate{
-  //  var socket = WebSocket(url: NSURL(string: "ws://pure-beach-75578.herokuapp.com/")!, protocols: ["ipad_client"])
-var socket = WebSocket(url: NSURL(string: "ws://localhost:5000")!, protocols: ["ipad_client"])
-    var socketEvent = Event<(String)>();
+    var socket = WebSocket(url: NSURL(string: "ws://pure-beach-75578.herokuapp.com/")!, protocols: ["drawing"])
+//var socket = WebSocket(url: NSURL(string: "ws://localhost:5000")!, protocols: ["ipad_client"])
+    var socketEvent = Event<(String,JSON?)>();
     var firstConnection = true;
     var targets = [WebTransmitter](); //objects which can send or recieve data
     var startTime:NSDate?
@@ -37,10 +37,10 @@ var socket = WebSocket(url: NSURL(string: "ws://localhost:5000")!, protocols: ["
         //send name of client
         socket.writeString("{\"name\":\"ipad\"}")
         if(firstConnection){
-            socketEvent.raise(("first_connection"));
+            socketEvent.raise(("first_connection",nil));
         }
         else{
-            socketEvent.raise("connected");
+            socketEvent.raise(("connected",nil));
         }
     }
     
@@ -51,13 +51,14 @@ var socket = WebSocket(url: NSURL(string: "ws://localhost:5000")!, protocols: ["
             print("websocket disconnected")
 
         }
-        socketEvent.raise("disconnected");
+        socketEvent.raise(("disconnected",nil));
 
     }
     
     func websocketDidReceiveMessage(ws: WebSocket, text: String) {
 
       
+        if(text == "init_data_recieved" || text == "message recieved"){
         if(dataQueue.count>0){
 
             socket.writeString(dataQueue.removeAtIndex(0));
@@ -66,6 +67,16 @@ var socket = WebSocket(url: NSURL(string: "ws://localhost:5000")!, protocols: ["
             print("all messages sent \(text)")
 
             transmitComplete = true;
+        }
+        }
+        else{
+           // print("message = \(text)")
+            if let dataFromString = text.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false) {
+                let json = JSON(data: dataFromString)
+                print("json=\(json)")
+                 socketEvent.raise(("fabricator_data",json))
+                
+            }
         }
     }
     

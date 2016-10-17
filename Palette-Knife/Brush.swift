@@ -13,7 +13,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var children = [Brush]();
     var parent: Brush?
     var lastSpawned = [Brush]();
-    
+    let gCodeGenerator = GCodeGenerator();
     //dictionary to store expressions for emitter->action handlers
     var states = [String:State]();
     var transitions = [String:StateTransition]();
@@ -22,7 +22,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var childHandlers = [Brush:[Disposable]]()
     
     //geometric/stylistic properties
-    var strokeColor = Color(r:0,g:0,b:0);
+    var strokeColor = Color(r: 0, g: 0, b: 0);
     var fillColor = Color(r:0,g:0,b:0);
     var weight = Observable<Float>(5.0)
     var reflectY = Observable<Float>(0)
@@ -34,7 +34,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var xBuffer = CircularBuffer()
     var yBuffer = CircularBuffer()
     var bufferKey = NSUUID().UUIDString;
-
+    
     var weightBuffer = Buffer()
     var origin = Point(x:0,y:0)
     var x:Observable<Float>
@@ -47,7 +47,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var angle = Observable<Float>(0)
     var bufferLimitX = Observable<Float>(0)
     var bufferLimitY = Observable<Float>(0)
-
+    
     //event Handler wrapper for draw updates
     var drawKey = NSUUID().UUIDString;
     
@@ -55,7 +55,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var geometryModified = Event<(Geometry,String,String)>()
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
-
+    
     let removeMappingEvent = Event<(Brush,String,Observable<Float>)>()
     let removeTransitionEvent = Event<(Brush,String,Emitter)>()
     
@@ -64,6 +64,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     let behavior_id:String?
     var matrix = Matrix();
     var index = Observable<Float>(0) //stores index of child
+    var ancestors = Observable<Float>(0);
+    
+    var jogHandlerKey:String
+    var jogPoint:Point!
     
     init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
         self.x = self.position.x;
@@ -75,6 +79,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         delta.parentName = "brush"
         self.currentState = "start"
         self.behavior_id = behaviorDef!.id;
+        
+        //key for listening to status change events
+        self.jogHandlerKey = NSUUID().UUIDString;
+        
         super.init()
         self.name = name;
         self.time = self.timerTime
@@ -88,7 +96,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         //self.createState(currentState);
         
         //self.addStateTransition(NSUUID().UUIDString, name:"setup", reference: self, fromState: nil, toState: "default")
-       
+        
         //setup listener for delta observable
         self.delta.didChange.addHandler(self, handler:Brush.deltaChange, key:deltaKey)
         self.xBuffer.bufferEvent.addHandler(self, handler: Brush.deltaBufferLimitReached, key: bufferKey)
@@ -101,19 +109,18 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         if(behaviorDef != nil){
             behaviorDef?.createBehavior(self)
         }
-      //  _  = NSTimer.scheduledTimerWithTimeInterval(0.00001, target: self, selector: #selector(Brush.defaultCallback), userInfo: nil, repeats: false)
+        //  _  = NSTimer.scheduledTimerWithTimeInterval(0.00001, target: self, selector: #selector(Brush.defaultCallback), userInfo: nil, repeats: false)
     }
     
     
-  //  @objc func defaultCallback(){
-        //self.transitionToState(self.getTransitionByName("setup")!)
-        
+    //  @objc func defaultCallback(){
+    //self.transitionToState(self.getTransitionByName("setup")!)
+    
     //}
     
     
     func setupTransition(){
         self.transitionToState(self.getTransitionByName("setup")!)
-        self.startInterval();
     }
     
     //MARK: - Hashable
@@ -152,10 +159,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             self.matrix.prepend(self.parent!.matrix)
         }
         var xScale = self.scaling.x.get();
-        
+        if((self.index.get()%2==0) && (self.parent != nil)){
+            self.reflectY.set(1);
+        }
         if(self.reflectX.get()==1){
             print("reflecting x axis")
-
+            
             xScale *= -1.0;
         }
         var yScale = self.scaling.y.get();
@@ -177,9 +186,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         yBuffer.push(yDelt);
         bufferLimitX.set(0)
         bufferLimitY.set(0)
-
+        
         weightBuffer.push(weight.get());
-        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight: self.weight.get());
+        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight: self.weight.get(), color: self.strokeColor);
         self.position.set(_dx,y:_dy);
         
     }
@@ -196,12 +205,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         let key = notification.userInfo?["key"] as! String
         let mapping = states[currentState]?.getTransitionMapping(key)
-
+        
         
         if(mapping != nil){
             let stateTransition = mapping
             print("state transition called, mapping = \(self.name,mapping!.toState)")
-
+            
             self.raiseBehaviorEvent(stateTransition!.toJSON(), event: "transition")
             self.transitionToState(stateTransition!)
             
@@ -211,7 +220,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     func transitionToState(transition:StateTransition){
         var constraint_mappings =  states[currentState]!.constraint_mappings
         for (_, value) in constraint_mappings{
-        
+            
             self.setConstraint(value)
             value.relativeProperty.constrained = false;
             
@@ -219,7 +228,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.currentState = transition.toState;
         self.raiseBehaviorEvent(states[currentState]!.toJSON(), event: "state")
         self.executeTransitionMethods(transition.methods)
-
+        
         
         print("transitioning \(self.name) to \(transition.toState)")
         constraint_mappings =  states[currentState]!.constraint_mappings
@@ -244,7 +253,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         data += "\"type\":\"behavior_change\","
         data += "\"data\":"+d;
         data += "}"
-       // if(self.name != "rootBehaviorBrush"){
+        // if(self.name != "rootBehaviorBrush"){
         self.transmitEvent.raise(data);
         //}
     }
@@ -258,7 +267,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 }
             }
             else{
-                 NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STATE_COMPLETE"])
+                NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STATE_COMPLETE"])
             }
             
         }
@@ -275,6 +284,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             case "newStroke":
                 self.newStroke();
                 break;
+            case "startInterval":
+                self.startInterval();
+                break;
             case "setOrigin":
                 let arg = method.arguments![0];
                 if  let arg_string = arg as? String {
@@ -288,14 +300,16 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 self.destroy();
                 break;
             case "spawn":
-                print("spawn called")
+                print("spawn called for \(self.name)")
                 self.spawn((method.arguments![0] as! String), behavior:(method.arguments![1] as! BehaviorDefinition),num:(method.arguments![2] as! Int));
-
+                
                 break;
             case "bake":
                 self.bake();
                 break;
-
+            case "jogTo":
+                self.jogTo(method.arguments![0] as! Point)
+                break;
             default:
                 break;
             }
@@ -337,7 +351,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     func setConstraint(constraint:Constraint){
         constraint.relativeProperty.set(constraint.reference.get());
-  
+        
         
         
     }
@@ -345,10 +359,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     func addStateTransition(id:String, name:String, reference:Emitter, fromStateName: String, toStateName:String){
         
         let transition:StateTransition
-       
+        
         var state = self.getStateByName(fromStateName);
-            print("state by name\(state,fromStateName)")
-            transition = state!.addStateTransitionMapping(id,name:name,reference: reference, toState:toStateName)
+        print("state by name\(state,fromStateName)")
+        transition = state!.addStateTransitionMapping(id,name:name,reference: reference, toState:toStateName)
         self.transitions[id] = transition;
     }
     
@@ -441,13 +455,14 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
             self.children.append(child);
             child.index.set(Float(self.children.count-1));
+            child.ancestors.set(self.ancestors.get()+1);
             let handler = self.children.last!.geometryModified.addHandler(self,handler: Brush.brushDrawHandler, key:child.drawKey)
             childHandlers[child]=[Disposable]();
             childHandlers[child]?.append(handler)
             lastSpawned.append(child)
             self.initEvent.raise((child,"brush_init"));
-
-
+            
+            
         }
         
         for key in keyStorage["SPAWN"]!  {
@@ -485,6 +500,37 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.currentCanvas!.currentDrawing!.bakeAllStrokesInQueue();
     }
     
+    func jogTo(point:Point){
+        jogPoint = point;
+        
+        self.jogOnStatus(("",0,0), key: jogHandlerKey)
+        
+        
+    }
+    
+    func jogOnStatus(data:(String,Float,Float),key:String){
+        if(GCodeGenerator.fabricatorStatus.get() == 0){
+            GCodeGenerator.fabricatorStatus.didChange.removeHandler(jogHandlerKey);
+            print("jogPoint = \(jogPoint)");
+            
+            let _x = Numerical.map(jogPoint!.x.get(), istart:0, istop: GCodeGenerator.pX, ostart: 0, ostop: GCodeGenerator.inX)
+            
+            let _y = Numerical.map(jogPoint!.y.get(), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
+            print("X,Y \(_x,_y)")
+            
+            
+            var source_string = "\""+gCodeGenerator.jog3(GCodeGenerator.fabricatorX, y: GCodeGenerator.fabricatorY, z: GCodeGenerator.retractHeight)+"\""
+            source_string += ",\""+gCodeGenerator.jog3(_x,y:_y,z:GCodeGenerator.retractHeight)+"\""
+            self.currentCanvas!.currentDrawing!.transmitJogEvent(source_string)
+            jogPoint = nil;
+            
+        }
+        else{
+            GCodeGenerator.fabricatorStatus.didChange.removeHandler(jogHandlerKey);
+            GCodeGenerator.fabricatorStatus.didChange.addHandler(self, handler: Brush.jogOnStatus, key: jogHandlerKey)
+            
+        }
+    }
     //END METHODS AVAILABLE TO USER
 }
 

@@ -23,7 +23,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
 
     let gCodeGenerator = GCodeGenerator();
     let svgGenerator = SVGGenerator();
-    
+
     var geometryModified = Event<(Geometry,String,String)>()
     
     override init(){
@@ -96,14 +96,14 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         //TODO: START HERE TOMORROW- don't know position of new stroke here, need to adjust gcode generator to match
     }
     
-    func addSegmentToStroke(parentID:String, point:Point, weight:Float){
+    func addSegmentToStroke(parentID:String, point:Point, weight:Float, color:Color){
         if (self.activeStrokes[parentID] == nil){
             return
         }
         for i in 0..<self.activeStrokes[parentID]!.count{
             let currentStroke = self.activeStrokes[parentID]![i]
-            let seg = currentStroke.addSegment(point,d:weight)
-            
+            var seg = currentStroke.addSegment(point,d:weight)
+            seg.color = color;
             var data = "\"drawing_id\":\""+self.id+"\","
             data += "\"stroke_id\":\""+currentStroke.id+"\","
             data += "\"type\":\"stroke_data\","
@@ -117,8 +117,9 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         }
     }
     
+    
     func bakeAllStrokesInQueue(){
-        var source_string = "[\"TR, 8000 \", \"C6\",";
+        var source_string = "[\"VR, .2, .1, .4, 10, .1, .4, .4, 10, 1, .200, 100, .150, 65, 0, 0, .200, .250 \",";
         
         for i in 0..<bakeQueue.count{
             var source = bakeQueue[i].gCodeGenerator.source;
@@ -137,6 +138,17 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         data += "\"data\":"+source_string
         self.transmitEvent.raise((data));
         //print("source",data);
+    }
+    
+    
+    func transmitJogEvent(data:String){
+        var source_string = "[\"VR, .2, .1, .4, 10, .1, .4, .4, 10, 1, .200, 100, .150, 65, 0, 0, .200, .250 \",";
+        source_string+=data+"]"
+       var data = "\"drawing_id\":\""+self.id+"\","
+        data += "\"type\":\"gcode\","
+        data += "\"data\":"+source_string
+        print("jog data to transmit = \(data)");
+        self.transmitEvent.raise((data));
     }
     
 }

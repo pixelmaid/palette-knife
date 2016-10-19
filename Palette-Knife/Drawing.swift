@@ -119,7 +119,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     
     
     func bakeAllStrokesInQueue(){
-        var source_string = "[\"VR, .2, .1, .4, 10, .1, .4, .4, 10, 1, .200, 100, .150, 65, 0, 0, .200, .250 \",";
+        var source_string = "[";
         
         for i in 0..<bakeQueue.count{
             var source = bakeQueue[i].gCodeGenerator.source;
@@ -129,7 +129,8 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
                 }
                 source_string += "\""+source[i]+"\""
             }
-            source_string+=",\""+gCodeGenerator.endSegment(bakeQueue[i].segments[bakeQueue[i].segments.count-1])+"\"]"
+            source_string += "]"
+            //source_string+=",\""+gCodeGenerator.endSegment(bakeQueue[i].segments[bakeQueue[i].segments.count-1])+"\"]"
             bakedStrokes.append(bakeQueue[i])
         }
         bakeQueue.removeAll();
@@ -142,7 +143,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     
     
     func transmitJogEvent(data:String){
-        var source_string = "[\"VR, .2, .1, .4, 10, .1, .4, .4, 10, 1, .200, 100, .150, 65, 0, 0, .200, .250 \",";
+        var source_string = "[";
         source_string+=data+"]"
        var data = "\"drawing_id\":\""+self.id+"\","
         data += "\"type\":\"gcode\","

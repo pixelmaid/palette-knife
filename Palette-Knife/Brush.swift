@@ -310,6 +310,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             case "jogTo":
                 self.jogTo(method.arguments![0] as! Point)
                 break;
+            case "liftUp":
+                self.liftUp()
+                break;
             default:
                 break;
             }
@@ -500,37 +503,35 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.currentCanvas!.currentDrawing!.bakeAllStrokesInQueue();
     }
     
+    func liftUp(){
+        let _x = Numerical.map(self.position.x.get(), istart:0, istop: GCodeGenerator.pX, ostart: 0, ostop: GCodeGenerator.inX)
+        
+        let _y = Numerical.map(self.position.y.get(), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
+        print("X,Y \(_x,_y)")
+        
+        
+        var source_string = ""
+        source_string += "\""+gCodeGenerator.jog3(_x,y:_y,z:GCodeGenerator.retractHeight)+"\""
+        self.currentCanvas!.currentDrawing!.transmitJogEvent(source_string)
+
+    }
+    
     func jogTo(point:Point){
         jogPoint = point;
         
-        self.jogOnStatus(("",0,0), key: jogHandlerKey)
+        let _x = Numerical.map(jogPoint!.x.get(), istart:0, istop: GCodeGenerator.pX, ostart: 0, ostop: GCodeGenerator.inX)
         
+        let _y = Numerical.map(jogPoint!.y.get(), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
+        print("X,Y \(_x,_y)")
+        
+        
+        var source_string = ""
+        source_string += "\""+gCodeGenerator.jog3(_x,y:_y,z:GCodeGenerator.retractHeight)+"\""
+        self.currentCanvas!.currentDrawing!.transmitJogEvent(source_string)
+        jogPoint = nil;
         
     }
     
-    func jogOnStatus(data:(String,Float,Float),key:String){
-        if(GCodeGenerator.fabricatorStatus.get() == 0){
-            GCodeGenerator.fabricatorStatus.didChange.removeHandler(jogHandlerKey);
-            print("jogPoint = \(jogPoint)");
-            
-            let _x = Numerical.map(jogPoint!.x.get(), istart:0, istop: GCodeGenerator.pX, ostart: 0, ostop: GCodeGenerator.inX)
-            
-            let _y = Numerical.map(jogPoint!.y.get(), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
-            print("X,Y \(_x,_y)")
-            
-            
-            var source_string = "\""+gCodeGenerator.jog3(GCodeGenerator.fabricatorX, y: GCodeGenerator.fabricatorY, z: GCodeGenerator.retractHeight)+"\""
-            source_string += ",\""+gCodeGenerator.jog3(_x,y:_y,z:GCodeGenerator.retractHeight)+"\""
-            self.currentCanvas!.currentDrawing!.transmitJogEvent(source_string)
-            jogPoint = nil;
-            
-        }
-        else{
-            GCodeGenerator.fabricatorStatus.didChange.removeHandler(jogHandlerKey);
-            GCodeGenerator.fabricatorStatus.didChange.addHandler(self, handler: Brush.jogOnStatus, key: jogHandlerKey)
-            
-        }
-    }
     //END METHODS AVAILABLE TO USER
 }
 

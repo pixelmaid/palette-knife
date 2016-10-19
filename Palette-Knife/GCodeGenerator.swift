@@ -21,10 +21,10 @@ class GCodeGenerator {
     let cuttingFeedRate = Float(8)
     let plungingFeedRate = Float(2)
     let leadInOutFeedRate = Float(0.6562)
-    let depthLimit = Float(-0.31)
-    static let inX = Float(10.35);
+    let depthLimit = Float(-0.51)
+    static let inX = Float(64);
     static let pX = Float(1366);
-    static let inY = Float(7.76);
+    static let inY = Float(48);
     static let pY = Float(1024);
     
     
@@ -86,7 +86,7 @@ class GCodeGenerator {
         let _z = Numerical.map(segment.diameter, istart: 0.2, istop: 42, ostart: 0, ostop: self.depthLimit)
 
         if(self.newStroke){
-            source.append(jog3(_x,y:_y,z: GCodeGenerator.retractHeight));
+           // source.append(jog3(_x,y:_y,z: GCodeGenerator.retractHeight));
             source.append(jog3(_x,y:_y,z: 0));
             source.append(moveSpeedSet(self.cuttingFeedRate,z:self.plungingFeedRate))
             self.newStroke = false;

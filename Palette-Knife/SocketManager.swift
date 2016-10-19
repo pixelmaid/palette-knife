@@ -11,8 +11,8 @@ import Starscream
 
 //central manager for all requests to web socket
 class SocketManager: WebSocketDelegate{
-    var socket = WebSocket(url: NSURL(string: "ws://pure-beach-75578.herokuapp.com/")!, protocols: ["drawing"])
-//var socket = WebSocket(url: NSURL(string: "ws://localhost:5000")!, protocols: ["ipad_client"])
+     var socket = WebSocket(url: NSURL(string: "ws://pure-beach-75578.herokuapp.com/")!, protocols: ["drawing"])
+    //var socket = WebSocket(url: NSURL(string: "ws://localhost:5000")!, protocols: ["ipad_client"])
     var socketEvent = Event<(String,JSON?)>();
     var firstConnection = true;
     var targets = [WebTransmitter](); //objects which can send or recieve data
@@ -20,8 +20,8 @@ class SocketManager: WebSocketDelegate{
     var dataQueue = [String]();
     var transmitComplete = true;
     let dataKey = NSUUID().UUIDString;
-
-     init(){
+    
+    init(){
         socket.delegate = self;
     }
     
@@ -35,7 +35,7 @@ class SocketManager: WebSocketDelegate{
     func websocketDidConnect(ws: WebSocket) {
         print("websocket is connected")
         //send name of client
-        socket.writeString("{\"name\":\"ipad\"}")
+        socket.writeString("{\"name\":\"drawing\"}")
         if(firstConnection){
             socketEvent.raise(("first_connection",nil));
         }
@@ -49,32 +49,33 @@ class SocketManager: WebSocketDelegate{
             print("websocket is disconnected: \(e.localizedDescription)")
         } else {
             print("websocket disconnected")
-
+            
         }
         socketEvent.raise(("disconnected",nil));
-
+        
     }
     
     func websocketDidReceiveMessage(ws: WebSocket, text: String) {
-
-      
-        if(text == "init_data_recieved" || text == "message recieved"){
-        if(dataQueue.count>0){
-
-            socket.writeString(dataQueue.removeAtIndex(0));
+         if(text == "init_data_recieved" || text == "message recieved"){
+            if(dataQueue.count>0){
+                
+                socket.writeString(dataQueue.removeAtIndex(0));
+            }
+            else{
+                print("all messages sent \(text)")
+                
+                transmitComplete = true;
+            }
+        }
+        else if(text == "fabricator connected"){
+          // self.sendFabricationConfigData();
         }
         else{
-            print("all messages sent \(text)")
-
-            transmitComplete = true;
-        }
-        }
-        else{
-           // print("message = \(text)")
+            // print("message = \(text)")
             if let dataFromString = text.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false) {
                 let json = JSON(data: dataFromString)
                 print("json=\(json)")
-                 socketEvent.raise(("fabricator_data",json))
+                socketEvent.raise(("fabricator_data",json))
                 
             }
         }
@@ -97,7 +98,16 @@ class SocketManager: WebSocketDelegate{
     }
     
     
-    // MARK: Write Text Action
+    func sendFabricationConfigData(){
+        var source_string = "[\"VR, .2, .1, .4, 10, .1, .4, .4, 10, 1, .200, 100, .150, 65, 0, 0, .200, .250 \",";
+        source_string += "\"SW, 2, , \","
+        source_string += "\"FS, C:/Users/ShopBot/Desktop/Debug/\""
+        source_string+="]"
+        var   data = "{\"type\":\"gcode\","
+        data += "\"data\":"+source_string+"}"
+        socket.writeString(data)
+
+    }
     
     func sendStylusData() {
         var string = "{\"type\":\"stylus_data\",\"canvas_id\":\""+stylus.id;
@@ -108,7 +118,7 @@ class SocketManager: WebSocketDelegate{
         string+="\"penDown\":"+String(stylus.penDown)+","
         string+="\"speed\":"+String(stylus.speed)+","
         string+="\"position\":{\"x\":"+String(stylus.position.x)+",\"y\":"+String(stylus.position.y)+"}"
-       // string+="\"delta\":{\"x\":"+String(delta.x)+",\"y\":"+String(delta.y)+"}"
+        // string+="\"delta\":{\"x\":"+String(delta.x)+",\"y\":"+String(delta.y)+"}"
         string+="}}"
         dataGenerated(string,key:"_")
     }
@@ -125,7 +135,6 @@ class SocketManager: WebSocketDelegate{
             let b = target as! Brush
             b.setupTransition();
         }
-
         
     }
     
@@ -156,13 +165,13 @@ class SocketManager: WebSocketDelegate{
         }
         else{
             print("appending data")
-
+            
             
             dataQueue.append(string)
         }
     }
     
     
-
+    
     
 }

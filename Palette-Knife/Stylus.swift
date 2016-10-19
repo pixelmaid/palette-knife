@@ -176,9 +176,9 @@ class Stylus: TimeSeries, WebTransmitter {
         deltaChangeBuffer.append(self.position.sub(self.prevPosition));
         self.distance += prevPosition.dist(position)
         moveDist += prevPosition.dist(position)
-        self.prevForce = self.force.get()
+        self.prevForce = self.force.get(nil)
         self.force.set(force*10)
-        self.prevAngle = self.angle.get();
+        self.prevAngle = self.angle.get(nil);
         self.angle.set(angle)
         let currentTime = self.getTimeElapsed();
         self.speed = prevPosition.dist(position)/(currentTime-prevTime)

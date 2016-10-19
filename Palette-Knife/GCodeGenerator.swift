@@ -79,9 +79,9 @@ class GCodeGenerator {
     }
     
     func drawSegment(segment:Segment)->[String]{
-        let _x = Numerical.map(segment.point.x.get(), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
+        let _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
         
-        let _y = Numerical.map(segment.point.y.get(), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
+        let _y = Numerical.map(segment.point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
         
         let _z = Numerical.map(segment.diameter, istart: 0.2, istop: 42, ostart: 0, ostop: self.depthLimit)
 
@@ -99,9 +99,9 @@ class GCodeGenerator {
     func endSegment(segment:Segment)->String{
         var s = ""
         
-        let _x = Numerical.map(segment.point.x.get(), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
+        let _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
         
-        let _y = Numerical.map(segment.point.y.get(), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
+        let _y = Numerical.map(segment.point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
         
         s += jog3(_x,y:_y,z: GCodeGenerator.retractHeight);
         

@@ -37,7 +37,7 @@ class Point:Observable<(Float,Float)>,Geometry{
     }
     
     func toJSON()->String{
-        let string = "\"x\":"+String(self.x.get())+",\"y\":"+String(self.y.get())
+        let string = "\"x\":"+String(self.x.get(nil))+",\"y\":"+String(self.y.get(nil))
         return string;
     }
     
@@ -54,19 +54,19 @@ class Point:Observable<(Float,Float)>,Geometry{
             return;
         }
         else if(x.constrained && !y.constrained && name == "x"){
-              didChange.raise((name, (oldValue,self.y.get()), (self.x.get(),self.y.get())))
+              didChange.raise((name, (oldValue,self.y.get(nil)), (self.x.get(nil),self.y.get(nil))))
         }
         else if(!x.constrained && y.constrained && name == "y"){
-            didChange.raise((name, (self.x.get(),oldValue), (self.x.get(),self.y.get())))
+            didChange.raise((name, (self.x.get(nil),oldValue), (self.x.get(nil),self.y.get(nil))))
         }
         else{
        
             if(self.x.invalidated && self.y.invalidated){
                 if(name == "x"){
-                    didChange.raise((name, (oldValue,storedValue),(self.x.get(),self.y.get())));
+                    didChange.raise((name, (oldValue,storedValue),(self.x.get(nil),self.y.get(nil))));
                 }
                 else if(name == "y"){
-                    didChange.raise((name, (storedValue,oldValue),(self.x.get(),self.y.get())));
+                    didChange.raise((name, (storedValue,oldValue),(self.x.get(nil),self.y.get(nil))));
                 }
                 
             }
@@ -78,7 +78,7 @@ class Point:Observable<(Float,Float)>,Geometry{
     
      func set(val:Point){
         let point = val 
-        self.set(point.x.get(),y:point.y.get())
+        self.set(point.x.get(nil),y:point.y.get(nil))
     }
     
     func set(x:Float,y:Float){
@@ -86,37 +86,37 @@ class Point:Observable<(Float,Float)>,Geometry{
         self.y.set(y);
     }
     
-    override func get()->(Float,Float){
-        return (self.x.get(),self.y.get())
+    override func get(id:String?)->(Float,Float){
+        return (self.x.get(nil),self.y.get(nil))
     }
 
     
     func clone()->Point{
-        return Point(x:self.x.get(),y:self.y.get())
+        return Point(x:self.x.get(nil),y:self.y.get(nil))
     }
     
     func add(point:Point)->Point{
-        return Point(x:self.x.get()+point.x.get(),y:self.y.get()+point.y.get());
+        return Point(x:self.x.get(nil)+point.x.get(nil),y:self.y.get(nil)+point.y.get(nil));
     }
     
     func sub(point:Point)->Point {
-        return Point(x:self.x.get()-point.x.get(),y:self.y.get()-point.y.get());
+        return Point(x:self.x.get(nil)-point.x.get(nil),y:self.y.get(nil)-point.y.get(nil));
     }
     
     func div(val:Float) ->Point{
-        return Point(x: self.x.get() / val, y: self.y.get() / val);
+        return Point(x: self.x.get(nil) / val, y: self.y.get(nil) / val);
     }
     
     func mul(val:Float)->Point {
-        return Point(x: self.x.get() * val, y: self.y.get() * val);
+        return Point(x: self.x.get(nil) * val, y: self.y.get(nil) * val);
     }
     
     func div(point:Point) ->Point{
-        return Point(x:self.x.get() / point.x.get(), y: self.y.get() / point.y.get());
+        return Point(x:self.x.get(nil) / point.x.get(nil), y: self.y.get(nil) / point.y.get(nil));
     }
     
     func mul(point:Point) ->Point{
-        return Point(x:self.x.get() * point.x.get(), y:self.y.get() * point.y.get());
+        return Point(x:self.x.get(nil) * point.x.get(nil), y:self.y.get(nil) * point.y.get(nil));
     }
     
     func dist(point:Point)->Float{
@@ -125,7 +125,7 @@ class Point:Observable<(Float,Float)>,Geometry{
     }
     
     func distanceSqrd(p1:Point, p2:Point)->Float{
-        return powf((p1.x.get()-p2.x.get()), 2.0)+powf((p1.y.get()-p2.y.get()), 2.0)
+        return powf((p1.x.get(nil)-p2.x.get(nil)), 2.0)+powf((p1.y.get(nil)-p2.y.get(nil)), 2.0)
     }
     
     static func isCollinear(x1:Float, y1:Float, x2:Float, y2:Float)->Bool{
@@ -144,7 +144,7 @@ class Point:Observable<(Float,Float)>,Geometry{
     
     //Returns the length of a vector sqaured. Faster than Length(), but only marginally
     static func lengthSqrd(vec:Point)->Float {
-    return pow(vec.x.get(), 2) + pow(vec.y.get(), 2);
+    return pow(vec.x.get(nil), 2) + pow(vec.y.get(nil), 2);
     }
     
     //Returns the length of vector'
@@ -154,7 +154,7 @@ class Point:Observable<(Float,Float)>,Geometry{
     
     //Returns a new vector that has the same direction as vec, but has a length of one.
     static func normalize(vec:Point)->Point {
-    if (vec.x.get() == 0 && vec.y.get() == 0) {
+    if (vec.x.get(nil) == 0 && vec.y.get(nil) == 0) {
         return vec;
     }
     
@@ -163,11 +163,11 @@ class Point:Observable<(Float,Float)>,Geometry{
     
     //Computes the dot product of a and b'
     func dot(b:Point)->Float {
-    return (self.x.get() * b.x.get()) + (self.y.get() * b.y.get());
+    return (self.x.get(nil) * b.x.get(nil)) + (self.y.get(nil) * b.y.get(nil));
     }
     
     func cross(point:Point)->Float {
-        return self.x.get() * point.y.get() - self.y.get() * point.x.get();
+        return self.x.get(nil) * point.y.get(nil) - self.y.get(nil) * point.x.get(nil);
     }
     
     static func projectOnto(v:Point, w:Point)->Point{
@@ -177,18 +177,18 @@ class Point:Observable<(Float,Float)>,Geometry{
     
     
     func pointAtDistance(d:Float,a:Float)->Point{
-        let x = self.x.get() + (d * cos(a*Float(M_PI/180)))
-        let y = self.y.get() + (d * sin(a*Float(M_PI/180)))
+        let x = self.x.get(nil) + (d * cos(a*Float(M_PI/180)))
+        let y = self.y.get(nil) + (d * sin(a*Float(M_PI/180)))
         return Point(x: x,y: y)
     }
     
     //returns new rotated point, original point is unaffected
     func rotate(angle:Float, origin:Point)->Point{
         let a = angle * Float(M_PI)/180;
-        let centerX = origin.x.get();
-        let centerY = origin.y.get();
-        let x = self.x.get();
-        let y = self.y.get();
+        let centerX = origin.x.get(nil);
+        let centerY = origin.y.get(nil);
+        let x = self.x.get(nil);
+        let y = self.y.get(nil);
         let newX = centerX + (x-centerX)*cos(a) - (y-centerY)*sin(a);
         
         let newY = centerY + (x-centerX)*sin(a) + (y-centerY)*cos(a);
@@ -206,7 +206,7 @@ class Point:Observable<(Float,Float)>,Geometry{
      
     
     func toCGPoint()->CGPoint{
-        return CGPoint(x:CGFloat(self.x.get()),y:CGFloat(self.y.get()))
+        return CGPoint(x:CGFloat(self.x.get(nil)),y:CGFloat(self.y.get(nil)))
     }
     
     
@@ -214,7 +214,7 @@ class Point:Observable<(Float,Float)>,Geometry{
     
 }
 func ==(lhs: Point, rhs: Point) -> Bool {
-    return lhs.x.get() == rhs.x.get() && lhs.y.get() == rhs.y.get()
+    return lhs.x.get(nil) == rhs.x.get(nil) && lhs.y.get(nil) == rhs.y.get(nil)
 }
 
 

@@ -219,7 +219,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         let b1 = initStandardTemplate("b1");
         
         b1.addInterval("timeInterval",inc:1,times:nil)
-        b1.addTransition(NSUUID().UUIDString, name:"spawnTransition", eventEmitter: stylus, parentFlag:false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "default", condition:"nil")
+        b1.addTransition(NSUUID().UUIDString, name:"spawnTransition", eventEmitter: stylus, parentFlag:false, event: "TICK", fromStateName: "default", toStateName: "default", condition:"nil")
         
         var b2 = initSpawnTemplate("b2");
         
@@ -238,19 +238,22 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         let branchBehavior = BehaviorDefinition(id:NSUUID().UUIDString,name:"branch")
         defaultSetup(branchBehavior);
         
+        
+        branchBehavior.addRandomGenerator("random1", min: 4.0, max: 12.0)
         branchBehavior.addState(NSUUID().UUIDString,stateName:"spawnEnd");
         
         
         branchBehavior.addCondition("spawnCondition", reference: nil, referenceName: "ancestors", referenceParentFlag: false, relative: Observable<Float>(2), relativeName: nil, relativeParentFlag: false, relational: "<")
 
-        branchBehavior.addInterval("timeInterval",inc:0.00008,times:nil)
 
         branchBehavior.addState(NSUUID().UUIDString,stateName: "die");
         
-        branchBehavior.addCondition("timeLimitCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: Observable<Float>(1.5), relativeName: nil, relativeParentFlag: false, relational: ">")
+        branchBehavior.addCondition("timeLimitCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: nil, relativeName: "random1", relativeParentFlag: false, relational: ">")
         
         
-        branchBehavior.addTransition(NSUUID().UUIDString, name: "destroyTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "die", condition: "timeLimitCondition")
+        branchBehavior.addTransition(NSUUID().UUIDString, name: "destroyTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateName: "default", toStateName: "die", condition: "timeLimitCondition")
+        
+    
         
       // branchBehavior.addMethod("destroyTransition", methodId: NSUUID().UUIDString, targetMethod: "destroy", arguments: nil)
         
@@ -259,7 +262,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
 
         branchBehavior.addTransition(NSUUID().UUIDString, name:"spawnTransition" , eventEmitter: nil, parentFlag: false, event: "STATE_COMPLETE", fromStateName: "die", toStateName: "spawnEnd", condition: "spawnCondition")
         
-        branchBehavior.addMethod("spawnTransition", methodId: NSUUID().UUIDString, targetMethod: "spawn", arguments: ["branchBehavior",branchBehavior,2])
+        //branchBehavior.addMethod("spawnTransition", methodId: NSUUID().UUIDString, targetMethod: "spawn", arguments: ["branchBehavior",branchBehavior,3])
         
         branchBehavior.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments:nil)
         branchBehavior.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: ["parent"])
@@ -267,10 +270,10 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
 
         
         
-      branchBehavior.addExpression("xDeltaExp", emitter1: nil, operand1Name: "xBuffer", parentFlag1: true, emitter2: Observable<Float>(0.999), operand2Name: nil, parentFlag2: false, type: "mult")
+      branchBehavior.addExpression("xDeltaExp", emitter1: nil, operand1Name: "xBuffer", parentFlag1: true, emitter2: Observable<Float>(0.65), operand2Name: nil, parentFlag2: false, type: "mult")
         
         
-      branchBehavior.addExpression("yDeltaExp", emitter1: nil, operand1Name: "yBuffer", parentFlag1: true, emitter2: Observable<Float>(0.999), operand2Name: nil, parentFlag2: false, type: "mult")
+      branchBehavior.addExpression("yDeltaExp", emitter1: nil, operand1Name: "yBuffer", parentFlag1: true, emitter2: Observable<Float>(0.65), operand2Name: nil, parentFlag2: false, type: "mult")
         
       branchBehavior.addExpression("weightDeltaExp", emitter1: nil, operand1Name: "weightBuffer", parentFlag1: true, emitter2: Observable<Float>(0.65), operand2Name: nil, parentFlag2: false, type: "mult")
         
@@ -278,18 +281,18 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
       branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "xDeltaExp", parentFlag: false, relativePropertyName: "dx", targetState: "default")
       branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "yDeltaExp", parentFlag: false, relativePropertyName: "dy", targetState: "default")
         
-     // branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "weightDeltaExp", parentFlag: false, relativePropertyName: "weight", targetState: "default")
+       branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "weightDeltaExp", parentFlag: false, relativePropertyName: "weight", targetState: "default")
         
-    branchBehavior.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
+     //  branchBehavior.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
     
         
-        branchBehavior.addTransition(NSUUID().UUIDString, name: "tickTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "default", condition: "incrementCondition")
+        branchBehavior.addTransition(NSUUID().UUIDString, name: "tickTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateName: "default", toStateName: "default", condition: nil)
     
         
         let rootBehavior = BehaviorDefinition(id:NSUUID().UUIDString,name:"root");
         defaultSetup(rootBehavior);
         
-        rootBehavior.addInterval("timeInterval",inc:3,times:nil)
+        rootBehavior.addInterval("timeInterval",inc:1,times:nil)
 
        
         rootBehavior.addCondition("stylusDownCondition", reference:stylus, referenceName: "penDown",referenceParentFlag: false, relative:Observable<Float>(1), relativeName:nil,relativeParentFlag: false, relational: "==")
@@ -308,10 +311,10 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
        
         rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
         
-        //rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
+        rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
 
         
-        rootBehavior.addTransition(NSUUID().UUIDString, name: "spawnTransition", eventEmitter: nil, parentFlag: false, event: "TIME_INCREMENT", fromStateName: "default", toStateName: "default", condition: "stylusANDIncrement")
+        rootBehavior.addTransition(NSUUID().UUIDString, name: "spawnTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateName: "default", toStateName: "default", condition: "stylusANDIncrement")
         
         rootBehavior.addMethod("spawnTransition", methodId: NSUUID().UUIDString, targetMethod: "spawn", arguments: ["branchBehavior",branchBehavior,2])
        
@@ -390,7 +393,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         b2.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
         
         b2.addTransition(NSUUID().UUIDString, name:"intervalTransition", eventEmitter: nil, parentFlag:false, event:
-            "TIME_INCREMENT", fromStateName: "delay", toStateName: "grow", condition: "incrementCondition")
+            "TICK", fromStateName: "delay", toStateName: "grow", condition: "incrementCondition")
         
         b2.addCondition("growCompleteCondition", reference: nil, referenceName: "bufferLimitX", referenceParentFlag: true, relative: falseConstant, relativeName:nil, relativeParentFlag: false, relational: "==")
         
@@ -470,7 +473,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             case "LEAF":
                 let leaf = data.0 as! StoredDrawing
                 
-                canvasView.drawLeaf(leaf.position, angle:leaf.angle, scale:leaf.scaling.x.get())
+                canvasView.drawLeaf(leaf.position, angle:leaf.angle, scale:leaf.scaling.x.get(nil))
                 break
                 
             case "FLOWER":

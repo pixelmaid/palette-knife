@@ -24,7 +24,7 @@ class BehaviorDefinition {
     var storedConditions = [String:Condition]()
     var name:String;
     var id: String;
-   
+    
     init(id:String, name:String){
         self.name = name;
         self.id = id;
@@ -35,17 +35,17 @@ class BehaviorDefinition {
         
         json_string+="\"name\":\""+self.name+"\","
         json_string+="\"id\":\""+self.id+"\","
-
+        
         json_string+="\"states\":["
         
         for (key,name) in states {
             json_string += "{"
             json_string += "\"id\":\""+key+"\","
-
+            
             json_string += "\"name\":\""+name+"\","
             json_string += "\"mappings\":["
-           
-                var hasMapping = false;
+            
+            var hasMapping = false;
             for (id,data) in mappings {
                 if(data.4 == name){
                     hasMapping = true;
@@ -53,12 +53,12 @@ class BehaviorDefinition {
                     json_string += "\"id\":\""+id+"\","
                     var refName = ""
                     if(data.0 != nil){
-                       refName = (data.0 as! Observable<Float>).name;
+                        refName = (data.0 as! Observable<Float>).name;
                     }
                     if(data.2){
                         refName = "parent."+refName;
                     }
-                   
+                    
                     if(data.1 != nil){
                         refName += data.1!
                         
@@ -66,16 +66,16 @@ class BehaviorDefinition {
                     json_string += "\"reference\":\""+refName+"\","
                     json_string += "\"relative\":\""+data.3+"\","
                     json_string += "\"state\":\""+data.4+"\""
-
+                    
                     json_string += "},"
                 }
             }
             if(hasMapping){
-            json_string.removeAtIndex(json_string.endIndex.predecessor())
+                json_string.removeAtIndex(json_string.endIndex.predecessor())
             }
             json_string += "]},"
         }
-         if(states.count > 0){
+        if(states.count > 0){
             json_string.removeAtIndex(json_string.endIndex.predecessor())
         }
         json_string += "],"
@@ -92,11 +92,11 @@ class BehaviorDefinition {
             json_string += "\"toState\":\""+self.getStateByName(data.5)!+"\","
             json_string += "\"methods\":["
             for i in 0..<methods.count{
-               
+                
                 if(i>0){
                     json_string += ","
                 }
-                 json_string += "{"
+                json_string += "{"
                 json_string += "\"id\":\""+methods[i].1+"\","
                 json_string += "\"name\":\""+methods[i].2+"\""
                 json_string+="}"
@@ -108,15 +108,15 @@ class BehaviorDefinition {
             json_string += "},"
         }
         
-
+        
         
         if(transitions.count > 0){
             json_string.removeAtIndex(json_string.endIndex.predecessor())
         }
-       
+        
         
         //debugPrint("++++JSON STRING = \(json_string) \nJSON STRING++++");
-         json_string+="]}"
+        json_string+="]}"
         
         return json_string
     }
@@ -159,6 +159,10 @@ class BehaviorDefinition {
         generators[name] = ("range",[min,max,start,stop]);
     }
     
+    func addRandomGenerator(name:String,min:Float,max:Float){
+        generators[name] = ("random",[min,max]);
+    }
+    
     func addAlternate(name:String,values:[Float]){
         generators[name] = ("alternate",[values]);
     }
@@ -166,7 +170,7 @@ class BehaviorDefinition {
     func addState(stateId:String, stateName:String){
         states[stateId] = stateName;
     }
-
+    
     func addMethod(targetTransition:String, methodId: String, targetMethod:String, arguments:[Any]?){
         methods.append((targetTransition,methodId,targetMethod,arguments))
     }
@@ -188,26 +192,30 @@ class BehaviorDefinition {
     //TODO: add in cases for other generators
     func generateGenerator(name:String, data:(String,[Any])){
         switch(data.0){
-            case "interval":
-                let interval = Interval(inc:data.1[0] as! Float,times:data.1[1] as? Int)
-                storedGenerators[name] = interval;
-                break;
-            case "range":
-                let range = Range(min:data.1[0] as! Int, max:data.1[1] as! Int, start: data.1[2] as! Float, stop:data.1[3] as! Float)
-                storedGenerators[name] = range;
-                break;
-            case "alternate":
-                let alternate = Alternate(values:data.1[0] as! [Float])
-                storedGenerators[name] = alternate;
-            case "increment":
-                let increment = Increment(inc:data.1[0] as! Observable<Float>, start:data.1[1] as! Observable<Float>)
-                storedGenerators[name] = increment;
-
+        case "interval":
+            let interval = Interval(inc:data.1[0] as! Float,times:data.1[1] as? Int)
+            storedGenerators[name] = interval;
+            break;
+        case "range":
+            let range = Range(min:data.1[0] as! Int, max:data.1[1] as! Int, start: data.1[2] as! Float, stop:data.1[3] as! Float)
+            storedGenerators[name] = range;
+        case "random":
+            let random = RandomGenerator(min:data.1[0] as! Float, max:data.1[1] as! Float)
+            storedGenerators[name] = random;
+            
+            break;
+        case "alternate":
+            let alternate = Alternate(values:data.1[0] as! [Float])
+            storedGenerators[name] = alternate;
+        case "increment":
+            let increment = Increment(inc:data.1[0] as! Observable<Float>, start:data.1[1] as! Observable<Float>)
+            storedGenerators[name] = increment;
+            
         default:
             break;
         }
     }
-
+    
     func generateOperands(targetBrush:Brush,data:(Any?,String?,Bool,Any?,String?,Bool,String))->(Observable<Float>,Observable<Float>){
         var emitter1:Any
         var emitter2:Any
@@ -245,11 +253,11 @@ class BehaviorDefinition {
             }
             else if(storedExpressions[data.1!] != nil){
                 operand1 = storedExpressions[data.1!]!;
-
+                
             }
             else if(storedConditions[data.1!] != nil){
                 operand1 = storedConditions[data.1!]!;
-
+                
             }
             else{
                 print("data 1 = \(data.1)")
@@ -261,6 +269,7 @@ class BehaviorDefinition {
         }
         
         if(data.4 != nil){
+            print("looking in generators for \(data.4)");
             if(storedGenerators[data.4!]) != nil{
                 operand2 = storedGenerators[data.4!]!;
             }
@@ -291,10 +300,10 @@ class BehaviorDefinition {
         let operands = generateOperands(targetBrush, data:(data.1,data.2,data.3,data.4,data.5,data.6,data.7))
         let operand1 = operands.0;
         let operand2 = operands.1;
-
+        
         let condition = Condition(a: operand1, b: operand2, relational: data.7)
         storedConditions[name] = condition;
-
+        
     }
     
     func generateExpression(targetBrush:Brush, name:String,data:(Any?,String?,Bool,Any?,String?,Bool,String)){
@@ -307,7 +316,7 @@ class BehaviorDefinition {
             expression = AddExpression(operand1: operand1,operand2: operand2)
         case "mult":
             expression = MultExpression(operand1: operand1,operand2: operand2)
-      
+            
             break;
         case "log":
             expression = LogExpression(operand1: operand1,operand2: operand2)
@@ -335,7 +344,7 @@ class BehaviorDefinition {
     
     func generateMapping(targetBrush:Brush, id:String, data:(Any?,String?,Bool,String,String)){
         
-       // expression (name:String, reference:Any?, referenceName:String?,referenceParentFlag:Bool, relative:Any?, relativeName:String?, relativeParentFlag:Bool, relational:String)
+        // expression (name:String, reference:Any?, referenceName:String?,referenceParentFlag:Bool, relative:Any?, relativeName:String?, relativeParentFlag:Bool, relational:String)
         //mapping (referenceProperty:Any?, referenceName:String?, parentFlag:Bool, relativePropertyName:String,targetState:String)
         //operand (Any?,String?,Bool,Any?,String?,Bool,String)
         let operands = generateOperands(targetBrush, data:(data.0,data.1,data.2,targetBrush,data.3,false,""))
@@ -350,21 +359,21 @@ class BehaviorDefinition {
         for (key, generator_data) in generators{
             self.generateGenerator(key,data:generator_data)
         }
-
+        
         for i in 0..<conditions.count{
             self.generateCondition(targetBrush,data:conditions[i])
         }
         
         for (key,expression_data) in expressions{
-           self.generateExpression(targetBrush,name:key,data:expression_data)
-
+            self.generateExpression(targetBrush,name:key,data:expression_data)
             
-
+            
+            
         }
         
         for (id,state) in states{
             behaviorMapper.createState(targetBrush,stateId:id, stateName:state)
-
+            
         }
         
         for (key,transition) in transitions{
@@ -390,7 +399,7 @@ class BehaviorDefinition {
             
             
             behaviorMapper.createStateTransition(key,name: transition.0,reference:reference as! Emitter, relative: targetBrush, eventName: transition.3, fromStateName:transition.4,toStateName:transition.5, condition: condition)
-
+            
         }
         
         for method in methods{
@@ -401,7 +410,7 @@ class BehaviorDefinition {
         for (id, mapping_data) in mappings{
             self.generateMapping(targetBrush,id:id, data:mapping_data);
         }
-
+        
         
         
     }

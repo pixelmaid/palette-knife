@@ -42,7 +42,7 @@ class Interval:Generator{
         
     }
     
-    override func get() -> Float {
+    override func get(id:String?) -> Float {
         if(infinite){
             return Float(self.index)*self.inc
         }
@@ -71,7 +71,7 @@ class Buffer:Generator{
         }
     }
     
-    override func get() -> Float {
+    override func get(id:String?) -> Float {
         let v = val[index]
         self.incrementIndex();
         return v;
@@ -81,14 +81,14 @@ class Buffer:Generator{
 
 class CircularBuffer:Generator{
     var val = [Float]();
-    var index = 0;
     var bufferEvent = Event<(String)>()
     func push(v: Float){
         val.append(v)
         
     }
     
-    func incrementIndex(){
+    func incrementIndex(id:String){
+        var index = subscribers[id]!
         if(index<val.count-1){
             index += 1;
         }
@@ -96,13 +96,17 @@ class CircularBuffer:Generator{
             index = 0;
            // bufferEvent.raise("BUFFER_LIMIT_REACHED");
         }
+        subscribers[id] = index;
     }
     
-    override func get() -> Float {
+    override func get(id:String?) -> Float {
+        let index = subscribers[id!]!
         let v = val[index]
-        self.incrementIndex();
+        self.incrementIndex(id!);
         return v;
     }
+    
+    
     
 }
 
@@ -117,19 +121,37 @@ class Range:Generator{
     }
     
     func incrementIndex(){
-        index.set(Float(index.get() + 1));
-        if(index.get()>=Float(val.count)){
+        index.set(Float(index.get(nil) + 1));
+        if(index.get(nil)>=Float(val.count)){
             index.set(0);
         }
     }
-    override func get() -> Float {
-        let v = val[Int(index.get())]
+    override func get(id:String?) -> Float {
+        let v = val[Int(index.get(nil))]
         self.incrementIndex();
         return v;
     }
     
     
     
+}
+
+
+class RandomGenerator: Generator{
+    let min:Float
+    let max:Float
+    let val:Float;
+    init(min:Float,max:Float){
+        self.min = min;
+        self.max = max;
+        val = (Float(arc4random_uniform(UInt32(max - min + 1))) + min)
+
+    }
+    
+    override func get(id:String?) -> Float {
+        print("returning random value of \(val)");
+        return val
+    }
 }
 
 //returns an incremental value updating to infinity;
@@ -139,16 +161,16 @@ class Increment:Generator{
     var index = Observable<Int>(0)
     
     init(inc:Observable<Float>, start:Observable<Float>){
-        self.inc = Observable<Float>(inc.get());
+        self.inc = Observable<Float>(inc.get(nil));
         self.start = start;
     }
     
     func incrementIndex(){
-        index.set(index.get()+1);
+        index.set(index.get(nil)+1);
         
     }
-    override func get() -> Float {
-        let v = ((Float(index.get())*inc.get()) + start.get());
+    override func get(id:String?) -> Float {
+        let v = ((Float(index.get(nil))*inc.get(nil)) + start.get(nil));
         self.incrementIndex();
         return v;
     }
@@ -167,18 +189,18 @@ class easeInOut:Generator{
     
     
     init(start:Observable<Float>,stop:Observable<Float>,max:Observable<Float>){
-        self.start = Observable<Float>(start.get());
-        self.stop = Observable<Float>(stop.get());
-        self.max = Observable<Float>(max.get());
-        self.range = Observable<Float>(stop.get()-start.get());
+        self.start = Observable<Float>(start.get(nil));
+        self.stop = Observable<Float>(stop.get(nil));
+        self.max = Observable<Float>(max.get(nil));
+        self.range = Observable<Float>(stop.get(nil)-start.get(nil));
     }
     
     func incrementIndex(){
-        index.set(index.get()+1);
+        index.set(index.get(nil)+1);
         
     }
     /*override func get() -> Float {
-     let v = ((Float(index.get())*inc.get()) + start.get());
+     let v = ((Float(index.get(nil))*inc.get(nil)) + start.get(nil));
      self.incrementIndex();
      return v;
      }*/
@@ -200,7 +222,7 @@ class Alternate:Generator{
             index=0;
         }
     }
-    override func get() -> Float {
+    override func get(id:String?) -> Float {
         let v = val[index]
         self.incrementIndex();
         return v;

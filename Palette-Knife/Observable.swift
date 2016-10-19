@@ -14,6 +14,7 @@ class Observable<T>:Model  {
     var name = "observable"
     var invalidated = false;
     var constrained = false;
+    var subscribers = [String:Int]();
     let didChange = Event<(String,T, T)>()
     private var value: T
     
@@ -34,8 +35,17 @@ class Observable<T>:Model  {
         value = newValue
     }
     
-    func get() -> T {
+    func get(id:String?) -> T {
         invalidated = false;
         return value
     }
+    
+    func subscribe(id:String){
+        subscribers[id] = 0
+    }
+    
+    func unsubscribe(id:String){
+        subscribers.removeValueForKey(id)
+    }
+
 }

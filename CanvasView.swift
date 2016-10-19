@@ -91,7 +91,7 @@ class CanvasView:  UIImageView {
         let color3 = UIColor(red: 0.754, green: 0.101, blue: 0.876, alpha: 1.000)
         
         //// Oval Drawing
-        let ovalPath = UIBezierPath(ovalInRect: CGRect(x: CGFloat(position.x.get()-52/2), y: CGFloat(position.y.get()-46/2), width: 52, height: 46))
+        let ovalPath = UIBezierPath(ovalInRect: CGRect(x: CGFloat(position.x.get(nil)-52/2), y: CGFloat(position.y.get(nil)-46/2), width: 52, height: 46))
         color3.setFill()
         ovalPath.fill()
         

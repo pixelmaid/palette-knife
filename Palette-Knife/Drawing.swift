@@ -71,7 +71,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         }
     }
     
-    func newStroke(parentID:String){
+    func newStroke(parentID:String)->Stroke{
         let stroke = Stroke(parentID:parentID);
         stroke.parentID = parentID;
         if (self.activeStrokes[parentID] == nil){
@@ -94,6 +94,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         //self.transmitEvent.raise((data))
         
         //TODO: START HERE TOMORROW- don't know position of new stroke here, need to adjust gcode generator to match
+        return stroke;
     }
     
     func addSegmentToStroke(parentID:String, point:Point, weight:Float, color:Color){

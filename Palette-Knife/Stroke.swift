@@ -171,6 +171,9 @@ func ==(lhs: Segment, rhs: Segment) -> Bool {
 // as a series of vectors over time
 class Stroke:TimeSeries, Geometry {
     var segments = [Segment]();
+    var xBuffer = CircularBuffer();
+    var yBuffer = CircularBuffer();
+    var weightBuffer = CircularBuffer();
     let id = NSUUID().UUIDString;
     let gCodeGenerator = GCodeGenerator();
     var parentID: String;
@@ -188,10 +191,16 @@ class Stroke:TimeSeries, Geometry {
         segment.time = Float(0-timer.timeIntervalSinceNow);
         segments.append(segment)
         if(segment.getPreviousSegment() != nil){
-            
+            xBuffer.push(segment.getPreviousSegment()!.point.x.get(nil)-segment.point.x.get(nil))
+            yBuffer.push(segment.getPreviousSegment()!.point.y.get(nil)-segment.point.y.get(nil))
+
+        }
+        else{
+            xBuffer.push(0);
+            yBuffer.push(0)
         }
         gCodeGenerator.drawSegment(segment)
-
+        
         return segment
     }
     
@@ -203,6 +212,7 @@ class Stroke:TimeSeries, Geometry {
     func addSegment(point:Point, d:Float)->Segment{
         var segment = Segment(point:point)
         segment.diameter = d
+        weightBuffer.push(d);
         return self.addSegment(segment)
     }
     

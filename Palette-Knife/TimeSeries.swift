@@ -19,7 +19,7 @@ class TimeSeries: Emitter{
         timer = NSDate()
 
         super.init()
-        self.events =  ["TIME_INCREMENT"]
+        self.events =  ["TICK"]
         self.createKeyStorage();
         timerTime.name = "time";
         
@@ -51,7 +51,7 @@ class TimeSeries: Emitter{
         let t = Float(currentTime.timeIntervalSinceDate(timer))
         print("timer interval callback")
         self.timerTime.set(t)
-        for key in keyStorage["TIME_INCREMENT"]!
+        for key in keyStorage["TICK"]!
         {
             
             if(key.1 != nil){
@@ -60,13 +60,15 @@ class TimeSeries: Emitter{
                 print("timer evaluation \(evaluation, self.name)");
                 if(evaluation){
                     
-                    NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INCREMENT"])
+                    NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"TICK"])
                 }
             }
             else{
                 
-                NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INCREMENT"])
+                NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"TICK"])
             }
+            
+            
             
         }
         

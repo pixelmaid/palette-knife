@@ -74,7 +74,7 @@ class Line: Geometry{
      *     two lines are collinear, or `null` if they don't intersect.
      */
     func intersect(line:Line,  isInfinite:Bool)->Point?{
-        return Line.intersect(self.p.x.get(), p1y: self.p.y.get(), v1x: self.v.x.get(), v1y: self.v.y.get(),p2x: line.p.x.get(), p2y: line.p.y.get(), v2x: line.v.x.get(), v2y: line.v.y.get(), asVector:true, isInfinite: isInfinite);
+        return Line.intersect(self.p.x.get(nil), p1y: self.p.y.get(nil), v1x: self.v.x.get(nil), v1y: self.v.y.get(nil),p2x: line.p.x.get(nil), p2y: line.p.y.get(nil), v2x: line.v.x.get(nil), v2y: line.v.y.get(nil), asVector:true, isInfinite: isInfinite);
     }
     
     
@@ -82,7 +82,7 @@ class Line: Geometry{
      * @return {Number}
      */
     func getSide(point:Point, isInfinite:Bool)->Int? {
-        return Line.getSide(self.p.x.get(), py: self.p.y.get(), vx: self.v.x.get(), vy: self.v.y.get(), x: point.x.get(), y: point.y.get(), isInfinite: isInfinite);
+        return Line.getSide(self.p.x.get(nil), py: self.p.y.get(nil), vx: self.v.x.get(nil), vy: self.v.y.get(nil), x: point.x.get(nil), y: point.y.get(nil), isInfinite: isInfinite);
     }
     
        /**
@@ -90,27 +90,27 @@ class Line: Geometry{
      * @return {Number}
      */
     func getDistance(point:Point)->Float {
-        return abs(Line.getSignedDistance(self.p.x.get(), py: self.p.y.get(), vx: self.v.x.get(), vy: self.v.y.get(), x: point.x.get(), y: point.y.get()));
+        return abs(Line.getSignedDistance(self.p.x.get(nil), py: self.p.y.get(nil), vx: self.v.x.get(nil), vy: self.v.y.get(nil), x: point.x.get(nil), y: point.y.get(nil)));
     }
     
     func isCollinear(line:Line)->Bool {
-        return Point.isCollinear(self.v.x.get(), y1: self.v.y.get(), x2: line.v.x.get(), y2: line.v.y.get());
+        return Point.isCollinear(self.v.x.get(nil), y1: self.v.y.get(nil), x2: line.v.x.get(nil), y2: line.v.y.get(nil));
     }
     
     func isOrthogonal(line:Line)->Bool {
-        return Point.isOrthoganal(self.v.x.get(), y1: self.v.y.get(), x2: line.v.x.get(), y2: line.v.y.get());
+        return Point.isOrthoganal(self.v.x.get(nil), y1: self.v.y.get(nil), x2: line.v.x.get(nil), y2: line.v.y.get(nil));
     }
     
     func getSlope()->Float{
-        return (v.y.get()-p.y.get())/(v.x.get()-p.x.get())
+        return (v.y.get(nil)-p.y.get(nil))/(v.x.get(nil)-p.x.get(nil))
     }
     
     func getYIntercept()->Float{
-        return -getSlope()*p.x.get()+p.y.get()
+        return -getSlope()*p.x.get(nil)+p.y.get(nil)
     }
     
     func getMidpoint()->Point{
-        return Point(x:(p.x.get()+v.x.get())/2,y:(p.y.get()+v.y.get())/2)
+        return Point(x:(p.x.get(nil)+v.x.get(nil))/2,y:(p.y.get(nil)+v.y.get(nil))/2)
     }
     
     

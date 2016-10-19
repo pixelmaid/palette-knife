@@ -24,30 +24,30 @@ class Condition:Observable<Float> {
     func evaluate()->Bool{
         switch (relational){
         case "<":
-            let a = referenceA.get()
-            let b = referenceB.get()
+            let a = referenceA.get(nil)
+            let b = referenceB.get(nil)
             print("checking less than \(a,b)")
             return a < b;
             
         case ">":
-            return referenceA.get() > referenceB.get();
+            return referenceA.get(nil) > referenceB.get(nil);
             
         case "==":
-            let a = referenceA.get()
-            let b = referenceB.get()
+            let a = referenceA.get(nil)
+            let b = referenceB.get(nil)
             print("checking equality \(a,b)")
             return a == b;
         case "!=":
-            let a = referenceA.get()
-            let b = referenceB.get()
+            let a = referenceA.get(nil)
+            let b = referenceB.get(nil)
             print("checking inequality \(a,b)")
             return a != b;
         case "within":
             let interval = self.referenceB as! Interval
-            let value = interval.get();
-            print("interval val =\(value), time val = \(referenceA.get())")
+            let value = interval.get(nil);
+            print("interval val =\(value), time val = \(referenceA.get(nil))")
             if(value > 0){
-                if(referenceA.get()>value){
+                if(referenceA.get(nil)>value){
                     interval.incrementIndex();
                     print("interval returning true")
                     return true;

@@ -15,9 +15,9 @@ class SVGGenerator{
         var source = "<polyline fill =\"none\" stroke=\"#000000\" stroke-miterlimit=\"10\" points=\""
         
         for i in 0..<stroke.segments.count{
-            source += String(stroke.segments[i].point.x.get())
+            source += String(stroke.segments[i].point.x.get(nil))
             source += ","
-            source += String(stroke.segments[i].point.y.get())
+            source += String(stroke.segments[i].point.y.get(nil))
             source += " "
             
         }

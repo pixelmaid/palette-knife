@@ -35,7 +35,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var yBuffer = CircularBuffer()
     var bufferKey = NSUUID().UUIDString;
     
-    var weightBuffer = Buffer()
+    var weightBuffer = CircularBuffer()
     var origin = Point(x:0,y:0)
     var x:Observable<Float>
     var y:Observable<Float>
@@ -52,6 +52,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var drawKey = NSUUID().UUIDString;
     
     var currentCanvas:Canvas?
+    var currentStroke:Stroke?
     var geometryModified = Event<(Geometry,String,String)>()
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
@@ -151,51 +152,51 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
         
-        let centerX = origin.x.get();
-        let centerY = origin.y.get();
+        let centerX = origin.x.get(nil);
+        let centerY = origin.y.get(nil);
         
         self.matrix.reset();
         if(self.parent != nil){
             self.matrix.prepend(self.parent!.matrix)
         }
-        var xScale = self.scaling.x.get();
-        if((self.index.get()%2==0) && (self.parent != nil)){
+        var xScale = self.scaling.x.get(nil);
+        if((self.index.get(nil)%2==0) && (self.parent != nil)){
             self.reflectY.set(1);
         }
-        if(self.reflectX.get()==1){
+        if(self.reflectX.get(nil)==1){
             print("reflecting x axis")
             
             xScale *= -1.0;
         }
-        var yScale = self.scaling.y.get();
-        if(self.reflectY.get()==1){
+        var yScale = self.scaling.y.get(nil);
+        if(self.reflectY.get(nil)==1){
             print("reflecting y axis")
             yScale *= -1.0;
         }
         self.matrix.scale(xScale, y: yScale, centerX: centerX, centerY: centerY);
-        self.matrix.rotate(self.angle.get(), centerX: centerX, centerY: centerY)
-        let _dx = self.position.x.get()+delta.x.get();
-        let _dy = self.position.y.get()+delta.y.get();
+        self.matrix.rotate(self.angle.get(nil), centerX: centerX, centerY: centerY)
+        let _dx = self.position.x.get(nil)+delta.x.get(nil);
+        let _dy = self.position.y.get(nil)+delta.y.get(nil);
         
         let transformedCoords = self.matrix.transformPoint(_dx, y: _dy)
         
-        var xDelt = delta.x.get();
-        var yDelt = delta.y.get();
+        var xDelt = delta.x.get(nil);
+        var yDelt = delta.y.get(nil);
         print("x delta mult for \(self.name) = \(xDelt,yDelt)");
         xBuffer.push(xDelt);
         yBuffer.push(yDelt);
         bufferLimitX.set(0)
         bufferLimitY.set(0)
         
-        weightBuffer.push(weight.get());
-        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight: self.weight.get(), color: self.strokeColor);
+        weightBuffer.push(weight.get(nil));
+        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight: self.weight.get(nil), color: self.strokeColor);
         self.position.set(_dx,y:_dy);
         
     }
     
     
     func setOrigin(p:Point){
-        print("setting origin for \(self.name) to \(p.get())")
+        print("setting origin for \(self.name) to \(p.get(nil))")
         self.origin.set(p);
         self.position.set(origin)
         
@@ -327,6 +328,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     func addConstraint(id:String,reference:Observable<Float>, relative:Observable<Float>, targetState:String){
         //let stateKey = NSUUID().UUIDString;
+        reference.subscribe(self.id);
         reference.didChange.addHandler(self, handler:  Brush.setHandler, key:id)
         self.removeMappingEvent.addHandler(self, handler: Brush.removeConstraint,key:id)
         states[targetState]!.addConstraintMapping(id,reference:reference,relativeProperty: relative)
@@ -353,7 +355,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func setConstraint(constraint:Constraint){
-        constraint.relativeProperty.set(constraint.reference.get());
+        constraint.relativeProperty.set(constraint.reference.get(self.id));
         
         
         
@@ -447,7 +449,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     func newStroke(){
         
         currentCanvas!.currentDrawing!.retireCurrentStrokes(self.id)
-        currentCanvas!.currentDrawing!.newStroke(self.id);
+        self.currentStroke = currentCanvas!.currentDrawing!.newStroke(self.id);
     }
     
     //creates number of clones specified by num and adds them as children
@@ -458,7 +460,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
             self.children.append(child);
             child.index.set(Float(self.children.count-1));
-            child.ancestors.set(self.ancestors.get()+1);
+            child.ancestors.set(self.ancestors.get(nil)+1);
             let handler = self.children.last!.geometryModified.addHandler(self,handler: Brush.brushDrawHandler, key:child.drawKey)
             childHandlers[child]=[Disposable]();
             childHandlers[child]?.append(handler)
@@ -504,9 +506,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func liftUp(){
-        let _x = Numerical.map(self.position.x.get(), istart:0, istop: GCodeGenerator.pX, ostart: 0, ostop: GCodeGenerator.inX)
+        let _x = Numerical.map(self.position.x.get(nil), istart:0, istop: GCodeGenerator.pX, ostart: 0, ostop: GCodeGenerator.inX)
         
-        let _y = Numerical.map(self.position.y.get(), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
+        let _y = Numerical.map(self.position.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
         print("X,Y \(_x,_y)")
         
         
@@ -519,9 +521,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     func jogTo(point:Point){
         jogPoint = point;
         
-        let _x = Numerical.map(jogPoint!.x.get(), istart:0, istop: GCodeGenerator.pX, ostart: 0, ostop: GCodeGenerator.inX)
+        let _x = Numerical.map(jogPoint!.x.get(nil), istart:0, istop: GCodeGenerator.pX, ostart: 0, ostop: GCodeGenerator.inX)
         
-        let _y = Numerical.map(jogPoint!.y.get(), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
+        let _y = Numerical.map(jogPoint!.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
         print("X,Y \(_x,_y)")
         
         

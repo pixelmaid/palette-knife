@@ -70,7 +70,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             //self.initStandardBrush();
             //self.initTestBrushes();
             self.initFractalBrush();
-           // self.initBakeBrush();
+          // self.initBakeBrush();
             break;
         case "disconnected":
             break;
@@ -176,9 +176,9 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         b.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
         b.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments: nil)
         
-        b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dx", parentFlag: false, relativePropertyName: "dx", targetState: "default")
-        b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
-        b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
+        b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dx"], relativePropertyName: "dx", targetState: "default")
+        b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dy"], relativePropertyName: "dy", targetState: "default")
+        b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["force"], relativePropertyName: "weight", targetState: "default")
         
         return b;
 
@@ -197,11 +197,11 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         let b1 = initStandardTemplate("b1");
         
         
-        b1.addTransition(NSUUID().UUIDString, name:"stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateName: "default", toStateName: "default", condition:nil)
+    b1.addTransition(NSUUID().UUIDString, name:"stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateName: "default", toStateName: "default", condition:nil)
         
         
-        b1.addMethod("stylusUpT", methodId:NSUUID().UUIDString, targetMethod: "bake", arguments: nil)
-        b1.addMethod("stylusUpT", methodId:NSUUID().UUIDString, targetMethod: "liftUp", arguments: nil)
+       b1.addMethod("stylusUpT", methodId:NSUUID().UUIDString, targetMethod: "bake", arguments: nil)
+    b1.addMethod("stylusUpT", methodId:NSUUID().UUIDString, targetMethod: "liftUp", arguments: nil)
 
         b1.addMethod("stylusDownT",methodId:NSUUID().UUIDString,targetMethod: "jogTo", arguments: [stylus.position])
         
@@ -243,12 +243,12 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         branchBehavior.addState(NSUUID().UUIDString,stateName:"spawnEnd");
         
         
-        branchBehavior.addCondition("spawnCondition", reference: nil, referenceName: "ancestors", referenceParentFlag: false, relative: Observable<Float>(2), relativeName: nil, relativeParentFlag: false, relational: "<")
+        branchBehavior.addCondition("spawnCondition", reference: nil, referenceNames: ["ancestors"], relative: Observable<Float>(2), relativeNames: nil, relational: "<")
 
 
         branchBehavior.addState(NSUUID().UUIDString,stateName: "die");
         
-        branchBehavior.addCondition("timeLimitCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative: nil, relativeName: "random1", relativeParentFlag: false, relational: ">")
+        branchBehavior.addCondition("timeLimitCondition", reference: nil, referenceNames: ["time"], relative: nil, relativeNames: ["random1"], relational: ">")
         
         
         branchBehavior.addTransition(NSUUID().UUIDString, name: "destroyTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateName: "default", toStateName: "die", condition: "timeLimitCondition")
@@ -270,18 +270,18 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
 
         
         
-      branchBehavior.addExpression("xDeltaExp", emitter1: nil, operand1Name: "xBuffer", parentFlag1: true, emitter2: Observable<Float>(0.65), operand2Name: nil, parentFlag2: false, type: "mult")
+      branchBehavior.addExpression("xDeltaExp", emitter1: nil, operand1Names: ["parent","currentStroke","xBuffer"],emitter2: Observable<Float>(0.65), operand2Names: nil, type: "mult")
         
         
-      branchBehavior.addExpression("yDeltaExp", emitter1: nil, operand1Name: "yBuffer", parentFlag1: true, emitter2: Observable<Float>(0.65), operand2Name: nil, parentFlag2: false, type: "mult")
+      branchBehavior.addExpression("yDeltaExp", emitter1: nil, operand1Names: ["parent","currentStroke","yBuffer"], emitter2: Observable<Float>(0.65), operand2Names: nil, type: "mult")
         
-      branchBehavior.addExpression("weightDeltaExp", emitter1: nil, operand1Name: "weightBuffer", parentFlag1: true, emitter2: Observable<Float>(0.65), operand2Name: nil, parentFlag2: false, type: "mult")
+      branchBehavior.addExpression("weightDeltaExp", emitter1: nil, operand1Names: ["parent","currentStroke","weightBuffer"],  emitter2: Observable<Float>(0.65), operand2Names: nil,type: "mult")
         
         
-      branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "xDeltaExp", parentFlag: false, relativePropertyName: "dx", targetState: "default")
-      branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "yDeltaExp", parentFlag: false, relativePropertyName: "dy", targetState: "default")
+      branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames: ["xDeltaExp"], relativePropertyName: "dx", targetState: "default")
+      branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames: ["yDeltaExp"], relativePropertyName: "dy", targetState: "default")
         
-       branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "weightDeltaExp", parentFlag: false, relativePropertyName: "weight", targetState: "default")
+   //    branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames:["weightDeltaExp"], relativePropertyName: "weight", targetState: "default")
         
      //  branchBehavior.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
     
@@ -295,11 +295,11 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         rootBehavior.addInterval("timeInterval",inc:1,times:nil)
 
        
-        rootBehavior.addCondition("stylusDownCondition", reference:stylus, referenceName: "penDown",referenceParentFlag: false, relative:Observable<Float>(1), relativeName:nil,relativeParentFlag: false, relational: "==")
+        rootBehavior.addCondition("stylusDownCondition", reference:stylus, referenceNames: ["penDown"], relative:Observable<Float>(1), relativeNames:nil, relational: "==")
         
-        rootBehavior.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
+        rootBehavior.addCondition("incrementCondition", reference: nil, referenceNames: ["time"], relative:nil, relativeNames: ["timeInterval"], relational: "within")
 
-        rootBehavior.addCondition("stylusANDIncrement",reference: nil, referenceName: "stylusDownCondition",referenceParentFlag: false, relative:nil, relativeName: "incrementCondition",relativeParentFlag: false, relational: "&&");
+        rootBehavior.addCondition("stylusANDIncrement",reference: nil, referenceNames: ["stylusDownCondition"], relative:nil, relativeNames: ["incrementCondition"], relational: "&&");
         
         rootBehavior.addTransition(NSUUID().UUIDString, name:"stylusDownT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromStateName: "default", toStateName: "default", condition:nil)
         
@@ -307,16 +307,16 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         rootBehavior.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments: nil)
          rootBehavior.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "startInterval", arguments: nil)
     
-        rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dx", parentFlag: false, relativePropertyName: "dx", targetState: "default")
+        rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dx"], relativePropertyName: "dx", targetState: "default")
        
-        rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
+       rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus,  referenceNames: ["dy"], relativePropertyName: "dy", targetState: "default")
         
-        rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
+     // rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus,  referenceNames: ["force"], relativePropertyName: "weight", targetState: "default")
 
         
         rootBehavior.addTransition(NSUUID().UUIDString, name: "spawnTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateName: "default", toStateName: "default", condition: "stylusANDIncrement")
         
-        rootBehavior.addMethod("spawnTransition", methodId: NSUUID().UUIDString, targetMethod: "spawn", arguments: ["branchBehavior",branchBehavior,2])
+       rootBehavior.addMethod("spawnTransition", methodId: NSUUID().UUIDString, targetMethod: "spawn", arguments: ["branchBehavior",branchBehavior,2])
        
         
         let rootBehaviorBrush = Brush(name:"rootBehaviorBrush",behaviorDef: rootBehavior, parent:nil, canvas:self.currentCanvas!)
@@ -363,43 +363,43 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         b2.addInterval("timeInterval",inc:0.005,times:nil)
         
         b2.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments: nil)
-        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "ox", parentFlag: true, relativePropertyName: "ox", targetState: "default")
-        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "oy", parentFlag: true, relativePropertyName: "oy", targetState: "default")
-        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "ox", parentFlag: true, relativePropertyName: "x", targetState: "default")
-        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "oy", parentFlag: true, relativePropertyName: "y", targetState: "default")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames: ["parent","ox"], relativePropertyName: "ox", targetState: "default")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames: ["parent","oy"], relativePropertyName: "oy", targetState: "default")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames: ["parent","ox"], relativePropertyName: "x", targetState: "default")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames: ["parent","oy"], relativePropertyName: "y", targetState: "default")
         
         
         
-        b2.addCondition("indexCondition", reference: angleRange, referenceName: "index", referenceParentFlag: false, relative: Observable<Float>(Float(num/2)), relativeName: nil, relativeParentFlag: false, relational: "==")
+        b2.addCondition("indexCondition", reference: angleRange, referenceNames: ["index"], relative: Observable<Float>(Float(num/2)), relativeNames: nil, relational: "==")
         
         b2.addTransition(NSUUID().UUIDString, name:"defaultDelayTransition", eventEmitter: nil, parentFlag:false, event:"STATE_COMPLETE", fromStateName: "default", toStateName: "delay", condition: nil)
         
         b2.addTransition(NSUUID().UUIDString, name:"reflectTransition", eventEmitter: nil, parentFlag:false, event:"STATE_COMPLETE", fromStateName: "default", toStateName: "reflect", condition: "indexCondition")
         
         
-        b2.addMapping(NSUUID().UUIDString, referenceProperty:reflectConstant, referenceName: nil, parentFlag: false, relativePropertyName: "reflectX", targetState: "default")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:reflectConstant, referenceNames: nil, relativePropertyName: "reflectX", targetState: "default")
         
         b2.addTransition(NSUUID().UUIDString, name:"reflectEndTransition", eventEmitter: nil, parentFlag:false, event:
             "STATE_COMPLETE", fromStateName: "reflect", toStateName: "default", condition: nil)
         
         b2.addIncrement("angleIncrememt", inc:angleRange, start:Observable<Float>(-1))
         
-        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "xBuffer", parentFlag: true, relativePropertyName: "dx", targetState: "grow")
-        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "yBuffer", parentFlag: true, relativePropertyName: "dy", targetState: "grow")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames: ["parent","xBuffer"], relativePropertyName: "dx", targetState: "grow")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames: ["parent","yBuffer"], relativePropertyName: "dy", targetState: "grow")
        // b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "weightBuffer", parentFlag: true, relativePropertyName: "weight", targetState: "grow")
         
-        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceName: "angleIncrememt", parentFlag: false, relativePropertyName: "angle", targetState: "grow")
+        b2.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames: ["angleIncrememt"], relativePropertyName: "angle", targetState: "grow")
         
-        b2.addCondition("incrementCondition", reference: nil, referenceName: "time", referenceParentFlag: false, relative:nil, relativeName: "timeInterval", relativeParentFlag: false, relational: "within")
+        b2.addCondition("incrementCondition", reference: nil, referenceNames: ["time"], relative:nil, relativeNames: ["timeInterval"], relational: "within")
         
         b2.addTransition(NSUUID().UUIDString, name:"intervalTransition", eventEmitter: nil, parentFlag:false, event:
             "TICK", fromStateName: "delay", toStateName: "grow", condition: "incrementCondition")
         
-        b2.addCondition("growCompleteCondition", reference: nil, referenceName: "bufferLimitX", referenceParentFlag: true, relative: falseConstant, relativeName:nil, relativeParentFlag: false, relational: "==")
+        b2.addCondition("growCompleteCondition", reference: nil, referenceNames: ["parent","bufferLimitX"], relative: falseConstant, relativeNames:nil, relational: "==")
         
-        b2.addCondition("growSpawnCondition", reference: nil, referenceName: "bufferLimitX", referenceParentFlag: true, relative: falseConstant, relativeName:nil, relativeParentFlag: false, relational: "!=")
+        b2.addCondition("growSpawnCondition", reference: nil, referenceNames: ["parent","bufferLimitX"], relative: falseConstant, relativeNames:nil, relational: "!=")
         
-        b2.addCondition("limitCondition", reference: angleRange, referenceName: "index", referenceParentFlag: false, relative: Observable<Float>(Float(num-1)), relativeName: nil, relativeParentFlag: false, relational: "<")
+        b2.addCondition("limitCondition", reference: angleRange, referenceNames: ["index"], relative: Observable<Float>(Float(num-1)), relativeNames: nil, relational: "<")
         
         b2.addTransition(NSUUID().UUIDString, name:"growEndTransition", eventEmitter: nil, parentFlag:false, event:
             "STATE_COMPLETE", fromStateName: "grow", toStateName: "delay", condition: "growCompleteCondition")
@@ -428,8 +428,8 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         b1.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
         b1.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments: nil)
         
-        b1.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dx", parentFlag: false, relativePropertyName: "dx", targetState: "default")
-        b1.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "dy", parentFlag: false, relativePropertyName: "dy", targetState: "default")
+        b1.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dx"], relativePropertyName: "dx", targetState: "default")
+        b1.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dy"], relativePropertyName: "dy", targetState: "default")
      //   b1.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceName: "force", parentFlag: false, relativePropertyName: "weight", targetState: "default")
         
         b1.addTransition(NSUUID().UUIDString, name:"stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateName: "default", toStateName: "default", condition:nil)

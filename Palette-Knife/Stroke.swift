@@ -191,8 +191,8 @@ class Stroke:TimeSeries, Geometry {
         segment.time = Float(0-timer.timeIntervalSinceNow);
         segments.append(segment)
         if(segment.getPreviousSegment() != nil){
-            xBuffer.push(segment.getPreviousSegment()!.point.x.get(nil)-segment.point.x.get(nil))
-            yBuffer.push(segment.getPreviousSegment()!.point.y.get(nil)-segment.point.y.get(nil))
+            xBuffer.push(segment.point.x.get(nil)-segment.getPreviousSegment()!.point.x.get(nil))
+            yBuffer.push(segment.point.y.get(nil)-segment.getPreviousSegment()!.point.y.get(nil))
 
         }
         else{

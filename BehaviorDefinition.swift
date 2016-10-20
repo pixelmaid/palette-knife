@@ -12,14 +12,14 @@ import SwiftKVC
 class BehaviorDefinition {
     
     var states = [String:String]()
-    var expressions = [String:(Any?,String?,Bool,Any?,String?,Bool,String)]()
-    var conditions = [(String,Any?,String?,Bool,Any?,String?,Bool,String)]()
+    var expressions = [String:(Any?,[String]?,Any?,[String]?,String)]()
+    var conditions = [(String,Any?,[String]?,Any?,[String]?,String)]()
     var generators = [String:(String,[Any])]()
     var storedGenerators = [String:Generator]()
     var methods = [(String,String,String,[Any]?)]()
     var transitions = [String:(String,Emitter?,Bool,String,String,String,String?)]()
     var behaviorMapper = BehaviorMapper()
-    var mappings = [String:(Any?,String?,Bool,String,String)]()
+    var mappings = [String:(Any?,[String]?,String,String)]()
     var storedExpressions = [String:Expression]()
     var storedConditions = [String:Condition]()
     var name:String;
@@ -47,7 +47,7 @@ class BehaviorDefinition {
             
             var hasMapping = false;
             for (id,data) in mappings {
-                if(data.4 == name){
+                if(data.3 == name){
                     hasMapping = true;
                     json_string += "{"
                     json_string += "\"id\":\""+id+"\","
@@ -55,17 +55,16 @@ class BehaviorDefinition {
                     if(data.0 != nil){
                         refName = (data.0 as! Observable<Float>).name;
                     }
-                    if(data.2){
-                        refName = "parent."+refName;
-                    }
                     
                     if(data.1 != nil){
-                        refName += data.1!
+                        for var i in 0..<data.1!.count{
+                            refName += data.1![i]
+                        }
                         
                     }
                     json_string += "\"reference\":\""+refName+"\","
-                    json_string += "\"relative\":\""+data.3+"\","
-                    json_string += "\"state\":\""+data.4+"\""
+                    json_string += "\"relative\":\""+data.2+"\","
+                    json_string += "\"state\":\""+data.3+"\""
                     
                     json_string += "},"
                 }
@@ -141,9 +140,9 @@ class BehaviorDefinition {
         return tmethods;
     }
     
-    func addCondition(name:String, reference:Any?, referenceName:String?,referenceParentFlag:Bool, relative:Any?, relativeName:String?, relativeParentFlag:Bool, relational:String){
+    func addCondition(name:String, reference:Any?, referenceNames:[String]?, relative:Any?, relativeNames:[String]?, relational:String){
         
-        conditions.append(name,reference,referenceName,referenceParentFlag,relative,relativeName,relativeParentFlag,relational)
+        conditions.append((name,reference,referenceNames,relative,relativeNames,relational))
         
     }
     
@@ -179,12 +178,12 @@ class BehaviorDefinition {
         transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateName,toStateName,condition))
     }
     
-    func addMapping(id:String, referenceProperty:Any?, referenceName:String?, parentFlag:Bool, relativePropertyName:String,targetState:String){
-        mappings[id] = ((referenceProperty,referenceName,parentFlag,relativePropertyName,targetState))
+    func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,targetState:String){
+        mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,targetState))
     }
     
-    func addExpression(name:String, emitter1:Any?, operand1Name:String?, parentFlag1:Bool, emitter2:Any?,operand2Name:String?,parentFlag2:Bool,type:String){
-        expressions[name]=(emitter1, operand1Name, parentFlag1, emitter2, operand2Name,parentFlag2,type);
+    func addExpression(name:String, emitter1:Any?, operand1Names:[String]?, emitter2:Any?,operand2Names:[String]?, type:String){
+        expressions[name]=(emitter1, operand1Names, emitter2, operand2Names,type);
     }
     
     
@@ -216,77 +215,88 @@ class BehaviorDefinition {
         }
     }
     
-    func generateOperands(targetBrush:Brush,data:(Any?,String?,Bool,Any?,String?,Bool,String))->(Observable<Float>,Observable<Float>){
+    func generateOperands(targetBrush:Brush,data:(Any?,[String]?,Any?,[String]?,String))->(Observable<Float>,Observable<Float>){
         var emitter1:Any
         var emitter2:Any
         
-        let operand1:Observable<Float>
-        let operand2: Observable<Float>
+        var operand1:Observable<Float>
+        var operand2: Observable<Float>
         
         if(data.0 == nil){
-            if(data.2 == false){
-                emitter1 = targetBrush
-            }
-            else{
-                emitter1 = targetBrush.parent!
-            }
+            emitter1 = targetBrush;
         }
         else{
             emitter1 = data.0!
         }
         
-        if(data.3 == nil){
-            if(data.5 == false){
-                emitter2 = targetBrush
-            }
-            else{
-                emitter2 = targetBrush.parent!
-            }
+        if(data.2 == nil){
+            emitter2 = targetBrush
         }
         else{
-            emitter2 = data.3!
+            emitter2 = data.2!
         }
         
         if(data.1 != nil){
-            if(storedGenerators[data.1!]) != nil{
-                operand1 = storedGenerators[data.1!]!;
+            var refPropList = data.1!
+            if(storedGenerators[refPropList[0]]) != nil{
+                operand1 = storedGenerators[refPropList[0]]!;
             }
-            else if(storedExpressions[data.1!] != nil){
-                operand1 = storedExpressions[data.1!]!;
+            else if(storedExpressions[refPropList[0]] != nil){
+                operand1 = storedExpressions[refPropList[0]]!;
                 
             }
-            else if(storedConditions[data.1!] != nil){
-                operand1 = storedConditions[data.1!]!;
+            else if(storedConditions[refPropList[0]] != nil){
+                operand1 = storedConditions[refPropList[0]]!;
                 
             }
             else{
-                print("data 1 = \(data.1)")
-                operand1 = (emitter1 as! Model)[data.1!]! as! Observable<Float>
+                print("data 1 = \(refPropList[0])")
+                operand1 = (emitter1 as! Model)[refPropList[0]]! as! Observable<Float>
+            }
+            print("generating operand1, \(refPropList[0],operand1)")
+
+            if(refPropList.count > 1){
+              
+                for var i in 1..<refPropList.count{
+                  operand1 = operand1[refPropList[i]] as! Observable<Float>
+                       print("setting  operand1 as property, \(refPropList[i],operand1)")
+                }
             }
         }
         else{
             operand1 = emitter1 as! Observable<Float>
         }
         
-        if(data.4 != nil){
-            print("looking in generators for \(data.4)");
-            if(storedGenerators[data.4!]) != nil{
-                operand2 = storedGenerators[data.4!]!;
+        if(data.3  != nil){
+            var refPropList = data.3!
+            if(storedGenerators[refPropList[0]]) != nil{
+                operand2 = storedGenerators[refPropList[0]]!;
             }
-            else if(storedExpressions[data.4!] != nil){
-                operand2 = storedExpressions[data.4!]!;
+            else if(storedExpressions[refPropList[0]] != nil){
+                operand2 = storedExpressions[refPropList[0]]!;
                 
             }
-            else if(storedConditions[data.4!] != nil){
-                operand2 = storedConditions[data.4!]!;
+            else if(storedConditions[refPropList[0]] != nil){
+                operand2 = storedConditions[refPropList[0]]!;
                 
             }
             else{
-                operand2 = (emitter2 as! Model)[data.4!]! as! Observable<Float>
+                print("data 3 = \(refPropList[0])")
+                operand2 = (emitter2 as! Model)[refPropList[0]] as! Observable<Float>
+            }
+            print("generating operand2, \(refPropList[0],operand1)")
+
+            if(refPropList.count > 1){
+                
+                for var i in 1..<refPropList.count{
+                    operand2 = operand2[refPropList[i]] as! Observable<Float>
+                    print("setting  operand2 as property, \(refPropList[i],operand2)")
+
+                }
             }
         }
         else{
-            operand2 = emitter2  as! Observable<Float>
+            operand2 = emitter2 as! Observable<Float>
         }
         
         return(operand1,operand2)
@@ -294,24 +304,24 @@ class BehaviorDefinition {
         
     }
     
-    func generateCondition(targetBrush:Brush, data:(String, Any?,String?,Bool,Any?,String?,Bool,String)){
+    func generateCondition(targetBrush:Brush, data:(String, Any?,[String]?,Any?,[String]?,String)){
         let name = data.0;
         //TODO: THIS IS GARBAGE CODE. Find a better solution
-        let operands = generateOperands(targetBrush, data:(data.1,data.2,data.3,data.4,data.5,data.6,data.7))
+        let operands = generateOperands(targetBrush, data:(data.1,data.2,data.3,data.4,data.5))
         let operand1 = operands.0;
         let operand2 = operands.1;
         
-        let condition = Condition(a: operand1, b: operand2, relational: data.7)
+        let condition = Condition(a: operand1, b: operand2, relational: data.5)
         storedConditions[name] = condition;
         
     }
     
-    func generateExpression(targetBrush:Brush, name:String,data:(Any?,String?,Bool,Any?,String?,Bool,String)){
+    func generateExpression(targetBrush:Brush, name:String,data:(Any?,[String]?,Any?,[String]?,String)){
         let operands = generateOperands(targetBrush, data:data)
         let operand1 = operands.0;
         let operand2 = operands.1;
         let expression:Expression;
-        switch(data.6){
+        switch(data.4){
         case "add":
             expression = AddExpression(operand1: operand1,operand2: operand2)
         case "mult":
@@ -342,16 +352,18 @@ class BehaviorDefinition {
         self.storedExpressions[name] = expression;
     }
     
-    func generateMapping(targetBrush:Brush, id:String, data:(Any?,String?,Bool,String,String)){
+    func generateMapping(targetBrush:Brush, id:String, data:(Any?,[String]?,String,String)){
         
         // expression (name:String, reference:Any?, referenceName:String?,referenceParentFlag:Bool, relative:Any?, relativeName:String?, relativeParentFlag:Bool, relational:String)
         //mapping (referenceProperty:Any?, referenceName:String?, parentFlag:Bool, relativePropertyName:String,targetState:String)
         //operand (Any?,String?,Bool,Any?,String?,Bool,String)
-        let operands = generateOperands(targetBrush, data:(data.0,data.1,data.2,targetBrush,data.3,false,""))
+        var mappingRelativeList = [String]();
+        mappingRelativeList.append(data.2);
+        let operands = generateOperands(targetBrush, data:(data.0,data.1,targetBrush,mappingRelativeList,""))
         let referenceOperand = operands.0;
         let relativeOperand = operands.1;
         
-        behaviorMapper.createMapping(id, reference: referenceOperand, relative: targetBrush, relativeProperty: relativeOperand, targetState: data.4)
+        behaviorMapper.createMapping(id, reference: referenceOperand, relative: targetBrush, relativeProperty: relativeOperand, targetState: data.3)
     }
     
     func createBehavior(targetBrush:Brush){

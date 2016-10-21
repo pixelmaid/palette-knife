@@ -26,7 +26,6 @@ class Condition:Observable<Float> {
         case "<":
             let a = referenceA.get(nil)
             let b = referenceB.get(nil)
-            print("checking less than \(a,b)")
             return a < b;
             
         case ">":
@@ -35,21 +34,17 @@ class Condition:Observable<Float> {
         case "==":
             let a = referenceA.get(nil)
             let b = referenceB.get(nil)
-            print("checking equality \(a,b)")
             return a == b;
         case "!=":
             let a = referenceA.get(nil)
             let b = referenceB.get(nil)
-            print("checking inequality \(a,b)")
             return a != b;
         case "within":
             let interval = self.referenceB as! Interval
             let value = interval.get(nil);
-            print("interval val =\(value), time val = \(referenceA.get(nil))")
             if(value > 0){
                 if(referenceA.get(nil)>value){
                     interval.incrementIndex();
-                    print("interval returning true")
                     return true;
                 }
             }
@@ -57,7 +52,6 @@ class Condition:Observable<Float> {
           case "&&":
             let a = (referenceA as! Condition).evaluate();
             let b = (referenceB as! Condition).evaluate();
-            print("&& eval \(a,b)");
             if(a && b){
                 return true;
             }

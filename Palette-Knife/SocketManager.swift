@@ -62,7 +62,6 @@ class SocketManager: WebSocketDelegate{
                 socket.writeString(dataQueue.removeAtIndex(0));
             }
             else{
-                print("all messages sent \(text)")
                 
                 transmitComplete = true;
             }
@@ -71,10 +70,8 @@ class SocketManager: WebSocketDelegate{
           // self.sendFabricationConfigData();
         }
         else{
-            // print("message = \(text)")
             if let dataFromString = text.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false) {
                 let json = JSON(data: dataFromString)
-                print("json=\(json)")
                 socketEvent.raise(("fabricator_data",json))
                 
             }
@@ -82,7 +79,6 @@ class SocketManager: WebSocketDelegate{
     }
     
     func websocketDidReceiveData(ws: WebSocket, data: NSData) {
-        print("Received data: \(data.length)")
     }
     
     
@@ -139,12 +135,10 @@ class SocketManager: WebSocketDelegate{
     }
     
     func initEvent(data:(WebTransmitter,String), key:String){
-        print("init event raised for \(data.0.name)");
         self.initAction(data.0, type: data.1)
     }
     
     func dataGenerated(data:(String), key:String){
-        print("data generated \(data)")
         if(transmitComplete){
             transmitComplete = false;
             socket.writeString(data)
@@ -159,12 +153,10 @@ class SocketManager: WebSocketDelegate{
         let string = "{\"type\":\"behavior_data\",\"data\":"+data+"}"
         if(transmitComplete){
             transmitComplete = false;
-            print("sending data \(data)")
             socket.writeString(string)
             
         }
         else{
-            print("appending data")
             
             
             dataQueue.append(string)

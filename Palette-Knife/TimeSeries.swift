@@ -49,7 +49,6 @@ class TimeSeries: Emitter{
     {
         let currentTime = NSDate();
         let t = Float(currentTime.timeIntervalSinceDate(timer))
-        print("timer interval callback")
         self.timerTime.set(t)
         for key in keyStorage["TICK"]!
         {
@@ -57,7 +56,6 @@ class TimeSeries: Emitter{
             if(key.1 != nil){
                 let condition = key.1;
                 var evaluation = condition.evaluate();
-                print("timer evaluation \(evaluation, self.name)");
                 if(evaluation){
                     
                     NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"TICK"])

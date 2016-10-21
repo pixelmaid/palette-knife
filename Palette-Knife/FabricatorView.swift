@@ -37,7 +37,6 @@ class FabricatorView:  UIImageView {
         let _x = Numerical.map(x, istart:0, istop: GCodeGenerator.inX, ostart: 0, ostop: GCodeGenerator.pX)
         
         let _y = Numerical.map(y, istart:0, istop:GCodeGenerator.inY, ostart:  GCodeGenerator.pY, ostop: 0 )
-        print("X,Y \(_x,_y)")
         
         let fromPoint = CGPoint(x:CGFloat(_x),y:CGFloat(_y));
         let toPoint = CGPoint(x:CGFloat(_x),y:CGFloat(_y));

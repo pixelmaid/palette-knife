@@ -199,7 +199,7 @@ class BehaviorDefinition {
             let range = Range(min:data.1[0] as! Int, max:data.1[1] as! Int, start: data.1[2] as! Float, stop:data.1[3] as! Float)
             storedGenerators[name] = range;
         case "random":
-            let random = RandomGenerator(min:data.1[0] as! Float, max:data.1[1] as! Float)
+            let random = RandomGenerator(start:data.1[0] as! Float, end:data.1[1] as! Float)
             storedGenerators[name] = random;
             
             break;
@@ -250,16 +250,13 @@ class BehaviorDefinition {
                 
             }
             else{
-                print("data 1 = \(refPropList[0])")
                 operand1 = (emitter1 as! Model)[refPropList[0]]! as! Observable<Float>
             }
-            print("generating operand1, \(refPropList[0],operand1)")
 
             if(refPropList.count > 1){
               
                 for var i in 1..<refPropList.count{
                   operand1 = operand1[refPropList[i]] as! Observable<Float>
-                       print("setting  operand1 as property, \(refPropList[i],operand1)")
                 }
             }
         }
@@ -281,16 +278,13 @@ class BehaviorDefinition {
                 
             }
             else{
-                print("data 3 = \(refPropList[0])")
                 operand2 = (emitter2 as! Model)[refPropList[0]] as! Observable<Float>
             }
-            print("generating operand2, \(refPropList[0],operand1)")
 
             if(refPropList.count > 1){
                 
                 for var i in 1..<refPropList.count{
                     operand2 = operand2[refPropList[i]] as! Observable<Float>
-                    print("setting  operand2 as property, \(refPropList[i],operand2)")
 
                 }
             }

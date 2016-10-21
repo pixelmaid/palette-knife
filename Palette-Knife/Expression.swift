@@ -77,9 +77,6 @@ class MultExpression:Expression{
         let a = operand1.get(self.id);
         let b = operand2.get(self.id);
         let c = a*b
-
-        print("returning mult value = \(a), * \(b) = \(c)")
-
         return c;
     }
     

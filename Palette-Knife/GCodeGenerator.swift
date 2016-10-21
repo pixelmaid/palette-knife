@@ -21,10 +21,10 @@ class GCodeGenerator {
     let cuttingFeedRate = Float(8)
     let plungingFeedRate = Float(2)
     let leadInOutFeedRate = Float(0.6562)
-    let depthLimit = Float(-0.51)
-    static let inX = Float(64);
+    let depthLimit = Float(-0.15)
+    static let inX = Float(48);
     static let pX = Float(1366);
-    static let inY = Float(48);
+    static let inY = Float(36);
     static let pY = Float(1024);
     
     
@@ -79,11 +79,27 @@ class GCodeGenerator {
     }
     
     func drawSegment(segment:Segment)->[String]{
-        let _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
+        var _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
         
-        let _y = Numerical.map(segment.point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
+        var _y = Numerical.map(segment.point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
         
-        let _z = Numerical.map(segment.diameter, istart: 0.2, istop: 42, ostart: 0, ostop: self.depthLimit)
+        var _z = Numerical.map(segment.diameter, istart: 0.2, istop: 42, ostart: 0, ostop: self.depthLimit)
+        if(_x>GCodeGenerator.inX){
+            _x = GCodeGenerator.inX;
+        }
+        else if(_x<0){
+            _x = 0;
+        }
+
+        if(_y>GCodeGenerator.inY){
+            _y = GCodeGenerator.inY;
+        }
+        else if(_y<0){
+            _y = 0;
+        }
+        if(_z>self.depthLimit){
+            _z = self.depthLimit;
+        }
 
         if(self.newStroke){
            // source.append(jog3(_x,y:_y,z: GCodeGenerator.retractHeight));

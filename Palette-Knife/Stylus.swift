@@ -177,7 +177,7 @@ class Stylus: TimeSeries, WebTransmitter {
         self.distance += prevPosition.dist(position)
         moveDist += prevPosition.dist(position)
         self.prevForce = self.force.get(nil)
-        self.force.set(force*10)
+        self.force.set(force*5)
         self.prevAngle = self.angle.get(nil);
         self.angle.set(angle)
         let currentTime = self.getTimeElapsed();

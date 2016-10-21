@@ -138,18 +138,17 @@ class Range:Generator{
 
 
 class RandomGenerator: Generator{
-    let min:Float
-    let max:Float
+    let start:Float
+    let end:Float
     let val:Float;
-    init(min:Float,max:Float){
-        self.min = min;
-        self.max = max;
-        val = (Float(arc4random_uniform(UInt32(max - min + 1))) + min)
+    init(start:Float,end:Float){
+        self.start = start;
+        self.end = end;
+        val = Float(arc4random()) / Float(UINT32_MAX) * abs(self.start - self.end) + min(self.start, self.end)
 
     }
     
     override func get(id:String?) -> Float {
-        print("returning random value of \(val)");
         return val
     }
 }

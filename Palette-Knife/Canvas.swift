@@ -51,7 +51,6 @@ class Canvas: WebTransmitter, Hashable{
     }
     
     func drawingDataGenerated(data:(String), key:String){
-        print("drawing data for canvas generated \(data)");
         var string = "{\"canvas_id\":\""+self.id+"\","
         string += data;
         string += "}"

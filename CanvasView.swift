@@ -50,6 +50,7 @@ class CanvasView:  UIImageView {
         self.image?.drawInRect(CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))
         
         let color = c.toCGColor();
+        
     
         let _center = center.toCGPoint()
         let _radius = CGFloat(radius);

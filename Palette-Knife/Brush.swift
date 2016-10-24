@@ -257,7 +257,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         data += "\"data\":"+d;
         data += "}"
         // if(self.name != "rootBehaviorBrush"){
-        //self.transmitEvent.raise(data);
+        self.transmitEvent.raise(data);
         //}
     }
     

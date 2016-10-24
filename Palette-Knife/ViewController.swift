@@ -69,8 +69,8 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             self.initCanvas();
             //self.initStandardBrush();
             //self.initTestBrushes();
-            self.initFractalBrush();
-          // self.initBakeBrush();
+         //   self.initFractalBrush();
+          self.initBakeBrush();
             break;
         case "disconnected":
             break;
@@ -258,8 +258,8 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         
          branchBehavior.addTransition(NSUUID().UUIDString, name: "offCanvasTransition", eventEmitter: nil, parentFlag: false, event: "STATE_COMPLETE", fromStateName: "default", toStateName: "die", condition: "offCanvasCondition")
         
-        //branchBehavior.addMethod("destroyTransition",methodId:NSUUID().UUIDString,targetMethod: "jogAndBake", arguments: nil)
-        branchBehavior.addMethod("timeLimitCondition",methodId:NSUUID().UUIDString,targetMethod: "jogAndBake", arguments: nil)
+        branchBehavior.addMethod("destroyTransition",methodId:NSUUID().UUIDString,targetMethod: "jogAndBake", arguments: nil)
+        branchBehavior.addMethod("offCanvasTransition",methodId:NSUUID().UUIDString,targetMethod: "jogAndBake", arguments: nil)
 
         
       // branchBehavior.addMethod("destroyTransition", methodId: NSUUID().UUIDString, targetMethod: "destroy", arguments: nil)

@@ -22,8 +22,8 @@ class Expression: Observable<Float>{
         super.init(0)
         
         
-        operand1.didChange.addHandler(self, handler: Expression.setHandler,key:operand1Key)
-        operand2.didChange.addHandler(self, handler: Expression.setHandler, key:operand2Key)
+      //  operand1.didChange.addHandler(self, handler: Expression.setHandler,key:operand1Key)
+       // operand2.didChange.addHandler(self, handler: Expression.setHandler, key:operand2Key)
         operand1.subscribe(self.id);
         operand2.subscribe(self.id);
 
@@ -48,8 +48,15 @@ class Expression: Observable<Float>{
 class AddExpression:Expression{
     
     override func setHandler(data:(String,Float,Float),key:String){
-        
        self.set(operand1.get(nil) + operand2.get(nil))
+    }
+    
+    //TODO: need to fix this- expressions should either be push or pull but not both...
+    override func get(id:String?)->Float{
+        let a = operand1.get(self.id);
+        let b = operand2.get(self.id);
+        let c = a+b
+        return c;
     }
     
 }

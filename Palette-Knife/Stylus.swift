@@ -117,7 +117,7 @@ class Stylus: TimeSeries, WebTransmitter {
                 
             }
         }
-        
+        self.delta.set(0,y:0)
         self.penDown.set(0);
         self.speed = 0;
         self.transmitData();
@@ -172,6 +172,7 @@ class Stylus: TimeSeries, WebTransmitter {
         
         self.position.set(x,y:y)
         self.delta.set(self.position.sub(self.prevPosition))
+        self.delta.set(0,y:0)
 
         deltaChangeBuffer.append(self.position.sub(self.prevPosition));
         self.distance += prevPosition.dist(position)

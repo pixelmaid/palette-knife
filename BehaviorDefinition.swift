@@ -162,6 +162,12 @@ class BehaviorDefinition {
         generators[name] = ("random",[min,max]);
     }
     
+    func addLogiGrowthGenerator(name:String,a:Float,b:Float,k:Float){
+        
+        generators[name] = ("logigrowth",[a,b,k]);
+    }
+
+    
     func addAlternate(name:String,values:[Float]){
         generators[name] = ("alternate",[values]);
     }
@@ -201,7 +207,10 @@ class BehaviorDefinition {
         case "random":
             let random = RandomGenerator(start:data.1[0] as! Float, end:data.1[1] as! Float)
             storedGenerators[name] = random;
-            
+        case "logigrowth":
+            let logigrowth = LogiGrowthGenerator(a: data.1[0] as! Float, b:  data.1[1] as! Float, k:  data.1[2] as! Float)
+            storedGenerators[name] = logigrowth;
+
             break;
         case "alternate":
             let alternate = Alternate(values:data.1[0] as! [Float])

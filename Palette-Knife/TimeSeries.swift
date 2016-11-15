@@ -33,16 +33,22 @@ class TimeSeries: Emitter{
     }
     
     func startInterval(){
-        if(intervalTimer == nil){
-        timer = NSDate()
+       // if(intervalTimer == nil){
         intervalTimer  = NSTimer.scheduledTimerWithTimeInterval(0.0001, target: self, selector: #selector(TimeSeries.timerIntervalCallback), userInfo: nil, repeats: true)
-        }
+        //}
+        
         
     }
     
+    func stopInterval(){
+         intervalTimer.invalidate();
+        
+    }
+
+    
     override func destroy(){
+        self.stopInterval();
         super.destroy();
-        intervalTimer.invalidate();
     }
     
     @objc func timerIntervalCallback()

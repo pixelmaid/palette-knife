@@ -30,7 +30,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var position = Point(x:0,y:0)
     var delta = Point(x:0,y:0)
     var deltaKey = NSUUID().UUIDString;
-    
+    var distance = Observable<Float>(0);
+    var xDistance = Observable<Float>(0);
+    var yDistance = Observable<Float>(0);
+
     var xBuffer = CircularBuffer()
     var yBuffer = CircularBuffer()
     var bufferKey = NSUUID().UUIDString;
@@ -158,9 +161,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             self.matrix.prepend(self.parent!.matrix)
         }
         var xScale = self.scaling.x.get(nil);
-        if((self.index.get(nil)%2==0) && (self.parent != nil)){
+       /* if((self.index.get(nil)%2==0) && (self.parent != nil)){
             self.reflectY.set(1);
-        }
+        }*/
         
         if(self.reflectX.get(nil)==1){
             
@@ -179,6 +182,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         var xDelt = delta.x.get(nil);
         var yDelt = delta.y.get(nil);
+        self.distance.set(self.distance.get(nil)+sqrt(pow(xDelt,2)+pow(yDelt,2)));
+        self.xDistance.set(self.xDistance.get(nil)+abs(xDelt));
+        self.yDistance.set(self.yDistance.get(nil)+abs(yDelt));
+
+        xBuffer.push(xDelt);
+
         xBuffer.push(xDelt);
         yBuffer.push(yDelt);
         bufferLimitX.set(0)
@@ -290,8 +299,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             case "startInterval":
                 self.startInterval();
                 break;
+            case "stopInterval":
+                self.stopInterval();
+                break;
             case "setOrigin":
                 let arg = method.arguments![0];
+                print("set origin argument \(method.arguments![0])");
                 if  let arg_string = arg as? String {
                     if(arg_string  == "parent"){
                         self.setOrigin(self.parent!.position)
@@ -304,7 +317,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 break;
             case "spawn":
                 self.spawn((method.arguments![0] as! String), behavior:(method.arguments![1] as! BehaviorDefinition),num:(method.arguments![2] as! Int));
-                
                 break;
             case "bake":
                 self.bake();
@@ -456,12 +468,13 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     //creates number of clones specified by num and adds them as children
     func spawn(name:String,behavior:BehaviorDefinition,num:Int) {
+        print("spawing \(name)");
         lastSpawned.removeAll()
         for i in 0...num-1{
             let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
             self.children.append(child);
             child.index.set(Float(self.children.count-1));
-            child.angle.set(Float(arc4random_uniform(60) + 1));
+           // child.angle.set(Float(arc4random_uniform(60) + 1));
 
             child.ancestors.set(self.ancestors.get(nil)+1);
             let handler = self.children.last!.geometryModified.addHandler(self,handler: Brush.brushDrawHandler, key:child.drawKey)

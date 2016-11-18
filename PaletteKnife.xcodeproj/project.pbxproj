@@ -32,6 +32,38 @@
 		5FA4C75C1CDBA47D004A728C /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75B1CDBA47D004A728C /* Point.swift */; };
 		5FA4C75E1CDBA530004A728C /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75D1CDBA530004A728C /* Color.swift */; };
 		5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75F1CDBC5F7004A728C /* Behavior.swift */; };
+		5FC56D201DDBC19200B91E7E /* BleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D1D1DDBC19200B91E7E /* BleManager.swift */; };
+		5FC56D211DDBC19200B91E7E /* BlePeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D1E1DDBC19200B91E7E /* BlePeripheral.swift */; };
+		5FC56D221DDBC19200B91E7E /* BleUUIDNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D1F1DDBC19200B91E7E /* BleUUIDNames.swift */; };
+		5FC56D2F1DDBC22200B91E7E /* HandoffManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D251DDBC22200B91E7E /* HandoffManager.swift */; };
+		5FC56D311DDBC22200B91E7E /* HexConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D271DDBC22200B91E7E /* HexConversions.swift */; };
+		5FC56D321DDBC22200B91E7E /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D281DDBC22200B91E7E /* LocalizationManager.swift */; };
+		5FC56D331DDBC22200B91E7E /* LogHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D2A1DDBC22200B91E7E /* LogHelper.swift */; };
+		5FC56D341DDBC22200B91E7E /* Synchronize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D2B1DDBC22200B91E7E /* Synchronize.swift */; };
+		5FC56D351DDBC22200B91E7E /* UartDataExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D2C1DDBC22200B91E7E /* UartDataExport.swift */; };
+		5FC56D361DDBC22200B91E7E /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D2D1DDBC22200B91E7E /* WatchSessionManager.swift */; };
+		5FC56D441DDBC2DD00B91E7E /* InfoModuleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D3A1DDBC2DD00B91E7E /* InfoModuleManager.swift */; };
+		5FC56D451DDBC2DD00B91E7E /* NeopixelModuleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D3B1DDBC2DD00B91E7E /* NeopixelModuleManager.swift */; };
+		5FC56D461DDBC2DD00B91E7E /* PeripheralList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D3C1DDBC2DD00B91E7E /* PeripheralList.swift */; };
+		5FC56D471DDBC2DD00B91E7E /* PinIOModuleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D3D1DDBC2DD00B91E7E /* PinIOModuleManager.swift */; };
+		5FC56D481DDBC2DD00B91E7E /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D3E1DDBC2DD00B91E7E /* Preferences.swift */; };
+		5FC56D491DDBC2DD00B91E7E /* UartDataChunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D3F1DDBC2DD00B91E7E /* UartDataChunk.swift */; };
+		5FC56D4A1DDBC2DD00B91E7E /* UartManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D401DDBC2DD00B91E7E /* UartManager.swift */; };
+		5FC56D4B1DDBC2DD00B91E7E /* UartModuleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D411DDBC2DD00B91E7E /* UartModuleManager.swift */; };
+		5FC56D4D1DDBC50F00B91E7E /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D4C1DDBC50F00B91E7E /* Config.swift */; };
+		5FC56D581DDBC59700B91E7E /* DataDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D511DDBC59700B91E7E /* DataDownloader.m */; };
+		5FC56D591DDBC59700B91E7E /* DeviceInfoData.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D531DDBC59700B91E7E /* DeviceInfoData.m */; };
+		5FC56D6C1DDBC61800B91E7E /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D5F1DDBC61800B91E7E /* Utility.m */; };
+		5FC56D6D1DDBC61800B91E7E /* BLEOperations.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D621DDBC61800B91E7E /* BLEOperations.m */; };
+		5FC56D6E1DDBC61800B91E7E /* DFUOperations.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D641DDBC61800B91E7E /* DFUOperations.m */; };
+		5FC56D6F1DDBC61800B91E7E /* DFUOperationsDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D661DDBC61800B91E7E /* DFUOperationsDetails.m */; };
+		5FC56D701DDBC61800B91E7E /* FileOperations.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D681DDBC61800B91E7E /* FileOperations.m */; };
+		5FC56D711DDBC61800B91E7E /* IntelHex2BinConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D6B1DDBC61800B91E7E /* IntelHex2BinConverter.m */; };
+		5FC56D751DDBC74800B91E7E /* MqttManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D731DDBC74800B91E7E /* MqttManager.swift */; };
+		5FC56D761DDBC74800B91E7E /* MqttSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D741DDBC74800B91E7E /* MqttSettings.swift */; };
+		5FC56D7C1DDBD0A600B91E7E /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 5FC56D781DDBD0A600B91E7E /* LICENSE */; };
+		5FC56D7D1DDBD0A600B91E7E /* NSObject+ENHThrottledReloading.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D7A1DDBD0A600B91E7E /* NSObject+ENHThrottledReloading.m */; };
+		5FC56D7E1DDBD0A600B91E7E /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D7B1DDBD0A600B91E7E /* README.md */; };
 		5FCFDED51CF79B2400CE296B /* Numerical.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCFDED41CF79B2400CE296B /* Numerical.swift */; };
 		5FF5EFAB1D664F22001E1616 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF5EFAA1D664F22001E1616 /* Observable.swift */; };
 		5FF5EFAD1D6661EC001E1616 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF5EFAC1D6661EC001E1616 /* Event.swift */; };
@@ -104,6 +136,49 @@
 		5FA4C75B1CDBA47D004A728C /* Point.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		5FA4C75D1CDBA530004A728C /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		5FA4C75F1CDBC5F7004A728C /* Behavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Behavior.swift; sourceTree = "<group>"; };
+		5FC56D1D1DDBC19200B91E7E /* BleManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BleManager.swift; sourceTree = "<group>"; };
+		5FC56D1E1DDBC19200B91E7E /* BlePeripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlePeripheral.swift; sourceTree = "<group>"; };
+		5FC56D1F1DDBC19200B91E7E /* BleUUIDNames.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BleUUIDNames.swift; sourceTree = "<group>"; };
+		5FC56D251DDBC22200B91E7E /* HandoffManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HandoffManager.swift; path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/Utils/HandoffManager.swift"; sourceTree = "<group>"; };
+		5FC56D271DDBC22200B91E7E /* HexConversions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HexConversions.swift; path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/Utils/HexConversions.swift"; sourceTree = "<group>"; };
+		5FC56D281DDBC22200B91E7E /* LocalizationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocalizationManager.swift; path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/Utils/LocalizationManager.swift"; sourceTree = "<group>"; };
+		5FC56D291DDBC22200B91E7E /* LogHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LogHelper.h; path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/Utils/LogHelper.h"; sourceTree = "<group>"; };
+		5FC56D2A1DDBC22200B91E7E /* LogHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LogHelper.swift; path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/Utils/LogHelper.swift"; sourceTree = "<group>"; };
+		5FC56D2B1DDBC22200B91E7E /* Synchronize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Synchronize.swift; path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/Utils/Synchronize.swift"; sourceTree = "<group>"; };
+		5FC56D2C1DDBC22200B91E7E /* UartDataExport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UartDataExport.swift; path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/Utils/UartDataExport.swift"; sourceTree = "<group>"; };
+		5FC56D2D1DDBC22200B91E7E /* WatchSessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WatchSessionManager.swift; path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/Utils/WatchSessionManager.swift"; sourceTree = "<group>"; };
+		5FC56D3A1DDBC2DD00B91E7E /* InfoModuleManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoModuleManager.swift; sourceTree = "<group>"; };
+		5FC56D3B1DDBC2DD00B91E7E /* NeopixelModuleManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NeopixelModuleManager.swift; sourceTree = "<group>"; };
+		5FC56D3C1DDBC2DD00B91E7E /* PeripheralList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralList.swift; sourceTree = "<group>"; };
+		5FC56D3D1DDBC2DD00B91E7E /* PinIOModuleManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinIOModuleManager.swift; sourceTree = "<group>"; };
+		5FC56D3E1DDBC2DD00B91E7E /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		5FC56D3F1DDBC2DD00B91E7E /* UartDataChunk.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UartDataChunk.swift; sourceTree = "<group>"; };
+		5FC56D401DDBC2DD00B91E7E /* UartManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UartManager.swift; sourceTree = "<group>"; };
+		5FC56D411DDBC2DD00B91E7E /* UartModuleManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UartModuleManager.swift; sourceTree = "<group>"; };
+		5FC56D4C1DDBC50F00B91E7E /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Config.swift; path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/Config.swift"; sourceTree = "<group>"; };
+		5FC56D501DDBC59700B91E7E /* DataDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDownloader.h; sourceTree = "<group>"; };
+		5FC56D511DDBC59700B91E7E /* DataDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataDownloader.m; sourceTree = "<group>"; };
+		5FC56D521DDBC59700B91E7E /* DeviceInfoData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceInfoData.h; sourceTree = "<group>"; };
+		5FC56D531DDBC59700B91E7E /* DeviceInfoData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceInfoData.m; sourceTree = "<group>"; };
+		5FC56D5E1DDBC61800B91E7E /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utility.h; sourceTree = "<group>"; };
+		5FC56D5F1DDBC61800B91E7E /* Utility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utility.m; sourceTree = "<group>"; };
+		5FC56D611DDBC61800B91E7E /* BLEOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLEOperations.h; sourceTree = "<group>"; };
+		5FC56D621DDBC61800B91E7E /* BLEOperations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BLEOperations.m; sourceTree = "<group>"; };
+		5FC56D631DDBC61800B91E7E /* DFUOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFUOperations.h; sourceTree = "<group>"; };
+		5FC56D641DDBC61800B91E7E /* DFUOperations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFUOperations.m; sourceTree = "<group>"; };
+		5FC56D651DDBC61800B91E7E /* DFUOperationsDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFUOperationsDetails.h; sourceTree = "<group>"; };
+		5FC56D661DDBC61800B91E7E /* DFUOperationsDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFUOperationsDetails.m; sourceTree = "<group>"; };
+		5FC56D671DDBC61800B91E7E /* FileOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileOperations.h; sourceTree = "<group>"; };
+		5FC56D681DDBC61800B91E7E /* FileOperations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileOperations.m; sourceTree = "<group>"; };
+		5FC56D6A1DDBC61800B91E7E /* IntelHex2BinConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntelHex2BinConverter.h; sourceTree = "<group>"; };
+		5FC56D6B1DDBC61800B91E7E /* IntelHex2BinConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntelHex2BinConverter.m; sourceTree = "<group>"; };
+		5FC56D731DDBC74800B91E7E /* MqttManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MqttManager.swift; sourceTree = "<group>"; };
+		5FC56D741DDBC74800B91E7E /* MqttSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MqttSettings.swift; sourceTree = "<group>"; };
+		5FC56D781DDBD0A600B91E7E /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		5FC56D791DDBD0A600B91E7E /* NSObject+ENHThrottledReloading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+ENHThrottledReloading.h"; sourceTree = "<group>"; };
+		5FC56D7A1DDBD0A600B91E7E /* NSObject+ENHThrottledReloading.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+ENHThrottledReloading.m"; sourceTree = "<group>"; };
+		5FC56D7B1DDBD0A600B91E7E /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		5FC56D811DDBD42300B91E7E /* BluefruitConnect-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BluefruitConnect-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
 		5FCFDED41CF79B2400CE296B /* Numerical.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Numerical.swift; sourceTree = "<group>"; };
 		5FF5EFAA1D664F22001E1616 /* Observable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		5FF5EFAC1D6661EC001E1616 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -219,6 +294,7 @@
 		5FA4C7221CDA7B5B004A728C /* PaletteKnife */ = {
 			isa = PBXGroup;
 			children = (
+				5FC56D231DDBC20600B91E7E /* Bluetooth */,
 				5FA4C7561CDB9EAF004A728C /* views */,
 				5FA4C7551CDB9E9A004A728C /* models */,
 				5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */,
@@ -274,6 +350,142 @@
 				5F62E4251DB53EAA00958BD2 /* FabricatorView.swift */,
 			);
 			name = views;
+			sourceTree = "<group>";
+		};
+		5FC56D1C1DDBC19200B91E7E /* BLE */ = {
+			isa = PBXGroup;
+			children = (
+				5FC56D1D1DDBC19200B91E7E /* BleManager.swift */,
+				5FC56D1E1DDBC19200B91E7E /* BlePeripheral.swift */,
+				5FC56D1F1DDBC19200B91E7E /* BleUUIDNames.swift */,
+			);
+			name = BLE;
+			path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/Utils/BLE";
+			sourceTree = "<group>";
+		};
+		5FC56D231DDBC20600B91E7E /* Bluetooth */ = {
+			isa = PBXGroup;
+			children = (
+				5FC56D811DDBD42300B91E7E /* BluefruitConnect-Bridging-Header.h */,
+				5FC56D771DDBD0A600B91E7E /* NSObject+ENHThrottledReloading */,
+				5FC56D5C1DDBC61800B91E7E /* DFU */,
+				5FC56D4E1DDBC58500B91E7E /* Utils */,
+				5FC56D4C1DDBC50F00B91E7E /* Config.swift */,
+				5FC56D371DDBC2DD00B91E7E /* Common */,
+				5FC56D251DDBC22200B91E7E /* HandoffManager.swift */,
+				5FC56D271DDBC22200B91E7E /* HexConversions.swift */,
+				5FC56D281DDBC22200B91E7E /* LocalizationManager.swift */,
+				5FC56D291DDBC22200B91E7E /* LogHelper.h */,
+				5FC56D2A1DDBC22200B91E7E /* LogHelper.swift */,
+				5FC56D2B1DDBC22200B91E7E /* Synchronize.swift */,
+				5FC56D2C1DDBC22200B91E7E /* UartDataExport.swift */,
+				5FC56D2D1DDBC22200B91E7E /* WatchSessionManager.swift */,
+			);
+			name = Bluetooth;
+			sourceTree = "<group>";
+		};
+		5FC56D371DDBC2DD00B91E7E /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				5FC56D3A1DDBC2DD00B91E7E /* InfoModuleManager.swift */,
+				5FC56D3B1DDBC2DD00B91E7E /* NeopixelModuleManager.swift */,
+				5FC56D3C1DDBC2DD00B91E7E /* PeripheralList.swift */,
+				5FC56D3D1DDBC2DD00B91E7E /* PinIOModuleManager.swift */,
+				5FC56D3E1DDBC2DD00B91E7E /* Preferences.swift */,
+				5FC56D3F1DDBC2DD00B91E7E /* UartDataChunk.swift */,
+				5FC56D401DDBC2DD00B91E7E /* UartManager.swift */,
+				5FC56D411DDBC2DD00B91E7E /* UartModuleManager.swift */,
+			);
+			name = Common;
+			path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/Common";
+			sourceTree = "<group>";
+		};
+		5FC56D4E1DDBC58500B91E7E /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				5FC56D721DDBC74800B91E7E /* Mqtt */,
+				5FC56D4F1DDBC59700B91E7E /* Updater */,
+				5FC56D1C1DDBC19200B91E7E /* BLE */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
+		5FC56D4F1DDBC59700B91E7E /* Updater */ = {
+			isa = PBXGroup;
+			children = (
+				5FC56D501DDBC59700B91E7E /* DataDownloader.h */,
+				5FC56D511DDBC59700B91E7E /* DataDownloader.m */,
+				5FC56D521DDBC59700B91E7E /* DeviceInfoData.h */,
+				5FC56D531DDBC59700B91E7E /* DeviceInfoData.m */,
+			);
+			name = Updater;
+			path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/Utils/Updater";
+			sourceTree = "<group>";
+		};
+		5FC56D5C1DDBC61800B91E7E /* DFU */ = {
+			isa = PBXGroup;
+			children = (
+				5FC56D5D1DDBC61800B91E7E /* Constants */,
+				5FC56D601DDBC61800B91E7E /* DFUImplementation */,
+				5FC56D691DDBC61800B91E7E /* HexToBinConverter */,
+			);
+			name = DFU;
+			path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/External Tools/DFU";
+			sourceTree = "<group>";
+		};
+		5FC56D5D1DDBC61800B91E7E /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				5FC56D5E1DDBC61800B91E7E /* Utility.h */,
+				5FC56D5F1DDBC61800B91E7E /* Utility.m */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		5FC56D601DDBC61800B91E7E /* DFUImplementation */ = {
+			isa = PBXGroup;
+			children = (
+				5FC56D611DDBC61800B91E7E /* BLEOperations.h */,
+				5FC56D621DDBC61800B91E7E /* BLEOperations.m */,
+				5FC56D631DDBC61800B91E7E /* DFUOperations.h */,
+				5FC56D641DDBC61800B91E7E /* DFUOperations.m */,
+				5FC56D651DDBC61800B91E7E /* DFUOperationsDetails.h */,
+				5FC56D661DDBC61800B91E7E /* DFUOperationsDetails.m */,
+				5FC56D671DDBC61800B91E7E /* FileOperations.h */,
+				5FC56D681DDBC61800B91E7E /* FileOperations.m */,
+			);
+			path = DFUImplementation;
+			sourceTree = "<group>";
+		};
+		5FC56D691DDBC61800B91E7E /* HexToBinConverter */ = {
+			isa = PBXGroup;
+			children = (
+				5FC56D6A1DDBC61800B91E7E /* IntelHex2BinConverter.h */,
+				5FC56D6B1DDBC61800B91E7E /* IntelHex2BinConverter.m */,
+			);
+			path = HexToBinConverter;
+			sourceTree = "<group>";
+		};
+		5FC56D721DDBC74800B91E7E /* Mqtt */ = {
+			isa = PBXGroup;
+			children = (
+				5FC56D731DDBC74800B91E7E /* MqttManager.swift */,
+				5FC56D741DDBC74800B91E7E /* MqttSettings.swift */,
+			);
+			name = Mqtt;
+			path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/Utils/Mqtt";
+			sourceTree = "<group>";
+		};
+		5FC56D771DDBD0A600B91E7E /* NSObject+ENHThrottledReloading */ = {
+			isa = PBXGroup;
+			children = (
+				5FC56D781DDBD0A600B91E7E /* LICENSE */,
+				5FC56D791DDBD0A600B91E7E /* NSObject+ENHThrottledReloading.h */,
+				5FC56D7A1DDBD0A600B91E7E /* NSObject+ENHThrottledReloading.m */,
+				5FC56D7B1DDBD0A600B91E7E /* README.md */,
+			);
+			name = "NSObject+ENHThrottledReloading";
+			path = "../../Bluefruit_LE_Connect_v2-master/bluefruitconnect/External Tools/NSObject+ENHThrottledReloading";
 			sourceTree = "<group>";
 		};
 		5FFF81871D402B9A00C1349B /* drawings */ = {
@@ -451,6 +663,7 @@
 			files = (
 				5FA4C72E1CDA7B5B004A728C /* LaunchScreen.storyboard in Resources */,
 				5FA4C72B1CDA7B5B004A728C /* Assets.xcassets in Resources */,
+				5FC56D7C1DDBD0A600B91E7E /* LICENSE in Resources */,
 				5FA4C7291CDA7B5B004A728C /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -599,30 +812,61 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FC56D321DDBC22200B91E7E /* LocalizationManager.swift in Sources */,
+				5FC56D6E1DDBC61800B91E7E /* DFUOperations.m in Sources */,
 				5F6A07EE1D63DCD80047FF56 /* Matrix.swift in Sources */,
 				5FFF81921D49219700C1349B /* BehaviorDefinition.swift in Sources */,
+				5FC56D7D1DDBD0A600B91E7E /* NSObject+ENHThrottledReloading.m in Sources */,
+				5FC56D6F1DDBC61800B91E7E /* DFUOperationsDetails.m in Sources */,
 				5F1896771D4A856F00AEF5F1 /* Generator.swift in Sources */,
+				5FC56D6C1DDBC61800B91E7E /* Utility.m in Sources */,
 				5F16B0181DB0494E00756085 /* Fabricator.swift in Sources */,
 				5FA4C75A1CDBA1FA004A728C /* Stroke.swift in Sources */,
 				5FFDAB0D1D234B6100632A26 /* TimeSeries.swift in Sources */,
+				5FC56D461DDBC2DD00B91E7E /* PeripheralList.swift in Sources */,
 				5F451BF31CF7928E0037EA88 /* Line.swift in Sources */,
+				5FC56D591DDBC59700B91E7E /* DeviceInfoData.m in Sources */,
+				5FC56D4B1DDBC2DD00B91E7E /* UartModuleManager.swift in Sources */,
 				5F62E4261DB53EAA00958BD2 /* FabricatorView.swift in Sources */,
+				5FC56D751DDBC74800B91E7E /* MqttManager.swift in Sources */,
+				5FC56D311DDBC22200B91E7E /* HexConversions.swift in Sources */,
+				5FC56D6D1DDBC61800B91E7E /* BLEOperations.m in Sources */,
 				5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */,
 				5F8FEFC91CF5F4E600D2CB0C /* Stylus.swift in Sources */,
 				5FFF818A1D403C4D00C1349B /* State.swift in Sources */,
 				5F8FEFCC1CF5F51900D2CB0C /* BehaviorMapper.swift in Sources */,
 				5FF5EFAD1D6661EC001E1616 /* Event.swift in Sources */,
+				5FC56D7E1DDBD0A600B91E7E /* README.md in Sources */,
+				5FC56D441DDBC2DD00B91E7E /* InfoModuleManager.swift in Sources */,
 				5FA4C7261CDA7B5B004A728C /* ViewController.swift in Sources */,
+				5FC56D711DDBC61800B91E7E /* IntelHex2BinConverter.m in Sources */,
 				5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */,
+				5FC56D2F1DDBC22200B91E7E /* HandoffManager.swift in Sources */,
 				5FFDAB071D1E040B00632A26 /* Drawing.swift in Sources */,
+				5FC56D351DDBC22200B91E7E /* UartDataExport.swift in Sources */,
 				5FFF818C1D4267F700C1349B /* Condition.swift in Sources */,
+				5FC56D201DDBC19200B91E7E /* BleManager.swift in Sources */,
 				5FA4C75E1CDBA530004A728C /* Color.swift in Sources */,
+				5FC56D761DDBC74800B91E7E /* MqttSettings.swift in Sources */,
+				5FC56D491DDBC2DD00B91E7E /* UartDataChunk.swift in Sources */,
+				5FC56D221DDBC19200B91E7E /* BleUUIDNames.swift in Sources */,
+				5FC56D211DDBC19200B91E7E /* BlePeripheral.swift in Sources */,
 				5FA4C75C1CDBA47D004A728C /* Point.swift in Sources */,
 				5F8FEFD21CF62F0700D2CB0C /* Emitter.swift in Sources */,
+				5FC56D471DDBC2DD00B91E7E /* PinIOModuleManager.swift in Sources */,
+				5FC56D481DDBC2DD00B91E7E /* Preferences.swift in Sources */,
+				5FC56D341DDBC22200B91E7E /* Synchronize.swift in Sources */,
+				5FC56D361DDBC22200B91E7E /* WatchSessionManager.swift in Sources */,
 				5FFF818E1D42EC8700C1349B /* Expression.swift in Sources */,
+				5FC56D4D1DDBC50F00B91E7E /* Config.swift in Sources */,
 				5FFDAB051D1DFA2500632A26 /* Canvas.swift in Sources */,
+				5FC56D581DDBC59700B91E7E /* DataDownloader.m in Sources */,
+				5FC56D4A1DDBC2DD00B91E7E /* UartManager.swift in Sources */,
+				5FC56D701DDBC61800B91E7E /* FileOperations.m in Sources */,
+				5FC56D331DDBC22200B91E7E /* LogHelper.swift in Sources */,
 				5F8454F71D9C53C50056C15E /* SVGGenerator.swift in Sources */,
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
+				5FC56D451DDBC2DD00B91E7E /* NeopixelModuleManager.swift in Sources */,
 				5FFDAB0B1D21B7EC00632A26 /* WebTransmitter.swift in Sources */,
 				5FCFDED51CF79B2400CE296B /* Numerical.swift in Sources */,
 				5FF5EFAB1D664F22001E1616 /* Observable.swift in Sources */,
@@ -786,7 +1030,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-Knife";
 				PRODUCT_NAME = PaletteKnife;
 				PROVISIONING_PROFILE = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "BluefruitConnect-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 2.3;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -809,7 +1053,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-Knife";
 				PRODUCT_NAME = PaletteKnife;
 				PROVISIONING_PROFILE = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "BluefruitConnect-Bridging-Header.h";
+				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 2.3;
 				TARGETED_DEVICE_FAMILY = 2;

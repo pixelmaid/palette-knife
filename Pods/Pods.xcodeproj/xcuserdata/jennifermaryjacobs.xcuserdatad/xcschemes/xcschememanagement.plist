@@ -4,6 +4,21 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>CocoaAsyncSocket.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>CocoaMQTT.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>MSWeakTimer.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-PaletteKnife.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -29,35 +44,25 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>UIColor+Hex.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>27887C10C4FA80009C84D2CDE138D05F</key>
+		<key>4DD8D7B8D6C13EC39913BEA7CCCCA5B0</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>31E30E1E9296A992330507A173CD1881</key>
+		<key>5BA345D47373DECFA92EF4FF952894F3</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>459A5503A9B06D6EE9C42C927BC39195</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>474D698F3B75DEAA13FE2D0E3E908E95</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>6C76B996382C8C530C902EBDDE5693DD</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>7F1AABB20E2CFBD60AD1506DBD1BE215</key>
+		<key>82E9C9E0F554216F37E22665F2259F1C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -72,7 +77,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D8E4909CDEBC213980EC9F0085ECDF41</key>
+		<key>B05FE8F04C0FC4F7F56D01191113D67D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B37E19CA872A7535725D1E1946E5C271</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B6982E8EE4E059061D141E3FF072BCCC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D6495667D78ED303D1A07DC6E250FA95</key>
 		<dict>
 			<key>primary</key>
 			<true/>

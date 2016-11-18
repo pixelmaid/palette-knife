@@ -10,6 +10,11 @@ target 'PaletteKnife' do
 
   pod 'Starscream'
 
+  pod 'CocoaMQTT'
+
+  pod 'UIColor+Hex', '~> 1.0.1'
+
+
   target 'PaletteKnifeTests' do
     inherit! :search_paths
     # Pods for testing

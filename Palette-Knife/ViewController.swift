@@ -95,8 +95,8 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
             //self.initStandardBrush();
             //self.initTestBrushes();
             //   self.initFractalBrush();
-            //self.initBakeBrush();
-            self.initDripBrush();
+            self.initBakeBrush();
+            //self.initDripBrush();
             break;
         case "disconnected":
             break;
@@ -208,7 +208,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         
         b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dx"], relativePropertyName: "dx", targetState: "default")
         b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dy"], relativePropertyName: "dy", targetState: "default")
-      // b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["force"], relativePropertyName: "weight", targetState: "default")
+        b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["force"], relativePropertyName: "weight", targetState: "default")
         
         return b;
         
@@ -270,7 +270,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         b1.addMethod("stylusUpT", methodId:NSUUID().UUIDString, targetMethod: "bake", arguments: nil)
         b1.addMethod("stylusUpT", methodId:NSUUID().UUIDString, targetMethod: "liftUp", arguments: nil)
         
-        b1.addMethod("stylusDownT",methodId:NSUUID().UUIDString,targetMethod: "jogTo", arguments: [stylus.position])
+        b1.addMethod("stylusDownTransition",methodId:NSUUID().UUIDString,targetMethod: "jogTo", arguments: [stylus.position])
         
         let b1_brush = Brush(name:"b1",behaviorDef: b1, parent:nil, canvas:self.currentCanvas!)
         

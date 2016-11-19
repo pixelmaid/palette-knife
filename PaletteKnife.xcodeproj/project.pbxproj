@@ -65,6 +65,7 @@
 		5FC56D7D1DDBD0A600B91E7E /* NSObject+ENHThrottledReloading.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D7A1DDBD0A600B91E7E /* NSObject+ENHThrottledReloading.m */; };
 		5FC56D7E1DDBD0A600B91E7E /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D7B1DDBD0A600B91E7E /* README.md */; };
 		5FCFDED51CF79B2400CE296B /* Numerical.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCFDED41CF79B2400CE296B /* Numerical.swift */; };
+		5FD6CD0E1DDFB4E6007D94AA /* BluetoothView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD6CD0D1DDFB4E6007D94AA /* BluetoothView.swift */; };
 		5FF5EFAB1D664F22001E1616 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF5EFAA1D664F22001E1616 /* Observable.swift */; };
 		5FF5EFAD1D6661EC001E1616 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF5EFAC1D6661EC001E1616 /* Event.swift */; };
 		5FFDAB051D1DFA2500632A26 /* Canvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB041D1DFA2500632A26 /* Canvas.swift */; };
@@ -180,6 +181,7 @@
 		5FC56D7B1DDBD0A600B91E7E /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5FC56D811DDBD42300B91E7E /* BluefruitConnect-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BluefruitConnect-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
 		5FCFDED41CF79B2400CE296B /* Numerical.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Numerical.swift; sourceTree = "<group>"; };
+		5FD6CD0D1DDFB4E6007D94AA /* BluetoothView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothView.swift; sourceTree = "<group>"; };
 		5FF5EFAA1D664F22001E1616 /* Observable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		5FF5EFAC1D6661EC001E1616 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		5FFDAB041D1DFA2500632A26 /* Canvas.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Canvas.swift; sourceTree = "<group>"; };
@@ -346,6 +348,7 @@
 		5FA4C7561CDB9EAF004A728C /* views */ = {
 			isa = PBXGroup;
 			children = (
+				5FD6CD0D1DDFB4E6007D94AA /* BluetoothView.swift */,
 				5FA4C7511CDA7C1B004A728C /* CanvasView.swift */,
 				5F62E4251DB53EAA00958BD2 /* FabricatorView.swift */,
 			);
@@ -857,6 +860,7 @@
 				5FC56D481DDBC2DD00B91E7E /* Preferences.swift in Sources */,
 				5FC56D341DDBC22200B91E7E /* Synchronize.swift in Sources */,
 				5FC56D361DDBC22200B91E7E /* WatchSessionManager.swift in Sources */,
+				5FD6CD0E1DDFB4E6007D94AA /* BluetoothView.swift in Sources */,
 				5FFF818E1D42EC8700C1349B /* Expression.swift in Sources */,
 				5FC56D4D1DDBC50F00B91E7E /* Config.swift in Sources */,
 				5FFDAB051D1DFA2500632A26 /* Canvas.swift in Sources */,

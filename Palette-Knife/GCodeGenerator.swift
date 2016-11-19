@@ -18,13 +18,12 @@ class GCodeGenerator {
     static let retractHeight = Float(0.59)
     let clearanceHeight = Float(0.6)
     let feedHeight = Float(0)
-    let cuttingFeedRate = Float(8)
-    let plungingFeedRate = Float(2)
-    let leadInOutFeedRate = Float(0.6562)
-    let depthLimit = Float(-0.15)
-    static let inX = Float(48);
+    let cuttingFeedRate = Float(10)
+    let plungingFeedRate = Float(10)
+    let depthLimit = Float(-0.06)
+    static let inX = Float(96);
     static let pX = Float(1366);
-    static let inY = Float(36);
+    static let inY = Float(48);
     static let pY = Float(1024);
     
     
@@ -84,19 +83,19 @@ class GCodeGenerator {
         var _y = Numerical.map(segment.point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
         
         var _z = Numerical.map(segment.diameter, istart: 0.2, istop: 42, ostart: 0, ostop: self.depthLimit)
-        if(_x>GCodeGenerator.inX){
+        /*if(_x>GCodeGenerator.inX){
             _x = GCodeGenerator.inX;
         }
         else if(_x<0){
             _x = 0;
-        }
+        }*/
 
-        if(_y>GCodeGenerator.inY){
+        /*if(_y>GCodeGenerator.inY){
             _y = GCodeGenerator.inY;
         }
         else if(_y<0){
             _y = 0;
-        }
+        }*/
         if(_z>self.depthLimit){
             _z = self.depthLimit;
         }

@@ -10,9 +10,9 @@ import Foundation
 import UIKit
 
 struct Color {
-    var r = 0;
-    var g = 0;
-    var b = 0;
+    var r = Float(0);
+    var g = Float(0);
+    var b = Float(0);
     
     mutating func setValue(value:Color){
         self.r = value.r;
@@ -21,7 +21,7 @@ struct Color {
     }
     
     func toCGColor()->CGColor{
-        return UIColor(red:CGFloat(self.r),green:CGFloat(self.g),blue:CGFloat(self.b), alpha:CGFloat(1)).CGColor;
+        return UIColor(red:CGFloat(self.r/255),green:CGFloat(self.g/255),blue:CGFloat(self.b/255), alpha:CGFloat(1)).CGColor;
     }
     
 }

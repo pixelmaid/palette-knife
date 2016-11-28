@@ -184,32 +184,40 @@ class Stroke:TimeSeries, Geometry {
         gCodeGenerator.startNewStroke();
     }
     
-    func addSegment(_segment:Segment)->Segment{
+    func addSegment(_segment:Segment)->Segment?{
         var segment = _segment;
         segment.parent = self
         segment.index = self.segments.count;
         segment.time = Float(0-timer.timeIntervalSinceNow);
-        segments.append(segment)
-        if(segment.getPreviousSegment() != nil){
-            xBuffer.push(segment.point.x.get(nil)-segment.getPreviousSegment()!.point.x.get(nil))
-            yBuffer.push(segment.point.y.get(nil)-segment.getPreviousSegment()!.point.y.get(nil))
+        
+        if(segments.count>0){
+            let prevSeg = segments[segments.count-1];
+            let dist = segment.point.dist(prevSeg.point)
+            
+            if(dist < 10){
+                return nil;
+            }
+            xBuffer.push(segment.point.x.get(nil)-prevSeg.point.x.get(nil))
+            yBuffer.push(segment.point.y.get(nil)-prevSeg.point.y.get(nil))
 
         }
         else{
             xBuffer.push(0);
             yBuffer.push(0)
         }
+        segments.append(segment)
+
         gCodeGenerator.drawSegment(segment)
         
         return segment
     }
     
-    func addSegment(point:Point)->Segment{
+    func addSegment(point:Point)->Segment?{
         let segment = Segment(point:point)
         return self.addSegment(segment)
     }
     
-    func addSegment(point:Point, d:Float)->Segment{
+    func addSegment(point:Point, d:Float)->Segment?{
         var segment = Segment(point:point)
         segment.diameter = d
         weightBuffer.push(d);

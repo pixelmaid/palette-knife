@@ -18,6 +18,8 @@ class CanvasView:  UIImageView {
     }
     */
    
+    
+    
     override func drawRect(rect: CGRect) {
     }
     

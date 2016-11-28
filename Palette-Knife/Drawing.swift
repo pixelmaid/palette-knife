@@ -113,17 +113,19 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         for i in 0..<self.activeStrokes[parentID]!.count{
             let currentStroke = self.activeStrokes[parentID]![i]
             var seg = currentStroke.addSegment(point,d:weight)
-            seg.color = color;
+            if(seg != nil){
+            seg!.color = color;
             var data = "\"drawing_id\":\""+self.id+"\","
             data += "\"stroke_id\":\""+currentStroke.id+"\","
             data += "\"type\":\"stroke_data\","
             data += "\"strokeData\":{"
-            data += "\"segments\":"+seg.toJSON()+",";
+            data += "\"segments\":"+seg!.toJSON()+",";
             data += "\"lengths\":{\"length\":"+String(currentStroke.getLength())+",\"time\":"
             data += String(self .getTimeElapsed())
             data += "}}"
             //self.transmitEvent.raise((data))
-            self.geometryModified.raise((seg,"SEGMENT","DRAW"))
+            self.geometryModified.raise((seg!,"SEGMENT","DRAW"))
+            }
         }
     }
     

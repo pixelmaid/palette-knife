@@ -15,15 +15,17 @@ class GCodeGenerator {
     var x = Float(0)
     var y = Float(0)
     var z = Float(0)
+    var xOffset = Float(0);
+    var yOffset = Float(0);
     static let retractHeight = Float(0.59)
     let clearanceHeight = Float(0.6)
     let feedHeight = Float(0)
-    let cuttingFeedRate = Float(10)
+    let cuttingFeedRate = Float(8)
     let plungingFeedRate = Float(10)
     let depthLimit = Float(-0.06)
-    static let inX = Float(96);
+    static let inX = Float(95);
     static let pX = Float(1366);
-    static let inY = Float(48);
+    static let inY = Float(45);
     static let pY = Float(1024);
     
     
@@ -36,6 +38,11 @@ class GCodeGenerator {
     var newStroke = false;
     init(){
         //TODO: set vc here
+    }
+    
+    func setOffset(x:Float, y:Float){
+        self.xOffset = x;
+        self.yOffset = y;
     }
     
     func generateVirtualTool()->String{
@@ -78,9 +85,9 @@ class GCodeGenerator {
     }
     
     func drawSegment(segment:Segment)->[String]{
-        var _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
+        var _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0) + xOffset
         
-        var _y = Numerical.map(segment.point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
+        var _y = Numerical.map(segment.point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 ) + yOffset
         
         var _z = Numerical.map(segment.diameter, istart: 0.2, istop: 42, ostart: 0, ostop: self.depthLimit)
         /*if(_x>GCodeGenerator.inX){
@@ -114,9 +121,9 @@ class GCodeGenerator {
     func endSegment(segment:Segment)->String{
         var s = ""
         
-        let _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
+        let _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0) + xOffset
         
-        let _y = Numerical.map(segment.point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
+        let _y = Numerical.map(segment.point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 ) + yOffset
         
         s += jog3(_x,y:_y,z: GCodeGenerator.retractHeight);
         

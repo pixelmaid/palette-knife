@@ -7,23 +7,21 @@
 //
 
 import UIKit
-import MessageUI
-import UIColor_Hex
 
 let behaviorMapper = BehaviorMapper()
 var stylus = Stylus(x: 0,y:0,angle:0,force:0)
 
-class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
+class ViewController: UIViewController {
     
     // MARK: Properties
     
+    @IBOutlet weak var dualBrushButton: UIButton!
+    @IBOutlet weak var largeBrushButton: UIButton!
+    @IBOutlet weak var smallBrushButton: UIButton!
     
     @IBOutlet weak var fabricatorView: FabricatorView!
     @IBOutlet weak var canvasView: CanvasView!
-    //@IBOutlet weak var new_canvas: UIButton!
-    //@IBOutlet weak var new_drawing: UIButton!
-    @IBOutlet weak var clearAll: UIButton!
-    //@IBOutlet weak var gcodeExport: UIButton!
+  
     
     @IBOutlet weak var xOutput: UITextField!
     
@@ -33,60 +31,28 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     
     @IBOutlet weak var statusOutput: UITextField!
     
-    private var peripheralList: PeripheralList!
-    private let uartData = UartModuleManager()
-    private var txColor = Preferences.uartSentDataColor
-    private var rxColor = Preferences.uartReceveivedDataColor
-    private var textCachedBuffer = NSMutableAttributedString()
-    private var tableCachedDataBuffer: [UartDataChunk]?
-    private var cachedNumOfTableItems = 0
-    private var selectedPeripheralIdentifier: String?
+
     
     var brushes = [String:Brush]()
     var socketManager = SocketManager();
     var currentCanvas: Canvas?
     let socketKey = NSUUID().UUIDString
     let drawKey = NSUUID().UUIDString
-    
+
     override func viewDidLoad() {
         
-        
-        
+    
         super.viewDidLoad()
-        
-        
-        clearAll.addTarget(self, action: #selector(ViewController.clearClicked(_:)), forControlEvents: .TouchUpInside)
-        
-        
-        //gcodeExport.addTarget(self, action: #selector(ViewController.gcodeExportClicked(_:)), forControlEvents: .TouchUpInside)
-        
-        
-        
         socketManager.socketEvent.addHandler(self,handler: ViewController.socketHandler, key:socketKey)
         socketManager.connect();
-        
-        // Peripheral should be connected
-        
-        peripheralList = PeripheralList()                  // Initialize here to wait for Preferences.registerDefaults to be executed
-
-        
-        // Subscribe to Ble Notifications
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didDiscoverPeripheral(_:)), name: BleManager.BleNotifications.DidDiscoverPeripheral.rawValue, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didDiscoverPeripheral(_:)), name: BleManager.BleNotifications.DidUnDiscoverPeripheral.rawValue, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didDisconnectFromPeripheral(_:)), name: BleManager.BleNotifications.DidDisconnectFromPeripheral.rawValue, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didConnectToPeripheral(_:)), name: BleManager.BleNotifications.DidConnectToPeripheral.rawValue, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(willConnectToPeripheral(_:)), name: BleManager.BleNotifications.WillConnectToPeripheral.rawValue, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didUpdateBleState(_:)), name: BleManager.BleNotifications.DidUpdateBleState.rawValue, object: nil)
-        
-        BleManager.sharedInstance.startScan()
-
-        uartData.delegate = self
-       
-
-
+              //toolbarView.toolbarEvent.addHandler(self,handler:ViewController.)
+        socketManager.connect();
+    
         
     }
     
+    
+      
     //event handler for socket connections
     func socketHandler(data:(String,JSON?), key:String){
         switch(data.0){
@@ -134,46 +100,11 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     func clearClicked(sender: AnyObject?) {
         canvasView.clear()
     }
+ 
     
-    func gcodeExportClicked(sender: AnyObject?){
-        let gcode = (currentCanvas?.currentDrawing?.getGcode())! as NSString;
-        let gcode_data = gcode.dataUsingEncoding(NSUTF8StringEncoding)!
-        
-        let svg = (currentCanvas?.currentDrawing?.getSVG())! as NSString;
-        let svg_data = svg.dataUsingEncoding(NSUTF8StringEncoding)!
-        
-        let mailComposeViewController = configuredMailComposeViewController()
-        mailComposeViewController.addAttachmentData(gcode_data, mimeType:"sbp" , fileName: "drawing.sbp")
-        
-        mailComposeViewController.addAttachmentData(svg_data, mimeType:"svg" , fileName: "drawing.svg")
-        
-        if MFMailComposeViewController.canSendMail() {
-            self.presentViewController(mailComposeViewController, animated: true, completion: nil)
-        } else {
-            self.showSendMailErrorAlert()
-        }
-    }
+  
     
-    func configuredMailComposeViewController() -> MFMailComposeViewController {
-        let mailComposerVC = MFMailComposeViewController()
-        mailComposerVC.mailComposeDelegate = self // Extremely important to set the --mailComposeDelegate-- property, NOT the --delegate-- property
-        
-        mailComposerVC.setToRecipients(["jenniferj.net@gmail.com"])
-        mailComposerVC.setSubject("GCODE")
-        mailComposerVC.setMessageBody("gcode", isHTML: false)
-        
-        return mailComposerVC
-    }
-    
-    func showSendMailErrorAlert() {
-        let sendMailErrorAlert = UIAlertView(title: "Could Not Send Email", message: "Your device could not send e-mail.  Please check e-mail configuration and try again.", delegate: self, cancelButtonTitle: "OK")
-        sendMailErrorAlert.show()
-    }
-    
-    // MARK: MFMailComposeViewControllerDelegate Method
-    func mailComposeController(controller: MFMailComposeViewController!, didFinishWithResult result: MFMailComposeResult, error: NSError!) {
-        controller.dismissViewControllerAnimated(true, completion: nil)
-    }
+
     func newCanvasClicked(sender: AnyObject?){
         self.initCanvas();
     }
@@ -208,7 +139,7 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
         
         b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dx"], relativePropertyName: "dx", targetState: "default")
         b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dy"], relativePropertyName: "dy", targetState: "default")
-        b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["force"], relativePropertyName: "weight", targetState: "default")
+       // b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["force"], relativePropertyName: "weight", targetState: "default")
         
         return b;
         
@@ -532,7 +463,15 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
                 let prevSeg = seg.getPreviousSegment()
                 
                 if(prevSeg != nil){
-                    canvasView.drawPath(prevSeg!.point,tP: seg.point, w:seg.diameter, c:seg.color)
+                    
+                    if(ToolManager.bothActive){
+                        canvasView.drawPath(prevSeg!.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)),tP: seg.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)), w:ToolManager.lgPenDiameter, c:ToolManager.lgPenColor)
+                        canvasView.drawPath(prevSeg!.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)),tP: seg.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)), w:ToolManager.smPenDiameter, c:ToolManager.smPenColor)
+
+                    }
+                    else{
+                        canvasView.drawPath(prevSeg!.point,tP: seg.point, w:ToolManager.diameter, c:ToolManager.color)
+                    }
                 }
                 
                 break
@@ -626,370 +565,6 @@ class ViewController: UIViewController, MFMailComposeViewControllerDelegate {
     }
     
     
-    // MARK: - Notifications
-    func didDiscoverPeripheral(notification: NSNotification) {
-        print("discovered peripheral\(notification)");
-        let bleManager = BleManager.sharedInstance
-        let blePeripheralsFound = bleManager.blePeripherals()
-        let filteredPeripherals =  bleManager.blePeripherals(); //peripheralList.filteredPeripherals(false)
-        print ("filtered count = \(filteredPeripherals.count,filteredPeripherals)");
-       for var blePeripheral in filteredPeripherals {      // To avoid problems with peripherals disconnecting
-                let localizationManager = LocalizationManager.sharedInstance
-                
-                var  name = blePeripheral.1.name ?? localizationManager.localizedString("peripherallist_unnamed")
-                print("peripheral name\(name)")
-        
-        if(name == "Adafruit Bluefruit LE"){
-            print("found bluetooth")
-            connectToPeripheral(notification.userInfo!["uuid"] as! String)
-           //BleManager.sharedInstance.connect(blePeripheral.1)
-            BleManager.sharedInstance.stopScan()
-            
-            }
-        
-        }
-
     }
-    
-    func connectToPeripheral(identifier: String?) {
-        let bleManager = BleManager.sharedInstance
-        
-        if (identifier != bleManager.blePeripheralConnected?.peripheral.identifier.UUIDString || identifier == nil) {
-            
-            //
-            let blePeripheralsFound = bleManager.blePeripherals()
-            
-            // Disconnect from previous
-                //BleManager.sharedInstance.disconnect(blePeripheral)
-            
-        
-            
-            // Connect to new peripheral
-            if let selectedBlePeripheralIdentifier = identifier {
-                
-                let blePeripheral = blePeripheralsFound[selectedBlePeripheralIdentifier]!
-                if (BleManager.sharedInstance.blePeripheralConnected?.peripheral.identifier != selectedBlePeripheralIdentifier) {
-                    // DLog("connect to new peripheral: \(selectedPeripheralIdentifier)")
-                    
-                    BleManager.sharedInstance.connect(blePeripheral)
-                    
-                    selectedPeripheralIdentifier = selectedBlePeripheralIdentifier
-                }
-            }
-            else {
-                //DLog("Peripheral selected row: -1")
-                selectedPeripheralIdentifier = nil;
-            }
-        }
-    }
-    
-    func willConnectToPeripheral(notification: NSNotification) {
-       
-                    if let peripheral = BleManager.sharedInstance.blePeripheralConnecting {
-                        BleManager.sharedInstance.disconnect(peripheral)
-                    }
-                    else if let peripheral = BleManager.sharedInstance.blePeripheralConnected {
-                        BleManager.sharedInstance.disconnect(peripheral)
-                    }
-        
-    }
-    
-    func didConnectToPeripheral(notification: NSNotification) {
-        
-        print("connection to bluetooth made");
-        if BleManager.sharedInstance.blePeripheralConnected != nil {
-               
-                    
-                    uartData.blePeripheral = BleManager.sharedInstance.blePeripheralConnected       // Note: this will start the service discovery
-                    guard uartData.blePeripheral != nil else {
-                       print("Error: Uart: blePeripheral is nil")
-                        return
-                    }
-                    print("peripheral\( BleManager.sharedInstance.blePeripheralConnected?.name,BleManager.sharedInstance.blePeripheralConnected?.hasUart())");
-            
-            let blePeripheral = BleManager.sharedInstance.blePeripheralConnected!
-            blePeripheral.peripheral.delegate = self
-            
-            // Notifications
-           print("has uart? \(BleManager.sharedInstance.blePeripheralConnected?.hasUart())")
-            
-            let notificationCenter =  NSNotificationCenter.defaultCenter()
-            if !uartData.isReady() {
-                print ("unart not ready yet");
-                notificationCenter.addObserver(self, selector: #selector(uartIsReady(_:)), name: UartManager.UartNotifications.DidBecomeReady.rawValue, object: nil)
-            }
-            else {
-               // delegate?.onControllerUartIsReady()
-                startUpdatingData()
-            }
-            
-
-                }
-                else {
-                    DLog("cancel push detail because peripheral was disconnected")
-                }
-        
-    
-    }
-    
-    func uartIsReady(notification: NSNotification) {
-        print("Uart is ready")
-        let notificationCenter = NSNotificationCenter.defaultCenter()
-        notificationCenter.removeObserver(self, name: UartManager.UartNotifications.DidBecomeReady.rawValue, object: nil)
-        
-        //delegate?.onControllerUartIsReady()
-        startUpdatingData()
-    }
-    
-    
-    // MARK: -
-    private func startUpdatingData() {
-        let text = "foo bar"
-        
-        var newText = text
-        // Eol
-        if (Preferences.uartIsAutomaticEolEnabled)  {
-            newText += "\n"
-        }
-        
-        uartData.sendMessageToUart(newText)
-        
-        //pollTimer = MSWeakTimer.scheduledTimerWithTimeInterval(pollInterval, target: self, selector: #selector(updateSensors), userInfo: nil, repeats: true, dispatchQueue: dispatch_get_main_queue())
-    }
-
-    
-    func didUpdateBleState(notification: NSNotification?) {
-        guard let state = BleManager.sharedInstance.centralManager?.state else {
-            return
-        }
-        
-        print("update\(notification)");
-        
-        // Check if there is any error
-        var errorMessage: String?
-        switch state {
-        case .Unsupported:
-            errorMessage = "This device doesn't support Bluetooth Low Energy"
-        case .Unauthorized:
-            errorMessage = "This app is not authorized to use the Bluetooth Low Energy"
-        case.PoweredOff:
-            errorMessage = "Bluetooth is currently powered off"
-            
-        default:
-            errorMessage = nil
-        }
-        
-        // Show alert if error found
-        if let errorMessage = errorMessage {
-            let localizationManager = LocalizationManager.sharedInstance
-            let alertController = UIAlertController(title: localizationManager.localizedString("dialog_error"), message: errorMessage, preferredStyle: .Alert)
-            let okAction = UIAlertAction(title: localizationManager.localizedString("dialog_ok"), style: .Default, handler: { (_) -> Void in
-                if let navController = self.splitViewController?.viewControllers[0] as? UINavigationController {
-                    navController.popViewControllerAnimated(true)
-                }
-            })
-            
-            alertController.addAction(okAction)
-            self.presentViewController(alertController, animated: true, completion: nil)
-        }
-    }
-    
-    override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
-        if identifier == "showDetailSegue" {
-            let isPeripheralStillConnected = BleManager.sharedInstance.blePeripheralConnected != nil  // peripheral should still be connected
-            //DLog("shouldPerformSegueWithIdentifier: \(isPeripheralStillConnected)")
-            return isPeripheralStillConnected
-        }
-        return true
-    }
-    
-    
-    
-    func didDisconnectFromPeripheral(notification : NSNotification) {
-        // Watch
-        WatchSessionManager.sharedInstance.updateApplicationContext(.Scan)
-        
-        //
-        dispatch_async(dispatch_get_main_queue(), {[unowned self] in
-            DLog("list: disconnection detected a")
-            self.peripheralList.disconnected()
-            if BleManager.sharedInstance.blePeripheralConnected == nil{
-                DLog("list: disconnection detected b")
-                
-                // Unexpected disconnect if the row is still selected but the connected peripheral is nil and the time since the user selected a new peripheral is bigger than kMinTimeSinceUserSelection second
-                // let kMinTimeSinceUserSelection = 1.0    // in secs
-                // if self.peripheralList.elapsedTimeSinceSelection > kMinTimeSinceUserSelection {
-               // self.baseTableView.deselectRowAtIndexPath(indexPathForSelectedRow, animated: true)
-                
-                DLog("list: disconnection detected c")
-                
-                let isFullScreen = UIScreen.mainScreen().traitCollection.horizontalSizeClass == .Compact
-                if isFullScreen {
-                    
-                    DLog("list: compact mode show alert")
-                    if self.presentedViewController != nil {
-                        self.dismissViewControllerAnimated(true, completion: { () -> Void in
-                            self.showPeripheralDisconnectedDialog()
-                        })
-                    }
-                    else {
-                        self.showPeripheralDisconnectedDialog()
-                    }
-                    //   }
-                }
-                else {
-                    self.reloadData()
-                }
-            }
-            })
-    }
-    
-    private func showPeripheralDisconnectedDialog() {
-        let localizationManager = LocalizationManager.sharedInstance
-        let alertController = UIAlertController(title: nil, message: localizationManager.localizedString("peripherallist_peripheraldisconnected"), preferredStyle: .Alert)
-        let okAction = UIAlertAction(title: localizationManager.localizedString("dialog_ok"), style: .Default, handler: { (_) -> Void in
-            if let navController = self.splitViewController?.viewControllers[0] as? UINavigationController {
-                navController.popViewControllerAnimated(true)
-            }
-        })
-        
-        alertController.addAction(okAction)
-        self.presentViewController(alertController, animated: true, completion: nil)
-    }
-
-    
-}
-
-// MARK: - UartModuleDelegate
-extension ViewController: UartModuleDelegate {
-    
-    func addChunkToUI(dataChunk : UartDataChunk) {
-        // Check that the view has been initialized before updating UI
-        guard isViewLoaded() && view.window != nil else {
-            return
-        }
-        
-        let displayMode = Preferences.uartIsDisplayModeTimestamp ? UartModuleManager.DisplayMode.Table : UartModuleManager.DisplayMode.Text
-        
-        switch(displayMode) {
-        case .Text:
-            addChunkToUIText(dataChunk)
-            self.enh_throttledReloadData()      // it will call self.reloadData without overloading the main thread with calls
-            
-        case .Table:
-            self.enh_throttledReloadData()      // it will call self.reloadData without overloading the main thread with calls
-            
-        }
-        
-        //updateBytesUI()
-    }
-    
-    func reloadData() {
-        let displayMode = Preferences.uartIsDisplayModeTimestamp ? UartModuleManager.DisplayMode.Table : UartModuleManager.DisplayMode.Text
-        switch(displayMode) {
-        case .Text:
-            //baseTextView.attributedText = textCachedBuffer
-            
-            let textLength = textCachedBuffer.length
-            if textLength > 0 {
-                let range = NSMakeRange(textLength - 1, 1);
-                //baseTextView.scrollRangeToVisible(range);
-            }
-            
-        case .Table:
-            //baseTableView.reloadData()
-            if let tableCachedDataBuffer = tableCachedDataBuffer {
-                if tableCachedDataBuffer.count > 0 {
-                    let lastIndex = NSIndexPath(forRow: tableCachedDataBuffer.count-1, inSection: 0)
-                    //baseTableView.scrollToRowAtIndexPath(lastIndex, atScrollPosition: UITableViewScrollPosition.Bottom, animated: false)
-                }
-            }
-        }
-    }
-    
-    private func addChunkToUIText(dataChunk : UartDataChunk) {
-        
-        /*if (Preferences.uartIsEchoEnabled || dataChunk.mode == .RX) {
-            let color = dataChunk.mode == .TX ? txColor : rxColor
-            
-            if let attributedString = UartModuleManager.attributeTextFromData(dataChunk.data, useHexMode: Preferences.uartIsInHexMode, color: color, font: UartModuleViewController.dataFont) {
-                textCachedBuffer.appendAttributedString(attributedString)
-            }
-        }*/
-    }
-    
-    func mqttUpdateStatusUI() {
-        /*if let imageView = mqttBarButtonItemImageView {
-            let status = MqttManager.sharedInstance.status
-            let tintColor = self.view.tintColor
-            
-            switch (status) {
-            case .Connecting:
-                let imageFrames = [
-                    UIImage(named:"mqtt_connecting1")!.tintWithColor(tintColor),
-                    UIImage(named:"mqtt_connecting2")!.tintWithColor(tintColor),
-                    UIImage(named:"mqtt_connecting3")!.tintWithColor(tintColor)
-                ]
-                imageView.animationImages = imageFrames
-                imageView.animationDuration = 0.5 * Double(imageFrames.count)
-                imageView.animationRepeatCount = 0;
-                imageView.startAnimating()
-                
-            case .Connected:
-                imageView.stopAnimating()
-                imageView.image = UIImage(named:"mqtt_connected")!.tintWithColor(tintColor)
-                
-            default:
-                imageView.stopAnimating()
-                imageView.image = UIImage(named:"mqtt_disconnected")!.tintWithColor(tintColor)
-            }
-        }*/
-    }
-    
-    func mqttError(message: String, isConnectionError: Bool) {
-      /*  let localizationManager = LocalizationManager.sharedInstance
-        
-        let alertMessage = isConnectionError ? localizationManager.localizedString("uart_mqtt_connectionerror_title"): message
-        let alertController = UIAlertController(title: nil, message: alertMessage, preferredStyle: .Alert)
-        
-        let okAction = UIAlertAction(title: localizationManager.localizedString("dialog_ok"), style: .Default, handler:nil)
-        alertController.addAction(okAction)
-        self.presentViewController(alertController, animated: true, completion: nil)*/
-    }
-}
-
-// MARK: - CBPeripheralDelegate
-extension ViewController: CBPeripheralDelegate {
-    // Pass peripheral callbacks to UartData
-    
-    func peripheral(peripheral: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
-        uartData.peripheral(peripheral, didModifyServices: invalidatedServices)
-    }
-    
-    func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
-        uartData.peripheral(peripheral, didDiscoverServices:error)
-    }
-    
-    func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
-        
-        uartData.peripheral(peripheral, didDiscoverCharacteristicsForService: service, error: error)
-        
-        // Check if ready
-        if uartData.isReady() {
-            print ("ready");
-            // Enable input
-         /*   dispatch_async(dispatch_get_main_queue(), { [unowned self] in
-                if self.inputTextField != nil {     // could be nil if the viewdidload has not been executed yet
-                    self.inputTextField.enabled = true
-                    self.inputTextField.backgroundColor = UIColor.whiteColor()
-                }
-                });*/
-        }
-    }
-    
-    func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
-        uartData.peripheral(peripheral, didUpdateValueForCharacteristic: characteristic, error: error)
-    }
-}
 
 

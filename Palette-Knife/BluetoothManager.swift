@@ -55,16 +55,16 @@ class BluetoothManager:NSObject {
     
     // MARK: - Notifications
     @objc func didDiscoverPeripheral(notification: NSNotification) {
-        print("discovered peripheral\(notification)");
+        //print("discovered peripheral\(notification)");
         let bleManager = BleManager.sharedInstance
         let blePeripheralsFound = bleManager.blePeripherals()
         let filteredPeripherals =  bleManager.blePeripherals(); //peripheralList.filteredPeripherals(false)
-        print ("filtered count = \(filteredPeripherals.count,filteredPeripherals)");
+       // print ("filtered count = \(filteredPeripherals.count,filteredPeripherals)");
         for var blePeripheral in filteredPeripherals {      // To avoid problems with peripherals disconnecting
             let localizationManager = LocalizationManager.sharedInstance
             
             var  name = blePeripheral.1.name ?? localizationManager.localizedString("peripherallist_unnamed")
-            print("peripheral name\(name)")
+            //print("peripheral name\(name)")
             
             if(name == "Adafruit Bluefruit LE"){
                 print("found bluetooth")

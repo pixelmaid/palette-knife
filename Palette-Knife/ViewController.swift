@@ -18,10 +18,16 @@ class ViewController: UIViewController {
     @IBOutlet weak var dualBrushButton: UIButton!
     @IBOutlet weak var largeBrushButton: UIButton!
     @IBOutlet weak var smallBrushButton: UIButton!
+    var canvasViewSm:CanvasView
+    var canvasViewLg:CanvasView
+    var bakeViewSm:CanvasView
     
-    @IBOutlet weak var fabricatorView: FabricatorView!
-    @IBOutlet weak var canvasView: CanvasView!
-  
+    var bakeViewLg:CanvasView
+    var backView:UIImageView
+    var fabricatorView = FabricatorView();
+    // var canvasViewBakeSm:CanvasView;
+    // var canvasViewBakeLg:CanvasView;
+    
     
     @IBOutlet weak var xOutput: UITextField!
     
@@ -31,37 +37,127 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var statusOutput: UITextField!
     
-
+    
     
     var brushes = [String:Brush]()
     var socketManager = SocketManager();
     var currentCanvas: Canvas?
     let socketKey = NSUUID().UUIDString
     let drawKey = NSUUID().UUIDString
+    let brushEventKey = NSUUID().UUIDString
 
-    override func viewDidLoad() {
+    
+    var downInCanvas = false;
+    
+    var radialBrush:Brush?
+    var bakeBrush:Brush?
+    
+    required init?(coder: NSCoder) {
+       
         
-    
-        super.viewDidLoad()
-        socketManager.socketEvent.addHandler(self,handler: ViewController.socketHandler, key:socketKey)
-        socketManager.connect();
-              //toolbarView.toolbarEvent.addHandler(self,handler:ViewController.)
-        socketManager.connect();
-    
+        
+        
+        let screenSize = UIScreen.mainScreen().bounds
+        let sX = (screenSize.width-CGFloat(GCodeGenerator.pX))/2.0
+        let sY = (screenSize.height-CGFloat(GCodeGenerator.pY))/2.0
+        
+        GCodeGenerator.setCanvasOffset(Float(sX),y:Float(sY));
+         canvasViewSm = CanvasView(frame: CGRectMake(sX, sY, CGFloat(GCodeGenerator.pX), CGFloat(GCodeGenerator.pY)))
+        
+         canvasViewLg = CanvasView(frame: CGRectMake(sX, sY, CGFloat(GCodeGenerator.pX), CGFloat(GCodeGenerator.pY)))
+        
+        bakeViewSm = CanvasView(frame: CGRectMake(sX, sY, CGFloat(GCodeGenerator.pX), CGFloat(GCodeGenerator.pY)))
+        
+         bakeViewLg = CanvasView(frame: CGRectMake(sX, sY, CGFloat(GCodeGenerator.pX), CGFloat(GCodeGenerator.pY)))
+         backView = UIImageView(frame: CGRectMake(sX, sY, CGFloat(GCodeGenerator.pX), CGFloat(GCodeGenerator.pY)))
+ 
+        
+        super.init(coder: coder);
         
     }
     
     
-      
+    override func viewDidLoad() {
+        
+        
+        super.viewDidLoad()
+              socketManager.socketEvent.addHandler(self,handler: ViewController.socketHandler, key:socketKey)
+        //toolbarView.toolbarEvent.addHandler(self,handler:ViewController.)
+        socketManager.connect();
+        
+        ToolManager.brushEvent.addHandler(self,handler:ViewController.brushToggleHandler,key:brushEventKey);
+
+        
+        canvasViewSm.backgroundColor=UIColor.whiteColor()
+        self.view.addSubview(canvasViewSm)
+        
+        canvasViewLg.backgroundColor=UIColor.clearColor()
+        self.view.addSubview(canvasViewLg)
+        
+        
+        bakeViewLg.backgroundColor=UIColor.clearColor()
+        self.view.addSubview(bakeViewLg)
+        
+        bakeViewSm.backgroundColor=UIColor.clearColor()
+        self.view.addSubview(bakeViewSm)
+        
+        backView.backgroundColor=UIColor.whiteColor()
+        self.view.addSubview(backView)
+        
+        fabricatorView.frame = CGRectMake(0, 0, CGFloat(GCodeGenerator.pX), CGFloat(GCodeGenerator.pY));
+        fabricatorView.backgroundColor = UIColor.clearColor();
+        self.view.addSubview(fabricatorView);
+        self.view.sendSubviewToBack(fabricatorView)
+        self.view.sendSubviewToBack(bakeViewLg)
+        self.view.sendSubviewToBack(bakeViewSm)
+
+        self.view.sendSubviewToBack(canvasViewLg)
+        self.view.sendSubviewToBack(canvasViewSm)
+        self.view.sendSubviewToBack(backView)
+
+        canvasViewLg.alpha = 0.25;
+        canvasViewSm.alpha = 0.25;
+        
+        
+        self.fabricatorView.drawFabricatorPosition(Float(0), y: Float(0), z: Float(0))
+        self.initCanvas()
+        self.initRadialBrush();
+        self.initBakeBrush();
+
+        radialBrush?.active = false;
+        
+        
+    }
+    
+    
+    func brushToggleHandler(data:(String),key:String){
+        switch(data){
+            case "draw":
+                radialBrush!.active = false;
+                bakeBrush!.active = true;
+                break;
+        case "radial":
+            radialBrush!.active = true;
+            bakeBrush!.active = false;
+
+            break;
+        default:
+            break;
+        }
+    }
+    
+    
     //event handler for socket connections
     func socketHandler(data:(String,JSON?), key:String){
         switch(data.0){
         case "first_connection":
-              self.initCanvas();
+            //self.initCanvas();
             //self.initStandardBrush();
             //self.initTestBrushes();
-            //   self.initFractalBrush();
-            self.initBakeBrush();
+               //self.initFractalBrush();
+            //self.initBakeBrush();
+            //self.initRadialBrush();
+            
             //self.initDripBrush();
             break;
         case "disconnected":
@@ -88,6 +184,15 @@ class ViewController: UIViewController {
             GCodeGenerator.fabricatorZ = Float(z);
             GCodeGenerator.fabricatorStatus.set(Float(status)!);
             
+            let _x = Numerical.map(Float(x)!, istart:0, istop: GCodeGenerator.inX, ostart: 0, ostop: GCodeGenerator.pX)
+            
+            let _y = Numerical.map(Float(y)!, istart:0, istop:GCodeGenerator.inY, ostart:  GCodeGenerator.pY, ostop: 0 )
+            var _z = Numerical.map(Float(z)!, istart: 0.2, istop: GCodeGenerator.depthLimit, ostart: 0.2, ostop: 42)
+
+
+            if(Float(status)! == 33 && Float(z) <= 0){
+                currentCanvas?.currentDrawing!.checkBake(_x,y:_y,z:_z);
+            }
             
             break;
         default:
@@ -97,14 +202,7 @@ class ViewController: UIViewController {
     }
     
     
-    func clearClicked(sender: AnyObject?) {
-        canvasView.clear()
-    }
- 
     
-  
-    
-
     func newCanvasClicked(sender: AnyObject?){
         self.initCanvas();
     }
@@ -139,7 +237,7 @@ class ViewController: UIViewController {
         
         b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dx"], relativePropertyName: "dx", targetState: "default")
         b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dy"], relativePropertyName: "dy", targetState: "default")
-       // b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["force"], relativePropertyName: "weight", targetState: "default")
+        // b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["force"], relativePropertyName: "weight", targetState: "default")
         
         return b;
         
@@ -168,9 +266,9 @@ class ViewController: UIViewController {
         dripBehavior.addTransition(NSUUID().UUIDString, name: "tickTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateName: "default", toStateName: "default", condition: nil)
         dripBehavior.addMapping(NSUUID().UUIDString, referenceProperty: Observable<Float>(2), referenceNames: nil, relativePropertyName: "dy", targetState: "default")
         
-      dripBehavior.addMapping(NSUUID().UUIDString, referenceProperty: nil, referenceNames: ["weightExpression"], relativePropertyName: "weight", targetState: "default")
- 
-
+        dripBehavior.addMapping(NSUUID().UUIDString, referenceProperty: nil, referenceNames: ["weightExpression"], relativePropertyName: "weight", targetState: "default")
+        
+        
         
         dripBehavior.addTransition(NSUUID().UUIDString, name: "dieTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateName: "default", toStateName: "die", condition: "lengthCondition")
         
@@ -199,16 +297,16 @@ class ViewController: UIViewController {
         
         
         b1.addMethod("stylusUpT", methodId:NSUUID().UUIDString, targetMethod: "bake", arguments: nil)
-        b1.addMethod("stylusUpT", methodId:NSUUID().UUIDString, targetMethod: "liftUp", arguments: nil)
+        //b1.addMethod("stylusUpT", methodId:NSUUID().UUIDString, targetMethod: "liftUp", arguments: nil)
         
         b1.addMethod("stylusDownTransition",methodId:NSUUID().UUIDString,targetMethod: "jogTo", arguments: [stylus.position])
         
-        let b1_brush = Brush(name:"b1",behaviorDef: b1, parent:nil, canvas:self.currentCanvas!)
+        bakeBrush = Brush(name:"b1",behaviorDef: b1, parent:nil, canvas:self.currentCanvas!)
         
         
         self.socketManager.sendBehaviorData(b1.toJSON());
         
-        socketManager.initAction(b1_brush,type:"brush_init");
+        socketManager.initAction(bakeBrush!,type:"brush_init");
         
         
         
@@ -231,6 +329,49 @@ class ViewController: UIViewController {
      socketManager.initAction(b1_brush,type:"brush_init");
      
      }*/
+    
+    func initRadialBrush(){
+       
+        let radial_spawnBehavior = initSpawnTemplate("radial_spawn_behavior");
+       radial_spawnBehavior.addExpression("angle_expression", emitter1: nil, operand1Names: ["index"], emitter2: Observable<Float>(60), operand2Names: nil, type: "mult")
+        
+        radial_spawnBehavior.addMapping(NSUUID().UUIDString, referenceProperty: nil, referenceNames: ["angle_expression"], relativePropertyName: "angle", targetState: "start")
+        
+        radial_spawnBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dx"], relativePropertyName: "dx", targetState: "default")
+        radial_spawnBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dy"], relativePropertyName: "dy", targetState: "default")
+        
+        
+        radial_spawnBehavior.addState(NSUUID().UUIDString,stateName:"die")
+
+       radial_spawnBehavior.addTransition(NSUUID().UUIDString, name: "dieTransition", eventEmitter: stylus, parentFlag: false, event: "STYLUS_UP", fromStateName: "default", toStateName: "die", condition: nil)
+        
+          radial_spawnBehavior.addMethod("dieTransition", methodId:NSUUID().UUIDString, targetMethod: "jogAndBake", arguments: nil)
+
+        let radial_behavior = BehaviorDefinition(id:NSUUID().UUIDString, name:"radial_behavior")
+        
+        
+        defaultSetup(radial_behavior);
+        
+        radial_behavior.addTransition(NSUUID().UUIDString, name:"stylusDownTransition", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromStateName: "default", toStateName: "default", condition:nil)
+        radial_behavior.addTransition(NSUUID().UUIDString, name:"stylusUpTransition", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateName: "default", toStateName: "default", condition:nil)
+        
+        radial_behavior.addMethod("stylusDownTransition", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
+        radial_behavior.addMethod("stylusDownTransition", methodId:NSUUID().UUIDString, targetMethod: "startInterval", arguments: nil)
+        radial_behavior.addMethod("stylusUpTransition", methodId:NSUUID().UUIDString, targetMethod: "stopInterval", arguments: nil)
+        
+        
+        
+        
+        radial_behavior.addMethod("stylusDownTransition", methodId:NSUUID().UUIDString, targetMethod: "spawn", arguments: ["radial_spawn_behavior",radial_spawnBehavior,6])
+         radial_behavior.addMethod("stylusDownTransition",methodId:NSUUID().UUIDString,targetMethod: "jogTo", arguments: [stylus.position])
+        radialBrush = Brush(name:"radial",behaviorDef: radial_behavior, parent:nil, canvas:self.currentCanvas!)
+        
+        self.socketManager.sendBehaviorData(radial_behavior.toJSON());
+        
+        socketManager.initAction(radialBrush!,type:"brush_init");
+
+
+    }
     
     func initFractalBrush(){
         
@@ -455,6 +596,37 @@ class ViewController: UIViewController {
     
     func canvasDrawHandler(data:(Geometry,String,String), key:String){
         switch data.2{
+            
+        case "BAKE_DRAW":
+            switch data.1{
+            case "SEGMENT":
+                
+                let seg = data.0 as! Segment
+                
+                let prevSeg = seg.getPreviousSegment()
+                
+                if(prevSeg != nil){
+                    
+                    if(ToolManager.bothActive){
+                        bakeViewLg.drawPath(prevSeg!.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)),tP: seg.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)), w:ToolManager.lgPenDiameter, c:ToolManager.lgPenColor)
+                        bakeViewSm.drawPath(prevSeg!.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)),tP: seg.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)), w:ToolManager.smPenDiameter, c:ToolManager.smPenColor)
+                        
+                    }
+                    else{
+                        if(ToolManager.smallActive){
+                             bakeViewSm.drawPath(prevSeg!.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)),tP: seg.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)), w:ToolManager.smPenDiameter, c:ToolManager.smPenColor)
+                        }
+                        else{
+ bakeViewLg.drawPath(prevSeg!.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)),tP: seg.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)), w:ToolManager.lgPenDiameter, c:ToolManager.lgPenColor)
+                        }
+                    }
+                }
+
+                break
+            default:
+                break;
+            }
+            break;
         case "DRAW":
             switch data.1{
             case "SEGMENT":
@@ -464,14 +636,10 @@ class ViewController: UIViewController {
                 
                 if(prevSeg != nil){
                     
-                    if(ToolManager.bothActive){
-                        canvasView.drawPath(prevSeg!.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)),tP: seg.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)), w:ToolManager.lgPenDiameter, c:ToolManager.lgPenColor)
-                        canvasView.drawPath(prevSeg!.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)),tP: seg.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)), w:ToolManager.smPenDiameter, c:ToolManager.smPenColor)
-
-                    }
-                    else{
-                        canvasView.drawPath(prevSeg!.point,tP: seg.point, w:ToolManager.diameter, c:ToolManager.color)
-                    }
+                        canvasViewLg.drawPath(prevSeg!.point,tP: seg.point, w:ToolManager.defaultPenDiameter, c:ToolManager.defaultPenColor)
+                            
+                    
+                    
                 }
                 
                 break
@@ -483,18 +651,15 @@ class ViewController: UIViewController {
             case "LINE":
                 let line = data.0 as! Line
                 
-                canvasView.drawPath(line.p, tP:line.v, w: 10, c: Color(r:0,g:0,b:0))
                 break
                 
             case "LEAF":
                 let leaf = data.0 as! StoredDrawing
                 
-                canvasView.drawLeaf(leaf.position, angle:leaf.angle, scale:leaf.scaling.x.get(nil))
                 break
                 
             case "FLOWER":
                 let flower = data.0 as! StoredDrawing
-                canvasView.drawFlower(flower.position)
                 
                 break
                 
@@ -519,14 +684,21 @@ class ViewController: UIViewController {
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if let touch = touches.first  {
+        if(ToolManager.mode == "draw"){
             
-            _ = touch.locationInView(view);
-            let force = Float(touch.force);
-            let angle = Float(touch.azimuthAngleInView(view))
-            stylus.onStylusUp()
-            // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
-            //socketManager.sendStylusData();
+            if let touch = touches.first  {
+                
+                _ = touch.locationInView(canvasViewSm);
+                let force = Float(touch.force);
+                let angle = Float(touch.azimuthAngleInView(canvasViewSm))
+                if(downInCanvas){
+                stylus.onStylusUp()
+                downInCanvas = false
+                }
+                // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
+                //socketManager.sendStylusData();
+                
+            }
             
         }
         
@@ -537,34 +709,52 @@ class ViewController: UIViewController {
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first  {
-            let point = touch.locationInView(view)
+            let point = touch.locationInView(canvasViewSm)
+            print(point);
             let x = Float(point.x)
             let y = Float(point.y)
             ;
             let force = Float(touch.force);
-            let angle = Float(touch.azimuthAngleInView(view))
-            stylus.onStylusDown(x, y:y, force:force, angle:angle)
-            // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
-            // socketManager.sendStylusData();
-            
+            let angle = Float(touch.azimuthAngleInView(canvasViewSm))
+            if(ToolManager.mode == "draw"){
+                if(x>=0 && y>=0 && x<=GCodeGenerator.pX && y<=GCodeGenerator.pY){
+                stylus.onStylusDown(x, y:y, force:force, angle:angle)
+                    downInCanvas = true;
+                }
+                // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
+                // socketManager.sendStylusData();
+                
+            }
+            else{
+                currentCanvas!.hitTest(Point(x:x,y:y),threshold:20);
+            }
         }
+        
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if let touch = touches.first  {
+        if(ToolManager.mode == "draw"){
             
-            let point = touch.locationInView(view);
-            let x = Float(point.x)
-            let y = Float(point.y)
-            let force = Float(touch.force);
-            let angle = Float(touch.azimuthAngleInView(view))
-            stylus.onStylusMove(x, y:y, force:force, angle:angle)
-            // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
-            // socketManager.sendStylusData();
+            if let touch = touches.first  {
+                
+                let point = touch.locationInView(canvasViewSm);
+                let x = Float(point.x)
+                let y = Float(point.y)
+                let force = Float(touch.force);
+                let angle = Float(touch.azimuthAngleInView(canvasViewSm))
+                if(x>=0 && y>=0 && x<=GCodeGenerator.pX && y<=GCodeGenerator.pY){
+
+                stylus.onStylusMove(x, y:y, force:force, angle:angle)
+                    downInCanvas = true;
+
+                }
+                // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
+                // socketManager.sendStylusData();
+            }
         }
     }
     
     
-    }
+}
 
 

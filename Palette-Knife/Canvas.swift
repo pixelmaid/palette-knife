@@ -50,6 +50,17 @@ class Canvas: WebTransmitter, Hashable{
 
     }
     
+    func hitTest(point:Point, threshold:Float)->Stroke?{
+       let hit = currentDrawing!.hitTest(point,threshold:threshold)
+        if(hit != nil){
+            print("found stroke \(hit)");
+            return hit;
+        }
+        print("found no stroke");
+
+        return nil;
+    }
+    
     func drawingDataGenerated(data:(String), key:String){
         var string = "{\"canvas_id\":\""+self.id+"\","
         string += data;

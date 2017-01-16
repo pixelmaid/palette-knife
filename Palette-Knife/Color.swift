@@ -13,15 +13,17 @@ struct Color {
     var r = Float(0);
     var g = Float(0);
     var b = Float(0);
+    var a = Float(1);
     
     mutating func setValue(value:Color){
         self.r = value.r;
         self.g = value.g;
         self.b = value.b;
+        self.a = value.a;
     }
     
     func toCGColor()->CGColor{
-        return UIColor(red:CGFloat(self.r/255),green:CGFloat(self.g/255),blue:CGFloat(self.b/255), alpha:CGFloat(1)).CGColor;
+        return UIColor(red:CGFloat(self.r/255),green:CGFloat(self.g/255),blue:CGFloat(self.b/255), alpha:CGFloat(a)).CGColor;
     }
     
 }

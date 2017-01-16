@@ -24,7 +24,7 @@ class ToolbarView: UIView{
     
     override func drawRect(rect: CGRect) {
    
-        self.layer.shadowColor = UIColor.blackColor().CGColor
+        /*self.layer.shadowColor = UIColor.blackColor().CGColor
         self.layer.shadowOffset = CGSizeZero
         self.layer.shadowOpacity = 0.5
         self.layer.shadowRadius = 5
@@ -33,7 +33,7 @@ class ToolbarView: UIView{
 
         self.layer.borderColor = UIColor.darkGrayColor().CGColor;
         self.layer.borderWidth = 0.5
-        self.clipsToBounds = true
+        //self.clipsToBounds = true*/
         
         
         dualBrushButton.addTarget(self, action: #selector(ToolbarView.dualBrushClicked(_:)), forControlEvents: .TouchUpInside)

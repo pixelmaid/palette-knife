@@ -41,7 +41,7 @@ struct Segment:Geometry, Equatable {
     var parent:Stroke?;
     var index:Int?
     var diameter = Float(1);
-    var color = Color(r:0,g:0,b:0);
+    var color = Color(r:0,g:0,b:0,a:1);
     var time = Float(0);
     
     init(x:Float,y:Float) {
@@ -79,6 +79,13 @@ struct Segment:Geometry, Equatable {
     }
     
    
+    func hitTest(testPoint:Point,threshold:Float)->Bool{
+        let dist = self.point.dist(testPoint);
+        if dist <= threshold {
+            return true
+        }
+        return false;
+    }
     
     func getPreviousSegment()->Segment?{
         if(self.parent != nil){
@@ -183,6 +190,18 @@ class Stroke:TimeSeries, Geometry {
         super.init();
         gCodeGenerator.startNewStroke();
     }
+    
+    func hitTest(testPoint:Point,threshold:Float)->Segment?{
+        for seg in self.segments{
+            let hit = seg.hitTest(testPoint, threshold: threshold);
+            if hit{
+                return seg
+            }
+        }
+        return nil;
+    
+    }
+    
     
     func addSegment(_segment:Segment)->Segment?{
         var segment = _segment;

@@ -21,7 +21,11 @@ class CanvasView:  UIImageView {
     
     
     override func drawRect(rect: CGRect) {
+    
     }
+
+    
+  
     
     func drawPath(fP: Point, tP: Point, w:Float, c:Color) {
         UIGraphicsBeginImageContext(self.frame.size)
@@ -40,7 +44,6 @@ class CanvasView:  UIImageView {
         CGContextStrokePath(context)
         
         self.image = UIGraphicsGetImageFromCurrentImageContext()
-        self.alpha = 1
         UIGraphicsEndImageContext()
 
 

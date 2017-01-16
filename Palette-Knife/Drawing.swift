@@ -17,6 +17,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     var allStrokes = [String:[Stroke]]();
     var bakeQueue = [String:[Stroke]]();
     var bakedStrokes = [String:[Stroke]]();
+    var drawnStrokes  = [String:[Stroke]]();
     // var geometry = [Geometry]();
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
@@ -56,6 +57,18 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         }
         return svgGenerator.generate(orderedStrokes)
         
+    }
+    
+    func hitTest(point:Point,threshold:Float)->Stroke?{
+        for list in allStrokes {
+            for stroke in list.1{
+                let seg = stroke.hitTest(point,threshold:threshold);
+                if(seg != nil){
+                    return stroke;
+                }
+            }
+        }
+        return nil
     }
     
     //MARK: - Hashable
@@ -132,6 +145,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     
     func bake(parentID:String){
         var source_string = "[";
+        if(bakeQueue[parentID] != nil){
         var bq = bakeQueue[parentID]!
         for i in 0..<bq.count{
             var source = bq[i].gCodeGenerator.source;
@@ -141,8 +155,9 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
                 }
                 source_string += "\""+source[j]+"\""
             }
-            source_string += "]"
-            //source_string+=",\""+gCodeGenerator.endSegment(bakeQueue[i].segments[bakeQueue[i].segments.count-1])+"\"]"
+            
+            //source_string += "]"
+            source_string += ",\""+gCodeGenerator.endSegment(bakeQueue[parentID]![i].segments[bakeQueue[parentID]![i].segments.count-1])+"\"]"
             bakedStrokes[parentID]!.append(bq[i]);
         }
         bakeQueue[parentID]?.removeAll();
@@ -151,8 +166,21 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         data += "\"data\":"+source_string
         self.transmitEvent.raise((data));
         print("source",data);
+        }
     }
     
+    
+    func checkBake(x:Float,y:Float,z:Float){
+        for strokeList in bakedStrokes{
+            for stroke in strokeList.1{
+                let hit = stroke.hitTest(Point(x:x,y:y), threshold: 5)
+                if(hit != nil){
+                    self.geometryModified.raise((hit!,"SEGMENT","BAKE_DRAW"))
+                    return;
+                }
+            }
+        }
+    }
     
     func jogAndBake(parentID:String){
         

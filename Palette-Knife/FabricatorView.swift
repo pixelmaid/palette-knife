@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class FabricatorView:  UIImageView {
+class FabricatorView:  UIView {
     
     /*
      // Only override drawRect: if you perform custom drawing.
@@ -19,25 +19,61 @@ class FabricatorView:  UIImageView {
      }
      */
     
-    override func drawRect(rect: CGRect) {
+    var inactiveMarker: UIImageView;
+    var activeMarker: UIImageView;
+    
+    override init(frame: CGRect) {
+        let inactiveImage = UIImage(named: "shopbot_position_inactive.png")
+       inactiveMarker = UIImageView(frame: CGRect(x: 100, y: 100, width: 42, height: 41))
+        inactiveMarker.image = inactiveImage;
+        
+        let activeImage = UIImage(named: "shopbot_position_active.png")
+        activeMarker = UIImageView(frame: CGRect(x: 100, y: 100, width: 42, height: 41))
+        activeMarker.image = activeImage;
+
+
+        super.init(frame:frame);
+        
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+  
+    override func drawRect(rect: CGRect) {
+        self.addSubview(inactiveMarker)
+
+        self.addSubview(activeMarker)
+
+           }
+    
     func clear(){
-        self.image = nil
+       // self.image = nil
     }
     
     func drawFabricatorPosition(x:Float,y:Float,z:Float) {
-        self.clear();
+        
+        let _x = Numerical.map(x, istart:0, istop: GCodeGenerator.inX, ostart: 0, ostop: GCodeGenerator.pX)+GCodeGenerator.pXOffset
+        
+        let _y = Numerical.map(y, istart:0, istop:GCodeGenerator.inY, ostart:  GCodeGenerator.pY, ostop: 0 )+GCodeGenerator.pYOffset
+        
+        self.inactiveMarker.frame = CGRectMake(CGFloat(_x-20), CGFloat(_y-20), 42, 41)
+        self.activeMarker.frame = CGRectMake(CGFloat(_x-20),CGFloat(_y-20), 42, 41)
+       /* self.clear();
+        
+        
         UIGraphicsBeginImageContext(self.frame.size)
+        
+        
         let context = UIGraphicsGetCurrentContext()!
+        
+        
         self.image?.drawInRect(CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))
         
         let color = Color(r:0,g:255,b:0)
         
-        let _x = Numerical.map(x, istart:0, istop: GCodeGenerator.inX, ostart: 0, ostop: GCodeGenerator.pX)
-        
-        let _y = Numerical.map(y, istart:0, istop:GCodeGenerator.inY, ostart:  GCodeGenerator.pY, ostop: 0 )
-        
+         
         let fromPoint = CGPoint(x:CGFloat(_x),y:CGFloat(_y));
         let toPoint = CGPoint(x:CGFloat(_x),y:CGFloat(_y));
 
@@ -51,9 +87,11 @@ class FabricatorView:  UIImageView {
         
         self.image = UIGraphicsGetImageFromCurrentImageContext()
         self.alpha = 1
-        UIGraphicsEndImageContext()
+        
+       
+        UIGraphicsEndImageContext()*/
         
         
-}
+    }
 }
 

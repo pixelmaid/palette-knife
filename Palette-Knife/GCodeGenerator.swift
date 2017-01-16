@@ -17,17 +17,21 @@ class GCodeGenerator {
     var z = Float(0)
     var xOffset = Float(0);
     var yOffset = Float(0);
+    
+    static let leftOffset = Float(-2.567);
+    static let rightOffset = Float(2.567);
     static let retractHeight = Float(0.59)
     let clearanceHeight = Float(0.6)
     let feedHeight = Float(0)
     let cuttingFeedRate = Float(8)
     let plungingFeedRate = Float(10)
-    let depthLimit = Float(-0.06)
-    static let inX = Float(95);
-    static let pX = Float(1366);
-    static let inY = Float(45);
-    static let pY = Float(1024);
-    
+    static let depthLimit = Float(-0.12)
+    static let inX = Float(84);
+    static let pX = Float(1250);
+    static let inY = Float(42);
+    static let pY = Float(625);
+    static var pXOffset = Float(0);
+    static var pYOffset = Float(0);
     
     static var fabricatorX: Float!
     static var fabricatorY: Float!
@@ -43,6 +47,11 @@ class GCodeGenerator {
     func setOffset(x:Float, y:Float){
         self.xOffset = x;
         self.yOffset = y;
+    }
+    
+    static func setCanvasOffset(x:Float,y:Float){
+        GCodeGenerator.pXOffset = x;
+        GCodeGenerator.pYOffset = y;
     }
     
     func generateVirtualTool()->String{
@@ -85,11 +94,11 @@ class GCodeGenerator {
     }
     
     func drawSegment(segment:Segment)->[String]{
-        var _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0) + xOffset
+        let _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0) + xOffset
         
-        var _y = Numerical.map(segment.point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 ) + yOffset
+        let _y = Numerical.map(segment.point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 ) + yOffset
         
-        var _z = Numerical.map(segment.diameter, istart: 0.2, istop: 42, ostart: 0, ostop: self.depthLimit)
+        var _z = Numerical.map(segment.diameter, istart: 0.2, istop: 42, ostart: 0, ostop: GCodeGenerator.depthLimit)
         /*if(_x>GCodeGenerator.inX){
             _x = GCodeGenerator.inX;
         }
@@ -103,14 +112,14 @@ class GCodeGenerator {
         else if(_y<0){
             _y = 0;
         }*/
-        if(_z>self.depthLimit){
-            _z = self.depthLimit;
+        if(_z>GCodeGenerator.depthLimit){
+            _z = GCodeGenerator.depthLimit;
         }
 
         if(self.newStroke){
            // source.append(jog3(_x,y:_y,z: GCodeGenerator.retractHeight));
             source.append(jog3(_x,y:_y,z: 0));
-            source.append(moveSpeedSet(self.cuttingFeedRate,z:self.plungingFeedRate))
+           // source.append(moveSpeedSet(self.cuttingFeedRate,z:self.plungingFeedRate))
             self.newStroke = false;
         }
                source.append(self.move3(_x, y: _y, z: _z));

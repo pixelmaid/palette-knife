@@ -19,10 +19,17 @@ class SocketManager: WebSocketDelegate{
     var startTime:NSDate?
     var dataQueue = [String]();
     var transmitComplete = true;
+    var pingInterval:NSTimer!;
     let dataKey = NSUUID().UUIDString;
     
     init(){
-        socket.delegate = self;
+             socket.delegate = self;
+
+
+    }
+    
+    @objc func pingIntervalCallback(){
+        socket.writeString("{\"name\":\"ping\"}")
     }
     
     func connect(){
@@ -35,6 +42,7 @@ class SocketManager: WebSocketDelegate{
     func websocketDidConnect(ws: WebSocket) {
         print("websocket is connected")
         //send name of client
+        pingInterval = NSTimer.scheduledTimerWithTimeInterval(15, target: self, selector: #selector(SocketManager.pingIntervalCallback), userInfo: nil, repeats: true)
         socket.writeString("{\"name\":\"drawing\"}")
         if(firstConnection){
             socketEvent.raise(("first_connection",nil));
@@ -57,6 +65,8 @@ class SocketManager: WebSocketDelegate{
     
     func websocketDidReceiveMessage(ws: WebSocket, text: String) {
          if(text == "init_data_recieved" || text == "message recieved"){
+            objc_sync_enter(dataQueue)
+
             if(dataQueue.count>0){
                 
                 socket.writeString(dataQueue.removeAtIndex(0));
@@ -65,6 +75,7 @@ class SocketManager: WebSocketDelegate{
                 
                 transmitComplete = true;
             }
+            objc_sync_exit(dataQueue);
         }
         else if(text == "fabricator connected"){
           // self.sendFabricationConfigData();
@@ -88,8 +99,6 @@ class SocketManager: WebSocketDelegate{
         if socket.isConnected {
             
             socket.disconnect()
-        } else {
-            socket.connect()
         }
     }
     
@@ -145,7 +154,9 @@ class SocketManager: WebSocketDelegate{
             
         }
         else{
+            objc_sync_enter(dataQueue)
             dataQueue.append(data)
+            objc_sync_exit(dataQueue)
         }
     }
     
@@ -158,8 +169,10 @@ class SocketManager: WebSocketDelegate{
         }
         else{
             
-            
+            objc_sync_enter(dataQueue)
             dataQueue.append(string)
+            objc_sync_exit(dataQueue)
+
         }
     }
     

@@ -64,7 +64,8 @@ class SocketManager: WebSocketDelegate{
     }
     
     func websocketDidReceiveMessage(ws: WebSocket, text: String) {
-         if(text == "init_data_recieved" || text == "message recieved"){
+        print("text = \(text)");
+         if(text == "init_data_received" || text == "message received"){
             objc_sync_enter(dataQueue)
 
             if(dataQueue.count>0){
@@ -83,7 +84,19 @@ class SocketManager: WebSocketDelegate{
         else{
             if let dataFromString = text.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false) {
                 let json = JSON(data: dataFromString)
-                socketEvent.raise(("fabricator_data",json))
+                let type = json["type"].stringValue;
+                if(type == "fabricator_data"){
+                    socketEvent.raise(("fabricator_data",json))
+                }
+                else if(type == "data_request"){
+                    print("data request")
+                    socketEvent.raise(("data_request",json))
+                }
+                else if (type == "authoring_request"){
+                    print("authoring request")
+                    socketEvent.raise(("authoring_request",json))
+
+                }
                 
             }
         }
@@ -160,6 +173,7 @@ class SocketManager: WebSocketDelegate{
         }
     }
     
+    
     func sendBehaviorData(data:(String)){
         let string = "{\"type\":\"behavior_data\",\"data\":"+data+"}"
         if(transmitComplete){
@@ -175,6 +189,24 @@ class SocketManager: WebSocketDelegate{
 
         }
     }
+    
+    func sendData(data:String){
+        
+        if(transmitComplete){
+            transmitComplete = false;
+            socket.writeString(data)
+            
+        }
+        else{
+            
+            objc_sync_enter(dataQueue)
+            dataQueue.append(data)
+            objc_sync_exit(dataQueue)
+            
+        }
+    }
+
+
     
     
     

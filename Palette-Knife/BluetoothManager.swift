@@ -40,7 +40,7 @@ class BluetoothManager:NSObject {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(willConnectToPeripheral(_:)), name: BleManager.BleNotifications.WillConnectToPeripheral.rawValue, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didUpdateBleState(_:)), name: BleManager.BleNotifications.DidUpdateBleState.rawValue, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector (didRecieveData(_:)), name: UartManager.UartNotifications.DidReceiveData.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector (didReceiveData(_:)), name: UartManager.UartNotifications.DidReceiveData.rawValue, object: nil)
         BleManager.sharedInstance.startScan()
         
         uartData.delegate = self
@@ -49,8 +49,8 @@ class BluetoothManager:NSObject {
     }
     
     
-    @objc func didRecieveData(notification: NSNotification){
-        print("recieved data \(notification)");
+    @objc func didReceiveData(notification: NSNotification){
+        print("received data \(notification)");
     }
     
     // MARK: - Notifications

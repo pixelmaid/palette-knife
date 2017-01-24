@@ -20,7 +20,7 @@
 		5F8454F71D9C53C50056C15E /* SVGGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8454F61D9C53C50056C15E /* SVGGenerator.swift */; };
 		5F8FEFC91CF5F4E600D2CB0C /* Stylus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFC81CF5F4E600D2CB0C /* Stylus.swift */; };
 		5F8FEFCC1CF5F51900D2CB0C /* BehaviorMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFCB1CF5F51900D2CB0C /* BehaviorMapper.swift */; };
-		5F8FEFD01CF6264A00D2CB0C /* BrushManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFCF1CF6264A00D2CB0C /* BrushManager.swift */; };
+		5F8FEFD01CF6264A00D2CB0C /* BehaviorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFCF1CF6264A00D2CB0C /* BehaviorManager.swift */; };
 		5F8FEFD21CF62F0700D2CB0C /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFD11CF62F0700D2CB0C /* Emitter.swift */; };
 		5F9118D81DEE345100A6B247 /* draw_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9118D61DEE345100A6B247 /* draw_icon.png */; };
 		5F9118D91DEE345100A6B247 /* select_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9118D71DEE345100A6B247 /* select_icon.png */; };
@@ -137,7 +137,7 @@
 		5F8454F61D9C53C50056C15E /* SVGGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SVGGenerator.swift; sourceTree = "<group>"; };
 		5F8FEFC81CF5F4E600D2CB0C /* Stylus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylus.swift; sourceTree = "<group>"; };
 		5F8FEFCB1CF5F51900D2CB0C /* BehaviorMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorMapper.swift; sourceTree = "<group>"; };
-		5F8FEFCF1CF6264A00D2CB0C /* BrushManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrushManager.swift; sourceTree = "<group>"; };
+		5F8FEFCF1CF6264A00D2CB0C /* BehaviorManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorManager.swift; sourceTree = "<group>"; };
 		5F8FEFD11CF62F0700D2CB0C /* Emitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		5F9118D61DEE345100A6B247 /* draw_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = draw_icon.png; sourceTree = "<group>"; };
 		5F9118D71DEE345100A6B247 /* select_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = select_icon.png; sourceTree = "<group>"; };
@@ -379,7 +379,6 @@
 				5F8FEFCD1CF5F52200D2CB0C /* brushes */,
 				5F8FEFCA1CF5F4EE00D2CB0C /* sensors */,
 				5FFF81881D402BF000C1349B /* behavior */,
-				5F8FEFCF1CF6264A00D2CB0C /* BrushManager.swift */,
 			);
 			name = models;
 			sourceTree = "<group>";
@@ -576,6 +575,7 @@
 		5FFF81881D402BF000C1349B /* behavior */ = {
 			isa = PBXGroup;
 			children = (
+				5F8FEFCF1CF6264A00D2CB0C /* BehaviorManager.swift */,
 				5FFF81911D49219700C1349B /* BehaviorDefinition.swift */,
 				5FFF818B1D4267F700C1349B /* Condition.swift */,
 				5FFF81891D403C4D00C1349B /* State.swift */,
@@ -965,7 +965,7 @@
 				5F0C97231D6BD726001FC228 /* GCodeGenerator.swift in Sources */,
 				5FA4C7581CDB9EF8004A728C /* Brush.swift in Sources */,
 				5F8454F21D9C50880056C15E /* SwiftyJSON.swift in Sources */,
-				5F8FEFD01CF6264A00D2CB0C /* BrushManager.swift in Sources */,
+				5F8FEFD01CF6264A00D2CB0C /* BehaviorManager.swift in Sources */,
 				5FA4C7521CDA7C1B004A728C /* CanvasView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

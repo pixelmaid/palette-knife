@@ -394,7 +394,10 @@ class ViewController: UIViewController {
                 
             }
             else{
-                currentCanvas!.hitTest(Point(x:x,y:y),threshold:20);
+                let stroke = currentCanvas!.hitTest(Point(x:x,y:y),threshold:20);
+                if(stroke != nil && ToolManager.mode == "erase"){
+                    currentCanvas!.deleteStroke(stroke);
+                }
             }
         }
         

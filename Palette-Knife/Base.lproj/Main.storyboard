@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11535.1" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1212" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="ipad12_9" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11523"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -74,7 +74,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rpd-O5-QAg">
-                                <rect key="frame" x="450" y="94" width="466" height="70"/>
+                                <rect key="frame" x="450" y="94" width="800" height="70"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
@@ -112,11 +112,11 @@
                         <viewControllerLayoutGuide type="bottom" id="TDm-4i-x05"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="ZM0-iE-Jwj">
-                        <rect key="frame" x="0.0" y="0.0" width="466" height="70"/>
+                        <rect key="frame" x="0.0" y="0.0" width="800" height="70"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RWY-K0-z3y" customClass="ToolbarView" customModule="PaletteKnife" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="466" height="70"/>
+                                <rect key="frame" x="0.0" y="0.0" width="800" height="70"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Xu-gy-i9h" userLabel="small Brush Button">
@@ -151,25 +151,52 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                        <state key="normal" image="draw_icon.png">
+                                        <state key="normal" image="draw_line.png">
                                             <color key="titleShadowColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VKe-77-Vp8" userLabel="selectButton">
-                                        <rect key="frame" x="396" y="0.0" width="70" height="70"/>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ymS-5e-1h2" userLabel="eraseButton">
+                                        <rect key="frame" x="328" y="0.0" width="70" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                        <state key="normal" image="select_icon.png">
+                                        <state key="normal" image="erase.png">
                                             <color key="titleShadowColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hD9-er-itM" userLabel="radialButton">
-                                        <rect key="frame" x="323" y="0.0" width="70" height="70"/>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oaB-Z8-Zh5" userLabel="marqueePlusButton">
+                                        <rect key="frame" x="406" y="0.0" width="70" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                        <state key="normal" image="radial.png">
+                                        <state key="normal" image="marquee_plus.png">
+                                            <color key="titleShadowColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pnc-bb-dRR" userLabel="marqueeMinusButton">
+                                        <rect key="frame" x="484" y="0.0" width="70" height="70"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                        <state key="normal" image="marquee_minus.png">
+                                            <color key="titleShadowColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RFn-BG-Vnh" userLabel="lassoPlusButton">
+                                        <rect key="frame" x="562" y="0.0" width="70" height="70"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                        <state key="normal" image="lasso_plus.png">
+                                            <color key="titleShadowColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KqP-Gh-QqN" userLabel="lassoMinusButton">
+                                        <rect key="frame" x="640" y="0.0" width="70" height="70"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                        <state key="normal" image="lasso_minus.png">
                                             <color key="titleShadowColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
@@ -186,8 +213,11 @@
                     </view>
                     <connections>
                         <outlet property="drawButton" destination="Upc-DO-Jzt" id="Bwg-y7-Dgl"/>
-                        <outlet property="radialButton" destination="hD9-er-itM" id="zKM-fM-Nqa"/>
-                        <outlet property="selectButton" destination="VKe-77-Vp8" id="bBD-ri-yZL"/>
+                        <outlet property="eraseButton" destination="ymS-5e-1h2" id="M5B-7y-eVC"/>
+                        <outlet property="lassoMinusButton" destination="KqP-Gh-QqN" id="vOV-kM-pVz"/>
+                        <outlet property="lassoPlusButton" destination="RFn-BG-Vnh" id="YCG-gc-vmt"/>
+                        <outlet property="marqueeMinusButton" destination="Pnc-bb-dRR" id="d04-NK-QV8"/>
+                        <outlet property="marqueePlusButton" destination="oaB-Z8-Zh5" id="zZh-VT-ox4"/>
                         <outlet property="toolbarView" destination="RWY-K0-z3y" id="2KW-Re-opy"/>
                     </connections>
                 </viewController>
@@ -197,11 +227,14 @@
         </scene>
     </scenes>
     <resources>
-        <image name="draw_icon.png" width="46" height="56"/>
+        <image name="draw_line.png" width="64" height="68"/>
         <image name="dual_pen.png" width="56" height="52"/>
+        <image name="erase.png" width="59" height="44"/>
+        <image name="lasso_minus.png" width="57" height="57"/>
+        <image name="lasso_plus.png" width="57" height="57"/>
         <image name="lg_pen_blue.png" width="46" height="62"/>
-        <image name="radial.png" width="60" height="60"/>
-        <image name="select_icon.png" width="49" height="58"/>
+        <image name="marquee_minus.png" width="52" height="50"/>
+        <image name="marquee_plus.png" width="57" height="51"/>
         <image name="sm_pen_blue.png" width="36" height="59"/>
     </resources>
     <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>

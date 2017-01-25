@@ -61,6 +61,13 @@ class Canvas: WebTransmitter, Hashable{
         return nil;
     }
     
+    func deleteStroke(stroke:Stroke)->Bool{
+        for d in drawings{
+            d.deleteStroke(stroke);
+        }
+        return false;
+    }
+    
     func drawingDataGenerated(data:(String), key:String){
         var string = "{\"canvas_id\":\""+self.id+"\","
         string += data;

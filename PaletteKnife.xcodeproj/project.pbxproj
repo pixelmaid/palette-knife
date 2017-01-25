@@ -46,6 +46,12 @@
 		5FA4C75C1CDBA47D004A728C /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75B1CDBA47D004A728C /* Point.swift */; };
 		5FA4C75E1CDBA530004A728C /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75D1CDBA530004A728C /* Color.swift */; };
 		5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C75F1CDBC5F7004A728C /* Behavior.swift */; };
+		5FAE8C541E380CC400AFAB57 /* draw_line.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FAE8C4E1E380CC400AFAB57 /* draw_line.png */; };
+		5FAE8C551E380CC400AFAB57 /* erase.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FAE8C4F1E380CC400AFAB57 /* erase.png */; };
+		5FAE8C561E380CC400AFAB57 /* lasso_minus.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FAE8C501E380CC400AFAB57 /* lasso_minus.png */; };
+		5FAE8C571E380CC400AFAB57 /* lasso_plus.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FAE8C511E380CC400AFAB57 /* lasso_plus.png */; };
+		5FAE8C581E380CC400AFAB57 /* marquee_minus.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FAE8C521E380CC400AFAB57 /* marquee_minus.png */; };
+		5FAE8C591E380CC400AFAB57 /* marquee_plus.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FAE8C531E380CC400AFAB57 /* marquee_plus.png */; };
 		5FC56D201DDBC19200B91E7E /* BleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D1D1DDBC19200B91E7E /* BleManager.swift */; };
 		5FC56D211DDBC19200B91E7E /* BlePeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D1E1DDBC19200B91E7E /* BlePeripheral.swift */; };
 		5FC56D221DDBC19200B91E7E /* BleUUIDNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC56D1F1DDBC19200B91E7E /* BleUUIDNames.swift */; };
@@ -169,6 +175,12 @@
 		5FA4C75B1CDBA47D004A728C /* Point.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		5FA4C75D1CDBA530004A728C /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		5FA4C75F1CDBC5F7004A728C /* Behavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Behavior.swift; sourceTree = "<group>"; };
+		5FAE8C4E1E380CC400AFAB57 /* draw_line.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = draw_line.png; sourceTree = "<group>"; };
+		5FAE8C4F1E380CC400AFAB57 /* erase.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = erase.png; sourceTree = "<group>"; };
+		5FAE8C501E380CC400AFAB57 /* lasso_minus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lasso_minus.png; sourceTree = "<group>"; };
+		5FAE8C511E380CC400AFAB57 /* lasso_plus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lasso_plus.png; sourceTree = "<group>"; };
+		5FAE8C521E380CC400AFAB57 /* marquee_minus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = marquee_minus.png; sourceTree = "<group>"; };
+		5FAE8C531E380CC400AFAB57 /* marquee_plus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = marquee_plus.png; sourceTree = "<group>"; };
 		5FC56D1D1DDBC19200B91E7E /* BleManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BleManager.swift; sourceTree = "<group>"; };
 		5FC56D1E1DDBC19200B91E7E /* BlePeripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlePeripheral.swift; sourceTree = "<group>"; };
 		5FC56D1F1DDBC19200B91E7E /* BleUUIDNames.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BleUUIDNames.swift; sourceTree = "<group>"; };
@@ -540,6 +552,12 @@
 		5FD6CD101DE0EE0E007D94AA /* image_assets */ = {
 			isa = PBXGroup;
 			children = (
+				5FAE8C4E1E380CC400AFAB57 /* draw_line.png */,
+				5FAE8C4F1E380CC400AFAB57 /* erase.png */,
+				5FAE8C501E380CC400AFAB57 /* lasso_minus.png */,
+				5FAE8C511E380CC400AFAB57 /* lasso_plus.png */,
+				5FAE8C521E380CC400AFAB57 /* marquee_minus.png */,
+				5FAE8C531E380CC400AFAB57 /* marquee_plus.png */,
 				5F9F25B11DEFE490005CB5D8 /* radial.png */,
 				5F9F25A31DEFE3A0005CB5D8 /* shopbot_position_active@2x.png */,
 				5F9F25A41DEFE3A0005CB5D8 /* draw_icon2x.png */,
@@ -735,13 +753,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FA4C72E1CDA7B5B004A728C /* LaunchScreen.storyboard in Resources */,
+				5FAE8C541E380CC400AFAB57 /* draw_line.png in Resources */,
 				5F9118D91DEE345100A6B247 /* select_icon.png in Resources */,
 				5F9F25AA1DEFE3A0005CB5D8 /* shopbot_position_active@2x.png in Resources */,
 				5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */,
 				5F9F25AD1DEFE3A0005CB5D8 /* shopbot_position_inactive2x.png in Resources */,
+				5FAE8C551E380CC400AFAB57 /* erase.png in Resources */,
 				5F9118D81DEE345100A6B247 /* draw_icon.png in Resources */,
 				5FA4C72B1CDA7B5B004A728C /* Assets.xcassets in Resources */,
 				5FC56D7C1DDBD0A600B91E7E /* LICENSE in Resources */,
+				5FAE8C581E380CC400AFAB57 /* marquee_minus.png in Resources */,
 				5F9F25AC1DEFE3A0005CB5D8 /* select_icon2x.png in Resources */,
 				5F9F25AF1DEFE3A0005CB5D8 /* lg_pen_blue2x.png in Resources */,
 				5F9F25B21DEFE490005CB5D8 /* radial.png in Resources */,
@@ -749,10 +770,13 @@
 				5F4D8CEC1DEE072A008042FE /* shopbot_position_active.png in Resources */,
 				5F9F25A21DEFE38B005CB5D8 /* radial2x.png in Resources */,
 				5FA4C7291CDA7B5B004A728C /* Main.storyboard in Resources */,
+				5FAE8C561E380CC400AFAB57 /* lasso_minus.png in Resources */,
 				5F4D8CED1DEE072A008042FE /* shopbot_position_inactive.png in Resources */,
 				5F9F25B01DEFE3A0005CB5D8 /* sm_pen_blue2x.png in Resources */,
 				5F9F25AE1DEFE3A0005CB5D8 /* dual_pen2x.png in Resources */,
 				5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */,
+				5FAE8C571E380CC400AFAB57 /* lasso_plus.png in Resources */,
+				5FAE8C591E380CC400AFAB57 /* marquee_plus.png in Resources */,
 				5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

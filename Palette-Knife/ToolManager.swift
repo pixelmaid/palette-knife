@@ -50,9 +50,12 @@ class ToolManager:UIViewController{
 
 
     @IBOutlet weak var toolbarView: ToolbarView!
-    @IBOutlet weak var selectButton: UIButton!
     @IBOutlet weak var drawButton: UIButton!
-    @IBOutlet weak var radialButton: UIButton!
+    @IBOutlet weak var eraseButton: UIButton!
+    @IBOutlet weak var marqueePlusButton: UIButton!
+    @IBOutlet weak var marqueeMinusButton: UIButton!
+    @IBOutlet weak var lassoPlusButton: UIButton!
+    @IBOutlet weak var lassoMinusButton: UIButton!
     
     override func viewDidLoad() {
         
@@ -63,39 +66,38 @@ class ToolManager:UIViewController{
         toolbarView.toolbarEvent.addHandler(self, handler: ToolManager.toolbarHandler, key: toolbarKey)
         
         drawButton.backgroundColor = selectedColor
-        selectButton.backgroundColor = standardColor
+        eraseButton.backgroundColor = standardColor
         
-       selectButton.addTarget(self, action: #selector(ToolManager.modeClicked(_:)), forControlEvents: .TouchUpInside)
+       eraseButton.addTarget(self, action: #selector(ToolManager.modeClicked(_:)), forControlEvents: .TouchUpInside)
          drawButton.addTarget(self, action: #selector(ToolManager.modeClicked(_:)), forControlEvents: .TouchUpInside)
-             radialButton.addTarget(self, action: #selector(ToolManager.modeClicked(_:)), forControlEvents: .TouchUpInside)
+             marqueePlusButton.addTarget(self, action: #selector(ToolManager.modeClicked(_:)), forControlEvents: .TouchUpInside)
 
 
     }
     
     
     func modeClicked(sender: AnyObject){
-        if(sender as! NSObject == selectButton){
-            ToolManager.mode = "select";
-            selectButton.backgroundColor = selectedColor
+        if(sender as! NSObject == eraseButton){
+            ToolManager.mode = "erase";
+            eraseButton.backgroundColor = selectedColor
             drawButton.backgroundColor = standardColor
-            radialButton.backgroundColor = standardColor
+            marqueePlusButton.backgroundColor = standardColor
 
         }
         else if(sender as! NSObject == drawButton){
             ToolManager.mode = "draw";
             drawButton.backgroundColor = selectedColor
-            selectButton.backgroundColor = standardColor
-            radialButton.backgroundColor = standardColor
+            eraseButton.backgroundColor = standardColor
+            marqueePlusButton.backgroundColor = standardColor
 
             ToolManager.brushEvent.raise(("draw"));
         }
         
-        else if(sender as! NSObject == radialButton){
-            ToolManager.mode = "draw";
-            radialButton.backgroundColor = selectedColor
+        else if(sender as! NSObject == marqueePlusButton){
+            ToolManager.mode = "select";
+            marqueePlusButton.backgroundColor = selectedColor
             drawButton.backgroundColor = standardColor
-            selectButton.backgroundColor = standardColor
-            ToolManager.brushEvent.raise(("radial"));
+            eraseButton.backgroundColor = standardColor
         }
         
         

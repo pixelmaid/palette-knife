@@ -16,6 +16,7 @@ enum BehaviorError: ErrorType {
 class BehaviorManager{
     var behaviors = [String:BehaviorDefinition]()
     var activeBehavior:BehaviorDefinition?;
+    
     init(){
         
     }
@@ -25,7 +26,7 @@ class BehaviorManager{
         let element_data = data["data"] as JSON;
         let type = element_data["type"].stringValue;
         print("authoring request data,type\(data,type)");
-        if(activeBehavior == nil){
+        if(activeBehavior == nil && type != "behavior_added"){
             let name = "my_behavior"
             activeBehavior = BehaviorDefinition(id:NSUUID().UUIDString,name: name)
             if(behaviors[name] != nil){
@@ -33,18 +34,123 @@ class BehaviorManager{
             }
             else{
                 behaviors[name] = activeBehavior;
-                
-                switch(type){
-                case "state_added":
-                    activeBehavior?.addState(data["id"].stringValue, stateName: data["name"].stringValue);
-                    return "success"
+            }
+        }
+        
+        switch(type){
+            
+        case "behavior_added":
+            activeBehavior = BehaviorDefinition(id:data["id"].stringValue, name: data["name"].stringValue);
+            if(behaviors[data["name"].stringValue] != nil){
+                throw BehaviorError.duplicateName;
+            }
+            else{
+                behaviors[data["name"].stringValue] = activeBehavior;
+            }
+            return "success"
+        case "state_added":
+            activeBehavior?.addState(data["id"].stringValue, stateName: data["name"].stringValue);
+            return "success"
+        case "transition_added":
+            let emitter:Emitter?
+            if(data["emitter"] != nil){
+                switch(data["emitter"].stringValue){
+                case "stylus":
+                    emitter = stylus;
                     break;
                 default:
-                    break
+                    emitter = nil;
+                    break;
+                    
+                }
+            }
+            else{
+                emitter = nil;
+            }
+            
+            activeBehavior?.addTransition(data["id"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["event"].stringValue, fromStateName: data["fromStateName"].stringValue, toStateName: data["toStateName"].stringValue, condition: data["condition"].stringValue)
+            return "success"
+            
+        case "method_added":
+            //TODO: need to adjust this so that methods with existing arguments can be added
+            let arguments:[Any]?
+            arguments = nil
+            
+            activeBehavior?.addMethod(data["targetTransition"].stringValue, methodId: data["id"].stringValue, targetMethod: data["targetMethod"].stringValue, arguments: arguments)
+            
+            return "success"
+        case "mapping_added":
+            let referenceNames:[String]?
+            let referenceProperty:Any?
+            if(data["referenceNames"] != nil){
+                let jsonList =  data["referenceNames"].arrayValue;
+                referenceNames = [String]();
+                for i in jsonList{
+                    referenceNames?.append(i.stringValue);
+                }
+            }
+            else{
+                referenceNames = nil;
+            }
+            if(data["referenceProperty"] != nil){
+                switch(data["referenceProperty"].stringValue){
+                case "stylus":
+                    referenceProperty = stylus;
+                    break;
+                default:
+                    referenceProperty = nil;
+                    break;
+                    
                 }
                 
             }
+            else{
+                referenceProperty = nil;
+            }
+            activeBehavior?.addMapping(data["id"].stringValue, referenceProperty:referenceProperty, referenceNames: referenceNames, relativePropertyName: data["relativePropertyName"].stringValue, targetState: data["targetState"].stringValue)
+            return "success"
+            
+        case "generator_added":
+            let type = data["type"].stringValue;
+            
+            switch(type){
+            case "random":
+                activeBehavior?.addRandomGenerator(data["name"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue)
+                return "success";
+                
+            case "alternate":
+                let jsonValues =  data["values"].arrayValue;
+                var values = [Float]();
+                for i in jsonValues{
+                    values.append(i.floatValue);
+                }
+                activeBehavior?.addAlternate(data["name"].stringValue, values: values)
+                return "success"
+                
+                
+            case "range":
+                
+                activeBehavior?.addRange(data["name"].stringValue, min: data["min"].intValue, max: data["max"].intValue, start: data["start"].floatValue, stop: data["stop"].floatValue)
+                return "success"
+                
+                // case "random_walk":
+                
+                //return "success"
+                
+                //case "sine":
+                
+            //  return "success";
+            default:
+                break;
+            }
+            break;
+            
+        default:
+            break
         }
+        
+        
+        
         return "fail"
     }
     

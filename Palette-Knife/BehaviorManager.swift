@@ -22,7 +22,7 @@ class BehaviorManager{
     }
     
     
-    func handleAuthoringRequest(data:JSON) throws->String{
+    func handleAuthoringRequest(data:JSON) throws->(String,String){
         let element_data = data["data"] as JSON;
         let type = element_data["type"].stringValue;
         print("authoring request data,type\(data,type)");
@@ -47,11 +47,12 @@ class BehaviorManager{
             else{
                 behaviors[data["name"].stringValue] = activeBehavior;
             }
-            return "success"
+            return ("behavior_added","success")
         case "state_added":
             activeBehavior?.addState(data["id"].stringValue, stateName: data["name"].stringValue);
-            return "success"
+            return ("state_added","success")
         case "transition_added":
+            print("adding transition \(data)")
             let emitter:Emitter?
             if(data["emitter"] != nil){
                 switch(data["emitter"].stringValue){
@@ -61,15 +62,14 @@ class BehaviorManager{
                 default:
                     emitter = nil;
                     break;
-                    
                 }
             }
             else{
                 emitter = nil;
             }
             
-            activeBehavior?.addTransition(data["id"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["event"].stringValue, fromStateName: data["fromStateName"].stringValue, toStateName: data["toStateName"].stringValue, condition: data["condition"].stringValue)
-            return "success"
+            activeBehavior?.addTransition(data["id"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["event"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: data["condition"].stringValue)
+            return ("transition_added","success")
             
         case "method_added":
             //TODO: need to adjust this so that methods with existing arguments can be added
@@ -78,7 +78,7 @@ class BehaviorManager{
             
             activeBehavior?.addMethod(data["targetTransition"].stringValue, methodId: data["id"].stringValue, targetMethod: data["targetMethod"].stringValue, arguments: arguments)
             
-            return "success"
+            return ("method_added","success")
         case "mapping_added":
             let referenceNames:[String]?
             let referenceProperty:Any?
@@ -100,7 +100,6 @@ class BehaviorManager{
                 default:
                     referenceProperty = nil;
                     break;
-                    
                 }
                 
             }
@@ -108,7 +107,7 @@ class BehaviorManager{
                 referenceProperty = nil;
             }
             activeBehavior?.addMapping(data["id"].stringValue, referenceProperty:referenceProperty, referenceNames: referenceNames, relativePropertyName: data["relativePropertyName"].stringValue, targetState: data["targetState"].stringValue)
-            return "success"
+            return ("mapping_added","success")
             
         case "generator_added":
             let type = data["type"].stringValue;
@@ -116,7 +115,7 @@ class BehaviorManager{
             switch(type){
             case "random":
                 activeBehavior?.addRandomGenerator(data["name"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue)
-                return "success";
+                return ("generator_added","success");
                 
             case "alternate":
                 let jsonValues =  data["values"].arrayValue;
@@ -125,13 +124,13 @@ class BehaviorManager{
                     values.append(i.floatValue);
                 }
                 activeBehavior?.addAlternate(data["name"].stringValue, values: values)
-                return "success"
+                return ("generator_added","success")
                 
                 
             case "range":
                 
                 activeBehavior?.addRange(data["name"].stringValue, min: data["min"].intValue, max: data["max"].intValue, start: data["start"].floatValue, stop: data["stop"].floatValue)
-                return "success"
+                return ("generator_added","success")
                 
                 // case "random_walk":
                 
@@ -151,7 +150,7 @@ class BehaviorManager{
         
         
         
-        return "fail"
+        return (type,"success")
     }
     
     
@@ -188,7 +187,7 @@ class BehaviorManager{
             b.addState(NSUUID().UUIDString,stateName:"start")
             b.addState(NSUUID().UUIDString,stateName:"default")
             
-            b.addTransition(NSUUID().UUIDString, name: "setup", eventEmitter: nil, parentFlag: false, event: "STATE_COMPLETE", fromStateName: "start", toStateName:"default", condition: nil)
+            b.addTransition(NSUUID().UUIDString, name: "setup", eventEmitter: nil, parentFlag: false, event: "STATE_COMPLETE", fromStateId: "start", toStateId:"default", condition: nil)
             return b;
         }
         
@@ -216,8 +215,8 @@ class BehaviorManager{
         do {
             let b = try defaultSetup(name);
             
-            b.addTransition(NSUUID().UUIDString, name:"stylusDownTransition", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromStateName: "default", toStateName: "default", condition:nil)
-            b.addTransition(NSUUID().UUIDString, name:"stylusUpTransition", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateName: "default", toStateName: "default", condition:nil)
+            b.addTransition(NSUUID().UUIDString, name:"stylusDownTransition", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromStateId: b.getStateByName("default")!, toStateId: b.getStateByName("default")!, condition:nil)
+            b.addTransition(NSUUID().UUIDString, name:"stylusUpTransition", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateId: b.getStateByName("default")!, toStateId: b.getStateByName("default")!, condition:nil)
             
             b.addMethod("stylusDownTransition", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
             b.addMethod("stylusDownTransition", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments: nil)
@@ -243,7 +242,7 @@ class BehaviorManager{
         let b1 = initStandardTemplate("b1");
         
         
-        b1!.addTransition(NSUUID().UUIDString, name:"stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateName: "default", toStateName: "default", condition:nil)
+        b1!.addTransition(NSUUID().UUIDString, name:"stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateId: b1!.getStateByName("default")!, toStateId: b1!.getStateByName("default")!, condition:nil);
         
         
         b1!.addMethod("stylusUpT", methodId:NSUUID().UUIDString, targetMethod: "bake", arguments: nil)
@@ -263,20 +262,20 @@ class BehaviorManager{
         dripBehavior!.addCondition("lengthCondition", reference: nil, referenceNames: ["distance"], relative: nil, relativeNames: ["randomTimeGenerator"], relational: ">")
         dripBehavior!.addState(NSUUID().UUIDString, stateName: "die");
         
-        dripBehavior!.addTransition(NSUUID().UUIDString, name: "tickTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateName: "default", toStateName: "default", condition: nil)
+        dripBehavior!.addTransition(NSUUID().UUIDString, name: "tickTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateId: "default", toStateId: "default", condition: nil)
         dripBehavior!.addMapping(NSUUID().UUIDString, referenceProperty: Observable<Float>(2), referenceNames: nil, relativePropertyName: "dy", targetState: "default")
         
         dripBehavior!.addMapping(NSUUID().UUIDString, referenceProperty: nil, referenceNames: ["weightExpression"], relativePropertyName: "weight", targetState: "default")
         
         
         
-        dripBehavior!.addTransition(NSUUID().UUIDString, name: "dieTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateName: "default", toStateName: "die", condition: "lengthCondition")
+        dripBehavior!.addTransition(NSUUID().UUIDString, name: "dieTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateId: dripBehavior!.getStateByName("default")!, toStateId: dripBehavior!.getStateByName("die")!, condition: "lengthCondition")
         
         
         let parentBehavior = initStandardTemplate("parentBehavior");
         parentBehavior!.addInterval("lengthInterval", inc: 100, times: nil)
         parentBehavior!.addCondition("lengthCondition", reference: nil, referenceNames: ["distance"], relative: nil, relativeNames: ["lengthInterval"], relational: "within")
-        parentBehavior!.addTransition(NSUUID().UUIDString, name: "lengthTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateName: "default", toStateName: "default", condition: "lengthCondition")
+        parentBehavior!.addTransition(NSUUID().UUIDString, name: "lengthTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateId: parentBehavior!.getStateByName("default")!, toStateId: parentBehavior!.getStateByName("default")!, condition: "lengthCondition")
         parentBehavior!.addMethod("lengthTransition", methodId: NSUUID().UUIDString, targetMethod: "spawn", arguments: ["dripBehavior",dripBehavior,1]);
         
         return parentBehavior;
@@ -297,7 +296,7 @@ class BehaviorManager{
             
             radial_spawnBehavior!.addState(NSUUID().UUIDString,stateName:"die")
             
-            radial_spawnBehavior!.addTransition(NSUUID().UUIDString, name: "dieTransition", eventEmitter: stylus, parentFlag: false, event: "STYLUS_UP", fromStateName: "default", toStateName: "die", condition: nil)
+            radial_spawnBehavior!.addTransition(NSUUID().UUIDString, name: "dieTransition", eventEmitter: stylus, parentFlag: false, event: "STYLUS_UP", fromStateId: radial_spawnBehavior!.getStateByName("default")!, toStateId:  radial_spawnBehavior!.getStateByName("die")!, condition: nil)
             
             radial_spawnBehavior!.addMethod("dieTransition", methodId:NSUUID().UUIDString, targetMethod: "jogAndBake", arguments: nil)
             
@@ -305,8 +304,8 @@ class BehaviorManager{
             
             let radial_behavior = try defaultSetup("radial_behavior");
             
-            radial_behavior.addTransition(NSUUID().UUIDString, name:"stylusDownTransition", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromStateName: "default", toStateName: "default", condition:nil)
-            radial_behavior.addTransition(NSUUID().UUIDString, name:"stylusUpTransition", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateName: "default", toStateName: "default", condition:nil)
+            radial_behavior.addTransition(NSUUID().UUIDString, name:"stylusDownTransition", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromStateId: radial_behavior.getStateByName("default")!, toStateId: radial_behavior.getStateByName("default")!, condition:nil)
+            radial_behavior.addTransition(NSUUID().UUIDString, name:"stylusUpTransition", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateId: radial_behavior.getStateByName("default")!, toStateId: radial_behavior.getStateByName("default")!, condition:nil)
             
             radial_behavior.addMethod("stylusDownTransition", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
             radial_behavior.addMethod("stylusDownTransition", methodId:NSUUID().UUIDString, targetMethod: "startInterval", arguments: nil)
@@ -346,9 +345,9 @@ class BehaviorManager{
             branchBehavior.addCondition("offCanvasCondition", reference: nil, referenceNames: ["offCanvas"], relative: Observable<Float>(1), relativeNames: nil, relational: "==")
             
             
-            branchBehavior.addTransition(NSUUID().UUIDString, name: "destroyTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateName: "default", toStateName: "die", condition: "timeLimitCondition")
+            branchBehavior.addTransition(NSUUID().UUIDString, name: "destroyTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateId: branchBehavior.getStateByName("default")!, toStateId: branchBehavior.getStateByName("die")!, condition: "timeLimitCondition")
             
-            branchBehavior.addTransition(NSUUID().UUIDString, name: "offCanvasTransition", eventEmitter: nil, parentFlag: false, event: "STATE_COMPLETE", fromStateName: "default", toStateName: "die", condition: "offCanvasCondition")
+            branchBehavior.addTransition(NSUUID().UUIDString, name: "offCanvasTransition", eventEmitter: nil, parentFlag: false, event: "STATE_COMPLETE", fromStateId: branchBehavior.getStateByName("default")!, toStateId: branchBehavior.getStateByName("die")!, condition: "offCanvasCondition")
             
             branchBehavior.addMethod("destroyTransition",methodId:NSUUID().UUIDString,targetMethod: "jogAndBake", arguments: nil)
             branchBehavior.addMethod("offCanvasTransition",methodId:NSUUID().UUIDString,targetMethod: "jogAndBake", arguments: nil)
@@ -359,7 +358,7 @@ class BehaviorManager{
             // branchBehavior.addMethod("defaultdestroyTransition", methodId: NSUUID().UUIDString, targetMethod: "destroy", arguments: nil)
             
             
-            branchBehavior.addTransition(NSUUID().UUIDString, name:"spawnTransition" , eventEmitter: nil, parentFlag: false, event: "STATE_COMPLETE", fromStateName: "die", toStateName: "spawnEnd", condition: "spawnCondition")
+            branchBehavior.addTransition(NSUUID().UUIDString, name:"spawnTransition" , eventEmitter: nil, parentFlag: false, event: "STATE_COMPLETE", fromStateId: branchBehavior.getStateByName("die")!, toStateId: branchBehavior.getStateByName("spawnEnd")!, condition: "spawnCondition")
             
             // branchBehavior.addMethod("spawnTransition", methodId: NSUUID().UUIDString, targetMethod: "spawn", arguments: ["branchBehavior",branchBehavior,2])
             
@@ -382,7 +381,7 @@ class BehaviorManager{
             branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames:["weightDeltaExp"], relativePropertyName: "weight", targetState: "default")
             
             
-            branchBehavior.addTransition(NSUUID().UUIDString, name: "tickTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateName: "default", toStateName: "default", condition: nil)
+            branchBehavior.addTransition(NSUUID().UUIDString, name: "tickTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateId: branchBehavior.getStateByName("default")!, toStateId:branchBehavior.getStateByName("default")!, condition: nil)
             
             
             
@@ -396,7 +395,7 @@ class BehaviorManager{
             
             rootBehavior.addCondition("stylusANDIncrement",reference: nil, referenceNames: ["stylusDownCondition"], relative:nil, relativeNames: ["incrementCondition"], relational: "&&");
             
-            rootBehavior.addTransition(NSUUID().UUIDString, name:"stylusDownT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromStateName: "default", toStateName: "default", condition:nil)
+            rootBehavior.addTransition(NSUUID().UUIDString, name:"stylusDownT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_DOWN", fromStateId: rootBehavior.getStateByName("default")!, toStateId: rootBehavior.getStateByName("default")!, condition:nil)
             
             rootBehavior.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
             rootBehavior.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments: nil)
@@ -409,8 +408,9 @@ class BehaviorManager{
             rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus,  referenceNames: ["force"], relativePropertyName: "weight", targetState: "default")
             
             
-            rootBehavior.addTransition(NSUUID().UUIDString, name: "spawnTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateName: "default", toStateName: "default", condition: "stylusANDIncrement")
-            rootBehavior.addTransition(NSUUID().UUIDString, name:"stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateName: "default", toStateName: "default", condition:nil)
+            rootBehavior.addTransition(NSUUID().UUIDString, name: "spawnTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateId: rootBehavior.getStateByName("default")!, toStateId: rootBehavior.getStateByName("default")!, condition: "stylusANDIncrement")
+           
+            rootBehavior.addTransition(NSUUID().UUIDString, name:"stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateId: rootBehavior.getStateByName("default")!, toStateId: rootBehavior.getStateByName("default")!, condition:nil)
             
             rootBehavior.addMethod("spawnTransition", methodId: NSUUID().UUIDString, targetMethod: "spawn", arguments: ["branchBehavior",branchBehavior,2])
             

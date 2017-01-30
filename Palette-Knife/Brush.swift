@@ -84,7 +84,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.ox = origin.x;
         self.oy = origin.y;
         delta.parentName = "brush"
-        self.currentState = "start"
+        self.currentState = "start";
         self.behavior_id = behaviorDef!.id;
         
         //key for listening to status change events
@@ -144,7 +144,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func createState(id:String,name:String){
-        states[name] = State(id:id,name:name);
+        states[id] = State(id:id,name:name);
     }
     
     
@@ -253,7 +253,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             value.relativeProperty.constrained = false;
             
         }
-        self.currentState = transition.toState;
+        self.currentState = transition.toStateId;
         self.raiseBehaviorEvent(states[currentState]!.toJSON(), event: "state")
         print("transitioning to state \(states[currentState]?.name, self.name)")
         self.executeTransitionMethods(transition.methods)
@@ -397,12 +397,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
     }
     
-    func addStateTransition(id:String, name:String, reference:Emitter, fromStateName: String, toStateName:String){
+    func addStateTransition(id:String, name:String, reference:Emitter, fromStateId: String, toStateId:String){
         
         let transition:StateTransition
         
-        var state = self.getStateByName(fromStateName);
-        transition = state!.addStateTransitionMapping(id,name:name,reference: reference, toState:toStateName)
+        let state = self.states[fromStateId]
+        transition = state!.addStateTransitionMapping(id,name:name,reference: reference, toStateId:toStateId)
         self.transitions[id] = transition;
     }
     

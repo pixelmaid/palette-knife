@@ -86,7 +86,8 @@ class BehaviorDefinition {
             var methods = getMethodsByTransition(data.0);
             json_string += "{"
             json_string += "\"id\":\""+key+"\","
-            json_string += "\"name\":\""+data.3+"\","
+            json_string += "\"event\":\""+data.3+"\","
+            json_string += "\"name\":\""+data.0+"\","
             json_string += "\"fromState\":\""+self.getStateByName(data.4)!+"\","
             json_string += "\"toState\":\""+self.getStateByName(data.5)!+"\","
             json_string += "\"methods\":["
@@ -129,6 +130,8 @@ class BehaviorDefinition {
         }
         return nil
     }
+    
+    
     
     func getMethodsByTransition(name:String)->[(String,String,String,[Any]?)]{
         var tmethods = [(String,String,String,[Any]?)]();
@@ -180,8 +183,8 @@ class BehaviorDefinition {
         methods.append((targetTransition,methodId,targetMethod,arguments))
     }
     
-    func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String, fromStateName:String,toStateName:String, condition:String?){
-        transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateName,toStateName,condition))
+    func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String, fromStateId:String,toStateId:String, condition:String?){
+        transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition))
     }
     
     func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,targetState:String){
@@ -413,7 +416,7 @@ class BehaviorDefinition {
             }
             
             
-            behaviorMapper.createStateTransition(key,name: transition.0,reference:reference as! Emitter, relative: targetBrush, eventName: transition.3, fromStateName:transition.4,toStateName:transition.5, condition: condition)
+            behaviorMapper.createStateTransition(key,name: transition.0,reference:reference as! Emitter, relative: targetBrush, eventName: transition.3, fromStateId:transition.4,toStateId:transition.5, condition: condition)
             
         }
         

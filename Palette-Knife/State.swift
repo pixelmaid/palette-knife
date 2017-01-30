@@ -30,8 +30,8 @@ class State {
     }
     
     
-     func addStateTransitionMapping(id:String, name:String, reference:Emitter,toState:String)->StateTransition{
-        let mapping = StateTransition(id:id, name:name, reference:reference,toState:toState)
+     func addStateTransitionMapping(id:String, name:String, reference:Emitter,toStateId:String)->StateTransition{
+        let mapping = StateTransition(id:id, name:name, reference:reference,toStateId:toStateId)
         transitions[id] = mapping;
         return mapping;
     }
@@ -136,14 +136,14 @@ class Method{
 
 class StateTransition{
     var reference:Emitter
-    var toState: String
+    var toStateId: String
     var methods = [Method]()
     let name: String
     let id: String
     
-    init(id:String, name:String, reference:Emitter, toState:String){
+    init(id:String, name:String, reference:Emitter, toStateId:String){
         self.reference = reference
-        self.toState = toState
+        self.toStateId = toStateId
         self.name = name
         self.id = id;
     }

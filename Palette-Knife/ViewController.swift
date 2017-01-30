@@ -119,10 +119,10 @@ class ViewController: UIViewController {
         
         self.fabricatorView.drawFabricatorPosition(Float(0), y: Float(0), z: Float(0))
         self.initCanvas()
-        self.initRadialBrush();
-        self.initBakeBrush();
+       // self.initRadialBrush();
+       // self.initBakeBrush();
 
-        radialBrush?.active = false;
+        //radialBrush?.active = false;
         
         
     }
@@ -160,7 +160,7 @@ class ViewController: UIViewController {
         case "authoring_request":
             do{
             let attempt = try behaviorManager.handleAuthoringRequest(data.1! as JSON);
-                socketManager.sendData("{\"type\":\"authoring_response\",\"result\":\""+attempt+"\"}");
+                socketManager.sendData("{\"type\":\"authoring_response\",\"result\":\""+attempt.1+"\",\"authoring_type\":\""+attempt.0+"\"}");
             }
             catch{
                 print("failed authoring request");

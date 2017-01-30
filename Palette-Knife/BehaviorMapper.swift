@@ -24,11 +24,11 @@ class BehaviorMapper{
         target.createState(stateId, name:stateName);
     }
     
-    func createStateTransition(id:String,name:String,reference:Emitter,relative:Brush, eventName:String, fromStateName:String, toStateName:String, condition:Condition!){
+    func createStateTransition(id:String,name:String,reference:Emitter,relative:Brush, eventName:String, fromStateId:String, toStateId:String, condition:Condition!){
         reference.assignKey(eventName,key:id,condition: condition)
         let selector = Selector("stateTransitionHandler"+":");
         NSNotificationCenter.defaultCenter().addObserver(relative, selector:selector, name:id, object: reference)
-        relative.addStateTransition(id, name:name,reference: reference, fromStateName:fromStateName, toStateName:toStateName)
+        relative.addStateTransition(id, name:name,reference: reference, fromStateId:fromStateId, toStateId:toStateId)
         relative.removeTransitionEvent.addHandler(relative, handler: Brush.removeStateTransition, key:id)
         
     }

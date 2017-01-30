@@ -11,6 +11,7 @@ import SwiftKVC
 
 class BehaviorDefinition {
     
+    var brushInstances = [String:Brush];
     var states = [String:String]()
     var expressions = [String:(Any?,[String]?,Any?,[String]?,String)]()
     var conditions = [(String,Any?,[String]?,Any?,[String]?,String)]()
@@ -29,6 +30,7 @@ class BehaviorDefinition {
         self.name = name;
         self.id = id;
     }
+    
     
     func toJSON()->String{
         var json_string = "{"

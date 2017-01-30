@@ -1,5 +1,5 @@
 //
-//  BrushManager.swift
+//  BehaviorManager.swift
 //  PaletteKnife
 //
 //  Created by JENNIFER MARY JACOBS on 5/25/16.
@@ -22,34 +22,30 @@ class BehaviorManager{
     }
     
     
-    func handleAuthoringRequest(data:JSON) throws->(String,String){
-        let element_data = data["data"] as JSON;
-        let type = element_data["type"].stringValue;
-        print("authoring request data,type\(data,type)");
-        if(activeBehavior == nil && type != "behavior_added"){
-            let name = "my_behavior"
-            activeBehavior = BehaviorDefinition(id:NSUUID().UUIDString,name: name)
-            if(behaviors[name] != nil){
-                throw BehaviorError.duplicateName;
-            }
-            else{
-                behaviors[name] = activeBehavior;
-            }
-        }
+    func handleAuthoringRequest(authoring_data:JSON) throws->(String,String){
+        let data = authoring_data["data"] as JSON;
+        let type = data["type"].stringValue;
+        print("authoring request \(type)");
         
         switch(type){
             
         case "behavior_added":
-            activeBehavior = BehaviorDefinition(id:data["id"].stringValue, name: data["name"].stringValue);
-            if(behaviors[data["name"].stringValue] != nil){
+            
+            let name = data["name"].stringValue;
+            print("behaviors with name\(name, behaviors[name])");
+            
+            let behavior = BehaviorDefinition(id:data["id"].stringValue, name: data["name"].stringValue);
+            if(behaviors[name] != nil){
                 throw BehaviorError.duplicateName;
             }
             else{
-                behaviors[data["name"].stringValue] = activeBehavior;
+                behaviors[name] = behavior;
+                activeBehavior = behavior;
+                return ("behavior_added","success")
             }
-            return ("behavior_added","success")
+            
         case "state_added":
-            activeBehavior?.addState(data["id"].stringValue, stateName: data["name"].stringValue);
+            behaviors[data["behavior_id"].stringValue]?.addState(data["id"].stringValue, stateName: data["name"].stringValue);
             return ("state_added","success")
         case "transition_added":
             print("adding transition \(data)")
@@ -68,7 +64,8 @@ class BehaviorManager{
                 emitter = nil;
             }
             
-            activeBehavior?.addTransition(data["id"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["event"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: data["condition"].stringValue)
+              behaviors[data["behavior_id"].stringValue]?.addTransition(data["id"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["event"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: data["condition"].stringValue)
+        
             return ("transition_added","success")
             
         case "method_added":
@@ -76,7 +73,7 @@ class BehaviorManager{
             let arguments:[Any]?
             arguments = nil
             
-            activeBehavior?.addMethod(data["targetTransition"].stringValue, methodId: data["id"].stringValue, targetMethod: data["targetMethod"].stringValue, arguments: arguments)
+             behaviors[data["behavior_id"].stringValue]?.addMethod(data["targetTransition"].stringValue, methodId: data["id"].stringValue, targetMethod: data["targetMethod"].stringValue, arguments: arguments)
             
             return ("method_added","success")
         case "mapping_added":
@@ -106,7 +103,7 @@ class BehaviorManager{
             else{
                 referenceProperty = nil;
             }
-            activeBehavior?.addMapping(data["id"].stringValue, referenceProperty:referenceProperty, referenceNames: referenceNames, relativePropertyName: data["relativePropertyName"].stringValue, targetState: data["targetState"].stringValue)
+              behaviors[data["behavior_id"].stringValue]?.addMapping(data["id"].stringValue, referenceProperty:referenceProperty, referenceNames: referenceNames, relativePropertyName: data["relativePropertyName"].stringValue, targetState: data["targetState"].stringValue)
             return ("mapping_added","success")
             
         case "generator_added":
@@ -114,7 +111,7 @@ class BehaviorManager{
             
             switch(type){
             case "random":
-                activeBehavior?.addRandomGenerator(data["name"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue)
+                  behaviors[data["behavior_id"].stringValue]?.addRandomGenerator(data["name"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue)
                 return ("generator_added","success");
                 
             case "alternate":
@@ -123,13 +120,13 @@ class BehaviorManager{
                 for i in jsonValues{
                     values.append(i.floatValue);
                 }
-                activeBehavior?.addAlternate(data["name"].stringValue, values: values)
+                 behaviors[data["behavior_id"].stringValue]?.addAlternate(data["name"].stringValue, values: values)
                 return ("generator_added","success")
                 
                 
             case "range":
                 
-                activeBehavior?.addRange(data["name"].stringValue, min: data["min"].intValue, max: data["max"].intValue, start: data["start"].floatValue, stop: data["stop"].floatValue)
+                behaviors[data["behavior_id"].stringValue]?.addRange(data["name"].stringValue, min: data["min"].intValue, max: data["max"].intValue, start: data["start"].floatValue, stop: data["stop"].floatValue)
                 return ("generator_added","success")
                 
                 // case "random_walk":
@@ -409,7 +406,7 @@ class BehaviorManager{
             
             
             rootBehavior.addTransition(NSUUID().UUIDString, name: "spawnTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateId: rootBehavior.getStateByName("default")!, toStateId: rootBehavior.getStateByName("default")!, condition: "stylusANDIncrement")
-           
+            
             rootBehavior.addTransition(NSUUID().UUIDString, name:"stylusUpT", eventEmitter: stylus, parentFlag:false, event: "STYLUS_UP", fromStateId: rootBehavior.getStateByName("default")!, toStateId: rootBehavior.getStateByName("default")!, condition:nil)
             
             rootBehavior.addMethod("spawnTransition", methodId: NSUUID().UUIDString, targetMethod: "spawn", arguments: ["branchBehavior",branchBehavior,2])

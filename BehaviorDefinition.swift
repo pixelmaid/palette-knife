@@ -11,7 +11,7 @@ import SwiftKVC
 
 class BehaviorDefinition {
     
-    var brushInstances = [String:Brush];
+    var brushInstances = [Brush]();
     var states = [String:String]()
     var expressions = [String:(Any?,[String]?,Any?,[String]?,String)]()
     var conditions = [(String,Any?,[String]?,Any?,[String]?,String)]()
@@ -374,8 +374,14 @@ class BehaviorDefinition {
         behaviorMapper.createMapping(id, reference: referenceOperand, relative: targetBrush, relativeProperty: relativeOperand, targetState: data.3)
     }
     
-    func createBehavior(targetBrush:Brush){
-        
+    func addBrush(targetBrush:Brush){
+        self.brushInstances.append(targetBrush);
+    }
+    
+    func createBehavior(){
+        for var i in 0..<self.brushInstances.count{
+            let targetBrush = self.brushInstances[i];
+            targetBrush.clearBehavior();
         for (key, generator_data) in generators{
             self.generateGenerator(key,data:generator_data)
         }
@@ -429,6 +435,7 @@ class BehaviorDefinition {
         //referenceProperty!,referenceName!,relativePropertyName,targetState
         for (id, mapping_data) in mappings{
             self.generateMapping(targetBrush,id:id, data:mapping_data);
+        }
         }
         
         

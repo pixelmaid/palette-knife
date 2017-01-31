@@ -40,7 +40,7 @@ class ViewController: UIViewController {
     
     
     var socketManager = SocketManager();
-    var behaviorManager = BehaviorManager();
+    var behaviorManager: BehaviorManager?
     var currentCanvas: Canvas?
     let socketKey = NSUUID().UUIDString
     let drawKey = NSUUID().UUIDString
@@ -155,11 +155,11 @@ class ViewController: UIViewController {
         case "connected":
             break
         case "data_request":
-            socketManager.sendBehaviorData(behaviorManager.getAllBehaviorJSON());
+            socketManager.sendBehaviorData(behaviorManager!.getAllBehaviorJSON());
             break
         case "authoring_request":
             do{
-            let attempt = try behaviorManager.handleAuthoringRequest(data.1! as JSON);
+            let attempt = try behaviorManager!.handleAuthoringRequest(data.1! as JSON);
                 socketManager.sendData("{\"type\":\"authoring_response\",\"result\":\""+attempt.1+"\",\"authoring_type\":\""+attempt.0+"\"}");
             }
             catch{
@@ -217,6 +217,7 @@ class ViewController: UIViewController {
     
     func initCanvas(){
         currentCanvas = Canvas();
+        behaviorManager = BehaviorManager(canvas: currentCanvas!);
         socketManager.initAction(currentCanvas!,type:"canvas_init");
         //socketManager.initAction(stylus);
         currentCanvas!.initDrawing();
@@ -228,7 +229,7 @@ class ViewController: UIViewController {
     
      //----------------------------------  HARDCODED BRUSHES ---------------------------------- //
     func initDripBrush(){
-        let dripBehavior = behaviorManager.initDripBehavior();
+        let dripBehavior = behaviorManager?.initDripBehavior();
         let dripBrush = Brush(name:"parentBehavior",behaviorDef: dripBehavior, parent:nil, canvas:self.currentCanvas!)
         socketManager.initAction(dripBrush,type:"brush_init");
 
@@ -236,21 +237,21 @@ class ViewController: UIViewController {
     
     
     func initBakeBrush(){
-        let bake_behavior = behaviorManager.initBakeBehavior();
+        let bake_behavior = behaviorManager?.initBakeBehavior();
         bakeBrush = Brush(name:"bake_brush",behaviorDef: bake_behavior, parent:nil, canvas:self.currentCanvas!)
         socketManager.initAction(bakeBrush!,type:"brush_init");
     }
     
  
     func initRadialBrush(){
-        let radial_behavior = behaviorManager.initRadialBehavior();
+        let radial_behavior = behaviorManager?.initRadialBehavior();
         radialBrush = Brush(name:"radial",behaviorDef: radial_behavior, parent:nil, canvas:self.currentCanvas!)
         socketManager.initAction(radialBrush!,type:"brush_init");
 
     }
     
    func initFractalBrush(){
-        let rootBehavior = behaviorManager.initFractalBehavior();
+        let rootBehavior = behaviorManager?.initFractalBehavior();
         let rootBehaviorBrush = Brush(name:"rootBehaviorBrush",behaviorDef: rootBehavior, parent:nil, canvas:self.currentCanvas!)
         rootBehaviorBrush.strokeColor.b = 255;
         socketManager.initAction(rootBehaviorBrush,type:"brush_init");

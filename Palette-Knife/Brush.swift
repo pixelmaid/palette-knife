@@ -114,11 +114,20 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         //setup behavior
         if(behaviorDef != nil){
-            behaviorDef?.createBehavior(self)
+            behaviorDef?.addBrush(self)
         }
         //  _  = NSTimer.scheduledTimerWithTimeInterval(0.00001, target: self, selector: #selector(Brush.defaultCallback), userInfo: nil, repeats: false)
     }
     
+    
+    func clearBehavior(){
+        for (_,state) in self.states{
+            state.removeAllTransitions();
+            state.removeAllConstraintMappings();
+        }
+        self.transitions.removeAll();
+        self.states.removeAll();
+    }
     
     //  @objc func defaultCallback(){
     //self.transitionToState(self.getTransitionByName("setup")!)
@@ -370,6 +379,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     func removeConstraint(data:(Brush, String, Observable<Float>),key:String){
         data.2.didChange.removeHandler(key)
+        data.2.unsubscribe(self.id);
     }
     
     
@@ -454,16 +464,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
      }*/
     
     
-    func removeConstraint(key:String){
-        for (key, var val) in states {
-            if(val.hasConstraintKey(key)){
-                let removal =  val.removeConstraintMapping(key)
-                let data = (self, key, removal!.reference)
-                removeMappingEvent.raise(data)
-                break
-            }
-        }
-    }
+ 
     
     func removeTransition(key:String){
         for (key, var val) in states {

@@ -24,6 +24,19 @@ class State {
         constraint_mappings[key] = mapping;
     }
     
+    func removeAllConstraintMappings(){
+        for (key,_) in constraint_mappings{
+            removeConstraintMapping(key);
+        }
+     }
+    
+    func removeAllTransitions(){
+        for (key,_) in transitions{
+            removeTransitionMapping(key);
+        }
+    }
+
+    
      func removeConstraintMapping(key:String)->Constraint?{
         constraint_mappings[key]!.relativeProperty.constrained = false;
        return constraint_mappings.removeValueForKey(key)

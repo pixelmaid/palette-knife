@@ -136,7 +136,13 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func setupTransition(){
-        self.transitionToState(self.getTransitionByName("setup")!)
+        let setupTransition = self.getTransitionByName("setup");
+        if(setupTransition != nil){
+        self.transitionToState(setupTransition!)
+        }
+        else{
+            print("no setup transition");
+        }
     }
     
     //MARK: - Hashable
@@ -165,7 +171,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
         
-        print("angle\(self.angle.get(nil),self.index.get(nil)))")
+      //  print("angle\(self.angle.get(nil),self.index.get(nil)))")
         let centerX = origin.x.get(nil);
         let centerY = origin.y.get(nil);
         
@@ -190,10 +196,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.matrix.rotate(self.angle.get(nil), centerX: centerX, centerY: centerY)
         let _dx = self.position.x.get(nil)+delta.x.get(nil);
         let _dy = self.position.y.get(nil)+delta.y.get(nil);
-        
+
         let transformedCoords = self.matrix.transformPoint(_dx, y: _dy)
+        print("pos\(_dx,_dy,delta.y.getSilent(),delta.y.getSilent())))")
         
-        if(transformedCoords.0 >= 0 && transformedCoords.1 >= 0 && transformedCoords.0 <= GCodeGenerator.pX && transformedCoords.1 <= GCodeGenerator.pY ){
+       // if(transformedCoords.0 >= 0 && transformedCoords.1 >= 0 && transformedCoords.0 <= GCodeGenerator.pX && transformedCoords.1 <= GCodeGenerator.pY ){
             
             
             
@@ -213,18 +220,18 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             weightBuffer.push(weight.get(nil));
             self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight: self.weight.get(nil), color: self.strokeColor);
             self.position.set(_dx,y:_dy);
-            
-            if(_dx < 0  || _dx > GCodeGenerator.pX || _dy < 0 || _dy > GCodeGenerator.pY){
-                self.offCanvas.set(1);
-            }
-            else{
+           
+            //if(_dx < 0  || _dx > GCodeGenerator.pX || _dy < 0 || _dy > GCodeGenerator.pY){
+               // self.offCanvas.set(1);
+           // }
+          //  else{
                 self.offCanvas.set(0);
                 
-            }
-        }
-        else{
-            currentCanvas!.currentDrawing!.retireCurrentStrokes(self.id)
-        }
+           // }
+       // }
+        //else{
+        //    currentCanvas!.currentDrawing!.retireCurrentStrokes(self.id)
+       // }
         
         
         
@@ -255,12 +262,16 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func transitionToState(transition:StateTransition){
-        var constraint_mappings =  states[currentState]!.constraint_mappings
+        var constraint_mappings:[String:Constraint];
+
+        if(states[currentState] != nil){
+         constraint_mappings =  states[currentState]!.constraint_mappings
         for (_, value) in constraint_mappings{
             
             self.setConstraint(value)
             value.relativeProperty.constrained = false;
             
+        }
         }
         self.currentState = transition.toStateId;
         self.raiseBehaviorEvent(states[currentState]!.toJSON(), event: "state")

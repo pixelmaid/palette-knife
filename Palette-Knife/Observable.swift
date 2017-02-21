@@ -40,6 +40,10 @@ class Observable<T>:Model  {
         return value
     }
     
+    func getSilent() -> T {
+        return value
+    }
+    
     func subscribe(id:String){
         subscribers[id] = 0
     }

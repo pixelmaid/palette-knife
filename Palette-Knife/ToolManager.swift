@@ -37,7 +37,7 @@ class ToolManager:UIViewController{
     static var smallActive = true;
 
 
-    var bluetoothManager = BluetoothManager();
+   // var bluetoothManager = BluetoothManager();
     let bluetoothKey = NSUUID().UUIDString
     let toolbarKey = NSUUID().UUIDString
     
@@ -59,7 +59,7 @@ class ToolManager:UIViewController{
         
         super.viewDidLoad()
 
-        bluetoothManager.bluetoothEvent.addHandler(self,handler: ToolManager.bluetoothHandler, key:bluetoothKey)
+        //bluetoothManager.bluetoothEvent.addHandler(self,handler: ToolManager.bluetoothHandler, key:bluetoothKey)
         toolbarView.toolbarEvent.addHandler(self, handler: ToolManager.toolbarHandler, key: toolbarKey)
         
         drawButton.backgroundColor = selectedColor
@@ -131,15 +131,15 @@ class ToolManager:UIViewController{
         switch(data){
         case "largeActive":
             if( ToolManager.smallActive == true &&  ToolManager.largeActive == false){
-                bluetoothManager.sendMessage("a");
+               // bluetoothManager.sendMessage("a");
             }
             else if( ToolManager.smallActive == false &&  ToolManager.largeActive == false){
-                bluetoothManager.sendMessage("e");
+                //bluetoothManager.sendMessage("e");
 
             }
             else if( ToolManager.smallActive == true &&  ToolManager.largeActive == true){
-                bluetoothManager.sendMessage("h");
-                
+               // bluetoothManager.sendMessage("h");
+               
             }
 
            ToolManager.largeActive = true;
@@ -153,14 +153,14 @@ class ToolManager:UIViewController{
         case "smallActive":
             
             if( ToolManager.smallActive == false &&  ToolManager.largeActive == true){
-                bluetoothManager.sendMessage("b");
+                //bluetoothManager.sendMessage("b");
             }
             else if( ToolManager.smallActive == false &&  ToolManager.largeActive == false){
-                bluetoothManager.sendMessage("f");
+                //bluetoothManager.sendMessage("f");
                 
             }
             else if( ToolManager.smallActive == true &&  ToolManager.largeActive == true){
-                bluetoothManager.sendMessage("g");
+               // bluetoothManager.sendMessage("g");
                 
             }
             ToolManager.largeActive = false;
@@ -172,14 +172,14 @@ class ToolManager:UIViewController{
     
         case "bothActive":
             if( ToolManager.smallActive == false &&  ToolManager.largeActive == true){
-                bluetoothManager.sendMessage("b");
+                //bluetoothManager.sendMessage("b");
             }
             else if( ToolManager.smallActive == false &&  ToolManager.largeActive == false){
-                bluetoothManager.sendMessage("c");
+                //bluetoothManager.sendMessage("c");
                 
             }
             else if( ToolManager.smallActive == true &&  ToolManager.largeActive == false){
-                bluetoothManager.sendMessage("e");
+                //bluetoothManager.sendMessage("e");
                 
             }
             
@@ -191,14 +191,14 @@ class ToolManager:UIViewController{
         case "noneActive":
             
             if( ToolManager.smallActive == true &&  ToolManager.largeActive == true){
-                bluetoothManager.sendMessage("d");
+               // bluetoothManager.sendMessage("d");
             }
             else if( ToolManager.smallActive == false &&  ToolManager.largeActive == true){
-                bluetoothManager.sendMessage("g");
+              //  bluetoothManager.sendMessage("g");
                 
             }
             else if( ToolManager.smallActive == true &&  ToolManager.largeActive == false){
-                bluetoothManager.sendMessage("h");
+               // bluetoothManager.sendMessage("h");
                 
             }
             ToolManager.largeActive = false;

@@ -689,7 +689,7 @@
 				TargetAttributes = {
 					5FA4C71F1CDA7B5B004A728C = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = R3G633C4P2;
+						DevelopmentTeam = GGBE93LPTY;
 						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
 					};
@@ -1115,7 +1115,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = R3G633C4P2;
+				DEVELOPMENT_TEAM = GGBE93LPTY;
 				INFOPLIST_FILE = "Palette-Knife/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1138,7 +1138,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = R3G633C4P2;
+				DEVELOPMENT_TEAM = GGBE93LPTY;
 				INFOPLIST_FILE = "Palette-Knife/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

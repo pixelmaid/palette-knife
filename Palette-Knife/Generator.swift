@@ -202,6 +202,23 @@ class Increment:Generator{
     
 }
 
+class Sine:Generator{
+    var index = Observable<Float>(0)
+
+    
+    func incrementIndex(){
+        index.set(index.get(nil)+1);
+        
+    }
+    override func get(id:String?) -> Float {
+        let v =  sin(self.index.get(nil));
+        self.incrementIndex();
+        return v;
+    }
+
+    
+}
+
 class easeInOut:Generator{
     var start:Observable<Float>
     var stop:Observable<Float>

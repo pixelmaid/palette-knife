@@ -163,6 +163,11 @@ class BehaviorDefinition {
         generators[name] = ("range",[min,max,start,stop]);
     }
     
+    func addSine(name:String){
+        generators[name] = ("sine",[]);
+    }
+
+    
     func addRandomGenerator(name:String,min:Float,max:Float){
         generators[name] = ("random",[min,max]);
     }
@@ -178,6 +183,7 @@ class BehaviorDefinition {
     }
     
     func addState(stateId:String, stateName:String){
+        print("adding state\(stateId,stateName)");
         states[stateId] = stateName;
     }
     
@@ -209,6 +215,9 @@ class BehaviorDefinition {
         case "range":
             let range = Range(min:data.1[0] as! Int, max:data.1[1] as! Int, start: data.1[2] as! Float, stop:data.1[3] as! Float)
             storedGenerators[name] = range;
+        case "sine":
+            let sine = Sine()
+            storedGenerators[name] = sine;
         case "random":
             let random = RandomGenerator(start:data.1[0] as! Float, end:data.1[1] as! Float)
             storedGenerators[name] = random;
@@ -379,6 +388,7 @@ class BehaviorDefinition {
     }
     
     func createBehavior(){
+        print("create behavior called \(self.brushInstances.count)");
         for var i in 0..<self.brushInstances.count{
             let targetBrush = self.brushInstances[i];
             targetBrush.clearBehavior();
@@ -436,8 +446,9 @@ class BehaviorDefinition {
         for (id, mapping_data) in mappings{
             self.generateMapping(targetBrush,id:id, data:mapping_data);
         }
+            targetBrush.setupTransition();
+
         }
-        
         
         
     }

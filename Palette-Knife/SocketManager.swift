@@ -149,10 +149,7 @@ class SocketManager: WebSocketDelegate{
         target.initEvent.addHandler(self,handler: SocketManager.initEvent, key:dataKey);
         
         self.dataGenerated(data,key:"_");
-        if(type == "brush_init"){
-            let b = target as! Brush
-            b.setupTransition();
-        }
+        
         
     }
     

@@ -172,6 +172,8 @@ class Stylus: TimeSeries, WebTransmitter {
         
         self.position.set(x,y:y)
         self.delta.set(self.position.sub(self.prevPosition))
+        print("stylus pos\(self.delta.x.getSilent(),self.delta.y.getSilent(),self.position.x.getSilent(),self.position.y.getSilent())");
+
         self.delta.set(0,y:0)
 
         deltaChangeBuffer.append(self.position.sub(self.prevPosition));

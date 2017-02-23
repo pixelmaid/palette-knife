@@ -15,6 +15,8 @@
 		5F4D8CEC1DEE072A008042FE /* shopbot_position_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F4D8CEA1DEE072A008042FE /* shopbot_position_active.png */; };
 		5F4D8CED1DEE072A008042FE /* shopbot_position_inactive.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F4D8CEB1DEE072A008042FE /* shopbot_position_inactive.png */; };
 		5F62E4261DB53EAA00958BD2 /* FabricatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F62E4251DB53EAA00958BD2 /* FabricatorView.swift */; };
+		5F695A211E5CDFA600267B37 /* target.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F695A201E5CDFA600267B37 /* target.png */; };
+		5F695A251E5CF03000267B37 /* StrokeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F695A241E5CF03000267B37 /* StrokeCell.swift */; };
 		5F6A07EE1D63DCD80047FF56 /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6A07ED1D63DCD80047FF56 /* Matrix.swift */; };
 		5F8454F21D9C50880056C15E /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8454F11D9C50880056C15E /* SwiftyJSON.swift */; };
 		5F8454F71D9C53C50056C15E /* SVGGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8454F61D9C53C50056C15E /* SVGGenerator.swift */; };
@@ -33,6 +35,8 @@
 		5F9F25AF1DEFE3A0005CB5D8 /* lg_pen_blue2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9F25A81DEFE3A0005CB5D8 /* lg_pen_blue2x.png */; };
 		5F9F25B01DEFE3A0005CB5D8 /* sm_pen_blue2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9F25A91DEFE3A0005CB5D8 /* sm_pen_blue2x.png */; };
 		5F9F25B21DEFE490005CB5D8 /* radial.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9F25B11DEFE490005CB5D8 /* radial.png */; };
+		5FA01CD71E5D1B42006C2A1E /* StrokeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA01CD61E5D1B42006C2A1E /* StrokeTableViewController.swift */; };
+		5FA01CD91E5D1E8F006C2A1E /* StrokeCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA01CD81E5D1E8F006C2A1E /* StrokeCellData.swift */; };
 		5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */; };
 		5FA4C7261CDA7B5B004A728C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7251CDA7B5B004A728C /* ViewController.swift */; };
 		5FA4C7291CDA7B5B004A728C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FA4C7271CDA7B5B004A728C /* Main.storyboard */; };
@@ -135,6 +139,8 @@
 		5F4D8CEA1DEE072A008042FE /* shopbot_position_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shopbot_position_active.png; sourceTree = "<group>"; };
 		5F4D8CEB1DEE072A008042FE /* shopbot_position_inactive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shopbot_position_inactive.png; sourceTree = "<group>"; };
 		5F62E4251DB53EAA00958BD2 /* FabricatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FabricatorView.swift; sourceTree = "<group>"; };
+		5F695A201E5CDFA600267B37 /* target.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = target.png; sourceTree = "<group>"; };
+		5F695A241E5CF03000267B37 /* StrokeCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrokeCell.swift; sourceTree = "<group>"; };
 		5F6A07E71D63D4550047FF56 /* Surge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Surge.framework; path = "../Surge/build/Debug-iphoneos/Surge.framework"; sourceTree = "<group>"; };
 		5F6A07E91D63D7B70047FF56 /* Surge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Surge.framework; path = "../Surge/build/Debug-iphoneos/Surge.framework"; sourceTree = "<group>"; };
 		5F6A07EB1D63D8C80047FF56 /* Surge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Surge.framework; path = "../../../../Library/Developer/Xcode/DerivedData/PaletteKnife-arutrzbvctyrwdejkitmjhajtcsj/Build/Products/Debug-iphonesimulator/Surge.framework"; sourceTree = "<group>"; };
@@ -156,6 +162,8 @@
 		5F9F25A81DEFE3A0005CB5D8 /* lg_pen_blue2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lg_pen_blue2x.png; sourceTree = "<group>"; };
 		5F9F25A91DEFE3A0005CB5D8 /* sm_pen_blue2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sm_pen_blue2x.png; sourceTree = "<group>"; };
 		5F9F25B11DEFE490005CB5D8 /* radial.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = radial.png; sourceTree = "<group>"; };
+		5FA01CD61E5D1B42006C2A1E /* StrokeTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StrokeTableViewController.swift; path = ../StrokeTableViewController.swift; sourceTree = "<group>"; };
+		5FA01CD81E5D1E8F006C2A1E /* StrokeCellData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrokeCellData.swift; sourceTree = "<group>"; };
 		5FA4C7201CDA7B5B004A728C /* PaletteKnife.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaletteKnife.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5FA4C7251CDA7B5B004A728C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -351,6 +359,7 @@
 				5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */,
 				5F10B7DC1DE910AB00CC3504 /* ToolManager.swift */,
 				5FA4C7251CDA7B5B004A728C /* ViewController.swift */,
+				5FA01CD61E5D1B42006C2A1E /* StrokeTableViewController.swift */,
 				5FEE2ACB1DE1362500080095 /* BluetoothManager.swift */,
 				5FFDAB081D21B5C400632A26 /* SocketManager.swift */,
 				5FA4C7271CDA7B5B004A728C /* Main.storyboard */,
@@ -398,9 +407,11 @@
 		5FA4C7561CDB9EAF004A728C /* views */ = {
 			isa = PBXGroup;
 			children = (
+				5F695A241E5CF03000267B37 /* StrokeCell.swift */,
 				5FD6CD0D1DDFB4E6007D94AA /* ToolbarView.swift */,
 				5FA4C7511CDA7C1B004A728C /* CanvasView.swift */,
 				5F62E4251DB53EAA00958BD2 /* FabricatorView.swift */,
+				5FA01CD81E5D1E8F006C2A1E /* StrokeCellData.swift */,
 			);
 			name = views;
 			sourceTree = "<group>";
@@ -552,6 +563,7 @@
 		5FD6CD101DE0EE0E007D94AA /* image_assets */ = {
 			isa = PBXGroup;
 			children = (
+				5F695A201E5CDFA600267B37 /* target.png */,
 				5FAE8C4E1E380CC400AFAB57 /* draw_line.png */,
 				5FAE8C4F1E380CC400AFAB57 /* erase.png */,
 				5FAE8C501E380CC400AFAB57 /* lasso_minus.png */,
@@ -757,6 +769,7 @@
 				5F9118D91DEE345100A6B247 /* select_icon.png in Resources */,
 				5F9F25AA1DEFE3A0005CB5D8 /* shopbot_position_active@2x.png in Resources */,
 				5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */,
+				5F695A211E5CDFA600267B37 /* target.png in Resources */,
 				5F9F25AD1DEFE3A0005CB5D8 /* shopbot_position_inactive2x.png in Resources */,
 				5FAE8C551E380CC400AFAB57 /* erase.png in Resources */,
 				5F9118D81DEE345100A6B247 /* draw_icon.png in Resources */,
@@ -930,6 +943,7 @@
 				5F6A07EE1D63DCD80047FF56 /* Matrix.swift in Sources */,
 				5FFF81921D49219700C1349B /* BehaviorDefinition.swift in Sources */,
 				5FC56D7D1DDBD0A600B91E7E /* NSObject+ENHThrottledReloading.m in Sources */,
+				5FA01CD71E5D1B42006C2A1E /* StrokeTableViewController.swift in Sources */,
 				5FC56D6F1DDBC61800B91E7E /* DFUOperationsDetails.m in Sources */,
 				5F1896771D4A856F00AEF5F1 /* Generator.swift in Sources */,
 				5FC56D6C1DDBC61800B91E7E /* Utility.m in Sources */,
@@ -947,6 +961,7 @@
 				5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */,
 				5F8FEFC91CF5F4E600D2CB0C /* Stylus.swift in Sources */,
 				5FFF818A1D403C4D00C1349B /* State.swift in Sources */,
+				5F695A251E5CF03000267B37 /* StrokeCell.swift in Sources */,
 				5F8FEFCC1CF5F51900D2CB0C /* BehaviorMapper.swift in Sources */,
 				5FF5EFAD1D6661EC001E1616 /* Event.swift in Sources */,
 				5FC56D7E1DDBD0A600B91E7E /* README.md in Sources */,
@@ -970,6 +985,7 @@
 				5FC56D471DDBC2DD00B91E7E /* PinIOModuleManager.swift in Sources */,
 				5FC56D481DDBC2DD00B91E7E /* Preferences.swift in Sources */,
 				5FC56D341DDBC22200B91E7E /* Synchronize.swift in Sources */,
+				5FA01CD91E5D1E8F006C2A1E /* StrokeCellData.swift in Sources */,
 				5FC56D361DDBC22200B91E7E /* WatchSessionManager.swift in Sources */,
 				5FD6CD0E1DDFB4E6007D94AA /* ToolbarView.swift in Sources */,
 				5FFF818E1D42EC8700C1349B /* Expression.swift in Sources */,

@@ -19,7 +19,7 @@ class Canvas: WebTransmitter, Hashable{
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
 
-    var geometryModified = Event<(Geometry,String,String)>()
+    var geometryModified = Event<(Any,String,String)>()
 
     let drawKey = NSUUID().UUIDString;
     let  dataKey = NSUUID().UUIDString;
@@ -63,9 +63,21 @@ class Canvas: WebTransmitter, Hashable{
     
     func deleteStroke(stroke:Stroke)->Bool{
         for d in drawings{
-            d.deleteStroke(stroke);
+            if(d.deleteStroke(stroke)){
+                let strokes = self.getAllStrokes();
+                self.geometryModified.raise((strokes,"REDRAW_ALL","DRAW"));
+                return true;
+            }
         }
         return false;
+    }
+    
+    func getAllStrokes()->[Stroke]{
+        var strokes = [Stroke]();
+        for d in drawings{
+            strokes = strokes + d.getAllStrokes()
+        }
+        return strokes
     }
     
     func drawingDataGenerated(data:(String), key:String){
@@ -80,7 +92,7 @@ class Canvas: WebTransmitter, Hashable{
     
     //Event handlers
     //chains communication between brushes and view controller
-    func drawHandler(data:(Geometry,String,String), key:String){
+    func drawHandler(data:(Any,String,String), key:String){
         self.geometryModified.raise(data)
     }
     

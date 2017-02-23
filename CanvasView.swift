@@ -24,7 +24,18 @@ class CanvasView:  UIImageView {
     
     }
 
-    
+    func redrawAll(strokeList:[Stroke]){
+        print("redraw all strokes \(strokeList.count)");
+        self.clear();
+        for i in 0..<strokeList.count{
+            let stroke = strokeList[i];
+            for j in 1..<stroke.segments.count{
+                let seg = stroke.segments[j];
+                self.drawPath((seg.getPreviousSegment()?.point)!,tP:seg.point,w:ToolManager.defaultPenDiameter, c:ToolManager.defaultPenColor)
+            }
+        }
+        
+    }
   
     
     func drawPath(fP: Point, tP: Point, w:Float, c:Color) {

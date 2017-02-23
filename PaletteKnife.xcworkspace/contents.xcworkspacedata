@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:StrokeTableViewController.swift">
+   </FileRef>
+   <FileRef
       location = "group:Palette-Knife/Event.swift">
    </FileRef>
    <FileRef

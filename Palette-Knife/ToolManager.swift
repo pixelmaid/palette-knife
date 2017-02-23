@@ -82,6 +82,7 @@ class ToolManager:UIViewController{
             eraseButton.backgroundColor = selectedColor
             drawButton.backgroundColor = standardColor
             marqueePlusButton.backgroundColor = standardColor
+            ToolManager.brushEvent.raise(("erase"));
 
         }
         else if(sender as! NSObject == drawButton){

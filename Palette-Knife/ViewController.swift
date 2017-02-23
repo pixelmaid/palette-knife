@@ -18,6 +18,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var dualBrushButton: UIButton!
     @IBOutlet weak var largeBrushButton: UIButton!
     @IBOutlet weak var smallBrushButton: UIButton!
+    
+    
     var canvasViewSm:CanvasView
     var canvasViewLg:CanvasView
     var bakeViewSm:CanvasView
@@ -56,7 +58,7 @@ class ViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         let screenSize = UIScreen.mainScreen().bounds
-        let sX = (screenSize.width-CGFloat(GCodeGenerator.pX))/2.0
+        let sX = (screenSize.width-CGFloat(GCodeGenerator.pX))/2.0+50
         let sY = (screenSize.height-CGFloat(GCodeGenerator.pY))/2.0
         
         GCodeGenerator.setCanvasOffset(Float(sX),y:Float(sY));
@@ -134,6 +136,11 @@ class ViewController: UIViewController {
                 radialBrush!.active = false;
                 bakeBrush!.active = true;
                 break;
+        case "erase":
+            radialBrush!.active = false;
+            bakeBrush!.active = false;
+            break;
+
         case "radial":
             radialBrush!.active = true;
             bakeBrush!.active = false;
@@ -262,7 +269,7 @@ class ViewController: UIViewController {
 
     
     
-    func canvasDrawHandler(data:(Geometry,String,String), key:String){
+    func canvasDrawHandler(data:(Any,String,String), key:String){
         switch data.2{
             
         case "BAKE_DRAW":
@@ -311,6 +318,9 @@ class ViewController: UIViewController {
                 }
                 
                 break
+            case "REDRAW_ALL":
+                let strokes = data.0 as! [Stroke];
+                canvasViewLg.redrawAll(strokes);
                 /*case "ARC":
                  let arc = data.0 as! Arc
                  canvasView.drawArc(arc.center, radius: arc.radius, startAngle: arc.startAngle, endAngle: arc.endAngle, w: 10, c: Color(r:0,g:0,b:0))
@@ -396,7 +406,8 @@ class ViewController: UIViewController {
             else{
                 let stroke = currentCanvas!.hitTest(Point(x:x,y:y),threshold:20);
                 if(stroke != nil && ToolManager.mode == "erase"){
-                    currentCanvas!.deleteStroke(stroke);
+                    let  delete = currentCanvas!.deleteStroke(stroke!);
+                    print("deleted stroke\(delete)")
                 }
             }
         }

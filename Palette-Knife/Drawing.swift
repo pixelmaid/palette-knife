@@ -25,7 +25,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     let gCodeGenerator = GCodeGenerator();
     let svgGenerator = SVGGenerator();
 
-    var geometryModified = Event<(Geometry,String,String)>()
+    var geometryModified = Event<(Any,String,String)>()
     
     override init(){
         super.init();
@@ -82,6 +82,23 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         if (self.activeStrokes[parentID] != nil){
             self.activeStrokes[parentID]!.removeAll();
         }
+    }
+    
+    func deleteStroke(stroke:Stroke)->Bool{
+        for (key, var strokeList) in allStrokes{
+            for i in 0..<strokeList.count {
+                let s = strokeList[i];
+                print("id check \(i,s.id,stroke.id,strokeList.count)");
+            if s.id == stroke.id{
+                strokeList.removeAtIndex(i)
+                allStrokes[key] = strokeList;
+                bakeQueue[key] = bakeQueue[key]!.filter{$0.id == stroke.id}
+                print("id check \(i,s.id,stroke.id,strokeList.count, bakeQueue[key]!.count)");
+                return true;
+            }
+            }
+        }
+            return false;
     }
     
     func newStroke(parentID:String)->Stroke{
@@ -142,6 +159,14 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         }
     }
     
+    
+    func getAllStrokes()->[Stroke]{
+        var strokes = [Stroke]();
+        for (_,s) in self.allStrokes{
+            strokes = strokes+s;
+        }
+        return strokes
+    }
     
     func bake(parentID:String){
         var source_string = "[";

@@ -18,6 +18,7 @@
 		5F695A211E5CDFA600267B37 /* target.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F695A201E5CDFA600267B37 /* target.png */; };
 		5F695A251E5CF03000267B37 /* StrokeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F695A241E5CF03000267B37 /* StrokeCell.swift */; };
 		5F6A07EE1D63DCD80047FF56 /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6A07ED1D63DCD80047FF56 /* Matrix.swift */; };
+		5F72DFAC1E6216F200B85B7D /* StrokeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F72DFAB1E6216F200B85B7D /* StrokeTableViewController.swift */; };
 		5F8454F21D9C50880056C15E /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8454F11D9C50880056C15E /* SwiftyJSON.swift */; };
 		5F8454F71D9C53C50056C15E /* SVGGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8454F61D9C53C50056C15E /* SVGGenerator.swift */; };
 		5F8FEFC91CF5F4E600D2CB0C /* Stylus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FEFC81CF5F4E600D2CB0C /* Stylus.swift */; };
@@ -35,7 +36,6 @@
 		5F9F25AF1DEFE3A0005CB5D8 /* lg_pen_blue2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9F25A81DEFE3A0005CB5D8 /* lg_pen_blue2x.png */; };
 		5F9F25B01DEFE3A0005CB5D8 /* sm_pen_blue2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9F25A91DEFE3A0005CB5D8 /* sm_pen_blue2x.png */; };
 		5F9F25B21DEFE490005CB5D8 /* radial.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9F25B11DEFE490005CB5D8 /* radial.png */; };
-		5FA01CD71E5D1B42006C2A1E /* StrokeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA01CD61E5D1B42006C2A1E /* StrokeTableViewController.swift */; };
 		5FA01CD91E5D1E8F006C2A1E /* StrokeCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA01CD81E5D1E8F006C2A1E /* StrokeCellData.swift */; };
 		5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */; };
 		5FA4C7261CDA7B5B004A728C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7251CDA7B5B004A728C /* ViewController.swift */; };
@@ -145,6 +145,7 @@
 		5F6A07E91D63D7B70047FF56 /* Surge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Surge.framework; path = "../Surge/build/Debug-iphoneos/Surge.framework"; sourceTree = "<group>"; };
 		5F6A07EB1D63D8C80047FF56 /* Surge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Surge.framework; path = "../../../../Library/Developer/Xcode/DerivedData/PaletteKnife-arutrzbvctyrwdejkitmjhajtcsj/Build/Products/Debug-iphonesimulator/Surge.framework"; sourceTree = "<group>"; };
 		5F6A07ED1D63DCD80047FF56 /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
+		5F72DFAB1E6216F200B85B7D /* StrokeTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrokeTableViewController.swift; sourceTree = "<group>"; };
 		5F8454F11D9C50880056C15E /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftyJSON.swift; path = "../../../../Downloads/SwiftyJSON-swift2/Source/SwiftyJSON.swift"; sourceTree = "<group>"; };
 		5F8454F61D9C53C50056C15E /* SVGGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SVGGenerator.swift; sourceTree = "<group>"; };
 		5F8FEFC81CF5F4E600D2CB0C /* Stylus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylus.swift; sourceTree = "<group>"; };
@@ -162,7 +163,6 @@
 		5F9F25A81DEFE3A0005CB5D8 /* lg_pen_blue2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lg_pen_blue2x.png; sourceTree = "<group>"; };
 		5F9F25A91DEFE3A0005CB5D8 /* sm_pen_blue2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sm_pen_blue2x.png; sourceTree = "<group>"; };
 		5F9F25B11DEFE490005CB5D8 /* radial.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = radial.png; sourceTree = "<group>"; };
-		5FA01CD61E5D1B42006C2A1E /* StrokeTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StrokeTableViewController.swift; path = ../StrokeTableViewController.swift; sourceTree = "<group>"; };
 		5FA01CD81E5D1E8F006C2A1E /* StrokeCellData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrokeCellData.swift; sourceTree = "<group>"; };
 		5FA4C7201CDA7B5B004A728C /* PaletteKnife.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaletteKnife.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -359,8 +359,8 @@
 				5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */,
 				5F10B7DC1DE910AB00CC3504 /* ToolManager.swift */,
 				5FA4C7251CDA7B5B004A728C /* ViewController.swift */,
-				5FA01CD61E5D1B42006C2A1E /* StrokeTableViewController.swift */,
 				5FEE2ACB1DE1362500080095 /* BluetoothManager.swift */,
+				5F72DFAB1E6216F200B85B7D /* StrokeTableViewController.swift */,
 				5FFDAB081D21B5C400632A26 /* SocketManager.swift */,
 				5FA4C7271CDA7B5B004A728C /* Main.storyboard */,
 				5FA4C72A1CDA7B5B004A728C /* Assets.xcassets */,
@@ -943,7 +943,6 @@
 				5F6A07EE1D63DCD80047FF56 /* Matrix.swift in Sources */,
 				5FFF81921D49219700C1349B /* BehaviorDefinition.swift in Sources */,
 				5FC56D7D1DDBD0A600B91E7E /* NSObject+ENHThrottledReloading.m in Sources */,
-				5FA01CD71E5D1B42006C2A1E /* StrokeTableViewController.swift in Sources */,
 				5FC56D6F1DDBC61800B91E7E /* DFUOperationsDetails.m in Sources */,
 				5F1896771D4A856F00AEF5F1 /* Generator.swift in Sources */,
 				5FC56D6C1DDBC61800B91E7E /* Utility.m in Sources */,
@@ -1005,6 +1004,7 @@
 				5F0C97231D6BD726001FC228 /* GCodeGenerator.swift in Sources */,
 				5FA4C7581CDB9EF8004A728C /* Brush.swift in Sources */,
 				5F8454F21D9C50880056C15E /* SwiftyJSON.swift in Sources */,
+				5F72DFAC1E6216F200B85B7D /* StrokeTableViewController.swift in Sources */,
 				5F8FEFD01CF6264A00D2CB0C /* BehaviorManager.swift in Sources */,
 				5FA4C7521CDA7C1B004A728C /* CanvasView.swift in Sources */,
 			);

@@ -29,14 +29,50 @@ class CanvasView:  UIImageView {
         self.clear();
         for i in 0..<strokeList.count{
             let stroke = strokeList[i];
-            for j in 1..<stroke.segments.count{
-                let seg = stroke.segments[j];
-                self.drawPath((seg.getPreviousSegment()?.point)!,tP:seg.point,w:ToolManager.defaultPenDiameter, c:ToolManager.defaultPenColor)
-            }
+            self.drawSingleStroke(stroke,i:i);
         }
-        
     }
   
+    
+    func drawSingleStroke(stroke:Stroke,i:Int){
+        let c:Color;
+        if(stroke.selected){
+            c = ToolManager.defaultSelectedColor;
+        }
+            
+        else if(i<ToolManager.defaultColorList.count){
+            c = ToolManager.defaultColorList[i];
+        }
+        else{
+            c = ToolManager.defaultColorList.last!;
+        }
+        for j in 1..<stroke.segments.count{
+            let seg = stroke.segments[j];
+            
+            self.drawPath((seg.getPreviousSegment()?.point)!,tP:seg.point,w:ToolManager.defaultPenDiameter, c:c)
+        }
+    }
+    
+    func drawSingleStrokeNormalized(stroke:Stroke,i:Int){
+        let c:Color;
+        if(stroke.selected){
+            c = ToolManager.defaultSelectedColor;
+        }
+            
+        else if(i<ToolManager.defaultColorList.count){
+            c = ToolManager.defaultColorList[i];
+        }
+        else{
+            c = ToolManager.defaultColorList.last!;
+        }
+        
+        for j in 1..<stroke.segments.count{
+            let seg = stroke.segments[j];
+            self.drawPath((seg.getPreviousSegment()?.point)!,tP:seg.point,w:ToolManager.defaultPenDiameter, c:c)
+        }
+
+
+    }
     
     func drawPath(fP: Point, tP: Point, w:Float, c:Color) {
         UIGraphicsBeginImageContext(self.frame.size)

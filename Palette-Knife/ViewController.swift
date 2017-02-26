@@ -27,6 +27,8 @@ class ViewController: UIViewController {
     var bakeViewLg:CanvasView
     var backView:UIImageView
     var fabricatorView = FabricatorView();
+    
+    var strokeTableController: StrokeTableViewController?
     // var canvasViewBakeSm:CanvasView;
     // var canvasViewBakeLg:CanvasView;
     
@@ -39,6 +41,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var statusOutput: UITextField!
     
+    @IBOutlet weak var tableViewContainer: UIView!
     
     
     var socketManager = SocketManager();
@@ -85,8 +88,10 @@ class ViewController: UIViewController {
         //toolbarView.toolbarEvent.addHandler(self,handler:ViewController.)
         socketManager.connect();
         
+       // tableViewContainer.
+        
         ToolManager.brushEvent.addHandler(self,handler:ViewController.brushToggleHandler,key:brushEventKey);
-
+        
         
         canvasViewSm.backgroundColor=UIColor.whiteColor()
         self.view.addSubview(canvasViewSm)
@@ -115,7 +120,7 @@ class ViewController: UIViewController {
         self.view.sendSubviewToBack(canvasViewSm)
         self.view.sendSubviewToBack(backView)
 
-        canvasViewLg.alpha = 0.25;
+        canvasViewLg.alpha = 1;
         canvasViewSm.alpha = 0.25;
         
         
@@ -129,6 +134,23 @@ class ViewController: UIViewController {
         
     }
     
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        print("segue \(segue.identifier)");
+        if(segue.identifier == "tableSegue"){
+            strokeTableController = segue.destinationViewController as? StrokeTableViewController;
+        }
+    }
+    
+    /*- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+    {
+    NSString * segueName = segue.identifier;
+    if ([segueName isEqualToString: @"alertview_embed"]) {
+    AlertViewController * childViewController = (AlertViewController *) [segue destinationViewController];
+    AlertView * alertView = childViewController.view;
+    // do something with the AlertView's subviews here...
+    }
+    }*/
+    
     
     func brushToggleHandler(data:(String),key:String){
         switch(data){
@@ -136,12 +158,12 @@ class ViewController: UIViewController {
                 radialBrush!.active = false;
                 bakeBrush!.active = true;
                 break;
-        case "erase":
+        case "erase","select_add","select_minus":
+     
             radialBrush!.active = false;
             bakeBrush!.active = false;
             break;
-
-        case "radial":
+               case "radial":
             radialBrush!.active = true;
             bakeBrush!.active = false;
 
@@ -272,6 +294,14 @@ class ViewController: UIViewController {
     func canvasDrawHandler(data:(Any,String,String), key:String){
         switch data.2{
             
+        case "NEW_STROKE":
+            let stroke = data.0 as! Stroke
+            if(strokeTableController != nil){
+                strokeTableController!.addStroke(stroke);
+            }
+            
+            break;
+        
         case "BAKE_DRAW":
             switch data.1{
             case "SEGMENT":
@@ -372,6 +402,9 @@ class ViewController: UIViewController {
                 if(downInCanvas){
                 stylus.onStylusUp()
                 downInCanvas = false
+                    let strokes = currentCanvas?.getAllStrokes();
+                    canvasViewLg.redrawAll(strokes!);
+
                 }
                 // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
                 //socketManager.sendStylusData();
@@ -403,11 +436,33 @@ class ViewController: UIViewController {
                 // socketManager.sendStylusData();
                 
             }
-            else{
+            else if(ToolManager.mode == "erase" || ToolManager.mode == "select_add" || ToolManager.mode == "select_minus" ){
                 let stroke = currentCanvas!.hitTest(Point(x:x,y:y),threshold:20);
-                if(stroke != nil && ToolManager.mode == "erase"){
+                if(stroke != nil){
+                    switch (ToolManager.mode){
+                        
+                        case "erase":
+                            strokeTableController?.removeStroke(stroke!.id);
                     let  delete = currentCanvas!.deleteStroke(stroke!);
                     print("deleted stroke\(delete)")
+                    break;
+                        case "select_add":
+                            if(!stroke!.selected){
+                                stroke!.selected = true;
+                                let strokes = currentCanvas?.getAllStrokes();
+                                canvasViewLg.redrawAll(strokes!);
+                            }
+                            break;
+                        case "select_minus":
+                            if(stroke!.selected){
+                                stroke!.selected = false;
+                                let strokes = currentCanvas?.getAllStrokes();
+                                canvasViewLg.redrawAll(strokes!);
+                            }
+                            break;
+                    default:
+                        break;
+                         }
                 }
             }
         }
@@ -428,7 +483,7 @@ class ViewController: UIViewController {
 
                 stylus.onStylusMove(x, y:y, force:force, angle:angle)
                     downInCanvas = true;
-
+                   
                 }
                 // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
                 // socketManager.sendStylusData();

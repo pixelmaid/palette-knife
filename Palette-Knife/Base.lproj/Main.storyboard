@@ -74,11 +74,11 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rpd-O5-QAg" userLabel="toolbar">
-                                <rect key="frame" x="10" y="42" width="197" height="869"/>
+                                <rect key="frame" x="10" y="42" width="766" height="869"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <connections>
-                                    <segue destination="pIZ-gU-DkI" kind="embed" id="15U-6h-bE4"/>
+                                    <segue destination="pIZ-gU-DkI" kind="embed" identifier="toolSegue" id="15U-6h-bE4"/>
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qed-Tn-scN" userLabel="stroke_list_container">
@@ -86,7 +86,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <connections>
-                                    <segue destination="ua1-Bv-a2d" kind="embed" id="1v6-6I-EUM"/>
+                                    <segue destination="ua1-Bv-a2d" kind="embed" identifier="tableSegue" id="1v6-6I-EUM"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -102,6 +102,7 @@
                         <outlet property="largeBrushButton" destination="TiE-XB-PWE" id="Ho7-ws-fyN"/>
                         <outlet property="smallBrushButton" destination="1Xu-gy-i9h" id="DRY-JR-PrB"/>
                         <outlet property="statusOutput" destination="aAp-uw-EIF" id="i3r-ED-GyA"/>
+                        <outlet property="tableViewContainer" destination="qed-Tn-scN" id="kHZ-6v-Ky3"/>
                         <outlet property="xOutput" destination="t1K-ja-Swa" id="Fjt-vg-4iL"/>
                         <outlet property="yOutput" destination="hKj-kr-lQb" id="Zpd-Va-405"/>
                         <outlet property="zOutput" destination="lhh-Ul-vy2" id="zrk-Ul-76d"/>
@@ -120,7 +121,7 @@
                         <viewControllerLayoutGuide type="bottom" id="TDm-4i-x05"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="ZM0-iE-Jwj">
-                        <rect key="frame" x="0.0" y="0.0" width="197" height="869"/>
+                        <rect key="frame" x="0.0" y="0.0" width="766" height="869"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RWY-K0-z3y" customClass="ToolbarView" customModule="PaletteKnife" customModuleProvider="target">
@@ -176,26 +177,8 @@
                                             <color key="titleShadowColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oaB-Z8-Zh5" userLabel="marqueePlusButton">
-                                        <rect key="frame" x="0.0" y="244" width="70" height="70"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                        <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                        <state key="normal" image="marquee_plus.png">
-                                            <color key="titleShadowColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pnc-bb-dRR" userLabel="marqueeMinusButton">
-                                        <rect key="frame" x="0.0" y="316" width="70" height="70"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                        <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                        <state key="normal" image="marquee_minus.png">
-                                            <color key="titleShadowColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RFn-BG-Vnh" userLabel="lassoPlusButton">
-                                        <rect key="frame" x="0.0" y="460" width="70" height="70"/>
+                                        <rect key="frame" x="0.0" y="244" width="70" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -213,7 +196,7 @@
                                         </state>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Xu-gy-i9h" userLabel="small Brush Button">
-                                        <rect key="frame" x="0.0" y="635" width="70" height="70"/>
+                                        <rect key="frame" x="0.0" y="491" width="70" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="tintColor" red="0.5" green="0.0" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
@@ -222,7 +205,7 @@
                                         </state>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TiE-XB-PWE">
-                                        <rect key="frame" x="0.0" y="707" width="70" height="70"/>
+                                        <rect key="frame" x="0.0" y="563" width="70" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -231,7 +214,7 @@
                                         </state>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WyG-fr-gyF">
-                                        <rect key="frame" x="0.0" y="779" width="70" height="70"/>
+                                        <rect key="frame" x="0.0" y="635" width="70" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -240,7 +223,7 @@
                                         </state>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KqP-Gh-QqN" userLabel="lassoMinusButton">
-                                        <rect key="frame" x="0.0" y="532" width="70" height="70"/>
+                                        <rect key="frame" x="0.0" y="316" width="70" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -256,7 +239,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Color change" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WWY-jY-H0I">
-                                        <rect key="frame" x="0.0" y="610" width="79" height="23"/>
+                                        <rect key="frame" x="0.0" y="466" width="79" height="23"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -277,21 +260,30 @@
                                     <outlet property="smallBrushButton" destination="1Xu-gy-i9h" id="pGC-AW-qpb"/>
                                 </connections>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x3i-ve-cWx">
+                                <rect key="frame" x="160" y="20" width="100" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Draw Selected"/>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="drawButton" destination="Upc-DO-Jzt" id="Bwg-y7-Dgl"/>
+                        <outlet property="drawHoverToggle" destination="7jR-AF-YaL" id="HQo-GN-8tY"/>
+                        <outlet property="drawSelectedButton" destination="ZM0-iE-Jwj" id="sD4-eF-Var"/>
                         <outlet property="eraseButton" destination="ymS-5e-1h2" id="M5B-7y-eVC"/>
+                        <outlet property="executeButton" destination="x3i-ve-cWx" id="CMd-NN-Aih"/>
+                        <outlet property="hoverButton" destination="L4p-lg-w9U" id="1hK-Al-d4U"/>
                         <outlet property="lassoMinusButton" destination="KqP-Gh-QqN" id="vOV-kM-pVz"/>
                         <outlet property="lassoPlusButton" destination="RFn-BG-Vnh" id="YCG-gc-vmt"/>
-                        <outlet property="marqueeMinusButton" destination="Pnc-bb-dRR" id="d04-NK-QV8"/>
-                        <outlet property="marqueePlusButton" destination="oaB-Z8-Zh5" id="zZh-VT-ox4"/>
+                        <outlet property="manualASAPToggle" destination="dA2-hL-dkz" id="7qh-pd-Zzu"/>
                         <outlet property="toolbarView" destination="RWY-K0-z3y" id="2KW-Re-opy"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nlH-yw-kTj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="662.81112737920932" y="298.828125"/>
+            <point key="canvasLocation" x="810" y="269"/>
         </scene>
         <!--Stroke Table View Controller-->
         <scene sceneID="EOH-e0-haj">
@@ -323,21 +315,28 @@
                                     <rect key="frame" x="0.0" y="0.0" width="354" height="89"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="radial.png" translatesAutoresizingMaskIntoConstraints="NO" id="1bP-Xk-lTF">
-                                            <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BaQ-RB-oUF">
-                                            <rect key="frame" x="98" y="34" width="256" height="21"/>
+                                            <rect key="frame" x="98" y="34" width="359" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="emq-TU-jAh">
+                                            <rect key="frame" x="208" y="13" width="59" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" title="move up"/>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M53-Ud-JJh">
+                                            <rect key="frame" x="198" y="51" width="79" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" title="move down"/>
+                                        </button>
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="strokeImage" destination="1bP-Xk-lTF" id="Tmt-8A-RgB"/>
+                                    <outlet property="moveDownButton" destination="M53-Ud-JJh" id="3o2-Vi-QUM"/>
+                                    <outlet property="moveUpButton" destination="emq-TU-jAh" id="xTe-Eg-1a3"/>
                                     <outlet property="strokeLabel" destination="BaQ-RB-oUF" id="fte-fW-wHd"/>
                                 </connections>
                             </tableViewCell>
@@ -352,10 +351,17 @@
                             <outlet property="delegate" destination="ua1-Bv-a2d" id="AhA-yx-B41"/>
                         </connections>
                     </tableView>
+                    <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="wgC-m2-o1c">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </refreshControl>
+                    <connections>
+                        <outlet property="tableView" destination="RwZ-HR-I4m" id="9DG-zs-rWL"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vfo-kX-H6A" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="696.63250366032207" y="761.71875"/>
+            <point key="canvasLocation" x="809.95607613469974" y="733.59375"/>
         </scene>
     </scenes>
     <resources>
@@ -365,9 +371,6 @@
         <image name="lasso_minus.png" width="57" height="57"/>
         <image name="lasso_plus.png" width="57" height="57"/>
         <image name="lg_pen_blue.png" width="46" height="62"/>
-        <image name="marquee_minus.png" width="52" height="50"/>
-        <image name="marquee_plus.png" width="57" height="51"/>
-        <image name="radial.png" width="60" height="60"/>
         <image name="sm_pen_blue.png" width="36" height="59"/>
         <image name="target.png" width="57" height="58"/>
     </resources>

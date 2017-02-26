@@ -101,6 +101,10 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             return false;
     }
     
+    func reorderStrokes(strokeId:String){
+        
+    }
+    
     func newStroke(parentID:String)->Stroke{
         let stroke = Stroke(parentID:parentID);
         stroke.parentID = parentID;
@@ -133,6 +137,8 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         //self.transmitEvent.raise((data))
         
         //TODO: START HERE TOMORROW- don't know position of new stroke here, need to adjust gcode generator to match
+        self.geometryModified.raise((stroke,"NEW_STROKE","NEW_STROKE"))
+
         return stroke;
     }
     

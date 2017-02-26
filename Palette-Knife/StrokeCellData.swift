@@ -24,10 +24,10 @@ class StrokeCellData {
     
     var name: String
     var photo: UIImage?
-    
+    var id: String;
     //MARK: Initialization
     
-    init?(name: String, photo: UIImage?) {
+    init?(name: String, id:String, photo: UIImage?) {
         
         // The name must not be empty
         guard !name.isEmpty else {
@@ -38,6 +38,7 @@ class StrokeCellData {
         // Initialize stored properties.
         self.name = name
         self.photo = photo
+        self.id = id;
         
     }
 }

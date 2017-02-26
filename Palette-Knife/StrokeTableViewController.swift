@@ -11,12 +11,13 @@ import UIKit
 class StrokeTableViewController: UITableViewController {
 
     //MARK: Properties
-    var strokes = [StrokeCellData]()
+     var strokes = [Stroke]()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadSampleCells();
-
+    
+    
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -24,26 +25,60 @@ class StrokeTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
     
-    //MARK: Private Methods
+    //MARK: Public Methods
     
-    private func loadSampleCells() {
-        let photo1 = UIImage(named: "radial")
-        let photo2 = UIImage(named: "radial")
-        let photo3 = UIImage(named: "radial")
-        
-        guard let stroke1 = StrokeCellData(name: "stroke1", photo: photo1) else {
-            fatalError("Unable to instantiate stroke1")
-        }
-        guard let stroke2 = StrokeCellData(name: "stroke2", photo: photo2) else {
-            fatalError("Unable to instantiate stroke1")
-        }
-        guard let stroke3 = StrokeCellData(name: "stroke3", photo: photo3) else {
-            fatalError("Unable to instantiate stroke1")
-        }
-        
-        strokes += [stroke1, stroke2, stroke3]
-    }
 
+    func addStroke(stroke:Stroke){
+        strokes.append(stroke);
+        tableView.reloadData();
+   
+    }
+    
+    func removeStroke(stroke_id:String){
+        for i in 0..<strokes.count{
+            if(strokes[i].id == stroke_id){
+                strokes.removeAtIndex(i);
+                tableView.reloadData();
+                break;
+            }
+        }
+
+        
+    }
+    
+    //MARK: Private Methods
+
+    @objc private func moveCellUp(sender: AnyObject){
+        let target = ((sender as! UIButton).superview!.superview) as! StrokeCell
+        let target_id = target.id;
+        for i in 0..<strokes.count{
+            if(strokes[i].id == target_id){
+                if(i != 0){
+                    let t = strokes.removeAtIndex(i);
+                    strokes.insert(t, atIndex: i-1)
+                    tableView.reloadData();
+                    break;
+                }
+            }
+        }
+    }
+    
+    @objc private func moveCellDown(sender: AnyObject){
+        let target = ((sender as! UIButton).superview!.superview) as! StrokeCell
+        let target_id = target.id;
+        for i in 0..<strokes.count{
+            if(strokes[i].id == target_id){
+                if(i != strokes.count-1){
+                    let t = strokes.removeAtIndex(i);
+                    strokes.insert(t, atIndex: i+1)
+                    tableView.reloadData();
+                    break;
+                }
+            }
+        }
+    }
+    
+   
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -70,7 +105,13 @@ class StrokeTableViewController: UITableViewController {
         let stroke = strokes[indexPath.row]
         
         cell.strokeLabel.text = stroke.name
-        cell.strokeImage.image = stroke.photo
+        
+       cell.strokeImage.clear();
+        cell.strokeImage.drawSingleStroke(stroke, i: indexPath.row)
+        cell.id = stroke.id;
+        cell.moveUpButton.addTarget(self, action: #selector(StrokeTableViewController.moveCellUp(_:)), forControlEvents: .TouchUpInside)
+         cell.moveDownButton.addTarget(self, action: #selector(StrokeTableViewController.moveCellDown(_:)), forControlEvents: .TouchUpInside)
+
         print("tableView \(cell)");
 
 

@@ -12,19 +12,34 @@ class StrokeCell: UITableViewCell {
 
     //MARK: properties
 
+    @IBOutlet weak var moveDownButton: UIButton!
+    @IBOutlet weak var moveUpButton: UIButton!
     @IBOutlet weak var strokeLabel: UILabel!
-    @IBOutlet weak var strokeImage: UIImageView!
+    var strokeImage:CanvasView;
+    var id: String!
     
-
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        strokeImage = CanvasView(frame: CGRectMake(0,0,90,90));
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+         strokeImage = CanvasView(frame: CGRectMake(0,0,90,90));
+        super.init(coder: aDecoder)
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        strokeImage.backgroundColor = UIColor.blueColor();
+     self.addSubview(strokeImage)
+               // Initialization code
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+  
+    
+    func modeClicked(){
+    
     }
 
 }

@@ -16,6 +16,8 @@ class ToolManager:UIViewController{
     static let lgPenColor = Color(r:0,g:0,b:0,a:1);
     static let smPenColor = Color(r:144,g:215,b:240,a:1);
     static let defaultPenColor = Color(r:119,g:119,b:199,a:1);
+    static var defaultColorList = [Color]();
+    static var defaultSelectedColor = Color(r:143,g:255,b:143,a:1);
     static let defaultPenDiameter = Float(2);
 
     static let lgPenColorBake = Color(r:0,g:0,b:0,a:1);
@@ -35,7 +37,7 @@ class ToolManager:UIViewController{
     static var bothActive = false;
     static var largeActive = false;
     static var smallActive = true;
-
+	
 
     var bluetoothManager = BluetoothManager();
     let bluetoothKey = NSUUID().UUIDString
@@ -52,15 +54,27 @@ class ToolManager:UIViewController{
     @IBOutlet weak var toolbarView: ToolbarView!
     @IBOutlet weak var drawButton: UIButton!
     @IBOutlet weak var eraseButton: UIButton!
-    @IBOutlet weak var marqueePlusButton: UIButton!
-    @IBOutlet weak var marqueeMinusButton: UIButton!
     @IBOutlet weak var lassoPlusButton: UIButton!
     @IBOutlet weak var lassoMinusButton: UIButton!
+    @IBOutlet weak var hoverButton: UIButton!
+    @IBOutlet var drawSelectedButton: UIView!
+    @IBOutlet weak var drawHoverToggle: UISwitch!
+    @IBOutlet weak var manualASAPToggle: UISwitch!
     
+    @IBOutlet weak var executeButton: UIButton!
+    
+    var buttonArray = [UIButton]();
     override func viewDidLoad() {
         
         
         super.viewDidLoad()
+
+        buttonArray.append(drawButton);
+        buttonArray.append(eraseButton);
+        buttonArray.append(lassoPlusButton);
+        buttonArray.append(lassoMinusButton);
+        buttonArray.append(hoverButton);
+        
 
         bluetoothManager.bluetoothEvent.addHandler(self,handler: ToolManager.bluetoothHandler, key:bluetoothKey)
         toolbarView.toolbarEvent.addHandler(self, handler: ToolManager.toolbarHandler, key: toolbarKey)
@@ -68,38 +82,60 @@ class ToolManager:UIViewController{
         drawButton.backgroundColor = selectedColor
         eraseButton.backgroundColor = standardColor
         
-       eraseButton.addTarget(self, action: #selector(ToolManager.modeClicked(_:)), forControlEvents: .TouchUpInside)
-         drawButton.addTarget(self, action: #selector(ToolManager.modeClicked(_:)), forControlEvents: .TouchUpInside)
-             marqueePlusButton.addTarget(self, action: #selector(ToolManager.modeClicked(_:)), forControlEvents: .TouchUpInside)
+      
+        for b in buttonArray{
+           b.addTarget(self, action: #selector(ToolManager.modeClicked(_:)), forControlEvents: .TouchUpInside)
 
+        }
+     
+        for i in 0..<10{
+            let c = Color(h: 360, s: 1.0, l: Float((10.0-Float(i))/10.0), a: 1);
+            print(c);
+            ToolManager.defaultColorList.append(c);
+        }
 
     }
     
     
     func modeClicked(sender: AnyObject){
+        for b in buttonArray{
+            b.backgroundColor = standardColor
+            
+        }
         if(sender as! NSObject == eraseButton){
             ToolManager.mode = "erase";
             eraseButton.backgroundColor = selectedColor
-            drawButton.backgroundColor = standardColor
-            marqueePlusButton.backgroundColor = standardColor
-            ToolManager.brushEvent.raise(("erase"));
+                      ToolManager.brushEvent.raise(("erase"));
 
         }
         else if(sender as! NSObject == drawButton){
             ToolManager.mode = "draw";
             drawButton.backgroundColor = selectedColor
-            eraseButton.backgroundColor = standardColor
-            marqueePlusButton.backgroundColor = standardColor
 
             ToolManager.brushEvent.raise(("draw"));
         }
+        else if(sender as! NSObject == lassoPlusButton){
+            ToolManager.mode = "select_add";
+            lassoPlusButton.backgroundColor = selectedColor
+            ToolManager.brushEvent.raise(("select_add"));
+        }
+        else if(sender as! NSObject == lassoMinusButton){
+            ToolManager.mode = "select_minus";
+            lassoMinusButton.backgroundColor = selectedColor
+            ToolManager.brushEvent.raise(("select_minus"));
+        }
+        else if(sender as! NSObject == hoverButton){
+            ToolManager.mode = "hover";
+            hoverButton.backgroundColor = selectedColor
+            ToolManager.brushEvent.raise(("hover"));
+        }
+
         
-        else if(sender as! NSObject == marqueePlusButton){
+       /* else if(sender as! NSObject == marqueePlusButton){
             ToolManager.mode = "select";
-            marqueePlusButton.backgroundColor = selectedColor
             drawButton.backgroundColor = standardColor
             eraseButton.backgroundColor = standardColor
-        }
+        }*/
         
         
     }

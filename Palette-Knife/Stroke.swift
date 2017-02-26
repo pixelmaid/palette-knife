@@ -183,6 +183,7 @@ class Stroke:TimeSeries, Geometry {
     var weightBuffer = CircularBuffer();
     let id = NSUUID().UUIDString;
     let gCodeGenerator = GCodeGenerator();
+    var selected = false;
 
     var parentID: String;
     

@@ -181,6 +181,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             if(toSendBake[i].id == strokeId){
                 let stroke = toSendBake.removeAtIndex(i);
                 toSendBake.insert(stroke, atIndex: i+1);
+                break;
                 
             }
         }
@@ -191,7 +192,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             if(toSendBake[i].id == strokeId){
                 let stroke = toSendBake.removeAtIndex(i);
                 toSendBake.insert(stroke, atIndex: i-1);
-                
+                break;
             }
         }
     }

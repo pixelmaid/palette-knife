@@ -77,6 +77,10 @@ class ToolManager:UIViewController{
         buttonArray.append(lassoMinusButton);
         buttonArray.append(hoverButton);
         
+        
+        executeButton.layer.cornerRadius = 5
+        executeButton.layer.borderWidth = 1
+        executeButton.layer.borderColor = UIColor.whiteColor().CGColor
 
         bluetoothManager.bluetoothEvent.addHandler(self,handler: ToolManager.bluetoothHandler, key:bluetoothKey)
         toolbarView.toolbarEvent.addHandler(self, handler: ToolManager.toolbarHandler, key: toolbarKey)

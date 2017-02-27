@@ -42,6 +42,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var statusOutput: UITextField!
     
     @IBOutlet weak var tableViewContainer: UIView!
+   
+    @IBOutlet weak var tableHideToggle: UISwitch!
     
     
     var socketManager = SocketManager();
@@ -85,10 +87,11 @@ class ViewController: UIViewController {
         
         super.viewDidLoad()
               socketManager.socketEvent.addHandler(self,handler: ViewController.socketHandler, key:socketKey)
-        //toolbarView.toolbarEvent.addHandler(self,handler:ViewController.)
+       
         socketManager.connect();
         
-       // tableViewContainer.
+       
+        tableHideToggle.addTarget(self, action:  #selector(ViewController.tableHideToggled(_:)), forControlEvents: UIControlEvents.ValueChanged)
         
         ToolManager.brushEvent.addHandler(self,handler:ViewController.brushToggleHandler,key:brushEventKey);
         
@@ -131,6 +134,10 @@ class ViewController: UIViewController {
 
         radialBrush?.active = false;
         
+        tableViewContainer.layer.cornerRadius = 5
+        tableViewContainer.layer.borderWidth = 1
+        tableViewContainer.layer.borderColor = UIColor.blackColor().CGColor
+        
         
     }
     
@@ -153,6 +160,15 @@ class ViewController: UIViewController {
     }
     }*/
     
+    
+    func tableHideToggled(sender:AnyObject){
+        if(tableHideToggle.on){
+            tableViewContainer.hidden = false;
+        }
+        else{
+            tableViewContainer.hidden = true;
+        }
+    }
     
     func tableEventHandler(data:(String,String),key:String){
         switch(data.0){

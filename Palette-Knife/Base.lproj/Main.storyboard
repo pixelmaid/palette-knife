@@ -82,13 +82,25 @@
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qed-Tn-scN" userLabel="stroke_list_container">
-                                <rect key="frame" x="1012" y="212" width="354" height="600"/>
+                                <rect key="frame" x="1012" y="93" width="354" height="887"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.093330536912751672" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
                                     <segue destination="ua1-Bv-a2d" kind="embed" identifier="tableSegue" id="1v6-6I-EUM"/>
                                 </connections>
                             </containerView>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NkN-PR-HhN">
+                                <rect key="frame" x="1306" y="54" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="onTintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="show stroke list" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6wa-9M-kIs">
+                                <rect key="frame" x="1179" y="59" width="119" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.081151832460000003" green="0.081151832460000003" blue="0.081151832460000003" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
@@ -102,7 +114,8 @@
                         <outlet property="largeBrushButton" destination="TiE-XB-PWE" id="Ho7-ws-fyN"/>
                         <outlet property="smallBrushButton" destination="1Xu-gy-i9h" id="DRY-JR-PrB"/>
                         <outlet property="statusOutput" destination="aAp-uw-EIF" id="i3r-ED-GyA"/>
-                        <outlet property="tableViewContainer" destination="qed-Tn-scN" id="kHZ-6v-Ky3"/>
+                        <outlet property="tableHideToggle" destination="NkN-PR-HhN" id="5In-nn-JCY"/>
+                        <outlet property="tableViewContainer" destination="qed-Tn-scN" id="aw0-dH-X7V"/>
                         <outlet property="xOutput" destination="t1K-ja-Swa" id="Fjt-vg-4iL"/>
                         <outlet property="yOutput" destination="hKj-kr-lQb" id="Zpd-Va-405"/>
                         <outlet property="zOutput" destination="lhh-Ul-vy2" id="zrk-Ul-76d"/>
@@ -261,7 +274,7 @@
                                 </connections>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x3i-ve-cWx">
-                                <rect key="frame" x="160" y="20" width="100" height="30"/>
+                                <rect key="frame" x="160" y="20" width="116" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <state key="normal" title="Draw Selected"/>
@@ -290,7 +303,7 @@
             <objects>
                 <tableViewController id="ua1-Bv-a2d" customClass="StrokeTableViewController" customModule="PaletteKnife" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="90" sectionHeaderHeight="28" sectionFooterHeight="28" id="RwZ-HR-I4m">
-                        <rect key="frame" x="0.0" y="0.0" width="354" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="354" height="887"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="kZD-T7-Dn8">
@@ -308,30 +321,30 @@
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         </view>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="StrokeTableCell" rowHeight="90" id="MqV-EP-NHH" customClass="StrokeCell" customModule="PaletteKnife" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="72" width="354" height="90"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="StrokeTableCell" rowHeight="60" id="MqV-EP-NHH" customClass="StrokeCell" customModule="PaletteKnife" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="72" width="354" height="60"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MqV-EP-NHH" id="DJ5-u7-9Ju">
-                                    <rect key="frame" x="0.0" y="0.0" width="354" height="89"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="354" height="59"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="emq-TU-jAh">
-                                            <rect key="frame" x="208" y="13" width="59" height="30"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <state key="normal" title="move up"/>
-                                        </button>
-                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M53-Ud-JJh">
-                                            <rect key="frame" x="198" y="51" width="79" height="30"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <state key="normal" title="move down"/>
-                                        </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BaQ-RB-oUF">
-                                            <rect key="frame" x="23" y="34" width="158" height="21"/>
+                                            <rect key="frame" x="20" y="19" width="158" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="emq-TU-jAh">
+                                            <rect key="frame" x="208" y="2" width="59" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" title="move up"/>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M53-Ud-JJh">
+                                            <rect key="frame" x="198" y="21" width="79" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" title="move down"/>
+                                        </button>
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
@@ -341,11 +354,6 @@
                                 </connections>
                             </tableViewCell>
                         </prototypes>
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
-                                <integer key="value" value="4"/>
-                            </userDefinedRuntimeAttribute>
-                        </userDefinedRuntimeAttributes>
                         <connections>
                             <outlet property="dataSource" destination="ua1-Bv-a2d" id="5ZY-0j-fqr"/>
                             <outlet property="delegate" destination="ua1-Bv-a2d" id="AhA-yx-B41"/>
@@ -361,7 +369,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vfo-kX-H6A" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="809.5168374816983" y="733.59375"/>
+            <point key="canvasLocation" x="809.5168374816983" y="733.30078125"/>
         </scene>
     </scenes>
     <resources>

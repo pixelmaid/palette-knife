@@ -12,6 +12,7 @@ class StrokeTableViewController: UITableViewController {
 
     //MARK: Properties
      var strokes = [Stroke]()
+     var brushEvent = Event<(String,String)>();
 
     
     override func viewDidLoad() {
@@ -27,6 +28,18 @@ class StrokeTableViewController: UITableViewController {
     
     //MARK: Public Methods
     
+    
+    func deactivateAll(){
+        self.tableView.userInteractionEnabled = false;
+        self.tableView.alpha = 0.75
+        
+    }
+    
+    func activateAll(){
+        self.tableView.userInteractionEnabled = true;
+        self.tableView.alpha = 1;
+
+    }
 
     func addStroke(stroke:Stroke){
         strokes.append(stroke);
@@ -57,6 +70,8 @@ class StrokeTableViewController: UITableViewController {
                     let t = strokes.removeAtIndex(i);
                     strokes.insert(t, atIndex: i-1)
                     tableView.reloadData();
+                    self.brushEvent.raise(("moveStrokeUp",target_id));
+
                     break;
                 }
             }
@@ -72,6 +87,8 @@ class StrokeTableViewController: UITableViewController {
                     let t = strokes.removeAtIndex(i);
                     strokes.insert(t, atIndex: i+1)
                     tableView.reloadData();
+                    self.brushEvent.raise(("moveStrokeDown",target_id));
+
                     break;
                 }
             }
@@ -106,8 +123,8 @@ class StrokeTableViewController: UITableViewController {
         
         cell.strokeLabel.text = stroke.name
         
-       cell.strokeImage.clear();
-        cell.strokeImage.drawSingleStroke(stroke, i: indexPath.row)
+       //cell.strokeImage.clear();
+       // cell.strokeImage.drawSingleStroke(stroke, i: indexPath.row)
         cell.id = stroke.id;
         cell.moveUpButton.addTarget(self, action: #selector(StrokeTableViewController.moveCellUp(_:)), forControlEvents: .TouchUpInside)
          cell.moveDownButton.addTarget(self, action: #selector(StrokeTableViewController.moveCellDown(_:)), forControlEvents: .TouchUpInside)

@@ -542,7 +542,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func jogAndBake(){
-        self.currentCanvas!.currentDrawing!.jogAndBake(self.id);
+        self.currentCanvas!.currentDrawing!.bake(self.id);
     }
     
     func liftUp(){

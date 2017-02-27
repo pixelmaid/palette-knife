@@ -50,7 +50,7 @@ class ViewController: UIViewController {
     let socketKey = NSUUID().UUIDString
     let drawKey = NSUUID().UUIDString
     let brushEventKey = NSUUID().UUIDString
-
+    let tableEventKey = NSUUID().UUIDString
     
     var downInCanvas = false;
     
@@ -138,6 +138,8 @@ class ViewController: UIViewController {
         print("segue \(segue.identifier)");
         if(segue.identifier == "tableSegue"){
             strokeTableController = segue.destinationViewController as? StrokeTableViewController;
+            strokeTableController?.deactivateAll()
+            strokeTableController?.brushEvent.addHandler(self, handler: ViewController.tableEventHandler, key: tableEventKey)
         }
     }
     
@@ -152,6 +154,23 @@ class ViewController: UIViewController {
     }*/
     
     
+    func tableEventHandler(data:(String,String),key:String){
+        switch(data.0){
+            case "moveStrokeDown":
+                currentCanvas!.currentDrawing!.moveStrokeDown(data.1)
+                canvasViewLg.redrawAll((currentCanvas?.getAllStrokes())!)
+                break;
+            case "moveStrokeUp":
+                currentCanvas!.currentDrawing!.moveStrokeUp(data.1)
+                canvasViewLg.redrawAll((currentCanvas?.getAllStrokes())!)
+
+
+                break;
+        default:
+            break;
+        }
+
+    }
     func brushToggleHandler(data:(String),key:String){
         switch(data){
             case "draw":
@@ -163,7 +182,14 @@ class ViewController: UIViewController {
             radialBrush!.active = false;
             bakeBrush!.active = false;
             break;
-               case "radial":
+            
+        case "asap_enabled":
+            strokeTableController?.activateAll();
+            break;
+        case "manual_enabled":
+            strokeTableController?.deactivateAll();
+            break;
+        case "radial":
             radialBrush!.active = true;
             bakeBrush!.active = false;
 

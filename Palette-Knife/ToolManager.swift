@@ -24,6 +24,8 @@ class ToolManager:UIViewController{
     static let smPenColorBake = Color(r:144,g:215,b:240,a:1);
     
     static var mode = "draw";
+    static var bakeMode = "manual";
+    static var drawMode = "draw";
     static var diameter = smPenDiameter;
     static var color = smPenColor;
     
@@ -87,15 +89,45 @@ class ToolManager:UIViewController{
            b.addTarget(self, action: #selector(ToolManager.modeClicked(_:)), forControlEvents: .TouchUpInside)
 
         }
+        
+        manualASAPToggle.addTarget(self, action:  #selector(ToolManager.bakeModeToggled(_:)), forControlEvents: UIControlEvents.ValueChanged)
+        drawHoverToggle.addTarget(self, action:  #selector(ToolManager.drawHoverModeToggled(_:)), forControlEvents: UIControlEvents.ValueChanged)
+
      
         for i in 0..<10{
             let c = Color(h: 360, s: 1.0, l: Float((10.0-Float(i))/10.0), a: 1);
             print(c);
             ToolManager.defaultColorList.append(c);
         }
-
     }
     
+    func bakeModeToggled(sender: AnyObject){
+        if(manualASAPToggle.on){
+            ToolManager.bakeMode = "ASAP"
+            hoverButton.enabled = false;
+            lassoPlusButton.enabled = false;
+            lassoMinusButton.enabled = false;
+            executeButton.enabled = false;
+            ToolManager.brushEvent.raise(("asap_enabled"));
+        }
+        else{
+            ToolManager.bakeMode = "manual";
+            hoverButton.enabled = true;
+            lassoPlusButton.enabled = true;
+            lassoMinusButton.enabled = true;
+            executeButton.enabled = true;
+            ToolManager.brushEvent.raise(("manual_enabled"));
+        }
+    }
+    
+    func drawHoverModeToggled(sender: AnyObject){
+        if(drawHoverToggle.on){
+            ToolManager.drawMode = "hover"
+        }
+        else{
+            ToolManager.drawMode = "draw";
+        }
+    }
     
     func modeClicked(sender: AnyObject){
         for b in buttonArray{
@@ -202,6 +234,7 @@ class ToolManager:UIViewController{
                 bluetoothManager.sendMessage("g");
                 
             }
+            
             ToolManager.largeActive = false;
             ToolManager.smallActive = true;
             ToolManager.bothActive = false;

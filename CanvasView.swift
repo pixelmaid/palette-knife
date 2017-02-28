@@ -39,7 +39,13 @@ class CanvasView:  UIImageView {
         if(stroke.selected){
             c = ToolManager.defaultSelectedColor;
         }
+        else if(stroke.baked){
+         
+            c = ToolManager.defaultBakedColor;        }
             
+        else if(ToolManager.bakeMode == "manual"){
+            c = ToolManager.defaultPenColor;
+        }
         else if(i<ToolManager.defaultColorList.count){
             c = ToolManager.defaultColorList[i];
         }

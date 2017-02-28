@@ -18,6 +18,8 @@ class ToolManager:UIViewController{
     static let defaultPenColor = Color(r:119,g:119,b:199,a:1);
     static var defaultColorList = [Color]();
     static var defaultSelectedColor = Color(r:143,g:255,b:143,a:1);
+    static var defaultBakedColor = Color(r:78,g:47,b:234,a:1);
+
     static let defaultPenDiameter = Float(2);
 
     static let lgPenColorBake = Color(r:0,g:0,b:0,a:1);
@@ -62,7 +64,6 @@ class ToolManager:UIViewController{
     @IBOutlet var drawSelectedButton: UIView!
     @IBOutlet weak var drawHoverToggle: UISwitch!
     @IBOutlet weak var manualASAPToggle: UISwitch!
-    
     @IBOutlet weak var executeButton: UIButton!
     
     var buttonArray = [UIButton]();
@@ -88,10 +89,8 @@ class ToolManager:UIViewController{
         drawButton.backgroundColor = selectedColor
         eraseButton.backgroundColor = standardColor
         
-      
         for b in buttonArray{
            b.addTarget(self, action: #selector(ToolManager.modeClicked(_:)), forControlEvents: .TouchUpInside)
-
         }
         
         manualASAPToggle.addTarget(self, action:  #selector(ToolManager.bakeModeToggled(_:)), forControlEvents: UIControlEvents.ValueChanged)
@@ -100,7 +99,7 @@ class ToolManager:UIViewController{
      
         for i in 0..<10{
             let c = Color(h: 360, s: 1.0, l: Float((10.0-Float(i))/10.0), a: 1);
-            print(c);
+            print(c.r,c.b,c.g);
             ToolManager.defaultColorList.append(c);
         }
     }

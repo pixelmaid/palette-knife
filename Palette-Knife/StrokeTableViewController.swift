@@ -32,12 +32,15 @@ class StrokeTableViewController: UITableViewController {
     func deactivateAll(){
         self.tableView.userInteractionEnabled = false;
         self.tableView.alpha = 0.75
+        self.tableView.hidden = false;
+
         
     }
     
     func activateAll(){
         self.tableView.userInteractionEnabled = true;
         self.tableView.alpha = 1;
+        self.tableView.hidden = true;
 
     }
 

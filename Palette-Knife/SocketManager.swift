@@ -64,7 +64,7 @@ class SocketManager: WebSocketDelegate{
     }
     
     func websocketDidReceiveMessage(ws: WebSocket, text: String) {
-       // print("text = \(text)");
+        print("text = \(text)");
          if(text == "init_data_received" || text == "message received"){
             objc_sync_enter(dataQueue)
 
@@ -82,10 +82,14 @@ class SocketManager: WebSocketDelegate{
           // self.sendFabricationConfigData();
         }
         else{
+            
+            print("json data")
             if let dataFromString = text.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false) {
                 let json = JSON(data: dataFromString)
                 let type = json["type"].stringValue;
+                print("type=\(type)");
                 if(type == "fabricator_data"){
+                    print("raising fabricator data")
                     socketEvent.raise(("fabricator_data",json))
                 }
                 else if(type == "data_request"){

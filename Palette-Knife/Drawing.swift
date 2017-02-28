@@ -18,7 +18,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     var allStrokes = [String:[Stroke]]();
     var bakeQueue = [String:[Stroke]]();
     var toSendBake = [Stroke]();
-    var bakedStrokes = [String:[Stroke]]();
+    var bakedStrokes = [Stroke]();
     var drawnStrokes  = [String:[Stroke]]();
     // var geometry = [Geometry]();
     var transmitEvent = Event<(String)>()
@@ -106,10 +106,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             self.bakeQueue[parentID] = [Stroke]()
             
         }
-        if (self.bakedStrokes[parentID] == nil){
-            self.bakedStrokes[parentID] = [Stroke]()
-            
-        }
+        
         
         self.allStrokes[parentID]!.append(stroke);
         self.bakeQueue[parentID]!.append(stroke)
@@ -153,7 +150,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     
     func getAllStrokes()->[Stroke]{
         if(ToolManager.bakeMode == "ASAP"){
-            return toSendBake;
+            return toSendBake+bakedStrokes;
         }
         else{
             var strokes = [Stroke]();
@@ -174,7 +171,48 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             bakeQueue[parentID]?.removeAll();
             
         }
+        if(GCodeGenerator.fabricatorStatus.get(nil) == 0){
+            self.bakeNext();
+        }
     }
+    
+    func bakeNext()->String?{
+        if(toSendBake.count>0){
+        var source_string = "[";
+        
+        
+        var stroke = toSendBake.removeFirst();
+        stroke.baked = true;
+        var source = stroke.gCodeGenerator.source;
+            var id = stroke.id;
+        var segments = stroke.segments;
+        print("segments=\(segments)");
+        let _x = Numerical.map(segments[0].point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
+        
+        let _y = Numerical.map(segments[0].point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
+        
+        source_string += "\""+stroke.gCodeGenerator.jog3(_x,y:_y,z: GCodeGenerator.retractHeight)+"\"";
+        for j in 0..<source.count{
+            
+            source_string += ",\""+source[j]+"\""
+        }
+        
+        source_string+=",\""+gCodeGenerator.endSegment(segments[segments.count-1])+"\"]"
+        bakedStrokes.append(stroke);
+        
+        var data = "\"drawing_id\":\""+self.id+"\","
+        data += "\"type\":\"gcode\","
+        data += "\"data\":"+source_string
+        self.transmitEvent.raise((data));
+        print("source",data);
+            return id;
+        }
+        return nil;
+        
+    }
+
+    
+    
     
     func moveStrokeDown(strokeId:String){
         for i in 0..<toSendBake.count{
@@ -252,14 +290,14 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         
         
         func checkBake(x:Float,y:Float,z:Float){
-            for strokeList in bakedStrokes{
-                for stroke in strokeList.1{
+            for stroke in  bakedStrokes{
+             
                     let hit = stroke.hitTest(Point(x:x,y:y), threshold: 5)
                     if(hit != nil){
                         self.geometryModified.raise((hit!,"SEGMENT","BAKE_DRAW"))
                         return;
                     }
-                }
+                
             }
         }
         

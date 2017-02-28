@@ -184,9 +184,9 @@ class Stroke:TimeSeries, Geometry {
     let id = NSUUID().UUIDString;
     let gCodeGenerator = GCodeGenerator();
     var selected = false;
+    var baked = false;
 
     var parentID: String;
-    
     init(parentID:String){
         self.parentID = parentID;
         super.init();
@@ -215,7 +215,7 @@ class Stroke:TimeSeries, Geometry {
             let prevSeg = segments[segments.count-1];
             let dist = segment.point.dist(prevSeg.point)
             
-            if(dist < 10){
+            if(dist < 3){
                 return nil;
             }
             xBuffer.push(segment.point.x.get(nil)-prevSeg.point.x.get(nil))

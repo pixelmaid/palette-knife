@@ -92,7 +92,6 @@ class ViewController: UIViewController {
         
        
         tableHideToggle.addTarget(self, action:  #selector(ViewController.tableHideToggled(_:)), forControlEvents: UIControlEvents.ValueChanged)
-        
         ToolManager.brushEvent.addHandler(self,handler:ViewController.brushToggleHandler,key:brushEventKey);
         
         
@@ -145,22 +144,12 @@ class ViewController: UIViewController {
         print("segue \(segue.identifier)");
         if(segue.identifier == "tableSegue"){
             strokeTableController = segue.destinationViewController as? StrokeTableViewController;
-            strokeTableController?.deactivateAll()
             strokeTableController?.brushEvent.addHandler(self, handler: ViewController.tableEventHandler, key: tableEventKey)
+            self.tableViewContainer.hidden = true;
+            self.tableHideToggle.enabled = false;
         }
     }
-    
-    /*- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-    {
-    NSString * segueName = segue.identifier;
-    if ([segueName isEqualToString: @"alertview_embed"]) {
-    AlertViewController * childViewController = (AlertViewController *) [segue destinationViewController];
-    AlertView * alertView = childViewController.view;
-    // do something with the AlertView's subviews here...
-    }
-    }*/
-    
-    
+
     func tableHideToggled(sender:AnyObject){
         if(tableHideToggle.on){
             tableViewContainer.hidden = false;
@@ -200,10 +189,17 @@ class ViewController: UIViewController {
             break;
             
         case "asap_enabled":
-            strokeTableController?.activateAll();
+            self.tableHideToggle.on = true;
+            self.tableViewContainer.hidden = false;
+            self.tableHideToggle.enabled = true;
+            canvasViewLg.redrawAll((currentCanvas!.currentDrawing?.getAllStrokes())!);
             break;
         case "manual_enabled":
-            strokeTableController?.deactivateAll();
+            self.tableHideToggle.on = false;
+            self.tableViewContainer.hidden = true;
+
+            self.tableHideToggle.enabled=false;
+            canvasViewLg.redrawAll((currentCanvas!.currentDrawing?.getAllStrokes())!);
             break;
         case "radial":
             radialBrush!.active = true;
@@ -265,9 +261,20 @@ class ViewController: UIViewController {
             var _z = Numerical.map(Float(z)!, istart: 0.2, istop: GCodeGenerator.depthLimit, ostart: 0.2, ostop: 42)
 
 
-            if(Float(status)! == 33 && Float(z) <= 0){
+            if(Float(status)! == 33 && Float(status)! == 0 && Float(z) <= 0){
                 currentCanvas?.currentDrawing!.checkBake(_x,y:_y,z:_z);
             }
+            
+            else if(Float(status) == 0 && ToolManager.bakeMode == "ASAP"){
+                print("shopbot ready for data");
+                let strokeId = currentCanvas?.currentDrawing?.bakeNext();
+                if(strokeId != nil){
+                    strokeTableController?.removeStroke(strokeId!);
+                    canvasViewLg.redrawAll((currentCanvas?.currentDrawing?.getAllStrokes())!);
+                }
+            }
+            
+    
             
             break;
         default:

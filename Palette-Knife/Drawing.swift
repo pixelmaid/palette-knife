@@ -20,6 +20,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     var toSendBake = [Stroke]();
     var bakedStrokes = [Stroke]();
     var drawnStrokes  = [String:[Stroke]]();
+    var selectedStrokes = [Stroke]();
     // var geometry = [Geometry]();
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
@@ -85,6 +86,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             self.activeStrokes[parentID]!.removeAll();
         }
     }
+    
     
     
     
@@ -161,6 +163,30 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         }
     }
     
+    func deselectAllStrokes(){
+        
+        for s in self.selectedStrokes{
+            s.selected=false;
+        }
+        self.selectedStrokes.removeAll();
+        
+    }
+    
+    func selectStroke(stroke:Stroke){
+        self.selectedStrokes.append(stroke);
+        stroke.selected = true;
+    }
+    
+    func deselectStroke(stroke:Stroke){
+        for i in 0..<self.selectedStrokes.count{
+            if stroke.id == self.selectedStrokes[i].id{
+                self.selectedStrokes.removeAtIndex(i)
+                break;
+                
+            }
+        }
+    }
+    
     func bake(parentID:String){
         var source_string = "[";
         if(bakeQueue[parentID] != nil){
@@ -170,49 +196,66 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             }
             bakeQueue[parentID]?.removeAll();
             
+            
+            if(GCodeGenerator.fabricatorStatus.get(nil) == 0){
+                self.bakeNext();
+            }
         }
-        if(GCodeGenerator.fabricatorStatus.get(nil) == 0){
-            self.bakeNext();
+    }
+    
+    func bakeSelected(){
+        let data = self.generateBakeData(self.selectedStrokes);
+        self.deselectAllStrokes();
+        for i in 0..<data.count{
+        self.transmitEvent.raise((data[i]));
         }
+        print("source",data);
     }
     
     func bakeNext()->String?{
         if(toSendBake.count>0){
-        var source_string = "[";
-        
-        
-        var stroke = toSendBake.removeFirst();
-        stroke.baked = true;
-        var source = stroke.gCodeGenerator.source;
-            var id = stroke.id;
-        var segments = stroke.segments;
-        print("segments=\(segments)");
-        let _x = Numerical.map(segments[0].point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
-        
-        let _y = Numerical.map(segments[0].point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
-        
-        source_string += "\""+stroke.gCodeGenerator.jog3(_x,y:_y,z: GCodeGenerator.retractHeight)+"\"";
-        for j in 0..<source.count{
-            
-            source_string += ",\""+source[j]+"\""
-        }
-        
-        source_string+=",\""+gCodeGenerator.endSegment(segments[segments.count-1])+"\"]"
-        bakedStrokes.append(stroke);
-        
-        var data = "\"drawing_id\":\""+self.id+"\","
-        data += "\"type\":\"gcode\","
-        data += "\"data\":"+source_string
-        self.transmitEvent.raise((data));
-        print("source",data);
+            let strokes = [toSendBake.removeFirst()];
+            let data = self.generateBakeData(strokes);
+            self.transmitEvent.raise((data[0]));
+            print("source",data);
             return id;
         }
         return nil;
         
     }
-
     
-    
+    func generateBakeData(strokes:[Stroke])->[String]{
+       
+        var data_collection = [String]();
+        for i in 0..<strokes.count{
+             var source_string = "[";
+            let stroke = strokes[i];
+            stroke.baked = true;
+            var source = stroke.gCodeGenerator.source;
+            let id = stroke.id;
+            var segments = stroke.segments;
+            print("segments=\(segments)");
+            let _x = Numerical.map(segments[0].point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
+            
+            let _y = Numerical.map(segments[0].point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
+            
+            source_string += "\""+stroke.gCodeGenerator.jog3(_x,y:_y,z: GCodeGenerator.retractHeight)+"\"";
+            for j in 0..<source.count{
+                
+                source_string += ",\""+source[j]+"\""
+            }
+            
+            source_string+=",\""+gCodeGenerator.endSegment(segments[segments.count-1])+"\"]"
+            bakedStrokes.append(stroke);
+            var data = "\"drawing_id\":\""+self.id+"\","
+            data += "\"type\":\"gcode\","
+            data += "\"data\":"+source_string
+            print("data \(data)");
+            
+            data_collection.append(data);
+        }
+        return data_collection;
+    }
     
     func moveStrokeDown(strokeId:String){
         for i in 0..<toSendBake.count{
@@ -234,118 +277,118 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             }
         }
     }
-        
-     func deleteStroke(stroke:Stroke)->Bool{
-            for (key, var strokeList) in allStrokes{
-                for i in 0..<strokeList.count {
-                    let s = strokeList[i];
-                    print("id check \(i,s.id,stroke.id,strokeList.count)");
-                    if s.id == stroke.id{
-                        strokeList.removeAtIndex(i)
-                        allStrokes[key] = strokeList;
-                        bakeQueue[key] = bakeQueue[key]!.filter{$0.id == stroke.id}
-                        print("id check \(i,s.id,stroke.id,strokeList.count, bakeQueue[key]!.count)");
-                        for j in 0..<self.toSendBake.count{
-                            if(self.toSendBake[j] == stroke){
-                                toSendBake.removeAtIndex(j);
-                                break;
-                            }
+    
+    func deleteStroke(stroke:Stroke)->Bool{
+        for (key, var strokeList) in allStrokes{
+            for i in 0..<strokeList.count {
+                let s = strokeList[i];
+                print("id check \(i,s.id,stroke.id,strokeList.count)");
+                if s.id == stroke.id{
+                    strokeList.removeAtIndex(i)
+                    allStrokes[key] = strokeList;
+                    bakeQueue[key] = bakeQueue[key]!.filter{$0.id == stroke.id}
+                    print("id check \(i,s.id,stroke.id,strokeList.count, bakeQueue[key]!.count)");
+                    for j in 0..<self.toSendBake.count{
+                        if(self.toSendBake[j] == stroke){
+                            toSendBake.removeAtIndex(j);
+                            break;
                         }
-                        return true;
                     }
+                    return true;
                 }
             }
-            
-            
-            return false;
         }
         
         
-        
-        /*func bake(parentID:String){
-         var source_string = "[";
-         if(bakeQueue[parentID] != nil){
-         var bq = bakeQueue[parentID]!
-         for i in 0..<bq.count{
-         var source = bq[i].gCodeGenerator.source;
-         for j in 0..<source.count{
-         if(j>0){
-         source_string += ","
-         }
-         source_string += "\""+source[j]+"\""
-         }
-         
-         //source_string += "]"
-         source_string += ",\""+gCodeGenerator.endSegment(bakeQueue[parentID]![i].segments[bakeQueue[parentID]![i].segments.count-1])+"\"]"
-         bakedStrokes[parentID]!.append(bq[i]);
-         }
-         bakeQueue[parentID]?.removeAll();
-         var data = "\"drawing_id\":\""+self.id+"\","
-         data += "\"type\":\"gcode\","
-         data += "\"data\":"+source_string
-         self.transmitEvent.raise((data));
-         print("source",data);
-         }
-         }*/
-        
-        
-        func checkBake(x:Float,y:Float,z:Float){
-            for stroke in  bakedStrokes{
-             
-                    let hit = stroke.hitTest(Point(x:x,y:y), threshold: 5)
-                    if(hit != nil){
-                        self.geometryModified.raise((hit!,"SEGMENT","BAKE_DRAW"))
-                        return;
-                    }
-                
-            }
-        }
-        
-        /*func jogAndBake(parentID:String){
-         
-         var source_string = "[";
-         var bq = bakeQueue[parentID]!
-         for i in 0..<bq.count{
-         var source = bq[i].gCodeGenerator.source;
-         var segments = bq[i].segments;
-         print("segments=\(segments)");
-         let _x = Numerical.map(segments[0].point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
-         
-         let _y = Numerical.map(segments[0].point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
-         
-         source_string += "\""+bq[i].gCodeGenerator.jog3(_x,y:_y,z: GCodeGenerator.retractHeight)+"\"";
-         for j in 0..<source.count{
-         
-         source_string += ",\""+source[j]+"\""
-         }
-         
-         source_string+=",\""+gCodeGenerator.endSegment(segments[segments.count-1])+"\"]"
-         bakedStrokes[parentID]!.append(bq[i]);
-         }
-         bakeQueue[parentID]?.removeAll();
-         var data = "\"drawing_id\":\""+self.id+"\","
-         data += "\"type\":\"gcode\","
-         data += "\"data\":"+source_string
-         self.transmitEvent.raise((data));
-         print("source",data);
-         
-         }*/
-        
-        func transmitJogEvent(data:String){
-            var source_string = "[";
-            source_string+=data+"]"
-            var data = "\"drawing_id\":\""+self.id+"\","
-            data += "\"type\":\"gcode\","
-            data += "\"data\":"+source_string
-            print("jog data to transmit = \(data)");
-            self.transmitEvent.raise((data));
-        }
-        
+        return false;
     }
     
     
-    // MARK: Equatable
-    func ==(lhs:Drawing, rhs:Drawing) -> Bool {
+    
+    /*func bake(parentID:String){
+     var source_string = "[";
+     if(bakeQueue[parentID] != nil){
+     var bq = bakeQueue[parentID]!
+     for i in 0..<bq.count{
+     var source = bq[i].gCodeGenerator.source;
+     for j in 0..<source.count{
+     if(j>0){
+     source_string += ","
+     }
+     source_string += "\""+source[j]+"\""
+     }
+     
+     //source_string += "]"
+     source_string += ",\""+gCodeGenerator.endSegment(bakeQueue[parentID]![i].segments[bakeQueue[parentID]![i].segments.count-1])+"\"]"
+     bakedStrokes[parentID]!.append(bq[i]);
+     }
+     bakeQueue[parentID]?.removeAll();
+     var data = "\"drawing_id\":\""+self.id+"\","
+     data += "\"type\":\"gcode\","
+     data += "\"data\":"+source_string
+     self.transmitEvent.raise((data));
+     print("source",data);
+     }
+     }*/
+    
+    
+    func checkBake(x:Float,y:Float,z:Float){
+        for stroke in  bakedStrokes{
+            
+            let hit = stroke.hitTest(Point(x:x,y:y), threshold: 5)
+            if(hit != nil){
+                self.geometryModified.raise((hit!,"SEGMENT","BAKE_DRAW"))
+                return;
+            }
+            
+        }
+    }
+    
+    /*func jogAndBake(parentID:String){
+     
+     var source_string = "[";
+     var bq = bakeQueue[parentID]!
+     for i in 0..<bq.count{
+     var source = bq[i].gCodeGenerator.source;
+     var segments = bq[i].segments;
+     print("segments=\(segments)");
+     let _x = Numerical.map(segments[0].point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
+     
+     let _y = Numerical.map(segments[0].point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
+     
+     source_string += "\""+bq[i].gCodeGenerator.jog3(_x,y:_y,z: GCodeGenerator.retractHeight)+"\"";
+     for j in 0..<source.count{
+     
+     source_string += ",\""+source[j]+"\""
+     }
+     
+     source_string+=",\""+gCodeGenerator.endSegment(segments[segments.count-1])+"\"]"
+     bakedStrokes[parentID]!.append(bq[i]);
+     }
+     bakeQueue[parentID]?.removeAll();
+     var data = "\"drawing_id\":\""+self.id+"\","
+     data += "\"type\":\"gcode\","
+     data += "\"data\":"+source_string
+     self.transmitEvent.raise((data));
+     print("source",data);
+     
+     }*/
+    
+    func transmitJogEvent(data:String){
+        var source_string = "[";
+        source_string+=data+"]"
+        var data = "\"drawing_id\":\""+self.id+"\","
+        data += "\"type\":\"gcode\","
+        data += "\"data\":"+source_string
+        print("jog data to transmit = \(data)");
+        self.transmitEvent.raise((data));
+    }
+    
+}
+
+
+// MARK: Equatable
+func ==(lhs:Drawing, rhs:Drawing) -> Bool {
     return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
 }
 

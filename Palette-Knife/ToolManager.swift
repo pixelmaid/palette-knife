@@ -96,7 +96,9 @@ class ToolManager:UIViewController{
         manualASAPToggle.addTarget(self, action:  #selector(ToolManager.bakeModeToggled(_:)), forControlEvents: UIControlEvents.ValueChanged)
         drawHoverToggle.addTarget(self, action:  #selector(ToolManager.drawHoverModeToggled(_:)), forControlEvents: UIControlEvents.ValueChanged)
 
-     
+        executeButton.addTarget(self, action: #selector(ToolManager.modeClicked(_:)), forControlEvents: .TouchUpInside)
+
+        
         for i in 0..<10{
             let c = Color(h: 360, s: 1.0, l: Float((10.0-Float(i))/10.0), a: 1);
             print(c.r,c.b,c.g);
@@ -136,6 +138,9 @@ class ToolManager:UIViewController{
         for b in buttonArray{
             b.backgroundColor = standardColor
             
+        }
+        if(sender as! NSObject == executeButton){
+            ToolManager.brushEvent.raise(("bake_selected"));
         }
         if(sender as! NSObject == eraseButton){
             ToolManager.mode = "erase";

@@ -27,7 +27,6 @@ class ViewController: UIViewController {
     var bakeViewLg:CanvasView
     var backView:UIImageView
     var fabricatorView = FabricatorView();
-    
     var strokeTableController: StrokeTableViewController?
     // var canvasViewBakeSm:CanvasView;
     // var canvasViewBakeLg:CanvasView;
@@ -168,8 +167,6 @@ class ViewController: UIViewController {
             case "moveStrokeUp":
                 currentCanvas!.currentDrawing!.moveStrokeUp(data.1)
                 canvasViewLg.redrawAll((currentCanvas?.getAllStrokes())!)
-
-
                 break;
         default:
             break;
@@ -188,10 +185,15 @@ class ViewController: UIViewController {
             bakeBrush!.active = false;
             break;
             
+        case "bake_selected":
+            currentCanvas?.currentDrawing!.bakeSelected();
+            canvasViewLg.redrawAll((currentCanvas!.currentDrawing?.getAllStrokes())!);
+            break;
         case "asap_enabled":
             self.tableHideToggle.on = true;
             self.tableViewContainer.hidden = false;
             self.tableHideToggle.enabled = true;
+            currentCanvas?.currentDrawing!.deselectAllStrokes();
             canvasViewLg.redrawAll((currentCanvas!.currentDrawing?.getAllStrokes())!);
             break;
         case "manual_enabled":
@@ -491,13 +493,18 @@ class ViewController: UIViewController {
                     switch (ToolManager.mode){
                         
                         case "erase":
-                            strokeTableController?.removeStroke(stroke!.id);
+                    strokeTableController?.removeStroke(stroke!.id);
                     let  delete = currentCanvas!.deleteStroke(stroke!);
                     print("deleted stroke\(delete)")
+                    if(delete){
+                        let strokes = currentCanvas?.getAllStrokes();
+                        canvasViewLg.redrawAll(strokes!);
+                    }
                     break;
                         case "select_add":
                             if(!stroke!.selected){
                                 stroke!.selected = true;
+                               currentCanvas?.currentDrawing!.selectStroke(stroke!);
                                 let strokes = currentCanvas?.getAllStrokes();
                                 canvasViewLg.redrawAll(strokes!);
                             }
@@ -505,6 +512,7 @@ class ViewController: UIViewController {
                         case "select_minus":
                             if(stroke!.selected){
                                 stroke!.selected = false;
+                                currentCanvas?.currentDrawing!.deselectStroke(stroke!);
                                 let strokes = currentCanvas?.getAllStrokes();
                                 canvasViewLg.redrawAll(strokes!);
                             }

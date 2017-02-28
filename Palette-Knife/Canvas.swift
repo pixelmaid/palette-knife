@@ -64,8 +64,7 @@ class Canvas: WebTransmitter, Hashable{
     func deleteStroke(stroke:Stroke)->Bool{
         for d in drawings{
             if(d.deleteStroke(stroke)){
-                let strokes = self.getAllStrokes();
-                self.geometryModified.raise((strokes,"REDRAW_ALL","DRAW"));
+                //let strokes = self.getAllStrokes();
                 return true;
             }
         }

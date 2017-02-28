@@ -189,6 +189,11 @@ class ViewController: UIViewController {
             currentCanvas?.currentDrawing!.bakeSelected();
             canvasViewLg.redrawAll((currentCanvas!.currentDrawing?.getAllStrokes())!);
             break;
+            
+        case "static_bake_selected":
+            currentCanvas?.currentDrawing!.bakeAll();
+            canvasViewLg.redrawAll((currentCanvas!.currentDrawing?.getAllStrokes())!);
+            break;
         case "asap_enabled":
             self.tableHideToggle.on = true;
             self.tableViewContainer.hidden = false;

@@ -31,8 +31,8 @@ class ToolManager:UIViewController{
     static var diameter = smPenDiameter;
     static var color = smPenColor;
     
-    static var smPenXOffset = Float(0);
-    static var lgPenXOffset = Float(0);
+    static var smPenXOffset = Float(3.0);
+    static var lgPenXOffset = Float(-3.0);
     
     //TODO  calculate actual offsets
     static var smPenYOffset =  Numerical.map(GCodeGenerator.rightOffset, istart:0, istop: GCodeGenerator.inY, ostart: 0, ostop: GCodeGenerator.pY)
@@ -65,6 +65,7 @@ class ToolManager:UIViewController{
     @IBOutlet weak var drawHoverToggle: UISwitch!
     @IBOutlet weak var manualASAPToggle: UISwitch!
     @IBOutlet weak var executeButton: UIButton!
+    @IBOutlet weak var staticExecuteButton: UIButton!
     
     var buttonArray = [UIButton]();
     override func viewDidLoad() {
@@ -77,6 +78,8 @@ class ToolManager:UIViewController{
         buttonArray.append(lassoPlusButton);
         buttonArray.append(lassoMinusButton);
         buttonArray.append(hoverButton);
+        
+        hoverButton.hidden=true;
         
         
         executeButton.layer.cornerRadius = 5
@@ -96,8 +99,8 @@ class ToolManager:UIViewController{
         manualASAPToggle.addTarget(self, action:  #selector(ToolManager.bakeModeToggled(_:)), forControlEvents: UIControlEvents.ValueChanged)
         drawHoverToggle.addTarget(self, action:  #selector(ToolManager.drawHoverModeToggled(_:)), forControlEvents: UIControlEvents.ValueChanged)
 
-        executeButton.addTarget(self, action: #selector(ToolManager.modeClicked(_:)), forControlEvents: .TouchUpInside)
-
+        executeButton.addTarget(self, action: #selector(ToolManager.executeClicked(_:)), forControlEvents: .TouchUpInside)
+ staticExecuteButton.addTarget(self, action: #selector(ToolManager.staticExecuteClicked(_:)), forControlEvents: .TouchUpInside)
         
         for i in 0..<10{
             let c = Color(h: 360, s: 1.0, l: Float((10.0-Float(i))/10.0), a: 1);
@@ -134,14 +137,21 @@ class ToolManager:UIViewController{
         }
     }
     
+    
+    func executeClicked(sender:AnyObject){
+        ToolManager.brushEvent.raise(("bake_selected"));
+
+    }
+    func staticExecuteClicked(sender:AnyObject){
+        ToolManager.brushEvent.raise(("static_bake_selected"));
+        
+    }
     func modeClicked(sender: AnyObject){
         for b in buttonArray{
             b.backgroundColor = standardColor
             
         }
-        if(sender as! NSObject == executeButton){
-            ToolManager.brushEvent.raise(("bake_selected"));
-        }
+        
         if(sender as! NSObject == eraseButton){
             ToolManager.mode = "erase";
             eraseButton.backgroundColor = selectedColor

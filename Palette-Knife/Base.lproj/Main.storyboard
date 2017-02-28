@@ -82,7 +82,7 @@
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qed-Tn-scN" userLabel="stroke_list_container">
-                                <rect key="frame" x="1012" y="93" width="354" height="887"/>
+                                <rect key="frame" x="1012" y="93" width="766" height="887"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.093330536912751672" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
@@ -279,6 +279,12 @@
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <state key="normal" title="Draw Selected"/>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4A0-Dx-nLD">
+                                <rect key="frame" x="284" y="20" width="116" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Draw All"/>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
@@ -291,6 +297,7 @@
                         <outlet property="lassoMinusButton" destination="KqP-Gh-QqN" id="vOV-kM-pVz"/>
                         <outlet property="lassoPlusButton" destination="RFn-BG-Vnh" id="YCG-gc-vmt"/>
                         <outlet property="manualASAPToggle" destination="dA2-hL-dkz" id="7qh-pd-Zzu"/>
+                        <outlet property="staticExecuteButton" destination="4A0-Dx-nLD" id="bHc-6y-A9V"/>
                         <outlet property="toolbarView" destination="RWY-K0-z3y" id="2KW-Re-opy"/>
                     </connections>
                 </viewController>
@@ -303,11 +310,11 @@
             <objects>
                 <tableViewController id="ua1-Bv-a2d" customClass="StrokeTableViewController" customModule="PaletteKnife" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="90" sectionHeaderHeight="28" sectionFooterHeight="28" id="RwZ-HR-I4m">
-                        <rect key="frame" x="0.0" y="0.0" width="354" height="887"/>
+                        <rect key="frame" x="0.0" y="0.0" width="766" height="887"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="kZD-T7-Dn8">
-                            <rect key="frame" x="0.0" y="0.0" width="354" height="44"/>
+                            <rect key="frame" x="0.0" y="0.0" width="766" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Strokes" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="uZU-Yc-hTM">
@@ -322,10 +329,10 @@
                         </view>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="StrokeTableCell" rowHeight="60" id="MqV-EP-NHH" customClass="StrokeCell" customModule="PaletteKnife" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="72" width="354" height="60"/>
+                                <rect key="frame" x="0.0" y="72" width="766" height="60"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MqV-EP-NHH" id="DJ5-u7-9Ju">
-                                    <rect key="frame" x="0.0" y="0.0" width="354" height="59"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="766" height="59"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BaQ-RB-oUF">

@@ -94,11 +94,24 @@ class GCodeGenerator {
     }
     
     func drawSegment(segment:Segment)->[String]{
-        let _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0) + xOffset
+        var _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0) + xOffset
         
+        if(ToolManager.largeActive){
+            _x+=ToolManager.lgPenXOffset;
+        }
+        else if(ToolManager.smallActive){
+            _x+=ToolManager.smPenXOffset;
+        }
         let _y = Numerical.map(segment.point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 ) + yOffset
         
-        var _z = Numerical.map(segment.diameter, istart: 0.2, istop: 42, ostart: 0, ostop: GCodeGenerator.depthLimit)
+        var _z:Float
+        
+        if(ToolManager.drawMode == "hover"){
+        _z = Numerical.map(segment.diameter, istart: 0.2, istop: 42, ostart: 0, ostop: GCodeGenerator.retractHeight)
+        }
+        else{
+        _z = Numerical.map(segment.diameter, istart: 0.2, istop: 42, ostart: 0, ostop: GCodeGenerator.depthLimit)
+        }
         /*if(_x>GCodeGenerator.inX){
             _x = GCodeGenerator.inX;
         }

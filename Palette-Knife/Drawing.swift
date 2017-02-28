@@ -203,6 +203,16 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         }
     }
     
+    func bakeAll(){
+        let data = self.generateBakeData(self.toSendBake);
+        self.deselectAllStrokes();
+        for i in 0..<data.count{
+            self.transmitEvent.raise((data[i]));
+        }
+        print("source",data);
+ 
+    }
+    
     func bakeSelected(){
         let data = self.generateBakeData(self.selectedStrokes);
         self.deselectAllStrokes();
@@ -238,11 +248,11 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             let _x = Numerical.map(segments[0].point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
             
             let _y = Numerical.map(segments[0].point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
-            
+           
             source_string += "\""+stroke.gCodeGenerator.jog3(_x,y:_y,z: GCodeGenerator.retractHeight)+"\"";
-            for j in 0..<source.count{
-                
-                source_string += ",\""+source[j]+"\""
+            for j in 0..<segments.count{
+                let seg_source = stroke.gCodeGenerator.drawSegment(segments[j]).last;
+                source_string += ",\""+seg_source!+"\""
             }
             
             source_string+=",\""+gCodeGenerator.endSegment(segments[segments.count-1])+"\"]"

@@ -228,7 +228,7 @@ class Stroke:TimeSeries, Geometry {
         }
         segments.append(segment)
 
-        gCodeGenerator.drawSegment(segment)
+       
         
         return segment
     }

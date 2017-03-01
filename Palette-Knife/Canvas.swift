@@ -94,9 +94,6 @@ class Canvas: WebTransmitter, Hashable{
     func drawHandler(data:(Any,String,String), key:String){
         self.geometryModified.raise(data)
     }
-    
-    
-    
 }
 
 

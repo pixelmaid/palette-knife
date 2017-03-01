@@ -197,7 +197,9 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             bakeQueue[parentID]?.removeAll();
             
             
-            if(GCodeGenerator.fabricatorStatus.get(nil) == 0){
+            if(GCodeGenerator.fabricatorStatus.get(nil) == 0 && ToolManager.bakeMode == "ASAP" && ToolManager.timeHold == false){
+                print("bake next called\(ToolManager.timeHold,GCodeGenerator.fabricatorStatus.get(nil))")
+                ToolManager.timeHold == true
                 self.bakeNext();
             }
         }
@@ -209,6 +211,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         for i in 0..<data.count{
             self.transmitEvent.raise((data[i]));
         }
+        self.toSendBake.removeAll();
         print("source",data);
  
     }
@@ -216,6 +219,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     func bakeSelected(){
         let data = self.generateBakeData(self.selectedStrokes);
         self.deselectAllStrokes();
+    
         for i in 0..<data.count{
         self.transmitEvent.raise((data[i]));
         }
@@ -224,7 +228,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     
     func bakeNext()->String?{
         if(toSendBake.count>0){
-            let strokes = [toSendBake.removeFirst()];
+            let strokes = [toSendBake[0]];
             let data = self.generateBakeData(strokes);
             self.transmitEvent.raise((data[0]));
             print("source",data);
@@ -240,13 +244,30 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         for i in 0..<strokes.count{
              var source_string = "[";
             let stroke = strokes[i];
+            for l in 0..<toSendBake.count{
+                if toSendBake[l].id == stroke.id{
+                    toSendBake.removeAtIndex(l);
+                    break;
+                }
+            
+            }
             stroke.baked = true;
             var source = stroke.gCodeGenerator.source;
             let id = stroke.id;
             var segments = stroke.segments;
             print("segments=\(segments)");
-            let _x = Numerical.map(segments[0].point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
+            var _x = Numerical.map(segments[0].point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
             
+            if (ToolManager.bothActive){
+                //do nothing
+            }
+            else if(ToolManager.largeActive){
+                _x+=ToolManager.lgPenXOffset;
+            }
+            else if(ToolManager.smallActive){
+                _x+=ToolManager.smPenXOffset;
+            }
+
             let _y = Numerical.map(segments[0].point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
            
             source_string += "\""+stroke.gCodeGenerator.jog3(_x,y:_y,z: GCodeGenerator.retractHeight)+"\"";
@@ -263,6 +284,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             print("data \(data)");
             
             data_collection.append(data);
+             self.geometryModified.raise((id,"STROKE_BAKED","STROKE_BAKED"))
         }
         return data_collection;
     }
@@ -313,33 +335,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         return false;
     }
     
-    
-    
-    /*func bake(parentID:String){
-     var source_string = "[";
-     if(bakeQueue[parentID] != nil){
-     var bq = bakeQueue[parentID]!
-     for i in 0..<bq.count{
-     var source = bq[i].gCodeGenerator.source;
-     for j in 0..<source.count{
-     if(j>0){
-     source_string += ","
-     }
-     source_string += "\""+source[j]+"\""
-     }
-     
-     //source_string += "]"
-     source_string += ",\""+gCodeGenerator.endSegment(bakeQueue[parentID]![i].segments[bakeQueue[parentID]![i].segments.count-1])+"\"]"
-     bakedStrokes[parentID]!.append(bq[i]);
-     }
-     bakeQueue[parentID]?.removeAll();
-     var data = "\"drawing_id\":\""+self.id+"\","
-     data += "\"type\":\"gcode\","
-     data += "\"data\":"+source_string
-     self.transmitEvent.raise((data));
-     print("source",data);
-     }
-     }*/
+
     
     
     func checkBake(x:Float,y:Float,z:Float){
@@ -354,35 +350,6 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         }
     }
     
-    /*func jogAndBake(parentID:String){
-     
-     var source_string = "[";
-     var bq = bakeQueue[parentID]!
-     for i in 0..<bq.count{
-     var source = bq[i].gCodeGenerator.source;
-     var segments = bq[i].segments;
-     print("segments=\(segments)");
-     let _x = Numerical.map(segments[0].point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0)
-     
-     let _y = Numerical.map(segments[0].point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
-     
-     source_string += "\""+bq[i].gCodeGenerator.jog3(_x,y:_y,z: GCodeGenerator.retractHeight)+"\"";
-     for j in 0..<source.count{
-     
-     source_string += ",\""+source[j]+"\""
-     }
-     
-     source_string+=",\""+gCodeGenerator.endSegment(segments[segments.count-1])+"\"]"
-     bakedStrokes[parentID]!.append(bq[i]);
-     }
-     bakeQueue[parentID]?.removeAll();
-     var data = "\"drawing_id\":\""+self.id+"\","
-     data += "\"type\":\"gcode\","
-     data += "\"data\":"+source_string
-     self.transmitEvent.raise((data));
-     print("source",data);
-     
-     }*/
     
     func transmitJogEvent(data:String){
         var source_string = "[";

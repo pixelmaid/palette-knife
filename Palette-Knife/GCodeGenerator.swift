@@ -17,19 +17,30 @@ class GCodeGenerator {
     var z = Float(0)
     var xOffset = Float(0);
     var yOffset = Float(0);
-    
-    static let leftOffset = Float(-2.567);
-    static let rightOffset = Float(2.567);
+
     static let retractHeight = Float(0.59)
     let clearanceHeight = Float(0.6)
     let feedHeight = Float(0)
     let cuttingFeedRate = Float(8)
     let plungingFeedRate = Float(10)
     static let depthLimit = Float(-0.12)
-    static let inX = Float(84);
-    static let pX = Float(1250);
-    static let inY = Float(42);
-    static let pY = Float(625);
+    //big
+    static let l_inX = Float(63);
+    static let l_pX = Float(1250);
+    static let l_inY = Float(38);
+    static let l_pY = Float(753);
+ 
+    //sm
+    static let s_inX = Float(20);
+    static let s_pX = Float(1020);
+    static let s_inY = Float(16);
+    static let s_pY = Float(816);
+    
+    static var inX = s_inX
+    static var pX = s_pX
+    static var inY = s_inY
+    static var pY = s_pY
+
     static var pXOffset = Float(0);
     static var pYOffset = Float(0);
     
@@ -47,6 +58,21 @@ class GCodeGenerator {
     func setOffset(x:Float, y:Float){
         self.xOffset = x;
         self.yOffset = y;
+    }
+    
+    static func setCanvasSizeLarge(){
+        GCodeGenerator.inX =   GCodeGenerator.l_inX
+        GCodeGenerator.pX =   GCodeGenerator.l_pX
+        GCodeGenerator.inY =   GCodeGenerator.l_inY
+        GCodeGenerator.pY =   GCodeGenerator.l_pY
+    }
+    
+    static func setCanvasSizeSmall(){
+        GCodeGenerator.inX =   GCodeGenerator.s_inX
+        GCodeGenerator.pX =   GCodeGenerator.s_pX
+        GCodeGenerator.inY =   GCodeGenerator.s_inY
+        GCodeGenerator.pY =   GCodeGenerator.s_pY
+
     }
     
     static func setCanvasOffset(x:Float,y:Float){
@@ -95,8 +121,10 @@ class GCodeGenerator {
     
     func drawSegment(segment:Segment)->[String]{
         var _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0) + xOffset
-        
-        if(ToolManager.largeActive){
+        if (ToolManager.bothActive){
+            //do nothing
+        }
+        else if(ToolManager.largeActive){
             _x+=ToolManager.lgPenXOffset;
         }
         else if(ToolManager.smallActive){
@@ -105,12 +133,17 @@ class GCodeGenerator {
         let _y = Numerical.map(segment.point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 ) + yOffset
         
         var _z:Float
-        
+        print("Tool manager draw mode \(ToolManager.drawMode)");
         if(ToolManager.drawMode == "hover"){
-        _z = Numerical.map(segment.diameter, istart: 0.2, istop: 42, ostart: 0, ostop: GCodeGenerator.retractHeight)
+            print("mapping z to hover")
+            _z = GCodeGenerator.retractHeight;
         }
         else{
         _z = Numerical.map(segment.diameter, istart: 0.2, istop: 42, ostart: 0, ostop: GCodeGenerator.depthLimit)
+            if(_z>GCodeGenerator.depthLimit){
+                _z = GCodeGenerator.depthLimit;
+            }
+
         }
         /*if(_x>GCodeGenerator.inX){
             _x = GCodeGenerator.inX;
@@ -125,10 +158,7 @@ class GCodeGenerator {
         else if(_y<0){
             _y = 0;
         }*/
-        if(_z>GCodeGenerator.depthLimit){
-            _z = GCodeGenerator.depthLimit;
-        }
-
+        
         if(self.newStroke){
            // source.append(jog3(_x,y:_y,z: GCodeGenerator.retractHeight));
             source.append(jog3(_x,y:_y,z: 0));
@@ -143,7 +173,17 @@ class GCodeGenerator {
     func endSegment(segment:Segment)->String{
         var s = ""
         
-        let _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0) + xOffset
+        var _x = Numerical.map(segment.point.x.get(nil), istart:GCodeGenerator.pX, istop: 0, ostart: GCodeGenerator.inX, ostop: 0) + xOffset
+        if (ToolManager.bothActive){
+            //do nothing
+        }
+        else if(ToolManager.largeActive){
+            _x+=ToolManager.lgPenXOffset;
+        }
+        else if(ToolManager.smallActive){
+            _x+=ToolManager.smPenXOffset;
+        }
+
         
         let _y = Numerical.map(segment.point.y.get(nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 ) + yOffset
         

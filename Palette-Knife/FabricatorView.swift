@@ -31,8 +31,8 @@ class FabricatorView:  UIView {
         activeMarker = UIImageView(frame: CGRect(x: 100, y: 100, width: 42, height: 41))
         activeMarker.image = activeImage;
 
-
         super.init(frame:frame);
+
         
     }
     
@@ -54,10 +54,23 @@ class FabricatorView:  UIView {
     
     func drawFabricatorPosition(x:Float,y:Float,z:Float) {
         
-        let _x = Numerical.map(x, istart:0, istop: GCodeGenerator.inX, ostart: 0, ostop: GCodeGenerator.pX)+GCodeGenerator.pXOffset
+        var gcodeX = x;
         
-        let _y = Numerical.map(y, istart:0, istop:GCodeGenerator.inY, ostart:  GCodeGenerator.pY, ostop: 0 )+GCodeGenerator.pYOffset
+        if (ToolManager.bothActive){
+            //do nothing
+        }
+        else if(ToolManager.largeActive){
+            gcodeX-=ToolManager.lgPenXOffset;
+        }
+        else if(ToolManager.smallActive){
+            gcodeX-=ToolManager.smPenXOffset;
+        }
         
+        let _x = Numerical.map(gcodeX, istart:0, istop: GCodeGenerator.inX, ostart: 0, ostop: GCodeGenerator.pX)
+        let _y = Numerical.map(y, istart:0, istop:GCodeGenerator.inY, ostart:  GCodeGenerator.pY, ostop: 0 )
+        
+        print("draw fabricator\(x,_x)");
+      
         self.inactiveMarker.frame = CGRectMake(CGFloat(_x-20), CGFloat(_y-20), 42, 41)
         self.activeMarker.frame = CGRectMake(CGFloat(_x-20),CGFloat(_y-20), 42, 41)
        /* self.clear();

@@ -18,6 +18,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var dualBrushButton: UIButton!
     @IBOutlet weak var largeBrushButton: UIButton!
     @IBOutlet weak var smallBrushButton: UIButton!
+    @IBOutlet weak var canvasSizeToggle: UISwitch!
     
     
     var canvasViewSm:CanvasView
@@ -55,6 +56,8 @@ class ViewController: UIViewController {
     
     var downInCanvas = false;
     
+    var bakeTimer:NSTimer!
+
     var radialBrush:Brush?
     var bakeBrush:Brush?
     
@@ -91,6 +94,7 @@ class ViewController: UIViewController {
         
        
         tableHideToggle.addTarget(self, action:  #selector(ViewController.tableHideToggled(_:)), forControlEvents: UIControlEvents.ValueChanged)
+        canvasSizeToggle.addTarget(self, action:  #selector(ViewController.canvasSizeToggled(_:)), forControlEvents: UIControlEvents.ValueChanged)
         ToolManager.brushEvent.addHandler(self,handler:ViewController.brushToggleHandler,key:brushEventKey);
         
         
@@ -109,9 +113,12 @@ class ViewController: UIViewController {
         
         backView.backgroundColor=UIColor.whiteColor()
         self.view.addSubview(backView)
-        
-        fabricatorView.frame = CGRectMake(0, 0, CGFloat(GCodeGenerator.pX), CGFloat(GCodeGenerator.pY));
+        let screenSize = UIScreen.mainScreen().bounds
+        let sX = (screenSize.width-CGFloat(GCodeGenerator.pX))/2.0+50
+        let sY = (screenSize.height-CGFloat(GCodeGenerator.pY))/2.0
+        fabricatorView.frame = CGRectMake(sX, sY, CGFloat(GCodeGenerator.pX), CGFloat(GCodeGenerator.pY));
         fabricatorView.backgroundColor = UIColor.clearColor();
+
         self.view.addSubview(fabricatorView);
         self.view.sendSubviewToBack(fabricatorView)
         self.view.sendSubviewToBack(bakeViewLg)
@@ -156,6 +163,33 @@ class ViewController: UIViewController {
         else{
             tableViewContainer.hidden = true;
         }
+    }
+    
+    func canvasSizeToggled(sender:AnyObject){
+        if(canvasSizeToggle.on){
+            GCodeGenerator.setCanvasSizeLarge()
+            
+        }
+            else{
+                GCodeGenerator.setCanvasSizeSmall();
+        }
+        let screenSize = UIScreen.mainScreen().bounds
+        let sX = (screenSize.width-CGFloat(GCodeGenerator.pX))/2.0+50
+        let sY = (screenSize.height-CGFloat(GCodeGenerator.pY))/2.0
+        ToolManager.recalculateOffsets();
+        canvasViewSm.frame = CGRectMake(sX, sY, CGFloat(GCodeGenerator.pX), CGFloat(GCodeGenerator.pY));
+        
+        canvasViewLg.frame = CGRectMake(sX, sY, CGFloat(GCodeGenerator.pX), CGFloat(GCodeGenerator.pY));
+        
+        bakeViewSm.frame = CGRectMake(sX, sY, CGFloat(GCodeGenerator.pX), CGFloat(GCodeGenerator.pY))
+        
+        bakeViewLg.frame = CGRectMake(sX, sY, CGFloat(GCodeGenerator.pX), CGFloat(GCodeGenerator.pY));
+        backView.frame = CGRectMake(sX, sY, CGFloat(GCodeGenerator.pX), CGFloat(GCodeGenerator.pY));
+        fabricatorView.frame = CGRectMake(sX, sY, CGFloat(GCodeGenerator.pX), CGFloat(GCodeGenerator.pY));
+        fabricatorView.drawFabricatorPosition(0,y:0,z:0);
+        canvasViewLg.redrawAll((currentCanvas?.getAllStrokes())!)
+        
+
     }
     
     func tableEventHandler(data:(String,String),key:String){
@@ -272,10 +306,13 @@ class ViewController: UIViewController {
                 currentCanvas?.currentDrawing!.checkBake(_x,y:_y,z:_z);
             }
             
-            else if(Float(status) == 0 && ToolManager.bakeMode == "ASAP"){
+            else if(Float(status) == 0 && ToolManager.bakeMode == "ASAP" && ToolManager.timeHold == false){
                 print("shopbot ready for data");
                 let strokeId = currentCanvas?.currentDrawing?.bakeNext();
                 if(strokeId != nil){
+                    //ToolManager.timeHold = true;
+                    //bakeTimer  = NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: #selector(ViewController.bakeTimerCallback), userInfo: nil, repeats: false)
+
                     strokeTableController?.removeStroke(strokeId!);
                     canvasViewLg.redrawAll((currentCanvas?.currentDrawing?.getAllStrokes())!);
                 }
@@ -288,6 +325,12 @@ class ViewController: UIViewController {
             break
         }
         
+    }
+    
+    @objc func bakeTimerCallback()
+    {
+        ToolManager.timeHold = false;
+        bakeTimer.invalidate();
     }
     
     
@@ -358,6 +401,12 @@ class ViewController: UIViewController {
             
             break;
         
+        case "STROKE_BAKED":
+            let stroke_id = data.0 as! String;
+            strokeTableController?.removeStroke(stroke_id);
+            break;
+        
+            
         case "BAKE_DRAW":
             switch data.1{
             case "SEGMENT":
@@ -369,16 +418,16 @@ class ViewController: UIViewController {
                 if(prevSeg != nil){
                     
                     if(ToolManager.bothActive){
-                        bakeViewLg.drawPath(prevSeg!.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)),tP: seg.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)), w:ToolManager.lgPenDiameter, c:ToolManager.lgPenColor)
-                        bakeViewSm.drawPath(prevSeg!.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)),tP: seg.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)), w:ToolManager.smPenDiameter, c:ToolManager.smPenColor)
+                       // bakeViewLg.drawPath(prevSeg!.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)),tP: seg.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)), w:ToolManager.lgPenDiameter, c:ToolManager.lgPenColor)
+                        //bakeViewSm.drawPath(prevSeg!.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)),tP: seg.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)), w:ToolManager.smPenDiameter, c:ToolManager.smPenColor)
                         
                     }
                     else{
                         if(ToolManager.smallActive){
-                             bakeViewSm.drawPath(prevSeg!.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)),tP: seg.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)), w:ToolManager.smPenDiameter, c:ToolManager.smPenColor)
+                           //  bakeViewSm.drawPath(prevSeg!.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)),tP: seg.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)), w:ToolManager.smPenDiameter, c:ToolManager.smPenColor)
                         }
                         else{
- bakeViewLg.drawPath(prevSeg!.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)),tP: seg.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)), w:ToolManager.lgPenDiameter, c:ToolManager.lgPenColor)
+ //bakeViewLg.drawPath(prevSeg!.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)),tP: seg.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)), w:ToolManager.lgPenDiameter, c:ToolManager.lgPenColor)
                         }
                     }
                 }
@@ -397,7 +446,7 @@ class ViewController: UIViewController {
                 
                 if(prevSeg != nil){
                     
-                        canvasViewLg.drawPath(prevSeg!.point,tP: seg.point, w:ToolManager.defaultPenDiameter, c:ToolManager.defaultPenColor)
+                        canvasViewLg.drawIsolatedPath(prevSeg!.point,tP: seg.point, w:ToolManager.defaultPenDiameter, c:ToolManager.defaultPenColor)
                             
                     
                     

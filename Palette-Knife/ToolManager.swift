@@ -19,9 +19,7 @@ class ToolManager:UIViewController{
     static var defaultColorList = [Color]();
     static var defaultSelectedColor = Color(r:143,g:255,b:143,a:1);
     static var defaultBakedColor = Color(r:78,g:47,b:234,a:1);
-
-    static let defaultPenDiameter = Float(2);
-
+    
     static let lgPenColorBake = Color(r:0,g:0,b:0,a:1);
     static let smPenColorBake = Color(r:144,g:215,b:240,a:1);
     
@@ -30,14 +28,12 @@ class ToolManager:UIViewController{
     static var drawMode = "draw";
     static var diameter = smPenDiameter;
     static var color = smPenColor;
+    static var timeHold = false;
     
     static var smPenXOffset = Float(3.0);
     static var lgPenXOffset = Float(-3.0);
-    
-    //TODO  calculate actual offsets
-    static var smPenYOffset =  Numerical.map(GCodeGenerator.rightOffset, istart:0, istop: GCodeGenerator.inY, ostart: 0, ostop: GCodeGenerator.pY)
-    static var lgPenYOffset =  Numerical.map(GCodeGenerator.leftOffset, istart:0, istop: GCodeGenerator.inY, ostart: 0, ostop: GCodeGenerator.pY)
-    
+
+    static var defaultPenDiameter =  Numerical.map(0.590551, istart:0, istop: GCodeGenerator.inX, ostart: 0, ostop: GCodeGenerator.pX)
     static var bothActive = false;
     static var largeActive = false;
     static var smallActive = true;
@@ -107,6 +103,13 @@ class ToolManager:UIViewController{
             print(c.r,c.b,c.g);
             ToolManager.defaultColorList.append(c);
         }
+        ToolManager.recalculateOffsets();
+    }
+    
+    static func recalculateOffsets(){
+        
+        ToolManager.defaultPenDiameter =  Numerical.map(0.590551, istart:0, istop: GCodeGenerator.inX, ostart: 0, ostop: GCodeGenerator.pX)
+
     }
     
     func bakeModeToggled(sender: AnyObject){

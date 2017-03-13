@@ -11,6 +11,7 @@ import Foundation
 enum BehaviorError: ErrorType {
     case duplicateName
     case behaviorDoesNotExist
+    case mappingDoesNotExist;
 }
 
 class BehaviorManager{
@@ -127,7 +128,7 @@ class BehaviorManager{
                 referenceProperty = nil;
             }
             print("behavior update mapping, target state:\(data["stateId"].stringValue)");
-            behaviors[data["behavior_id"].stringValue]!.addMapping(data["id"].stringValue, referenceProperty:referenceProperty, referenceNames: referenceNames, relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue)
+            behaviors[data["behavior_id"].stringValue]!.addMapping(data["mappingId"].stringValue, referenceProperty:referenceProperty, referenceNames: referenceNames, relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue)
             if(data["referenceProperty"] != nil){
             behaviors[data["behavior_id"].stringValue]!.createBehavior()
             }
@@ -136,7 +137,22 @@ class BehaviorManager{
             }
 
             return (type,"success")
-    
+        
+        case "mapping_relative_removed":
+            
+            do{
+            try behaviors[data["behavior_id"].stringValue]!.removeMapping(data["mappingId"].stringValue);
+            return (type,"success")
+
+            }
+            catch{
+                print("mapping id does not exist, cannot remove");
+                return (type,"failure")
+  
+            }
+
+            
+            
         case "generator_added":
             let type = data["type"].stringValue;
             

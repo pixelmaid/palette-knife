@@ -196,8 +196,17 @@ class BehaviorDefinition {
     }
     
     func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String){
-        print("adding mapping target state:\(stateId)");
         mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId))
+    }
+    
+    func removeMapping(id:String) throws{
+        print("mappings \(mappings,id)")
+        if(mappings[id] != nil){
+            mappings.removeValueForKey(id);
+            return;
+        }
+        throw BehaviorError.mappingDoesNotExist;
+        
     }
     
     func addExpression(name:String, emitter1:Any?, operand1Names:[String]?, emitter2:Any?,operand2Names:[String]?, type:String){

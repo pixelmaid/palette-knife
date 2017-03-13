@@ -380,12 +380,14 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.currentCanvas = canvas;
     }
     
-    func addConstraint(id:String,reference:Observable<Float>, relative:Observable<Float>, targetState:String){
+    func addConstraint(id:String,reference:Observable<Float>, relative:Observable<Float>, stateId:String){
         //let stateKey = NSUUID().UUIDString;
         reference.subscribe(self.id);
         reference.didChange.addHandler(self, handler:  Brush.setHandler, key:id)
         self.removeMappingEvent.addHandler(self, handler: Brush.removeConstraint,key:id)
-        states[targetState]!.addConstraintMapping(id,reference:reference,relativeProperty: relative)
+        print(states);
+        print("target state = \(stateId)");
+        states[stateId]!.addConstraintMapping(id,reference:reference,relativeProperty: relative)
     }
     
     func removeConstraint(data:(Brush, String, Observable<Float>),key:String){

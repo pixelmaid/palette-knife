@@ -15,8 +15,8 @@ typealias BehaviorConfig = (target: Brush, action: String, emitter:Emitter, even
 class BehaviorMapper{
     
       
-    func createMapping(id:String, reference:Observable<Float>, relative:Brush, relativeProperty:Observable<Float>,targetState:String){
-        relative.addConstraint(id, reference:reference, relative: relativeProperty, targetState: targetState)
+    func createMapping(id:String, reference:Observable<Float>, relative:Brush, relativeProperty:Observable<Float>,stateId:String){
+        relative.addConstraint(id, reference:reference, relative: relativeProperty, stateId: stateId)
     
     }
     

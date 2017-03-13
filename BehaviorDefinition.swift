@@ -195,8 +195,9 @@ class BehaviorDefinition {
         transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition))
     }
     
-    func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,targetState:String){
-        mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,targetState))
+    func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String){
+        print("adding mapping target state:\(stateId)");
+        mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId))
     }
     
     func addExpression(name:String, emitter1:Any?, operand1Names:[String]?, emitter2:Any?,operand2Names:[String]?, type:String){
@@ -371,16 +372,13 @@ class BehaviorDefinition {
     
     func generateMapping(targetBrush:Brush, id:String, data:(Any?,[String]?,String,String)){
         
-        // expression (name:String, reference:Any?, referenceName:String?,referenceParentFlag:Bool, relative:Any?, relativeName:String?, relativeParentFlag:Bool, relational:String)
-        //mapping (referenceProperty:Any?, referenceName:String?, parentFlag:Bool, relativePropertyName:String,targetState:String)
-        //operand (Any?,String?,Bool,Any?,String?,Bool,String)
         var mappingRelativeList = [String]();
         mappingRelativeList.append(data.2);
         let operands = generateOperands(targetBrush, data:(data.0,data.1,targetBrush,mappingRelativeList,""))
         let referenceOperand = operands.0;
         let relativeOperand = operands.1;
         
-        behaviorMapper.createMapping(id, reference: referenceOperand, relative: targetBrush, relativeProperty: relativeOperand, targetState: data.3)
+        behaviorMapper.createMapping(id, reference: referenceOperand, relative: targetBrush, relativeProperty: relativeOperand, stateId: data.3)
     }
     
     func addBrush(targetBrush:Brush){
@@ -442,7 +440,8 @@ class BehaviorDefinition {
             behaviorMapper.addMethod(targetBrush,transitionName:method.0,methodId:method.1,methodName:method.2,arguments:method.3);
         }
         
-        //referenceProperty!,referenceName!,relativePropertyName,targetState
+        //referenceProperty!,referenceName!,relativePropertyName,stateId
+            print("mappings are:\(mappings)");
         for (id, mapping_data) in mappings{
             self.generateMapping(targetBrush,id:id, data:mapping_data);
         }

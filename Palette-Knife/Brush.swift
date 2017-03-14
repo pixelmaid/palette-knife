@@ -218,6 +218,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             bufferLimitY.set(0)
             
             weightBuffer.push(weight.get(nil));
+            print("brush moved \(transformedCoords.0,transformedCoords.1,self.weight.get(nil))")
             self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight: self.weight.get(nil), color: self.strokeColor);
             self.position.set(_dx,y:_dy);
            

@@ -163,8 +163,9 @@ class BehaviorDefinition {
         generators[name] = ("range",[min,max,start,stop]);
     }
     
-    func addSine(name:String){
-        generators[name] = ("sine",[]);
+    func addSine(name:String,freq:Float,amp:Float,phase:Float){
+        generators[name] = ("sine",[freq,amp,phase]);
+        print("added sine, generators \(generators)");
     }
 
     
@@ -226,7 +227,7 @@ class BehaviorDefinition {
             let range = Range(min:data.1[0] as! Int, max:data.1[1] as! Int, start: data.1[2] as! Float, stop:data.1[3] as! Float)
             storedGenerators[name] = range;
         case "sine":
-            let sine = Sine()
+            let sine = Sine(freq: data.1[0] as! Float, amp: data.1[1] as! Float, phase: data.1[2] as! Float);
             storedGenerators[name] = sine;
         case "random":
             let random = RandomGenerator(start:data.1[0] as! Float, end:data.1[1] as! Float)
@@ -271,6 +272,7 @@ class BehaviorDefinition {
         
         if(data.1 != nil){
             var refPropList = data.1!
+            print("stored generators = \(storedGenerators,refPropList)");
             if(storedGenerators[refPropList[0]]) != nil{
                 operand1 = storedGenerators[refPropList[0]]!;
             }
@@ -399,6 +401,7 @@ class BehaviorDefinition {
         for var i in 0..<self.brushInstances.count{
             let targetBrush = self.brushInstances[i];
             targetBrush.clearBehavior();
+            print("generators:\(generators)");
         for (key, generator_data) in generators{
             self.generateGenerator(key,data:generator_data)
         }

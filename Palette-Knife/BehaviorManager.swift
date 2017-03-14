@@ -102,6 +102,7 @@ class BehaviorManager{
         case "mapping_added","mapping_updated":
             let referenceNames:[String]?
             let referenceProperty:Any?
+            
             if(data["referenceNames"] != nil){
                 let jsonList =  data["referenceNames"].arrayValue;
                 referenceNames = [String]();
@@ -154,7 +155,7 @@ class BehaviorManager{
             
             
         case "generator_added":
-            let type = data["type"].stringValue;
+            let type = data["generator_type"].stringValue;
             
             switch(type){
             case "random":
@@ -176,7 +177,7 @@ class BehaviorManager{
                 break;
                 
             case "sine":
-                behaviors[data["behavior_id"].stringValue]!.addSine(data["name"].stringValue);
+                behaviors[data["behavior_id"].stringValue]!.addSine(data["name"].stringValue, freq: data["freq"].floatValue, amp: data["amp"].floatValue, phase: data["phase"].floatValue);
 
                 break;
                 // case "random_walk":

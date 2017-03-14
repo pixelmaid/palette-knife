@@ -203,16 +203,26 @@ class Increment:Generator{
 }
 
 class Sine:Generator{
-    var index = Observable<Float>(0)
-
+    var freq:Float
+    var phase:Float
+    var amp:Float
+    
+    var index = Observable<Float>(0);
+    
+    init(freq:Float, amp:Float, phase:Float){
+        self.freq = freq;
+        self.phase = phase;
+        self.amp = amp;
+    }
     
     func incrementIndex(){
         index.set(index.get(nil)+1);
         
     }
     override func get(id:String?) -> Float {
-        let v =  sin(self.index.get(nil));
+        let v =  sin(self.index.get(nil)*freq+phase)*amp+amp;
         self.incrementIndex();
+        print("returning sine value of \(v)");
         return v;
     }
 

@@ -19,8 +19,8 @@ class State {
         self.name = name;
     }
     
-     func addConstraintMapping(key:String, reference:Observable<Float>, relativeProperty:Observable<Float>){
-        let mapping = Constraint(id:key,reference: reference, relativeProperty:relativeProperty)
+    func addConstraintMapping(key:String, reference:Observable<Float>, relativeProperty:Observable<Float>, type:String){
+        let mapping = Constraint(id:key,reference: reference, relativeProperty:relativeProperty,type:type)
         constraint_mappings[key] = mapping;
     }
     
@@ -116,10 +116,12 @@ struct Constraint{
     var reference:Observable<Float>
     var relativeProperty:Observable<Float>
     var id:String
-    init(id:String, reference:Observable<Float>, relativeProperty:Observable<Float>){
+    var type:String
+    init(id:String, reference:Observable<Float>, relativeProperty:Observable<Float>,type:String){
         self.reference = reference
         self.relativeProperty = relativeProperty
         self.id = id;
+        self.type = type; //should be active or passive
     }
     
     func toJSON()->String{

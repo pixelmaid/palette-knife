@@ -15,6 +15,7 @@ class Observable<T>:Model  {
     var invalidated = false;
     var constrained = false;
     var subscribers = [String:Int]();
+    var constraintTarget: Observable<T>?
     let didChange = Event<(String,T, T)>()
     private var value: T
     
@@ -30,6 +31,12 @@ class Observable<T>:Model  {
 
     }
     
+    //used for passiveConstraints
+    
+    func passiveConstrain(target:Observable<T>){
+        self.constraintTarget = target;
+    }
+    
     //sets without raising change event
     func setSilent(newValue:T){
         value = newValue
@@ -37,6 +44,9 @@ class Observable<T>:Model  {
     
     func get(id:String?) -> T {
         invalidated = false;
+        if(constraintTarget != nil){
+            return constraintTarget!.get(id);
+        }
         return value
     }
     

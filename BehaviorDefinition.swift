@@ -20,7 +20,7 @@ class BehaviorDefinition {
     var methods = [(String,String,String,[Any]?)]()
     var transitions = [String:(String,Emitter?,Bool,String,String,String,String?)]()
     var behaviorMapper = BehaviorMapper()
-    var mappings = [String:(Any?,[String]?,String,String)]()
+    var mappings = [String:(Any?,[String]?,String,String,String)]()
     var storedExpressions = [String:Expression]()
     var storedConditions = [String:Condition]()
     var name:String;
@@ -195,8 +195,8 @@ class BehaviorDefinition {
         transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition))
     }
     
-    func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String){
-        mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId))
+    func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String, type:String){
+        mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId,type))
         print("current mappings: \(mappings)");
     }
     
@@ -380,7 +380,7 @@ class BehaviorDefinition {
         self.storedExpressions[name] = expression;
     }
     
-    func generateMapping(targetBrush:Brush, id:String, data:(Any?,[String]?,String,String)){
+    func generateMapping(targetBrush:Brush, id:String, data:(Any?,[String]?,String,String,String)){
         
         var mappingRelativeList = [String]();
         mappingRelativeList.append(data.2);
@@ -388,7 +388,7 @@ class BehaviorDefinition {
         let referenceOperand = operands.0;
         let relativeOperand = operands.1;
         
-        behaviorMapper.createMapping(id, reference: referenceOperand, relative: targetBrush, relativeProperty: relativeOperand, stateId: data.3)
+        behaviorMapper.createMapping(id, reference: referenceOperand, relative: targetBrush, relativeProperty: relativeOperand, stateId: data.3,type:data.4)
     }
     
     func addBrush(targetBrush:Brush){

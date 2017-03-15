@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Palette-Knife/Brush.swift"
-            timestampString = "511216755.151167"
+            timestampString = "511292559.54698"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "474"
-            endingLineNumber = "474"
+            startingLineNumber = "489"
+            endingLineNumber = "489"
             landmarkName = "Brush"
             landmarkType = "3">
          </BreakpointContent>

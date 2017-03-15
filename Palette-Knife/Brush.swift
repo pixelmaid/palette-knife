@@ -138,7 +138,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     func setupTransition(){
         let setupTransition = self.getTransitionByName("setup");
         if(setupTransition != nil){
-        self.transitionToState(setupTransition!)
+            self.transitionToState(setupTransition!)
         }
         else{
             print("no setup transition");
@@ -171,7 +171,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
         
-      //  print("angle\(self.angle.get(nil),self.index.get(nil)))")
+        //  print("angle\(self.angle.get(nil),self.index.get(nil)))")
         let centerX = origin.x.get(nil);
         let centerY = origin.y.get(nil);
         
@@ -196,44 +196,44 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.matrix.rotate(self.angle.get(nil), centerX: centerX, centerY: centerY)
         let _dx = self.position.x.get(nil)+delta.x.get(nil);
         let _dy = self.position.y.get(nil)+delta.y.get(nil);
-
+        
         let transformedCoords = self.matrix.transformPoint(_dx, y: _dy)
         print("pos\(_dx,_dy,delta.y.getSilent(),delta.y.getSilent())))")
         
-       // if(transformedCoords.0 >= 0 && transformedCoords.1 >= 0 && transformedCoords.0 <= GCodeGenerator.pX && transformedCoords.1 <= GCodeGenerator.pY ){
-            
-            
-            
-            var xDelt = delta.x.get(nil);
-            var yDelt = delta.y.get(nil);
+        // if(transformedCoords.0 >= 0 && transformedCoords.1 >= 0 && transformedCoords.0 <= GCodeGenerator.pX && transformedCoords.1 <= GCodeGenerator.pY ){
         
-            self.distance.set(self.distance.get(nil)+sqrt(pow(xDelt,2)+pow(yDelt,2)));
-            self.xDistance.set(self.xDistance.get(nil)+abs(xDelt));
-            self.yDistance.set(self.yDistance.get(nil)+abs(yDelt));
-            
-            xBuffer.push(xDelt);
-            
-            xBuffer.push(xDelt);
-            yBuffer.push(yDelt);
-            bufferLimitX.set(0)
-            bufferLimitY.set(0)
-            
-            weightBuffer.push(weight.get(nil));
-            self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight: self.weight.get(nil), color: self.strokeColor);
-            self.position.set(_dx,y:_dy);
-        print("brush moved \(transformedCoords.0,transformedCoords.1,self.weight.getSilent())")
-
-            //if(_dx < 0  || _dx > GCodeGenerator.pX || _dy < 0 || _dy > GCodeGenerator.pY){
-               // self.offCanvas.set(1);
-           // }
-          //  else{
-                self.offCanvas.set(0);
-                
-           // }
-       // }
+        
+        
+        var xDelt = delta.x.get(nil);
+        var yDelt = delta.y.get(nil);
+        
+        self.distance.set(self.distance.get(nil)+sqrt(pow(xDelt,2)+pow(yDelt,2)));
+        self.xDistance.set(self.xDistance.get(nil)+abs(xDelt));
+        self.yDistance.set(self.yDistance.get(nil)+abs(yDelt));
+        
+        xBuffer.push(xDelt);
+        
+        xBuffer.push(xDelt);
+        yBuffer.push(yDelt);
+        bufferLimitX.set(0)
+        bufferLimitY.set(0)
+        let cweight = self.weight.get(nil);
+        weightBuffer.push(cweight);
+        self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: self.strokeColor);
+        self.position.set(_dx,y:_dy);
+        print("brush moved \(transformedCoords.0,transformedCoords.1,cweight)")
+        
+        //if(_dx < 0  || _dx > GCodeGenerator.pX || _dy < 0 || _dy > GCodeGenerator.pY){
+        // self.offCanvas.set(1);
+        // }
+        //  else{
+        self.offCanvas.set(0);
+        
+        // }
+        // }
         //else{
         //    currentCanvas!.currentDrawing!.retireCurrentStrokes(self.id)
-       // }
+        // }
         
         
         
@@ -265,15 +265,15 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     func transitionToState(transition:StateTransition){
         var constraint_mappings:[String:Constraint];
-
+        
         if(states[currentState] != nil){
-         constraint_mappings =  states[currentState]!.constraint_mappings
-        for (_, value) in constraint_mappings{
-            
-            self.setConstraint(value)
-            value.relativeProperty.constrained = false;
-            
-        }
+            constraint_mappings =  states[currentState]!.constraint_mappings
+            for (_, value) in constraint_mappings{
+                
+                self.setConstraint(value)
+                value.relativeProperty.constrained = false;
+                
+            }
         }
         self.currentState = transition.toStateId;
         self.raiseBehaviorEvent(states[currentState]!.toJSON(), event: "state")
@@ -380,15 +380,30 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.currentCanvas = canvas;
     }
     
-    func addConstraint(id:String,reference:Observable<Float>, relative:Observable<Float>, stateId:String){
-        //let stateKey = NSUUID().UUIDString;
-        reference.subscribe(self.id);
-        reference.didChange.addHandler(self, handler:  Brush.setHandler, key:id)
-        self.removeMappingEvent.addHandler(self, handler: Brush.removeConstraint,key:id)
-        print(states);
+    
+    /* addConstraint
+     //adds a property mapping constraint.
+     //property mappings can take two forms, active and passive
+     //active: when reference changes, relative is updated to reflect change. This is for properties which are updated manually by the artist
+     //like the stylus properties, or properties with an internal interval, like a timed buffer
+     //passive: this for constraints which are not actively modifed by an interval or an external change. This can include constants
+     //or generators and buffers which will return a new value each time they are accessed
+     */
+    func addConstraint(id:String,reference:Observable<Float>, relative:Observable<Float>, stateId:String, type:String){
+        //let stateKey = NSUUID().UUIDString; 
+        if(type == "active"){
+            reference.subscribe(self.id);
+            reference.didChange.addHandler(self, handler:  Brush.setHandler, key:id)
+            self.removeMappingEvent.addHandler(self, handler: Brush.removeConstraint,key:id)
+        }
+            
+        else if(type == "passive"){
+            relative.passiveConstrain(reference);
+        }
         print("target state = \(stateId)");
-        states[stateId]!.addConstraintMapping(id,reference:reference,relativeProperty: relative)
+        states[stateId]!.addConstraintMapping(id,reference:reference,relativeProperty: relative,type:type)
     }
+    
     
     func removeConstraint(data:(Brush, String, Observable<Float>),key:String){
         data.2.didChange.removeHandler(key)
@@ -477,7 +492,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
      }*/
     
     
- 
+    
     
     func removeTransition(key:String){
         for (key, var val) in states {

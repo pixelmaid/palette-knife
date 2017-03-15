@@ -305,7 +305,7 @@ class ViewController: UIViewController {
                 
                 if(prevSeg != nil){
                     
-                        canvasViewLg.drawPath(prevSeg!.point,tP: seg.point, w:ToolManager.defaultPenDiameter, c:ToolManager.defaultPenColor)
+                        canvasViewLg.drawPath(prevSeg!.point,tP: seg.point, w:seg.diameter, c:ToolManager.defaultPenColor)
                             
                     
                     

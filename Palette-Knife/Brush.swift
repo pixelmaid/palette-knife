@@ -206,6 +206,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             
             var xDelt = delta.x.get(nil);
             var yDelt = delta.y.get(nil);
+        
             self.distance.set(self.distance.get(nil)+sqrt(pow(xDelt,2)+pow(yDelt,2)));
             self.xDistance.set(self.xDistance.get(nil)+abs(xDelt));
             self.yDistance.set(self.yDistance.get(nil)+abs(yDelt));
@@ -218,10 +219,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             bufferLimitY.set(0)
             
             weightBuffer.push(weight.get(nil));
-            print("brush moved \(transformedCoords.0,transformedCoords.1,self.weight.get(nil))")
             self.currentCanvas!.currentDrawing!.addSegmentToStroke(self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight: self.weight.get(nil), color: self.strokeColor);
             self.position.set(_dx,y:_dy);
-           
+        print("brush moved \(transformedCoords.0,transformedCoords.1,self.weight.getSilent())")
+
             //if(_dx < 0  || _dx > GCodeGenerator.pX || _dy < 0 || _dy > GCodeGenerator.pY){
                // self.offCanvas.set(1);
            // }
@@ -279,11 +280,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         print("transitioning to state \(states[currentState]?.name, self.name)")
         self.executeTransitionMethods(transition.methods)
         
-        
-        //print("transitioning \(self.name) to \(transition.toState)")
         constraint_mappings =  states[currentState]!.constraint_mappings
-        for (_, value) in constraint_mappings{
-            
+        for (key, value) in constraint_mappings{
+            print("constraining:\(key,value)");
             value.relativeProperty.constrained = true;
         }
         //execute methods

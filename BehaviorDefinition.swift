@@ -165,7 +165,6 @@ class BehaviorDefinition {
     
     func addSine(name:String,freq:Float,amp:Float,phase:Float){
         generators[name] = ("sine",[freq,amp,phase]);
-        print("added sine, generators \(generators)");
     }
 
     
@@ -198,10 +197,11 @@ class BehaviorDefinition {
     
     func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String){
         mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId))
+        print("current mappings: \(mappings)");
     }
     
     func removeMapping(id:String) throws{
-        print("mappings \(mappings,id)")
+        print("removing mappings \(mappings,id)")
         if(mappings[id] != nil){
             mappings.removeValueForKey(id);
             return;
@@ -272,7 +272,6 @@ class BehaviorDefinition {
         
         if(data.1 != nil){
             var refPropList = data.1!
-            print("stored generators = \(storedGenerators,refPropList)");
             if(storedGenerators[refPropList[0]]) != nil{
                 operand1 = storedGenerators[refPropList[0]]!;
             }
@@ -401,7 +400,6 @@ class BehaviorDefinition {
         for var i in 0..<self.brushInstances.count{
             let targetBrush = self.brushInstances[i];
             targetBrush.clearBehavior();
-            print("generators:\(generators)");
         for (key, generator_data) in generators{
             self.generateGenerator(key,data:generator_data)
         }
@@ -453,7 +451,6 @@ class BehaviorDefinition {
         }
         
         //referenceProperty!,referenceName!,relativePropertyName,stateId
-            print("mappings are:\(mappings)");
         for (id, mapping_data) in mappings{
             self.generateMapping(targetBrush,id:id, data:mapping_data);
         }

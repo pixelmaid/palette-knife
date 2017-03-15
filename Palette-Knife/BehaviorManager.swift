@@ -99,6 +99,8 @@ class BehaviorManager{
              behaviors[data["behavior_id"].stringValue]!.addMethod(data["targetTransition"].stringValue, methodId: data["id"].stringValue, targetMethod: data["targetMethod"].stringValue, arguments: arguments)
             behaviors[data["behavior_id"].stringValue]!.createBehavior()
             return ("method_added","success")
+            
+            
         case "mapping_added","mapping_updated":
             let referenceNames:[String]?
             let referenceProperty:Any?
@@ -128,13 +130,14 @@ class BehaviorManager{
             else{
                 referenceProperty = nil;
             }
+            
             print("behavior update mapping, target state:\(data["stateId"].stringValue)");
             behaviors[data["behavior_id"].stringValue]!.addMapping(data["mappingId"].stringValue, referenceProperty:referenceProperty, referenceNames: referenceNames, relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue)
-            if(data["referenceProperty"] != nil){
+            if(data["referenceProperty"] != nil || referenceNames != nil ){
             behaviors[data["behavior_id"].stringValue]!.createBehavior()
             }
             else{
-                print("could not create behavior because no reference property")
+                print("could not create behavior because no reference property or reference names")
             }
 
             return (type,"success")

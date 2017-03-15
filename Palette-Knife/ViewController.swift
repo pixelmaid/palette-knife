@@ -379,7 +379,6 @@ class ViewController: UIViewController {
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first  {
             let point = touch.locationInView(canvasViewSm)
-            print(point);
             let x = Float(point.x)
             let y = Float(point.y)
             ;

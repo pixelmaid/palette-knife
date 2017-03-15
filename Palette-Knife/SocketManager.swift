@@ -64,7 +64,7 @@ class SocketManager: WebSocketDelegate{
     }
     
     func websocketDidReceiveMessage(ws: WebSocket, text: String) {
-        print("text = \(text)");
+        //print("text = \(text)");
          if(text == "init_data_received" || text == "message received"){
             objc_sync_enter(dataQueue)
 

@@ -61,7 +61,7 @@ class BehaviorManager{
             behaviors[data["behavior_id"].stringValue]!.createBehavior()
            
             return ("state_added","success")
-        case "transition_added":
+        case "transition_added","transition_event_added":
             print("adding transition \(data)")
             let emitter:Emitter?
             if(data["emitter"] != nil){
@@ -80,14 +80,19 @@ class BehaviorManager{
             
               behaviors[data["behavior_id"].stringValue]!.addTransition(data["id"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["event"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: data["condition"].stringValue)
             
-            behaviors[data["behavior_id"].stringValue]!.createBehavior()
+           
+           
+            //TODO: placeholder to get stuff up and running
+            //need to remove eventually
             
-            if(data["name"]=="setup"){
+           /* if(data["name"]=="setup"){
                 print("adding set origin method and new stroke method")
                    behaviors[data["behavior_id"].stringValue]!.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
                  behaviors[data["behavior_id"].stringValue]!.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments:nil)
 
-            }
+            }*/
+            
+            behaviors[data["behavior_id"].stringValue]!.createBehavior()
 
             return ("transition_added","success")
             
@@ -96,7 +101,7 @@ class BehaviorManager{
             let arguments:[Any]?
             arguments = nil
             
-             behaviors[data["behavior_id"].stringValue]!.addMethod(data["targetTransition"].stringValue, methodId: data["id"].stringValue, targetMethod: data["targetMethod"].stringValue, arguments: arguments)
+             behaviors[data["behavior_id"].stringValue]!.addMethod(data["targetTransition"].stringValue, methodId: data["methodId"].stringValue, targetMethod: data["targetMethod"].stringValue, arguments: arguments)
             behaviors[data["behavior_id"].stringValue]!.createBehavior()
             return ("method_added","success")
             
@@ -132,13 +137,9 @@ class BehaviorManager{
             }
             
             print("behavior update mapping, target state:\(data["stateId"].stringValue)");
+            
             behaviors[data["behavior_id"].stringValue]!.addMapping(data["mappingId"].stringValue, referenceProperty:referenceProperty, referenceNames: referenceNames, relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue,type: data["constraint_type"].stringValue)
-            if(data["referenceProperty"] != nil || referenceNames != nil ){
             behaviors[data["behavior_id"].stringValue]!.createBehavior()
-            }
-            else{
-                print("could not create behavior because no reference property or reference names")
-            }
 
             return (type,"success")
         
@@ -146,6 +147,8 @@ class BehaviorManager{
             
             do{
             try behaviors[data["behavior_id"].stringValue]!.removeMapping(data["mappingId"].stringValue);
+                behaviors[data["behavior_id"].stringValue]!.createBehavior()
+
             return (type,"success")
 
             }
@@ -155,6 +158,20 @@ class BehaviorManager{
   
             }
 
+        case "mapping_reference_removed":
+            
+            do{
+                try behaviors[data["behavior_id"].stringValue]!.removeMappingReference(data["mappingId"].stringValue);
+                behaviors[data["behavior_id"].stringValue]!.createBehavior()
+                
+                return (type,"success")
+                
+            }
+            catch{
+                print("mapping id does not exist, cannot remove");
+                return (type,"failure")
+                
+            }
             
             
         case "generator_added":

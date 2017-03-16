@@ -18,7 +18,7 @@ class BehaviorDefinition {
     var generators = [String:(String,[Any])]()
     var storedGenerators = [String:Generator]()
     var methods = [(String,String,String,[Any]?)]()
-    var transitions = [String:(String,Emitter?,Bool,String,String,String,String?)]()
+    var transitions = [String:(String,Emitter?,Bool,String?,String,String,String?)]()
     var behaviorMapper = BehaviorMapper()
     var mappings = [String:(Any?,[String]?,String,String,String)]()
     var storedExpressions = [String:Expression]()
@@ -88,7 +88,10 @@ class BehaviorDefinition {
             var methods = getMethodsByTransition(data.0);
             json_string += "{"
             json_string += "\"id\":\""+key+"\","
-            json_string += "\"event\":\""+data.3+"\","
+            if(data.3 != nil){
+                json_string += "\"event\":\""+data.3!+"\","
+            }
+            
             json_string += "\"name\":\""+data.0+"\","
             json_string += "\"fromState\":\""+self.getStateByName(data.4)!+"\","
             json_string += "\"toState\":\""+self.getStateByName(data.5)!+"\","
@@ -166,7 +169,7 @@ class BehaviorDefinition {
     func addSine(name:String,freq:Float,amp:Float,phase:Float){
         generators[name] = ("sine",[freq,amp,phase]);
     }
-
+    
     
     func addRandomGenerator(name:String,min:Float,max:Float){
         generators[name] = ("random",[min,max]);
@@ -176,7 +179,7 @@ class BehaviorDefinition {
         
         generators[name] = ("logigrowth",[a,b,k]);
     }
-
+    
     
     func addAlternate(name:String,values:[Float]){
         generators[name] = ("alternate",[values]);
@@ -191,19 +194,30 @@ class BehaviorDefinition {
         methods.append((targetTransition,methodId,targetMethod,arguments))
     }
     
-    func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String, fromStateId:String,toStateId:String, condition:String?){
+    func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String?, fromStateId:String,toStateId:String, condition:String?){
         transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition))
     }
     
     func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String, type:String){
         mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId,type))
-        print("current mappings: \(mappings)");
+       
     }
     
     func removeMapping(id:String) throws{
         print("removing mappings \(mappings,id)")
         if(mappings[id] != nil){
             mappings.removeValueForKey(id);
+            return;
+        }
+        throw BehaviorError.mappingDoesNotExist;
+        
+    }
+    
+    func removeMappingReference(id:String) throws{
+        print("removing mapping reference \(mappings,id)")
+        if(mappings[id] != nil){
+            mappings[id]!.0 = nil;
+            mappings[id]!.1 = nil;
             return;
         }
         throw BehaviorError.mappingDoesNotExist;
@@ -235,7 +249,7 @@ class BehaviorDefinition {
         case "logigrowth":
             let logigrowth = LogiGrowthGenerator(a: data.1[0] as! Float, b:  data.1[1] as! Float, k:  data.1[2] as! Float)
             storedGenerators[name] = logigrowth;
-
+            
             break;
         case "alternate":
             let alternate = Alternate(values:data.1[0] as! [Float])
@@ -286,11 +300,11 @@ class BehaviorDefinition {
             else{
                 operand1 = (emitter1 as! Model)[refPropList[0]]! as! Observable<Float>
             }
-
+            
             if(refPropList.count > 1){
-              
+                
                 for var i in 1..<refPropList.count{
-                  operand1 = operand1[refPropList[i]] as! Observable<Float>
+                    operand1 = operand1[refPropList[i]] as! Observable<Float>
                 }
             }
         }
@@ -314,12 +328,12 @@ class BehaviorDefinition {
             else{
                 operand2 = (emitter2 as! Model)[refPropList[0]] as! Observable<Float>
             }
-
+            
             if(refPropList.count > 1){
                 
                 for var i in 1..<refPropList.count{
                     operand2 = operand2[refPropList[i]] as! Observable<Float>
-
+                    
                 }
             }
         }
@@ -400,62 +414,80 @@ class BehaviorDefinition {
         for var i in 0..<self.brushInstances.count{
             let targetBrush = self.brushInstances[i];
             targetBrush.clearBehavior();
-        for (key, generator_data) in generators{
-            self.generateGenerator(key,data:generator_data)
-        }
-        
-        for i in 0..<conditions.count{
-            self.generateCondition(targetBrush,data:conditions[i])
-        }
-        
-        for (key,expression_data) in expressions{
-            self.generateExpression(targetBrush,name:key,data:expression_data)
+            for (key, generator_data) in generators{
+                self.generateGenerator(key,data:generator_data)
+            }
             
+            for i in 0..<conditions.count{
+                self.generateCondition(targetBrush,data:conditions[i])
+            }
             
+            for (key,expression_data) in expressions{
+                self.generateExpression(targetBrush,name:key,data:expression_data)
+                
+                
+                
+            }
             
-        }
-        
-        for (id,state) in states{
-            behaviorMapper.createState(targetBrush,stateId:id, stateName:state)
+            for (id,state) in states{
+                behaviorMapper.createState(targetBrush,stateId:id, stateName:state)
+                
+            }
             
-        }
-        
-        for (key,transition) in transitions{
-            var reference:Any
-            if(transition.1 == nil){
-                if(transition.2){
-                    reference = targetBrush.parent!
+            for (key,transition) in transitions{
+                if((transition.3?.isEmpty) == false){
+                    var reference:Any
+                    if(transition.1 == nil){
+                        if(transition.2){
+                            reference = targetBrush.parent!
+                        }
+                        else{
+                            reference = targetBrush
+                        }
+                    }
+                    else{
+                        reference = transition.1!;
+                    }
+                    let condition:Condition?
+                    if((transition.6) != nil){
+                        condition = storedConditions[transition.6!]
+                    }
+                    else{
+                        condition = nil
+                    }
+                    
+                    
+                    print("generating transition \(key) because event is: \(transition.3?.isEmpty)");
+
+                    behaviorMapper.createStateTransition(key,name: transition.0,reference:reference as! Emitter, relative: targetBrush, eventName: transition.3!, fromStateId:transition.4,toStateId:transition.5, condition: condition)
+                }
+                    
+                    
+                else{
+                    print("could not generate transition \(key) because event is empty")
+                    
+                }
+                
+            }
+            
+            for method in methods{
+                print("generating method:\(targetBrush,transitionName:method.0,methodId:method.1,methodName:method.2,arguments:method.3)");
+                behaviorMapper.addMethod(targetBrush,transitionName:method.0,methodId:method.1,methodName:method.2,arguments:method.3);
+            }
+            
+            //referenceProperty!,referenceName!,relativePropertyName,stateId
+            for (id, mapping_data) in mappings{
+                if(mapping_data.0 != nil || mapping_data.1 != nil ){
+                    print("generating mapping \(id) because reference is not nil")
+
+                    self.generateMapping(targetBrush,id:id, data:mapping_data);
                 }
                 else{
-                    reference = targetBrush
+                    print("could not generate mapping \(id) because reference is nil")
                 }
+                targetBrush.setupTransition();
+                
             }
-            else{
-                reference = transition.1!;
-            }
-            let condition:Condition?
-            if((transition.6) != nil){
-                condition = storedConditions[transition.6!]
-            }
-            else{
-                condition = nil
-            }
-            
-            
-            behaviorMapper.createStateTransition(key,name: transition.0,reference:reference as! Emitter, relative: targetBrush, eventName: transition.3, fromStateId:transition.4,toStateId:transition.5, condition: condition)
-            
-        }
-        
-        for method in methods{
-            behaviorMapper.addMethod(targetBrush,transitionName:method.0,methodId:method.1,methodName:method.2,arguments:method.3);
-        }
-        
-        //referenceProperty!,referenceName!,relativePropertyName,stateId
-        for (id, mapping_data) in mappings{
-            self.generateMapping(targetBrush,id:id, data:mapping_data);
-        }
-            targetBrush.setupTransition();
-
         }
         
         

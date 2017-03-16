@@ -329,6 +329,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         for i in 0..<methods.count{
             let method = methods[i];
             let methodName = method.name;
+            print("executing method:\(method.name)");
             switch (methodName){
             case "newStroke":
                 self.newStroke();
@@ -449,11 +450,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         data.2.removeKey(data.1)
     }
     
-    func addMethod(transitionName:String, methodId:String, methodName:String, arguments:[Any]?){
-        let transition = self.getTransitionByName(transitionName);
-        if(transition != nil){
-            transition!.addMethod(methodId, name:methodName,arguments:arguments)
-        }
+    func addMethod(transitionId:String, methodId:String, methodName:String, arguments:[Any]?){
+        print("adding method \(methodId) for transition \(transitionId)");
+        
+        transitions[transitionId]!.addMethod(methodId, name:methodName,arguments:arguments)
+        
         
     }
     

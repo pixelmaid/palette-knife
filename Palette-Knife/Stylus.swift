@@ -36,7 +36,6 @@ class Stylus: TimeSeries, WebTransmitter {
     var constraintTransmitComplete = true;
     var time = Observable<Float>(0)
     var moveDist = Float(0);
-    var moveLimit = Float(20);
     // var testCount = 4;
     init(x:Float,y:Float,angle:Float,force:Float){
         prevPosition = Point(x:0, y:0)
@@ -163,7 +162,6 @@ class Stylus: TimeSeries, WebTransmitter {
             else{
                 
                     moveDist = 0;
-                    moveLimit = Float(arc4random_uniform(10) + 60)
                     NSNotificationCenter.defaultCenter().postNotificationName(key.0, object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE"])
                 
             }

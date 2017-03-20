@@ -13,7 +13,7 @@ class BehaviorDefinition {
     
     var brushInstances = [Brush]();
     var states = [String:String]()
-    var expressions = [String:(Any?,[String]?,Any?,[String]?,String)]()
+    var expressions = [String:([(Any?,[String]?)],String)]();
     var conditions = [(String,Any?,[String]?,Any?,[String]?,String)]()
     var generators = [String:(String,[Any])]()
     var storedGenerators = [String:Generator]()
@@ -21,7 +21,7 @@ class BehaviorDefinition {
     var transitions = [String:(String,Emitter?,Bool,String?,String,String,String?)]()
     var behaviorMapper = BehaviorMapper()
     var mappings = [String:(Any?,[String]?,String,String,String)]()
-    var storedExpressions = [String:Expression]()
+    var storedExpressions = [String:TextExpression]()
     var storedConditions = [String:Condition]()
     var name:String;
     var id: String;
@@ -224,8 +224,8 @@ class BehaviorDefinition {
         
     }
     
-    func addExpression(name:String, emitter1:Any?, operand1Names:[String]?, emitter2:Any?,operand2Names:[String]?, type:String){
-        expressions[name]=(emitter1, operand1Names, emitter2, operand2Names,type);
+    func addExpression(id:String, emitterOperandList:[(Any?,[String]?)], expressionText:String){
+        expressions[id]=(emitterOperandList,expressionText);
     }
     
     
@@ -261,6 +261,44 @@ class BehaviorDefinition {
         default:
             break;
         }
+    }
+    
+    func generateSingleOperand(targetBrush:Brush, emitter:Any?,propList:[String]?)->Observable<Float>{
+        var targetEmitter:Any;
+        var operand:Observable<Float>
+        if(emitter == nil){
+            targetEmitter = targetBrush;
+        }
+        else{
+            targetEmitter = emitter;
+        }
+        if(propList != nil){
+            if(storedGenerators[propList![0]]) != nil{
+                operand = storedGenerators[propList![0]]!;
+            }
+            else if(storedExpressions[propList![0]] != nil){
+                operand = storedExpressions[propList![0]]!;
+                
+            }
+            else if(storedConditions[propList![0]] != nil){
+                operand = storedConditions[propList![0]]!;
+                
+            }
+            else{
+                operand = (emitter as! Model)[propList![0]]! as! Observable<Float>
+            }
+            
+            if(propList!.count > 1){
+                
+                for var i in 1..<propList!.count{
+                    operand = operand[propList![i]] as! Observable<Float>
+                }
+            }
+        }
+        else{
+            operand = emitter as! Observable<Float>
+        }
+        return operand;
     }
     
     func generateOperands(targetBrush:Brush,data:(Any?,[String]?,Any?,[String]?,String))->(Observable<Float>,Observable<Float>){
@@ -358,39 +396,16 @@ class BehaviorDefinition {
         
     }
     
-    func generateExpression(targetBrush:Brush, name:String,data:(Any?,[String]?,Any?,[String]?,String)){
-        let operands = generateOperands(targetBrush, data:data)
-        let operand1 = operands.0;
-        let operand2 = operands.1;
-        let expression:Expression;
-        switch(data.4){
-        case "add":
-            expression = AddExpression(operand1: operand1,operand2: operand2)
-        case "mult":
-            expression = MultExpression(operand1: operand1,operand2: operand2)
-            
-            break;
-        case "log":
-            expression = LogExpression(operand1: operand1,operand2: operand2)
-            
-            break;
-        case "exp":
-            expression = ExpExpression(operand1: operand1,operand2: operand2)
-            
-            break;
-        case "logigrowth":
-            expression = LogiGrowthExpression(operand1: operand1,operand2: operand2)
-            
-            break;
-        case "sub":
-            expression = SubExpression(operand1: operand1,operand2: operand2)
-            
-            break;
-        default:
-            expression = AddExpression(operand1: operand1,operand2: operand2)
-            
-            break;
+    func generateExpression(targetBrush:Brush, name:String, data:([(Any?,[String]?)],String)){
+        var operands = [String:Observable<Float>]();
+        for i in 0..<data.0.count {
+            let emitter = data.0[i].0;
+            let propList = data.0[i].1;
+            let operand = self.generateSingleOperand(targetBrush, emitter: emitter, propList: propList)
+            operands[data.0[i].1![0]] = operand;
         }
+    
+        let expression = TextExpression(id:name,operandList: operands, text: data.1);
         self.storedExpressions[name] = expression;
     }
     

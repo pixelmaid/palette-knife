@@ -215,7 +215,35 @@ class BehaviorManager{
             return ("generator_added","success");
 
             
-            break;
+           
+            
+        case "expression_added":
+            
+            let emitterOperandList = [(Any?,[String]?)]();
+            let expression_list = data["expression_list"].arrayValue;
+            for i in 0..<expression_list.count{
+                let emitterValue = (expression_list[i].arrayValue)[0].stringValue;
+                let emitter:Any?
+                switch(emitterValue){
+                case "stylus":
+                    emitter = stylus;
+                    break;
+                default:
+                    emitter = nil;
+                    break;
+                }
+
+            }
+            
+            
+            behaviors[data["behavior_id"].stringValue]!.addExpression(data["expression_id"].stringValue, emitterOperandList: emitterOperandList, expressionText: data["expression_text"].stringValue)
+        
+        
+            behaviors[data["behavior_id"].stringValue]!.createBehavior()
+            
+            return ("expression_added","success");
+            
+            
             
         default:
             break
@@ -330,7 +358,7 @@ class BehaviorManager{
         let dripBehavior = initSpawnTemplate("dripBehavior");
         
         dripBehavior!.addLogiGrowthGenerator("weightGenerator", a:10,b:15,k:0.36);
-        dripBehavior!.addExpression("weightExpression", emitter1: nil, operand1Names:["weight"], emitter2: nil, operand2Names: ["weightGenerator"], type: "add")
+      //  dripBehavior!.addExpression("weightExpression", emitter1: nil, operand1Names:["weight"], emitter2: nil, operand2Names: ["weightGenerator"], type: "add")
         dripBehavior!.addRandomGenerator("randomTimeGenerator", min:50, max: 100)
         dripBehavior!.addCondition("lengthCondition", reference: nil, referenceNames: ["distance"], relative: nil, relativeNames: ["randomTimeGenerator"], relational: ">")
         dripBehavior!.addState(NSUUID().UUIDString, stateName: "die");
@@ -359,7 +387,7 @@ class BehaviorManager{
     func initRadialBehavior()->BehaviorDefinition?{
         do{
             let radial_spawnBehavior = initSpawnTemplate("radial_spawn_behavior");
-            radial_spawnBehavior!.addExpression("angle_expression", emitter1: nil, operand1Names: ["index"], emitter2: Observable<Float>(60), operand2Names: nil, type: "mult")
+         //   radial_spawnBehavior!.addExpression("angle_expression", emitter1: nil, operand1Names: ["index"], emitter2: Observable<Float>(60), operand2Names: nil, type: "mult")
             
             radial_spawnBehavior!.addMapping(NSUUID().UUIDString, referenceProperty: nil, referenceNames: ["angle_expression"], relativePropertyName: "angle", stateId: "start", type:"active")
             

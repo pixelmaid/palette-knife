@@ -46,6 +46,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var dy:Observable<Float>
     var ox:Observable<Float>
     var oy:Observable<Float>
+    //TODO: need to fix scaling so that it works with behaviors
     var scaling = Point(x:1,y:1)
     var angle = Observable<Float>(0)
     var bufferLimitX = Observable<Float>(0)

@@ -127,7 +127,7 @@ class Stylus: TimeSeries, WebTransmitter {
         //TODO: silent set, need to make more robust/ readable
         self.position.x.setSilent(x)
         self.position.y.setSilent(y)
-
+        print("stylus down listeners\(self.keyStorage["STYLUS_DOWN"])");
         for key in self.keyStorage["STYLUS_DOWN"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;

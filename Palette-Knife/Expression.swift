@@ -50,31 +50,41 @@ class TextExpression:Observable<Float>{
     var id: String;
 
     init(id:String,operandList:[String:Observable<Float>],text:String){
-        super.init(0);
+        self.id = id;
         self.text = text;
         self.operandList = operandList;
-        
-        for (_,value) in self.operandList{
+        super.init(0);
+
+        for (key,value) in self.operandList{
+            print("subscribing to \(key,value)");
            value.subscribe(self.id);
             let operandKey = NSUUID().UUIDString;
            value.didChange.addHandler(self, handler: TextExpression.setHandler,key:operandKey)
         }
         
-      
-    //initial set after intialize
-        //TODO: check if this causes errors...
-        //self.setHandler((name,0,0),key:"_")
-
-        
     }
     
-  
-    func setHandler(data:(String,Float,Float),key:String){
-        var valueString:String;
+    override func get(id:String?) -> Float {
+        print("getting constraint value \(constraintTarget)");
+        invalidated = false;
+        if(isPassive){
+            return calculateValue();
+        }
+        return super.get(id);
+    }
+    
+    func calculateValue()->Float{
+        var valueString = "";
+
         let stringArr = text.characters.split{$0 == "%"}.map(String.init);
+        print ("stringArr =\(stringArr,self.operandList)");
         var currentVals = [String: Float]();
+        
+        
         for (key,value) in self.operandList{
             currentVals[key] = value.get(self.id);
+            print("operand value at = \(key, currentVals[key])");
+            
         }
         
         for i in 0..<stringArr.count{
@@ -88,17 +98,25 @@ class TextExpression:Observable<Float>{
             
         }
         print("text expression string to evaluate = \(valueString)");
-        
+        var result:Float = 0;
+        let exception = tryBlock {
         let exp: NSExpression = NSExpression(format: valueString)
-        let result: Float = exp.expressionValueWithObject(nil, context: nil) as! Float // 25.0
-        print("resupt of text expression = \(result)");
+           result  = exp.expressionValueWithObject(nil, context: nil) as! Float// 25.0
+        
+        print("result of text expression = \(result)");
+        }
+        print("exception: \(exception)")
+
+        return result;
+
+    }
+  
+    func setHandler(data:(String,Float,Float),key:String){
+        let result = self.calculateValue();
         self.set(result)
     }
     
-    //TODO: need to fix this- expressions should either be push or pull but not both...
-    override func get(id:String?)->Float{
-        return super.get(id);
-    }
+
 }
 
 

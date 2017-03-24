@@ -190,8 +190,15 @@ class BehaviorDefinition {
         states[stateId] = stateName;
     }
     
-    func addMethod(targetTransition:String, methodId: String, targetMethod:String, arguments:[Any]?){
-        methods.append((targetTransition,methodId,targetMethod,arguments))
+    func addMethod(targetTransition:String?, methodId: String, targetMethod:String, arguments:[Any]?){
+        var tt:String;
+        if(targetTransition != nil){
+            tt = targetTransition!
+        }
+        else{
+            tt = "globalTransition"
+        }
+        methods.append((tt,methodId,targetMethod,arguments))
     }
     
     func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String?, fromStateId:String,toStateId:String, condition:String?){
@@ -199,6 +206,7 @@ class BehaviorDefinition {
     }
     
     func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String, type:String){
+        print("mapping type = \(type)");
         mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId,type))
        
     }
@@ -226,6 +234,7 @@ class BehaviorDefinition {
     
     func addExpression(id:String, emitterOperandList:[(Any?,[String]?)], expressionText:String){
         expressions[id]=(emitterOperandList,expressionText);
+        print("adding expression\(expressions)");
     }
     
     
@@ -264,6 +273,7 @@ class BehaviorDefinition {
     }
     
     func generateSingleOperand(targetBrush:Brush, emitter:Any?,propList:[String]?)->Observable<Float>{
+        print("stored generators: \(storedGenerators)");
         var targetEmitter:Any;
         var operand:Observable<Float>
         if(emitter == nil){
@@ -429,6 +439,7 @@ class BehaviorDefinition {
         for var i in 0..<self.brushInstances.count{
             let targetBrush = self.brushInstances[i];
             targetBrush.clearBehavior();
+            targetBrush.createGlobals();
             for (key, generator_data) in generators{
                 self.generateGenerator(key,data:generator_data)
             }
@@ -472,7 +483,7 @@ class BehaviorDefinition {
                     }
                     
                     
-                    print("generating transition \(key) because event is: \(transition.3?.isEmpty)");
+                    print("generating transition \(key) because event is: \(transition.3)");
 
                     behaviorMapper.createStateTransition(key,name: transition.0,reference:reference as! Emitter, relative: targetBrush, eventName: transition.3!, fromStateId:transition.4,toStateId:transition.5, condition: condition)
                 }

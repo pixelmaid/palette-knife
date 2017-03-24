@@ -23,7 +23,7 @@ class BehaviorManager{
     }
     
     
-    func handleAuthoringRequest(authoring_data:JSON) throws->(String,String){
+    func handleAuthoringRequest(authoring_data:JSON) throws->(String,String,JSON?){
         let data = authoring_data["data"] as JSON;
         let type = data["type"].stringValue;
         print("authoring request \(type)");
@@ -48,20 +48,21 @@ class BehaviorManager{
                 activeBehavior?.addState(endId, stateName: "die");
                 
                 let brush = Brush(name: "brush_"+data["id"].stringValue, behaviorDef: activeBehavior, parent: nil, canvas: canvas)
-                return ("behavior_added","success")
+                return ("behavior_added","success",nil)
             }
-         
             
-        
+            
+            
             
         case "state_added":
-             print("state added behaviors \(behaviors.count,data["behavior_id"].stringValue,behaviors)");
-            behaviors[data["behavior_id"].stringValue]!.addState(data["id"].stringValue, stateName: data["name"].stringValue);
+            print("state added behaviors \(behaviors.count,data["behaviorId"].stringValue,behaviors)");
+            behaviors[data["behaviorId"].stringValue]!.addState(data["id"].stringValue, stateName: data["name"].stringValue);
             
-            behaviors[data["behavior_id"].stringValue]!.createBehavior()
-           
-            return ("state_added","success")
+            behaviors[data["behaviorId"].stringValue]!.createBehavior()
+            
+            return ("state_added","success",nil)
         case "transition_added","transition_event_added":
+            let event = data["eventName"].stringValue;
             print("adding transition \(data)")
             let emitter:Emitter?
             if(data["emitter"] != nil){
@@ -75,101 +76,195 @@ class BehaviorManager{
                 }
             }
             else{
-                emitter = nil;
+                switch(event){
+                    case "STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE":
+                    emitter = stylus
+                    break;
+                    case "TICK","STATE_COMPLETE":
+                    emitter = nil;
+                    break;
+                default:
+                    emitter = nil
+                    break;
+                }
             }
             
-              behaviors[data["behavior_id"].stringValue]!.addTransition(data["id"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["event"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: data["condition"].stringValue)
+            behaviors[data["behaviorId"].stringValue]!.addTransition(data["id"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["eventName"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: data["condition"].stringValue)
             
-           
-           
+            
+            
             //TODO: placeholder to get stuff up and running
             //need to remove eventually
             
-           /* if(data["name"]=="setup"){
-                print("adding set origin method and new stroke method")
-                   behaviors[data["behavior_id"].stringValue]!.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
-                 behaviors[data["behavior_id"].stringValue]!.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments:nil)
-
-            }*/
+            /* if(data["name"]=="setup"){
+             print("adding set origin method an fd new stroke method")
+             behaviors[data["behaviorId"].stringValue]!.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
+             behaviors[data["behaviorId"].stringValue]!.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments:nil)
+             
+             }*/
             
-            behaviors[data["behavior_id"].stringValue]!.createBehavior()
-
-            return ("transition_added","success")
+            behaviors[data["behaviorId"].stringValue]!.createBehavior()
             
-        case "method_added":
-            //TODO: need to adjust this so that methods with existing arguments can be added
-            let arguments:[Any]?
-            arguments = nil
+            return ("transition_added","success",nil)
             
-             behaviors[data["behavior_id"].stringValue]!.addMethod(data["targetTransition"].stringValue, methodId: data["methodId"].stringValue, targetMethod: data["targetMethod"].stringValue, arguments: arguments)
-            behaviors[data["behavior_id"].stringValue]!.createBehavior()
-            return ("method_added","success")
-            
-            
-        case "mapping_added","mapping_updated":
-            let referenceNames:[String]?
-            let referenceProperty:Any?
-            
-            if(data["referenceNames"] != nil){
-                let jsonList =  data["referenceNames"].arrayValue;
-                referenceNames = [String]();
-                for i in jsonList{
-                    referenceNames?.append(i.stringValue);
-                }
+        case "method_added","method_argument_changed":
+            let behaviorId = data["behaviorId"].stringValue
+            let targetTransition:String?
+            if(data["targetTransition"] != nil){
+                targetTransition = data["targetTransition"].stringValue;
             }
             else{
-                referenceNames = nil;
+                targetTransition = nil;
             }
-            if(data["referenceProperty"] != nil){
-                switch(data["referenceProperty"].stringValue){
-                case "stylus":
-                    print("reference property is stylus")
-                    referenceProperty = stylus;
-                    break;
-                default:
-                    referenceProperty = nil;
-                    break;
-                }
+            var arguments:[Any]? = nil;
+            let dataArguments = data["args"];
+            let targetMethod = data["targetMethod"].stringValue
+            
+            var methodJSON:JSON = [:]
+            switch(targetMethod){
+              case "spawn":
+                let name:String;
+                let behavior:BehaviorDefinition;
+                let num:Int;
                 
+                if(dataArguments != nil){
+                    let spawnBehaviorId = (dataArguments.arrayValue)[0].stringValue;
+                    if(spawnBehaviorId == "self"){
+                        behavior = self.behaviors[behaviorId]!;
+                    }
+                    else{
+                        behavior = self.behaviors[spawnBehaviorId]!;
+                    }
+                    name = behavior.name+"_child";
+                    num = (dataArguments.arrayValue)[1].intValue
+                   
+                    arguments = [name,behavior,num];
+                }
+                else{
+                    arguments = [self.behaviors[behaviorId]!.name+"_child","self",1]
+                }
+                var behavior_list = [String:String]()
+                
+                for (key,value) in self.behaviors{
+                    if key != behaviorId {
+                    behavior_list[key] = value.name;
+                    }
+                }
+                behavior_list["self"] = "self";
+                methodJSON["argumentList"] = JSON(behavior_list);
+                methodJSON["defaultArgument"] = JSON("self");
+                break;
+            case "setOrigin", "newStroke":
+                if(dataArguments != nil){
+                    let arg = (dataArguments.arrayValue)[0].stringValue;
+                    switch(arg){
+                        case "stylus_position":
+                            arguments = [stylus.position];
+                            break;
+                        case "parent_position":
+                            arguments = ["parent_position"];
+                            break;
+                    case "parent_origin":
+                        arguments = ["parent_origin"];
+                        break;
+                    default:
+                        //TODO: handle arbitrary point values here
+                        break;
+                    }
+                }
+                else{
+                    arguments = [stylus.position];
+                }
+                methodJSON["argumentList"] = JSON(["stylus_position":"stylus_position","parent_position":"parent_position","parent_origin":"parent_origin" ])
+                methodJSON["defaultArgument"] = JSON("stylus_position");
+
+                break;
+            case "startTimer":
+                arguments = nil
+                break;
+            case "stopTimer":
+                arguments = nil
+
+                break;
+            default:
+                arguments = nil;
+                break;
             }
-            else{
-                referenceProperty = nil;
-            }
+            
+            print("arguments= \(arguments)")
+            behaviors[data["behaviorId"].stringValue]!.addMethod(targetTransition, methodId: data["methodId"].stringValue, targetMethod: targetMethod, arguments: arguments)
+            behaviors[data["behaviorId"].stringValue]!.createBehavior();
+            
+            return ("method_added","success",methodJSON)
+            
+            
+        case "mapping_added":
+            let behaviorId = data["behaviorId"].stringValue;
+            let expressionId = data["expressionId"].stringValue;
+            self.addExpression(behaviorId, expressionId: expressionId, expressionText: "", expressionPropertyList: nil)
+            behaviors[behaviorId]!.addMapping(data["mappingId"].stringValue, referenceProperty:nil, referenceNames: [expressionId], relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue,type: data["constraintType"].stringValue)
+            
+            behaviors[behaviorId]!.createBehavior()
+            
+            return (type,"success",nil)
+            
+        case "mapping_updated":
+        let behaviorId = data["behaviorId"].stringValue;
+            let expressionId = data["expressionId"].stringValue;
+            
+            let propertyList = data["expressionPropertyList"];
+            let expressionText = data["expressionText"].stringValue;
+            
+            self.addExpression(behaviorId, expressionId: expressionId, expressionText: expressionText, expressionPropertyList: propertyList)
+
             
             print("behavior update mapping, target state:\(data["stateId"].stringValue)");
             
-            behaviors[data["behavior_id"].stringValue]!.addMapping(data["mappingId"].stringValue, referenceProperty:referenceProperty, referenceNames: referenceNames, relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue,type: data["constraint_type"].stringValue)
-            behaviors[data["behavior_id"].stringValue]!.createBehavior()
+            behaviors[behaviorId]!.addMapping(data["mappingId"].stringValue, referenceProperty:nil, referenceNames: [expressionId], relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue,type: data["constraintType"].stringValue)
+            behaviors[data["behaviorId"].stringValue]!.createBehavior()
+            
+            return (type,"success",nil)
+            
+        case "expression_text_modified":
+            let behaviorId = data["behaviorId"].stringValue;
+            let expressionId = data["expressionId"].stringValue;
+            let expressionText = data["expressionText"].stringValue;
+            let propertyList = data["expressionPropertyList"];
 
-            return (type,"success")
-        
+            self.addExpression(behaviorId, expressionId: expressionId, expressionText: expressionText, expressionPropertyList: propertyList)
+            
+            behaviors[behaviorId]!.createBehavior()
+            
+            return (type,"success",nil)
+
+            
         case "mapping_relative_removed":
             
             do{
-            try behaviors[data["behavior_id"].stringValue]!.removeMapping(data["mappingId"].stringValue);
-                behaviors[data["behavior_id"].stringValue]!.createBehavior()
-
-            return (type,"success")
-
+                try behaviors[data["behaviorId"].stringValue]!.removeMapping(data["mappingId"].stringValue);
+                behaviors[data["behaviorId"].stringValue]!.createBehavior()
+                
+                return (type,"success",nil)
+                
             }
             catch{
                 print("mapping id does not exist, cannot remove");
-                return (type,"failure")
-  
+                return (type,"failure",nil)
+                
             }
-
+            
         case "mapping_reference_removed":
             
             do{
-                try behaviors[data["behavior_id"].stringValue]!.removeMappingReference(data["mappingId"].stringValue);
-                behaviors[data["behavior_id"].stringValue]!.createBehavior()
+                try behaviors[data["behaviorId"].stringValue]!.removeMappingReference(data["mappingId"].stringValue);
+                behaviors[data["behaviorId"].stringValue]!.createBehavior()
                 
-                return (type,"success")
+                return (type,"success",nil)
                 
             }
             catch{
                 print("mapping id does not exist, cannot remove");
-                return (type,"failure")
+                return (type,"failure",nil)
                 
             }
             
@@ -179,26 +274,26 @@ class BehaviorManager{
             
             switch(type){
             case "random":
-                  behaviors[data["behavior_id"].stringValue]!.addRandomGenerator(data["name"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue)
-                  break;
+                behaviors[data["behaviorId"].stringValue]!.addRandomGenerator(data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue)
+                break;
             case "alternate":
                 let jsonValues =  data["values"].arrayValue;
                 var values = [Float]();
                 for i in jsonValues{
                     values.append(i.floatValue);
                 }
-                 behaviors[data["behavior_id"].stringValue]!.addAlternate(data["name"].stringValue, values: values)
+                behaviors[data["behaviorId"].stringValue]!.addAlternate(data["generatorId"].stringValue, values: values)
                 break;
                 
                 
             case "range":
                 
-                behaviors[data["behavior_id"].stringValue]!.addRange(data["name"].stringValue, min: data["min"].intValue, max: data["max"].intValue, start: data["start"].floatValue, stop: data["stop"].floatValue)
+                behaviors[data["behaviorId"].stringValue]!.addRange(data["generatorId"].stringValue, min: data["min"].intValue, max: data["max"].intValue, start: data["start"].floatValue, stop: data["stop"].floatValue)
                 break;
                 
             case "sine":
-                behaviors[data["behavior_id"].stringValue]!.addSine(data["name"].stringValue, freq: data["freq"].floatValue, amp: data["amp"].floatValue, phase: data["phase"].floatValue);
-
+                behaviors[data["behaviorId"].stringValue]!.addSine(data["generatorId"].stringValue, freq: data["freq"].floatValue, amp: data["amp"].floatValue, phase: data["phase"].floatValue);
+                
                 break;
                 // case "random_walk":
                 
@@ -210,38 +305,9 @@ class BehaviorManager{
                 break;
             }
             
-            behaviors[data["behavior_id"].stringValue]!.createBehavior()
+            behaviors[data["behaviorId"].stringValue]!.createBehavior()
             
-            return ("generator_added","success");
-
-            
-           
-            
-        case "expression_added":
-            
-            let emitterOperandList = [(Any?,[String]?)]();
-            let expression_list = data["expression_list"].arrayValue;
-            for i in 0..<expression_list.count{
-                let emitterValue = (expression_list[i].arrayValue)[0].stringValue;
-                let emitter:Any?
-                switch(emitterValue){
-                case "stylus":
-                    emitter = stylus;
-                    break;
-                default:
-                    emitter = nil;
-                    break;
-                }
-
-            }
-            
-            
-            behaviors[data["behavior_id"].stringValue]!.addExpression(data["expression_id"].stringValue, emitterOperandList: emitterOperandList, expressionText: data["expression_text"].stringValue)
-        
-        
-            behaviors[data["behavior_id"].stringValue]!.createBehavior()
-            
-            return ("expression_added","success");
+            return ("generator_added","success",nil);
             
             
             
@@ -251,7 +317,44 @@ class BehaviorManager{
         
         
         
-        return (type,"fail")
+        return (type,"fail",nil)
+    }
+    
+    func addExpression(behaviorId:String, expressionId:String, expressionText:String, expressionPropertyList:JSON?){
+        var emitterOperandList = [(Any?,[String]?)]();
+        
+        if(expressionPropertyList != nil){
+            print("expression list present\(expressionPropertyList!.arrayValue)")
+            var dataExpressionList = expressionPropertyList!.arrayValue;
+        for i in 0..<dataExpressionList.count{
+            let dataEmitterValue = (dataExpressionList[i].arrayValue)[0].stringValue;
+            let emitter:Any?
+            switch(dataEmitterValue){
+            case "stylus":
+                emitter = stylus;
+                break;
+            default:
+                emitter = nil;
+                break;
+            }
+            var propertyList:[String]?;
+            
+            if ((dataExpressionList[i].arrayValue)[1] != nil) {
+                let dataPropertyList = (dataExpressionList[i].arrayValue)[1].arrayValue;
+                propertyList = [String]();
+                
+                for i in 0..<dataPropertyList.count {
+                    let property = dataPropertyList[i].stringValue;
+                    propertyList!.append(property)
+                }
+            }
+            
+            emitterOperandList.append((emitter,propertyList));
+        }
+        }
+        
+        print("emitter operand list \(emitterOperandList)")
+        behaviors[behaviorId]!.addExpression(expressionId, emitterOperandList: emitterOperandList, expressionText: expressionText)
     }
     
     
@@ -358,7 +461,7 @@ class BehaviorManager{
         let dripBehavior = initSpawnTemplate("dripBehavior");
         
         dripBehavior!.addLogiGrowthGenerator("weightGenerator", a:10,b:15,k:0.36);
-      //  dripBehavior!.addExpression("weightExpression", emitter1: nil, operand1Names:["weight"], emitter2: nil, operand2Names: ["weightGenerator"], type: "add")
+        //  dripBehavior!.addExpression("weightExpression", emitter1: nil, operand1Names:["weight"], emitter2: nil, operand2Names: ["weightGenerator"], type: "add")
         dripBehavior!.addRandomGenerator("randomTimeGenerator", min:50, max: 100)
         dripBehavior!.addCondition("lengthCondition", reference: nil, referenceNames: ["distance"], relative: nil, relativeNames: ["randomTimeGenerator"], relational: ">")
         dripBehavior!.addState(NSUUID().UUIDString, stateName: "die");
@@ -387,7 +490,7 @@ class BehaviorManager{
     func initRadialBehavior()->BehaviorDefinition?{
         do{
             let radial_spawnBehavior = initSpawnTemplate("radial_spawn_behavior");
-         //   radial_spawnBehavior!.addExpression("angle_expression", emitter1: nil, operand1Names: ["index"], emitter2: Observable<Float>(60), operand2Names: nil, type: "mult")
+            //   radial_spawnBehavior!.addExpression("angle_expression", emitter1: nil, operand1Names: ["index"], emitter2: Observable<Float>(60), operand2Names: nil, type: "mult")
             
             radial_spawnBehavior!.addMapping(NSUUID().UUIDString, referenceProperty: nil, referenceNames: ["angle_expression"], relativePropertyName: "angle", stateId: "start", type:"active")
             
@@ -468,12 +571,12 @@ class BehaviorManager{
             branchBehavior.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "startInterval", arguments:nil)
             branchBehavior.addMethod("spawnEnd",  methodId:NSUUID().UUIDString, targetMethod: "destroy", arguments:nil)
             
-            branchBehavior.addExpression("xDeltaExp", emitter1: nil, operand1Names: ["parent","currentStroke","xBuffer"],emitter2: Observable<Float>(0.65), operand2Names: nil, type: "mult")
+            //branchBehavior.addExpression("xDeltaExp", emitter1: nil, operand1Names: ["parent","currentStroke","xBuffer"],emitter2: Observable<Float>(0.65), operand2Names: nil, type: "mult")
             
             
-            branchBehavior.addExpression("yDeltaExp", emitter1: nil, operand1Names: ["parent","currentStroke","yBuffer"], emitter2: Observable<Float>(0.65), operand2Names: nil, type: "mult")
+            //branchBehavior.addExpression("yDeltaExp", emitter1: nil, operand1Names: ["parent","currentStroke","yBuffer"], emitter2: /Observable<Float>(0.65), operand2Names: nil, type: "mult")
             
-            branchBehavior.addExpression("weightDeltaExp", emitter1: nil, operand1Names: ["parent","currentStroke","weightBuffer"],  emitter2: Observable<Float>(0.45), operand2Names: nil,type: "mult")
+            // branchBehavior.addExpression("weightDeltaExp", emitter1: nil, operand1Names: ["parent","currentStroke","weightBuffer"],  emitter2: Observable<Float>(0.45), operand2Names: nil,type: "mult")
             
             
             branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames: ["xDeltaExp"], relativePropertyName: "dx", stateId: "default", type:"active")

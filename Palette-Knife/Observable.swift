@@ -12,6 +12,7 @@ import SwiftKVC
 class Observable<T>:Model  {
     
     var name = "observable"
+    var isPassive = false;
     var invalidated = false;
     var constrained = false;
     var subscribers = [String:Int]();
@@ -35,6 +36,7 @@ class Observable<T>:Model  {
     
     func passiveConstrain(target:Observable<T>){
         self.constraintTarget = target;
+        target.isPassive = true;
     }
     
     //sets without raising change event

@@ -32,6 +32,7 @@ class State {
     
     func removeAllTransitions(){
         for (key,_) in transitions{
+
             removeTransitionMapping(key);
         }
     }

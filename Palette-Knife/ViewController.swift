@@ -160,7 +160,11 @@ class ViewController: UIViewController {
         case "authoring_request":
             do{
             let attempt = try behaviorManager!.handleAuthoringRequest(data.1! as JSON);
-                socketManager.sendData("{\"type\":\"authoring_response\",\"result\":\""+attempt.1+"\",\"authoring_type\":\""+attempt.0+"\"}");
+                var jsonArg = "null";
+                if(attempt.2 != nil){
+                    jsonArg = (attempt.2?.rawString())!;
+                }
+                socketManager.sendData("{\"type\":\"authoring_response\",\"result\":\""+attempt.1+"\",\"authoring_type\":\""+attempt.0+"\",\"data\":"+jsonArg+"}");
             }
             catch{
                 print("failed authoring request");

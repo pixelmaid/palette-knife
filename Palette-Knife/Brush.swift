@@ -67,6 +67,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var time = Observable<Float>(0)
     var id = NSUUID().UUIDString;
     let behavior_id:String?
+    let behaviorDef:BehaviorDefinition?
     var matrix = Matrix();
     var index = Observable<Float>(0) //stores index of child
     var ancestors = Observable<Float>(0);
@@ -87,6 +88,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         delta.parentName = "brush"
         self.currentState = "start";
         self.behavior_id = behaviorDef!.id;
+        self.behaviorDef = behaviorDef;
         
         //key for listening to status change events
         self.jogHandlerKey = NSUUID().UUIDString;
@@ -118,7 +120,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             behaviorDef?.addBrush(self)
         }
         //  _  = NSTimer.scheduledTimerWithTimeInterval(0.00001, target: self, selector: #selector(Brush.defaultCallback), userInfo: nil, repeats: false)
-    }
+          }
     
     
     func clearBehavior(){
@@ -128,6 +130,14 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         }
         self.transitions.removeAll();
         self.states.removeAll();
+    }
+    
+    //creates states and transitions for global actions and mappings
+    func createGlobals(){
+        let _ = self.createState("global",name: "global");
+        let globalEmitter = Emitter();
+        self.addStateTransition("globalTransition", name: "globalTransition", reference: globalEmitter, fromStateId: "global", toStateId: "global")
+
     }
     
     //  @objc func defaultCallback(){
@@ -333,6 +343,19 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             print("executing method:\(method.name)");
             switch (methodName){
             case "newStroke":
+                let arg = method.arguments![0];
+                print("set origin argument \(method.arguments![0])");
+                if  let arg_string = arg as? String {
+                    if(arg_string  == "parent_position"){
+                        self.setOrigin(self.parent!.position)
+                    }
+                    else if(arg_string  == "parent_origin"){
+                        self.setOrigin(self.parent!.origin)
+                    }
+                }else {
+                    self.setOrigin(method.arguments![0] as! Point)
+                }
+
                 self.newStroke();
                 break;
             case "startInterval":
@@ -345,8 +368,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 let arg = method.arguments![0];
                 print("set origin argument \(method.arguments![0])");
                 if  let arg_string = arg as? String {
-                    if(arg_string  == "parent"){
+                    if(arg_string  == "parent_position"){
                         self.setOrigin(self.parent!.position)
+                    }
+                    else if(arg_string  == "parent_origin"){
+                        self.setOrigin(self.parent!.origin)
                     }
                 }else {
                     self.setOrigin(method.arguments![0] as! Point)
@@ -356,7 +382,24 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 break;
             case "spawn":
                 print("spawning brush")
-                self.spawn((method.arguments![0] as! String), behavior:(method.arguments![1] as! BehaviorDefinition),num:(method.arguments![2] as! Int));
+                let arg = method.arguments![1];
+                let behaviorDef:BehaviorDefinition!;
+                if  let arg_string = arg as? String {
+                    if(arg_string == "parent"){
+                        behaviorDef = self.parent!.behaviorDef!;
+                    }
+                    else if(arg_string == "self"){
+                        behaviorDef = self.behaviorDef!;
+                    }
+                    else{
+                        behaviorDef = nil;
+                    }
+                }
+                else{
+                    behaviorDef = arg as! BehaviorDefinition;
+                }
+
+                self.spawn((method.arguments![0] as! String), behavior:behaviorDef,num:(method.arguments![2] as! Int));
                 break;
             case "bake":
                 self.bake();
@@ -393,6 +436,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
      */
     func addConstraint(id:String,reference:Observable<Float>, relative:Observable<Float>, stateId:String, type:String){
         //let stateKey = NSUUID().UUIDString; 
+        print("adding constraint \(type,reference,relative,stateId)")
         if(type == "active"){
             reference.subscribe(self.id);
             reference.didChange.addHandler(self, handler:  Brush.setHandler, key:id)
@@ -452,9 +496,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func addMethod(transitionId:String, methodId:String, methodName:String, arguments:[Any]?){
-        print("adding method \(methodId) for transition \(transitionId)");
+        print("adding method \(methodId) for transition \(transitionId,transitions)");
         
-        transitions[transitionId]!.addMethod(methodId, name:methodName,arguments:arguments)
+        (transitions[transitionId]!).addMethod(methodId, name:methodName,arguments:arguments)
         
         
     }

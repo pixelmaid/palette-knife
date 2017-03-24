@@ -218,6 +218,7 @@
 		5FEE2AC71DE127D800080095 /* dual_pen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dual_pen.png; sourceTree = "<group>"; };
 		5FEE2AC81DE127D800080095 /* lg_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lg_pen_blue.png; sourceTree = "<group>"; };
 		5FEE2ACB1DE1362500080095 /* BluetoothManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
+		5FF03E5C1E85C4A600C07484 /* ExceptionCatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExceptionCatcher.h; sourceTree = "<group>"; };
 		5FF5EFAA1D664F22001E1616 /* Observable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		5FF5EFAC1D6661EC001E1616 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		5FFDAB041D1DFA2500632A26 /* Canvas.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Canvas.swift; sourceTree = "<group>"; };
@@ -302,6 +303,7 @@
 				5FF5EFAA1D664F22001E1616 /* Observable.swift */,
 				5FCFDED41CF79B2400CE296B /* Numerical.swift */,
 				5F6A07ED1D63DCD80047FF56 /* Matrix.swift */,
+				5FF03E5C1E85C4A600C07484 /* ExceptionCatcher.h */,
 			);
 			name = base;
 			sourceTree = "<group>";

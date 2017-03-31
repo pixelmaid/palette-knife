@@ -13,11 +13,11 @@ class BehaviorDefinition {
     
     var brushInstances = [Brush]();
     var states = [String:String]()
-    var expressions = [String:([(Any?,[String]?)],String)]();
+    var expressions = [String:([String:(Any?,[String]?)],String)]();
     var conditions = [(String,Any?,[String]?,Any?,[String]?,String)]()
     var generators = [String:(String,[Any])]()
     var storedGenerators = [String:Generator]()
-    var methods = [(String,String,String,[Any]?)]()
+    var methods = [String:[(String,String,[Any]?)]]()
     var transitions = [String:(String,Emitter?,Bool,String?,String,String,String?)]()
     var behaviorMapper = BehaviorMapper()
     var mappings = [String:(Any?,[String]?,String,String,String)]()
@@ -85,7 +85,7 @@ class BehaviorDefinition {
         
         for(key, data) in transitions{
             
-            var methods = getMethodsByTransition(data.0);
+            var method_list = methods[data.0]!;
             json_string += "{"
             json_string += "\"id\":\""+key+"\","
             if(data.3 != nil){
@@ -96,15 +96,15 @@ class BehaviorDefinition {
             json_string += "\"fromState\":\""+self.getStateByName(data.4)!+"\","
             json_string += "\"toState\":\""+self.getStateByName(data.5)!+"\","
             json_string += "\"methods\":["
-            for i in 0..<methods.count{
+            for i in 0..<method_list.count{
                 
                 if(i>0){
                     json_string += ","
                 }
                 json_string += "{"
-                json_string += "\"id\":\""+methods[i].1+"\","
-                json_string += "\"name\":\""+methods[i].2+"\""
-                json_string+="}"
+                json_string += "\"id\":\""+method_list[i].0+"\","
+                json_string += "\"name\":\""+method_list[i].1+"\""
+                json_string += "}"
             }
             json_string += "]"
             if(data.6 != nil){
@@ -138,15 +138,15 @@ class BehaviorDefinition {
     
     
     
-    func getMethodsByTransition(name:String)->[(String,String,String,[Any]?)]{
-        var tmethods = [(String,String,String,[Any]?)]();
-        for m in methods {
-            if m.0 == name{
-                tmethods.append(m)
-            }
-        }
-        return tmethods;
-    }
+    /*func getMethodsByTransition(name:String)->[(String,String,String,[Any]?)]{
+     var tmethods = [(String,String,String,[Any]?)]();
+     for m in methods {
+     if m.0 == name{
+     tmethods.append(m)
+     }
+     }
+     return tmethods;
+     }*/
     
     func addCondition(name:String, reference:Any?, referenceNames:[String]?, relative:Any?, relativeNames:[String]?, relational:String){
         
@@ -190,6 +190,15 @@ class BehaviorDefinition {
         states[stateId] = stateName;
     }
     
+    func removeState(stateId:String){
+        removeTransitionsForState(stateId);
+        removeMappingsForState(stateId);
+        if(states[stateId] != nil){
+            states.removeValueForKey(stateId);
+            
+        }
+    }
+    
     func addMethod(targetTransition:String?, methodId: String, targetMethod:String, arguments:[Any]?){
         var tt:String;
         if(targetTransition != nil){
@@ -198,22 +207,117 @@ class BehaviorDefinition {
         else{
             tt = "globalTransition"
         }
-        methods.append((tt,methodId,targetMethod,arguments))
+        if(methods[tt] == nil){
+            methods [tt] = [];
+        }
+        methods[tt]!.append((methodId,targetMethod,arguments))
+    }
+    
+    func removeMethod(methodId:String){
+        for (_, var method_list) in methods{
+            for i in 0..<method_list.count{
+                if method_list[i].0 == methodId{
+                    method_list.removeAtIndex(i);
+                    if method_list.count == 0{
+                        methods.removeValueForKey(methodId);
+                        
+                    }
+                    return;
+                }
+                
+            }
+        }
+        print("method with id \(methodId) not found");
+    }
+    
+    func removeMethodsForTransition(transitionId:String){
+        if(methods[transitionId] != nil){
+            
+            methods.removeValueForKey(transitionId);
+            return;
+        }
+        
+        print("no methods for transition \(transitionId)")
+        
     }
     
     func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String?, fromStateId:String,toStateId:String, condition:String?){
         transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition))
     }
     
+    func setTransitionToDefaultEvent(transitionId:String) throws{
+        if(transitions[transitionId] != nil){
+            transitions[transitionId]!.1 = nil;
+            transitions[transitionId]!.3 = "STATE_COMPLETE";
+            return;
+        }
+        
+        throw BehaviorError.transitionDoesNotExist;
+
+    }
+    
+    
+    func removeTransition(id:String) throws{
+        print("removing transition \(transitions,id)")
+        
+        removeMethodsForTransition(id);
+       
+        if(transitions[id] != nil){
+            transitions.removeValueForKey(id);
+            return;
+        }
+        throw BehaviorError.transitionDoesNotExist;
+        
+    }
+    
+    func removeTransitionsForState(stateId:String){
+    for (key,transition) in transitions{
+        if(transition.5 == stateId || transition.4 == stateId){
+            do {
+                try removeTransition(key);
+            }
+            catch{
+                print("no transition by that id for that state");
+            }
+
+        }
+    }
+    }
+    
+    
     func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String, type:String){
         print("mapping type = \(type)");
         mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId,type))
-       
+        print("mappings:\(mappings)")
+        
+    }
+    
+    func removeMappingsForState(stateId:String){
+        for(key,mapping) in mappings{
+            if mapping.3 == stateId{
+                do{
+                    try removeMapping(key);
+
+                }
+                catch{
+                    print("no mapping by that state id")
+                }
+            }
+        }
     }
     
     func removeMapping(id:String) throws{
         print("removing mappings \(mappings,id)")
         if(mappings[id] != nil){
+            let mapping = mappings[id];
+            if(mapping!.0 == nil){
+                if(mapping!.1 != nil){
+                    let mappingKey = mapping!.1![0];
+                    if(expressions[mappingKey] != nil){
+                        expressions.removeValueForKey(mappingKey);
+                    }
+                }
+            }
             mappings.removeValueForKey(id);
             return;
         }
@@ -232,7 +336,7 @@ class BehaviorDefinition {
         
     }
     
-    func addExpression(id:String, emitterOperandList:[(Any?,[String]?)], expressionText:String){
+    func addExpression(id:String, emitterOperandList:[String:(Any?,[String]?)], expressionText:String){
         expressions[id]=(emitterOperandList,expressionText);
         print("adding expression\(expressions)");
     }
@@ -406,15 +510,16 @@ class BehaviorDefinition {
         
     }
     
-    func generateExpression(targetBrush:Brush, name:String, data:([(Any?,[String]?)],String)){
+    func generateExpression(targetBrush:Brush, name:String, data:([String:(Any?,[String]?)],String)){
         var operands = [String:Observable<Float>]();
-        for i in 0..<data.0.count {
-            let emitter = data.0[i].0;
-            let propList = data.0[i].1;
+        print("expression operand data\(data.0)");
+        for (key,value) in data.0 {
+            let emitter = value.0;
+            let propList = value.1;
             let operand = self.generateSingleOperand(targetBrush, emitter: emitter, propList: propList)
-            operands[data.0[i].1![0]] = operand;
+            operands[key] = operand;
         }
-    
+        print("expression operands=\(operands)");
         let expression = TextExpression(id:name,operandList: operands, text: data.1);
         self.storedExpressions[name] = expression;
     }
@@ -436,10 +541,17 @@ class BehaviorDefinition {
     
     func createBehavior(){
         print("create behavior called \(self.brushInstances.count)");
+        print("expressions before behavior created \(self.storedExpressions)");
+        self.storedExpressions.removeAll();
+        self.storedConditions.removeAll();
+        self.storedGenerators.removeAll();
+        print("expressions after clear \(self.storedExpressions)");
+
         for var i in 0..<self.brushInstances.count{
             let targetBrush = self.brushInstances[i];
             targetBrush.clearBehavior();
             targetBrush.createGlobals();
+           
             for (key, generator_data) in generators{
                 self.generateGenerator(key,data:generator_data)
             }
@@ -454,12 +566,13 @@ class BehaviorDefinition {
                 
                 
             }
-            
+            print("expressions after created \(self.storedExpressions)");
+
             for (id,state) in states{
                 behaviorMapper.createState(targetBrush,stateId:id, stateName:state)
                 
             }
-            
+            print("transitions:\(transitions)")
             for (key,transition) in transitions{
                 if((transition.3?.isEmpty) == false){
                     var reference:Any
@@ -484,7 +597,7 @@ class BehaviorDefinition {
                     
                     
                     print("generating transition \(key) because event is: \(transition.3)");
-
+                    
                     behaviorMapper.createStateTransition(key,name: transition.0,reference:reference as! Emitter, relative: targetBrush, eventName: transition.3!, fromStateId:transition.4,toStateId:transition.5, condition: condition)
                 }
                     
@@ -496,16 +609,18 @@ class BehaviorDefinition {
                 
             }
             
-            for method in methods{
-                print("generating method:\(targetBrush,transitionName:method.0,methodId:method.1,methodName:method.2,arguments:method.3)");
-                behaviorMapper.addMethod(targetBrush,transitionName:method.0,methodId:method.1,methodName:method.2,arguments:method.3);
+            for (key,method_list) in methods{
+                for method in method_list {
+                    print("generating method:\(targetBrush,transitionName:key,methodId:method.0,methodName:method.1,arguments:method.2)");
+                    behaviorMapper.addMethod(targetBrush,transitionName:key,methodId:method.0,methodName:method.1,arguments:method.2);
+                }
             }
             
             //referenceProperty!,referenceName!,relativePropertyName,stateId
             for (id, mapping_data) in mappings{
                 if(mapping_data.0 != nil || mapping_data.1 != nil ){
                     print("generating mapping \(id) because reference is not nil")
-
+                    
                     self.generateMapping(targetBrush,id:id, data:mapping_data);
                 }
                 else{

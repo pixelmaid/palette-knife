@@ -41,14 +41,15 @@ public class Event<T> {
     /// removes the given handler that matches the key
     //TODO: UNTESTED!!!!
     public func removeHandler(key:String){
-        /*for i in 0..<eventHandlers.count{
-            var e = eventHandlers[i]
-            let eW = e as! EventHandlerWrapper
+       for i in 0..<eventHandlers.count{
+        let e = eventHandlers[i]
+            let eW = e as! EventHandlerWrapper<Brush,(String, Float, Float)>
             if eW.key == key{
+                print("found event handler for key to remove\(key)")
                 eventHandlers.removeAtIndex(i);
                 return;
             }
-        }*/
+        }
     }
     
 }

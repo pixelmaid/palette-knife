@@ -65,7 +65,6 @@ class TextExpression:Observable<Float>{
     }
     
     override func get(id:String?) -> Float {
-        print("getting constraint value \(constraintTarget)");
         invalidated = false;
         if(isPassive){
             return calculateValue();
@@ -78,6 +77,8 @@ class TextExpression:Observable<Float>{
 
         let stringArr = text.characters.split{$0 == "%"}.map(String.init);
         print ("stringArr =\(stringArr,self.operandList)");
+        //xprint(NSThread.callStackSymbols())
+
         var currentVals = [String: Float]();
         
         

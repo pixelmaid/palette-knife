@@ -61,6 +61,7 @@ class Observable<T>:Model  {
     }
     
     func unsubscribe(id:String){
+        print("unsubscribe called\(id,subscribers)");
         subscribers.removeValueForKey(id)
     }
 

@@ -126,7 +126,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     func clearBehavior(){
         for (_,state) in self.states{
             state.removeAllTransitions();
-            state.removeAllConstraintMappings();
+            state.removeAllConstraintMappings(self.id);
         }
         self.transitions.removeAll();
         self.states.removeAll();
@@ -440,7 +440,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         if(type == "active"){
             reference.subscribe(self.id);
             reference.didChange.addHandler(self, handler:  Brush.setHandler, key:id)
-            self.removeMappingEvent.addHandler(self, handler: Brush.removeConstraint,key:id)
         }
             
         else if(type == "passive"){
@@ -450,11 +449,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         states[stateId]!.addConstraintMapping(id,reference:reference,relativeProperty: relative,type:type)
     }
     
-    
-    func removeConstraint(data:(Brush, String, Observable<Float>),key:String){
-        data.2.didChange.removeHandler(key)
-        data.2.unsubscribe(self.id);
-    }
     
     
     

@@ -12,6 +12,7 @@ enum BehaviorError: ErrorType {
     case duplicateName
     case behaviorDoesNotExist
     case mappingDoesNotExist;
+    case transitionDoesNotExist;
 }
 
 class BehaviorManager{
@@ -61,6 +62,14 @@ class BehaviorManager{
             behaviors[data["behaviorId"].stringValue]!.createBehavior()
             
             return ("state_added","success",nil)
+        case "state_removed":
+          
+            behaviors[data["behaviorId"].stringValue]!.removeState(data["stateId"].stringValue);
+            
+            behaviors[data["behaviorId"].stringValue]!.createBehavior()
+            
+            return ("state_removed","success",nil)
+
         case "transition_added","transition_event_added":
             let event = data["eventName"].stringValue;
             print("adding transition \(data)")
@@ -89,24 +98,36 @@ class BehaviorManager{
                 }
             }
             
-            behaviors[data["behaviorId"].stringValue]!.addTransition(data["id"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["eventName"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: data["condition"].stringValue)
+            behaviors[data["behaviorId"].stringValue]!.addTransition(data["transitionId"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["eventName"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: data["condition"].stringValue)
             
-            
-            
-            //TODO: placeholder to get stuff up and running
-            //need to remove eventually
-            
-            /* if(data["name"]=="setup"){
-             print("adding set origin method an fd new stroke method")
-             behaviors[data["behaviorId"].stringValue]!.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "setOrigin", arguments: [stylus.position])
-             behaviors[data["behaviorId"].stringValue]!.addMethod("setup", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments:nil)
-             
-             }*/
-            
+
             behaviors[data["behaviorId"].stringValue]!.createBehavior()
             
             return ("transition_added","success",nil)
+        
+        case "transition_removed":
+            do{
+            try behaviors[data["behaviorId"].stringValue]!.removeTransition(data["transitionId"].stringValue);
+            behaviors[data["behaviorId"].stringValue]!.createBehavior()
+
+            return("transition_removed","success",nil);
+            }
+            catch{
+                print("transition id does not exist, cannot remove");
+                return (type,"failure",nil)
+                
+            }
+        case "transition_event_removed":
+            do{
+            try behaviors[data["behaviorId"].stringValue]!.setTransitionToDefaultEvent(data["transitionId"].stringValue)
+                return ("transition_event_removed","success",nil)
+            }
+            catch{
+                return ("transition_event_removed","failure",nil)
+            }
+        
             
+
         case "method_added","method_argument_changed":
             let behaviorId = data["behaviorId"].stringValue
             let targetTransition:String?
@@ -154,6 +175,10 @@ class BehaviorManager{
                 methodJSON["argumentList"] = JSON(behavior_list);
                 methodJSON["defaultArgument"] = JSON("self");
                 break;
+                
+           
+                
+                
             case "setOrigin", "newStroke":
                 if(dataArguments != nil){
                     let arg = (dataArguments.arrayValue)[0].stringValue;
@@ -196,7 +221,14 @@ class BehaviorManager{
             behaviors[data["behaviorId"].stringValue]!.createBehavior();
             
             return ("method_added","success",methodJSON)
+           
+        case "method_removed":
             
+            behaviors[data["behaviorId"].stringValue]!.removeMethod(data["methodId"].stringValue)
+            behaviors[data["behaviorId"].stringValue]!.createBehavior();
+            print("removed method");
+            return ("method_removed","success",nil)
+
             
         case "mapping_added":
             let behaviorId = data["behaviorId"].stringValue;
@@ -224,6 +256,7 @@ class BehaviorManager{
             behaviors[data["behaviorId"].stringValue]!.createBehavior()
             
             return (type,"success",nil)
+            
             
         case "expression_text_modified":
             let behaviorId = data["behaviorId"].stringValue;
@@ -254,20 +287,17 @@ class BehaviorManager{
             }
             
         case "mapping_reference_removed":
+            let behaviorId = data["behaviorId"].stringValue;
+            let expressionId = data["expressionId"].stringValue;
             
-            do{
-                try behaviors[data["behaviorId"].stringValue]!.removeMappingReference(data["mappingId"].stringValue);
-                behaviors[data["behaviorId"].stringValue]!.createBehavior()
-                
-                return (type,"success",nil)
-                
-            }
-            catch{
-                print("mapping id does not exist, cannot remove");
-                return (type,"failure",nil)
-                
-            }
+            let propertyList = data["expressionPropertyList"];
+            let expressionText = data["expressionText"].stringValue;
             
+            self.addExpression(behaviorId, expressionId: expressionId, expressionText: expressionText, expressionPropertyList: propertyList)
+            
+            return (type,"success",nil)
+
+
             
         case "generator_added":
             let type = data["generator_type"].stringValue;
@@ -321,13 +351,13 @@ class BehaviorManager{
     }
     
     func addExpression(behaviorId:String, expressionId:String, expressionText:String, expressionPropertyList:JSON?){
-        var emitterOperandList = [(Any?,[String]?)]();
+        var emitterOperandList = [String:(Any?,[String]?)]();
         
         if(expressionPropertyList != nil){
-            print("expression list present\(expressionPropertyList!.arrayValue)")
-            var dataExpressionList = expressionPropertyList!.arrayValue;
-        for i in 0..<dataExpressionList.count{
-            let dataEmitterValue = (dataExpressionList[i].arrayValue)[0].stringValue;
+            print("expression list present\(expressionPropertyList!.dictionaryValue)")
+            var dataExpressionDictionary = expressionPropertyList!.dictionaryValue;
+        for (key,value) in dataExpressionDictionary{
+            let dataEmitterValue = (value.arrayValue)[0].stringValue;
             let emitter:Any?
             switch(dataEmitterValue){
             case "stylus":
@@ -339,8 +369,8 @@ class BehaviorManager{
             }
             var propertyList:[String]?;
             
-            if ((dataExpressionList[i].arrayValue)[1] != nil) {
-                let dataPropertyList = (dataExpressionList[i].arrayValue)[1].arrayValue;
+            if ((value.arrayValue)[1] != nil) {
+                let dataPropertyList = (value.arrayValue)[1].arrayValue;
                 propertyList = [String]();
                 
                 for i in 0..<dataPropertyList.count {
@@ -349,11 +379,11 @@ class BehaviorManager{
                 }
             }
             
-            emitterOperandList.append((emitter,propertyList));
+            emitterOperandList[key]=(emitter,propertyList);
         }
         }
         
-        print("emitter operand list \(emitterOperandList)")
+        print("emitter operand list \(emitterOperandList,expressionText)")
         behaviors[behaviorId]!.addExpression(expressionId, emitterOperandList: emitterOperandList, expressionText: expressionText)
     }
     

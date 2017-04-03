@@ -9,25 +9,77 @@
 import UIKit
 
 class CanvasView:  UIImageView {
-
+    
     /*
-    // Only override drawRect: if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
+     // Only override drawRect: if you perform custom drawing.
+     // An empty implementation adversely affects performance during animation.
+     override func drawRect(rect: CGRect) {
+     // Drawing code
+     }
+     */
+    
+    
+    
     override func drawRect(rect: CGRect) {
-        // Drawing code
+        
     }
-    */
-   
     
-    
-    override func drawRect(rect: CGRect) {
-    
+    func redrawAll(strokeList:[Stroke]){
+        self.clear();
+        UIGraphicsBeginImageContext(self.frame.size)
+        let context = UIGraphicsGetCurrentContext()!
+        self.image?.drawInRect(CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))
+        
+        print("redraw all strokes \(strokeList.count)");
+        
+        for i in 0..<strokeList.count{
+            let stroke = strokeList[i];
+            self.drawSingleStroke(stroke,i:i,context:context);
+        }
+        
+        self.image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
     }
-
     
-  
     
-    func drawPath(fP: Point, tP: Point, w:Float, c:Color) {
+    func drawSingleStroke(stroke:Stroke,i:Int,context:CGContext){
+        var c:Color;
+       
+        for j in 1..<stroke.segments.count{
+          
+            let seg = stroke.segments[j];
+            if(stroke.selected){
+                c = ToolManager.defaultSelectedColor;
+            }
+                
+            else{
+                print("segment color \(seg.color)")
+                c = seg.color;
+            }
+            self.drawPath((seg.getPreviousSegment()?.point)!,tP:seg.point,w:ToolManager.defaultPenDiameter, c:c,context:context)
+        }
+    }
+    
+    
+    
+    func drawPath(fP: Point, tP: Point, w:Float, c:Color, context:CGContext) {
+        
+        let color = c.toCGColor();
+        let fromPoint = fP.toCGPoint();
+        let toPoint = tP.toCGPoint();
+        CGContextSetLineCap(context, CGLineCap.Round)
+        CGContextSetLineWidth(context, CGFloat(w))
+        CGContextSetStrokeColorWithColor(context, color)
+        CGContextSetBlendMode(context, CGBlendMode.Normal)
+        CGContextMoveToPoint(context, fromPoint.x,fromPoint.y)
+        CGContextAddLineToPoint(context,  toPoint.x,toPoint.y)
+        CGContextStrokePath(context)
+        
+        
+        
+    }
+    
+    func drawIsolatedPath(fP: Point, tP: Point, w:Float, c:Color) {
         UIGraphicsBeginImageContext(self.frame.size)
         let context = UIGraphicsGetCurrentContext()!
         self.image?.drawInRect(CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))
@@ -45,9 +97,9 @@ class CanvasView:  UIImageView {
         
         self.image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-
-
-        }
+        
+    }
+    
     
     func drawArc(center:Point, radius:Float,startAngle:Float,endAngle:Float, w:Float, c:Color){
         UIGraphicsBeginImageContext(self.frame.size)
@@ -56,14 +108,14 @@ class CanvasView:  UIImageView {
         
         let color = c.toCGColor();
         
-    
+        
         let _center = center.toCGPoint()
         let _radius = CGFloat(radius);
         let _startAngle = CGFloat(Float(M_PI/180)*startAngle)
         let _endAngle = CGFloat(Float(M_PI)/180*endAngle)
         
         let path = CGPathCreateMutable();
-
+        
         CGPathAddArc(path, nil, _center.x, _center.y, _radius, _startAngle, _endAngle, false)
         CGContextSetLineCap(context, CGLineCap.Round)
         CGContextSetLineWidth(context, CGFloat(w))
@@ -77,7 +129,7 @@ class CanvasView:  UIImageView {
         self.alpha = 1
         UIGraphicsEndImageContext()
         
-
+        
     }
     
     func drawPolygon(){
@@ -93,7 +145,7 @@ class CanvasView:  UIImageView {
         
         let context = UIGraphicsGetCurrentContext()
         self.image?.drawInRect(CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))
-
+        
         let color3 = UIColor(red: 0.754, green: 0.101, blue: 0.876, alpha: 1.000)
         
         //// Oval Drawing
@@ -104,18 +156,18 @@ class CanvasView:  UIImageView {
         self.image = UIGraphicsGetImageFromCurrentImageContext()
         self.alpha = 1
         UIGraphicsEndImageContext()
-
-
+        
+        
     }
     
     
     func drawLeaf(position:Point,angle:Float,scale:Float){
         //// General Declarations
         UIGraphicsBeginImageContext(self.frame.size)
-
+        
         let context = UIGraphicsGetCurrentContext()
         self.image?.drawInRect(CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))
-
+        
         //// Color Declarations
         let color = UIColor(red: 0.000, green: 1.000, blue: 0.069, alpha: 1.000)
         let color2 = UIColor(red: 0.207, green: 0.397, blue: 0.324, alpha: 1.000)
@@ -187,11 +239,11 @@ class CanvasView:  UIImageView {
         self.image = UIGraphicsGetImageFromCurrentImageContext()
         self.alpha = 1
         UIGraphicsEndImageContext()
-
-
- 
+        
+        
+        
     }
     
-
-
+    
+    
 }

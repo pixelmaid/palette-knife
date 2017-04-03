@@ -242,7 +242,8 @@ class BehaviorDefinition {
     }
     
     func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String?, fromStateId:String,toStateId:String, condition:String?){
-        transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition))
+        transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition));
+        print("current transitions \(transitions.count)");
     }
     
     func setTransitionToDefaultEvent(transitionId:String) throws{

@@ -17,6 +17,7 @@ class ToolManager:UIViewController{
     static let smPenColor = Color(r:144,g:215,b:240,a:1);
     static let defaultPenColor = Color(r:119,g:119,b:199,a:1);
     static let defaultPenDiameter = Float(2);
+    static var defaultSelectedColor = Color(r:143,g:255,b:143,a:1);
 
     static let lgPenColorBake = Color(r:0,g:0,b:0,a:1);
     static let smPenColorBake = Color(r:144,g:215,b:240,a:1);

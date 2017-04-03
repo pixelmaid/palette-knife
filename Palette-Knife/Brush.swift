@@ -125,7 +125,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     func clearBehavior(){
         for (_,state) in self.states{
-            state.removeAllTransitions();
+            let removedTransitions = state.removeAllTransitions();
+            for i in 0..<removedTransitions.count{
+                var transition = removedTransitions[i]
+            self.removeTransitionEvent.raise((self,transition.id,transition.reference));
+            }
+
             state.removeAllConstraintMappings(self.id);
         }
         self.transitions.removeAll();
@@ -485,6 +490,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func removeStateTransition(data:(Brush, String, Emitter),key:String){
+        print("removing state transition \(key)");
         NSNotificationCenter.defaultCenter().removeObserver(data.0, name: data.1, object: data.2)
         data.2.removeKey(data.1)
     }

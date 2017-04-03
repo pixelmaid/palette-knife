@@ -184,6 +184,7 @@ class Stroke:TimeSeries, Geometry {
     let id = NSUUID().UUIDString;
     let gCodeGenerator = GCodeGenerator();
     var parentID: String;
+    var selected = false;
     
     init(parentID:String){
         self.parentID = parentID;

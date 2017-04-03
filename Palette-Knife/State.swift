@@ -30,11 +30,13 @@ class State {
         }
      }
     
-    func removeAllTransitions(){
+    func removeAllTransitions()->[StateTransition]{
+        var removed = [StateTransition]();
         for (key,_) in transitions{
 
-            removeTransitionMapping(key);
+            removed.append(removeTransitionMapping(key)!);
         }
+        return removed;
     }
 
     

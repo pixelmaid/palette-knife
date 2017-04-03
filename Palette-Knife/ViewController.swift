@@ -113,7 +113,7 @@ class ViewController: UIViewController {
         self.view.sendSubviewToBack(canvasViewSm)
         self.view.sendSubviewToBack(backView)
 
-        canvasViewLg.alpha = 0.25;
+        canvasViewLg.alpha = 1;
         canvasViewSm.alpha = 0.25;
         
         
@@ -270,36 +270,6 @@ class ViewController: UIViewController {
     func canvasDrawHandler(data:(Geometry,String,String), key:String){
         switch data.2{
             
-        case "BAKE_DRAW":
-            switch data.1{
-            case "SEGMENT":
-                
-                let seg = data.0 as! Segment
-                
-                let prevSeg = seg.getPreviousSegment()
-                
-                if(prevSeg != nil){
-                    
-                    if(ToolManager.bothActive){
-                        bakeViewLg.drawPath(prevSeg!.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)),tP: seg.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)), w:ToolManager.lgPenDiameter, c:ToolManager.lgPenColor)
-                        bakeViewSm.drawPath(prevSeg!.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)),tP: seg.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)), w:ToolManager.smPenDiameter, c:ToolManager.smPenColor)
-                        
-                    }
-                    else{
-                        if(ToolManager.smallActive){
-                             bakeViewSm.drawPath(prevSeg!.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)),tP: seg.point.add(Point(x:ToolManager.smPenXOffset,y:ToolManager.smPenYOffset)), w:ToolManager.smPenDiameter, c:ToolManager.smPenColor)
-                        }
-                        else{
- bakeViewLg.drawPath(prevSeg!.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)),tP: seg.point.add(Point(x:ToolManager.lgPenXOffset,y:ToolManager.lgPenYOffset)), w:ToolManager.lgPenDiameter, c:ToolManager.lgPenColor)
-                        }
-                    }
-                }
-
-                break
-            default:
-                break;
-            }
-            break;
         case "DRAW":
             switch data.1{
             case "SEGMENT":
@@ -309,12 +279,11 @@ class ViewController: UIViewController {
                 
                 if(prevSeg != nil){
                     
-                        canvasViewLg.drawPath(prevSeg!.point,tP: seg.point, w:seg.diameter, c:ToolManager.defaultPenColor)
-                            
+                    canvasViewLg.drawIsolatedPath(prevSeg!.point,tP: seg.point, w:seg.diameter, c:seg.color)
+                    
                     
                     
                 }
-                
                 break
                 /*case "ARC":
                  let arc = data.0 as! Arc

@@ -120,6 +120,7 @@ class BehaviorManager{
         case "transition_event_removed":
             do{
             try behaviors[data["behaviorId"].stringValue]!.setTransitionToDefaultEvent(data["transitionId"].stringValue)
+                behaviors[data["behaviorId"].stringValue]!.createBehavior();
                 return ("transition_event_removed","success",nil)
             }
             catch{

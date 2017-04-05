@@ -22,7 +22,7 @@ class ToolbarView: UIView{
     private var standardColor = UIColor(red:104.0/255,green:104.0/255,blue:103.0/255,alpha:1);
 
     
-    override func drawRect(rect: CGRect) {
+     override func drawRect(rect: CGRect) {
    
         /*self.layer.shadowColor = UIColor.blackColor().CGColor
         self.layer.shadowOffset = CGSizeZero

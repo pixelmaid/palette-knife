@@ -12,13 +12,13 @@ import SwiftKVC
 class BehaviorDefinition {
     
     var brushInstances = [Brush]();
-    var states = [String:String]()
+    var states = [String:(String,Float,Float)]()
     var expressions = [String:([String:(Any?,[String]?)],String)]();
     var conditions = [(String,Any?,[String]?,Any?,[String]?,String)]()
     var generators = [String:(String,[Any])]()
     var storedGenerators = [String:Generator]()
     var methods = [String:[(String,String,[Any]?)]]()
-    var transitions = [String:(String,Emitter?,Bool,String?,String,String,String?)]()
+    var transitions = [String:(String,Emitter?,Bool,String?,String,String,String?,String)]()
     var behaviorMapper = BehaviorMapper()
     var mappings = [String:(Any?,[String]?,String,String,String)]()
     var storedExpressions = [String:TextExpression]()
@@ -30,106 +30,102 @@ class BehaviorDefinition {
         self.name = name;
         self.id = id;
     }
-    
-    
-    func toJSON()->String{
-        var json_string = "{"
-        
-        json_string+="\"name\":\""+self.name+"\","
-        json_string+="\"id\":\""+self.id+"\","
-        
-        json_string+="\"states\":["
-        
-        for (key,name) in states {
-            json_string += "{"
-            json_string += "\"id\":\""+key+"\","
-            
-            json_string += "\"name\":\""+name+"\","
-            json_string += "\"mappings\":["
-            
-            var hasMapping = false;
-            for (id,data) in mappings {
-                if(data.3 == name){
-                    hasMapping = true;
-                    json_string += "{"
-                    json_string += "\"id\":\""+id+"\","
-                    var refName = ""
-                    if(data.0 != nil){
-                        refName = (data.0 as! Observable<Float>).name;
-                    }
-                    
-                    if(data.1 != nil){
-                        for var i in 0..<data.1!.count{
-                            refName += data.1![i]
-                        }
-                        
-                    }
-                    json_string += "\"reference\":\""+refName+"\","
-                    json_string += "\"relative\":\""+data.2+"\","
-                    json_string += "\"state\":\""+data.3+"\""
-                    
-                    json_string += "},"
-                }
-            }
-            if(hasMapping){
-                json_string.removeAtIndex(json_string.endIndex.predecessor())
-            }
-            json_string += "]},"
+    func toJSON()->JSON{
+        var json_obj:JSON = [:]
+        json_obj["name"] = JSON(self.name);
+        json_obj["id"] = JSON(self.id);
+        var statesArray = [JSON]();
+        for (key,data) in states {
+            var stateJSON:JSON = [:]
+            stateJSON["id"] = JSON(key);
+            stateJSON["name"] = JSON(data.0);
+            stateJSON["x"] = JSON(data.1);
+            stateJSON["y"] = JSON(data.2);
+            statesArray.append(stateJSON);
         }
-        if(states.count > 0){
-            json_string.removeAtIndex(json_string.endIndex.predecessor())
-        }
-        json_string += "],"
-        json_string += "\"transitions\":["
+        var transitionsArray = [JSON]();
         
-        
-        for(key, data) in transitions{
+        for (key,data) in transitions {
+            var transitionJSON:JSON = [:]
+            //(name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition)
+            let name = data.0
+            let emitter = data.1
+            let parentFlag = data.2
+            let event = data.3
+            let fromStateId = data.4
+            let toStateId = data.5
+            let condition = data.6
+            let displayName = data.7
             
-            var method_list = methods[data.0]!;
-            json_string += "{"
-            json_string += "\"id\":\""+key+"\","
-            if(data.3 != nil){
-                json_string += "\"event\":\""+data.3!+"\","
-            }
+            transitionJSON["transitionId"] = JSON(key);
+            transitionJSON["name"] = JSON(name);
+            transitionJSON["fromStateId"] = JSON(fromStateId);
+            transitionJSON["toStateId"] = JSON(toStateId);
             
-            json_string += "\"name\":\""+data.0+"\","
-            json_string += "\"fromState\":\""+self.getStateByName(data.4)!+"\","
-            json_string += "\"toState\":\""+self.getStateByName(data.5)!+"\","
-            json_string += "\"methods\":["
-            for i in 0..<method_list.count{
+            if(emitter != nil){
                 
-                if(i>0){
-                    json_string += ","
+                if(emitter == stylus){
+                    transitionJSON["emitter"] = JSON("stylus");
                 }
-                json_string += "{"
-                json_string += "\"id\":\""+method_list[i].0+"\","
-                json_string += "\"name\":\""+method_list[i].1+"\""
-                json_string += "}"
             }
-            json_string += "]"
-            if(data.6 != nil){
-                json_string += ",\"condition_name\":\""+data.6!+"\""
+            
+            transitionJSON["eventName"] = JSON(event!);
+            transitionJSON["parentFlag"] = JSON(parentFlag)
+            transitionJSON["displayName"] = JSON(displayName);
+            transitionsArray.append(transitionJSON);
+        }
+        var mappingsArray = [JSON]();
+
+        for(key, data) in mappings{
+            var mappingJSON:JSON = [:]
+            
+            let mappingId = key;
+            let expressionId = data.1![0]
+            let expression = expressions[expressionId];
+            let expressionText = expression?.1;
+            let expressionPropertyList = expression?.0;
+            var expressionPropertyListJSON:JSON = [:]
+            for(pId,pData) in expressionPropertyList!{
+                let emitter = pData.0;
+                let propertyList = pData.1;
+                var propEmitter = [JSON]();
+                if (emitter as? Stylus) != nil{
+                    propEmitter.append(JSON("stylus"));
+                }
+                else{
+                    propEmitter.append(JSON("null"));
+                }
+                propEmitter.append(JSON(propertyList!));
+                expressionPropertyListJSON[pId] = JSON(propEmitter);
+                
             }
-            json_string += "},"
+            let relativePropertyName = data.2
+            let stateId = data.3
+            let type = data.4
+            mappingJSON["mappingId"] = JSON(mappingId);
+            mappingJSON["relativePropertyName"] = JSON(relativePropertyName);
+            mappingJSON["stateId"] = JSON(stateId);
+            mappingJSON["expressionId"] = JSON(expressionId);
+            mappingJSON["expressionText"] = JSON(expressionText!);
+            mappingJSON["expressionPropertyList"] = expressionPropertyListJSON
+            mappingJSON["constraintType"] = JSON(type)
+            mappingsArray.append(mappingJSON);
+            
         }
+ 
+        json_obj["states"] = JSON(statesArray);
+        json_obj["transitions"] = JSON(transitionsArray);
+        json_obj["mappings"] = JSON(mappingsArray);
         
-        
-        
-        if(transitions.count > 0){
-            json_string.removeAtIndex(json_string.endIndex.predecessor())
-        }
-        
-        
-        //debugPrint("++++JSON STRING = \(json_string) \nJSON STRING++++");
-        json_string+="]}"
-        
-        return json_string
+        return json_obj;
     }
+    
+    
     
     //TODO: remove eventually- this is bad
     func getStateByName(name:String)->String?{
         for(id,state) in self.states{
-            if(state == name){
+            if(state.0 == name){
                 return id;
             }
         }
@@ -137,16 +133,6 @@ class BehaviorDefinition {
     }
     
     
-    
-    /*func getMethodsByTransition(name:String)->[(String,String,String,[Any]?)]{
-     var tmethods = [(String,String,String,[Any]?)]();
-     for m in methods {
-     if m.0 == name{
-     tmethods.append(m)
-     }
-     }
-     return tmethods;
-     }*/
     
     func addCondition(name:String, reference:Any?, referenceNames:[String]?, relative:Any?, relativeNames:[String]?, relational:String){
         
@@ -185,9 +171,9 @@ class BehaviorDefinition {
         generators[name] = ("alternate",[values]);
     }
     
-    func addState(stateId:String, stateName:String){
-        print("adding state\(stateId,stateName)");
-        states[stateId] = stateName;
+    func addState(stateId:String, stateName:String, stateX:Float, stateY:Float){
+        print("adding state\(stateId,stateName,stateX,stateY)");
+        states[stateId] = (stateName,stateX,stateY);
     }
     
     func removeState(stateId:String){
@@ -241,8 +227,8 @@ class BehaviorDefinition {
         
     }
     
-    func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String?, fromStateId:String,toStateId:String, condition:String?){
-        transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition));
+    func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String?, fromStateId:String,toStateId:String, condition:String?, displayName:String){
+        transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition, displayName));
         print("current transitions \(transitions.count)");
     }
     
@@ -254,7 +240,7 @@ class BehaviorDefinition {
         }
         
         throw BehaviorError.transitionDoesNotExist;
-
+        
     }
     
     
@@ -262,7 +248,7 @@ class BehaviorDefinition {
         print("removing transition \(transitions,id)")
         
         removeMethodsForTransition(id);
-       
+        
         if(transitions[id] != nil){
             transitions.removeValueForKey(id);
             return;
@@ -272,17 +258,17 @@ class BehaviorDefinition {
     }
     
     func removeTransitionsForState(stateId:String){
-    for (key,transition) in transitions{
-        if(transition.5 == stateId || transition.4 == stateId){
-            do {
-                try removeTransition(key);
+        for (key,transition) in transitions{
+            if(transition.5 == stateId || transition.4 == stateId){
+                do {
+                    try removeTransition(key);
+                }
+                catch{
+                    print("no transition by that id for that state");
+                }
+                
             }
-            catch{
-                print("no transition by that id for that state");
-            }
-
         }
-    }
     }
     
     
@@ -298,7 +284,7 @@ class BehaviorDefinition {
             if mapping.3 == stateId{
                 do{
                     try removeMapping(key);
-
+                    
                 }
                 catch{
                     print("no mapping by that state id")
@@ -547,12 +533,12 @@ class BehaviorDefinition {
         self.storedConditions.removeAll();
         self.storedGenerators.removeAll();
         print("expressions after clear \(self.storedExpressions)");
-
+        
         for var i in 0..<self.brushInstances.count{
             let targetBrush = self.brushInstances[i];
             targetBrush.clearBehavior();
             targetBrush.createGlobals();
-           
+            
             for (key, generator_data) in generators{
                 self.generateGenerator(key,data:generator_data)
             }
@@ -568,9 +554,9 @@ class BehaviorDefinition {
                 
             }
             print("expressions after created \(self.storedExpressions)");
-
+            
             for (id,state) in states{
-                behaviorMapper.createState(targetBrush,stateId:id, stateName:state)
+                behaviorMapper.createState(targetBrush,stateId:id, stateName:state.0)
                 
             }
             print("transitions:\(transitions)")

@@ -240,7 +240,7 @@ class BehaviorManager{
             let behaviorId = data["behaviorId"].stringValue;
             let expressionId = data["expressionId"].stringValue;
             self.addExpression(behaviorId, expressionId: expressionId, expressionText: "", expressionPropertyList: nil)
-            behaviors[behaviorId]!.addMapping(data["mappingId"].stringValue, referenceProperty:nil, referenceNames: [expressionId], relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue,type: data["constraintType"].stringValue)
+            behaviors[behaviorId]!.addMapping(data["mappingId"].stringValue, referenceProperty:nil, referenceNames: [expressionId], relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue,type: data["constraintType"].stringValue,relativePropertyItemName: data["relativePropertyItemName"].stringValue)
             
             behaviors[behaviorId]!.createBehavior()
             
@@ -258,7 +258,7 @@ class BehaviorManager{
             
             print("behavior update mapping, target state:\(data["stateId"].stringValue)");
             
-            behaviors[behaviorId]!.addMapping(data["mappingId"].stringValue, referenceProperty:nil, referenceNames: [expressionId], relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue,type: data["constraintType"].stringValue)
+            behaviors[behaviorId]!.addMapping(data["mappingId"].stringValue, referenceProperty:nil, referenceNames: [expressionId], relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue,type: data["constraintType"].stringValue,relativePropertyItemName: data["relativePropertyItemName"].stringValue)
             behaviors[data["behaviorId"].stringValue]!.createBehavior()
             
             return (type,"success",nil)
@@ -357,7 +357,7 @@ class BehaviorManager{
     }
     
     func addExpression(behaviorId:String, expressionId:String, expressionText:String, expressionPropertyList:JSON?){
-        var emitterOperandList = [String:(Any?,[String]?)]();
+        var emitterOperandList = [String:(Any?,[String]?,[String]?)]();
         
         if(expressionPropertyList != nil){
             print("expression list present\(expressionPropertyList!.dictionaryValue)")
@@ -385,7 +385,20 @@ class BehaviorManager{
                 }
             }
             
-            emitterOperandList[key]=(emitter,propertyList);
+            var displayNameList:[String]?;
+            
+            if ((value.arrayValue)[2] != nil) {
+                let dataPropertyList = (value.arrayValue)[2].arrayValue;
+                displayNameList = [String]();
+                
+                for i in 0..<dataPropertyList.count {
+                    let property = dataPropertyList[i].stringValue;
+                    displayNameList!.append(property)
+                }
+            }
+
+            
+            emitterOperandList[key]=(emitter,propertyList,displayNameList);
         }
         }
         
@@ -467,8 +480,8 @@ class BehaviorManager{
             b.addMethod("stylusUpTransition", methodId:NSUUID().UUIDString, targetMethod: "stopInterval", arguments: nil)
             
             
-            b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dx"], relativePropertyName: "dx", stateId: "default", type:"active")
-            b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dy"], relativePropertyName: "dy", stateId: "default", type:"active")
+            b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dx"], relativePropertyName: "dx", stateId: "default", type:"active",relativePropertyItemName:"foo")
+            b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dy"], relativePropertyName: "dy", stateId: "default", type:"active",relativePropertyItemName:"foo")
             // b.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["force"], relativePropertyName: "weight", stateId: "default")
             
             return b;
@@ -506,9 +519,9 @@ class BehaviorManager{
         dripBehavior!.addState(NSUUID().UUIDString, stateName: "die",stateX:0,stateY:0);
         
         dripBehavior!.addTransition(NSUUID().UUIDString, name: "tickTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateId: "default", toStateId: "default", condition: nil, displayName: "foo")
-        dripBehavior!.addMapping(NSUUID().UUIDString, referenceProperty: Observable<Float>(2), referenceNames: nil, relativePropertyName: "dy", stateId: "default", type:"active")
+        dripBehavior!.addMapping(NSUUID().UUIDString, referenceProperty: Observable<Float>(2), referenceNames: nil, relativePropertyName: "dy", stateId: "default", type:"active",relativePropertyItemName:"foo")
         
-        dripBehavior!.addMapping(NSUUID().UUIDString, referenceProperty: nil, referenceNames: ["weightExpression"], relativePropertyName: "weight", stateId: "default", type:"active")
+        dripBehavior!.addMapping(NSUUID().UUIDString, referenceProperty: nil, referenceNames: ["weightExpression"], relativePropertyName: "weight", stateId: "default", type:"active",relativePropertyItemName:"foo")
         
         
         
@@ -531,10 +544,10 @@ class BehaviorManager{
             let radial_spawnBehavior = initSpawnTemplate("radial_spawn_behavior");
             //   radial_spawnBehavior!.addExpression("angle_expression", emitter1: nil, operand1Names: ["index"], emitter2: Observable<Float>(60), operand2Names: nil, type: "mult")
             
-            radial_spawnBehavior!.addMapping(NSUUID().UUIDString, referenceProperty: nil, referenceNames: ["angle_expression"], relativePropertyName: "angle", stateId: "start", type:"active")
+            radial_spawnBehavior!.addMapping(NSUUID().UUIDString, referenceProperty: nil, referenceNames: ["angle_expression"], relativePropertyName: "angle", stateId: "start", type:"active",relativePropertyItemName:"foo")
             
-            radial_spawnBehavior!.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dx"], relativePropertyName: "dx", stateId: "default", type:"active")
-            radial_spawnBehavior!.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dy"], relativePropertyName: "dy", stateId: "default", type:"active")
+            radial_spawnBehavior!.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dx"], relativePropertyName: "dx", stateId: "default", type:"active",relativePropertyItemName:"foo")
+            radial_spawnBehavior!.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dy"], relativePropertyName: "dy", stateId: "default", type:"active",relativePropertyItemName:"foo")
             
             
             radial_spawnBehavior!.addState(NSUUID().UUIDString,stateName:"die",stateX:0,stateY:0)
@@ -618,10 +631,10 @@ class BehaviorManager{
             // branchBehavior.addExpression("weightDeltaExp", emitter1: nil, operand1Names: ["parent","currentStroke","weightBuffer"],  emitter2: Observable<Float>(0.45), operand2Names: nil,type: "mult")
             
             
-            branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames: ["xDeltaExp"], relativePropertyName: "dx", stateId: "default", type:"active")
-            branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames: ["yDeltaExp"], relativePropertyName: "dy", stateId: "default", type:"active")
+            branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames: ["xDeltaExp"], relativePropertyName: "dx", stateId: "default", type:"active",relativePropertyItemName:"foo")
+            branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames: ["yDeltaExp"], relativePropertyName: "dy", stateId: "default", type:"active",relativePropertyItemName:"foo")
             
-            branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames:["weightDeltaExp"], relativePropertyName: "weight", stateId: "default", type:"active")
+            branchBehavior.addMapping(NSUUID().UUIDString, referenceProperty:nil, referenceNames:["weightDeltaExp"], relativePropertyName: "weight", stateId: "default", type:"active",relativePropertyItemName:"foo")
             
             
             branchBehavior.addTransition(NSUUID().UUIDString, name: "tickTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateId: branchBehavior.getStateByName("default")!, toStateId:branchBehavior.getStateByName("default")!, condition: nil, displayName: "foo")
@@ -644,11 +657,11 @@ class BehaviorManager{
             rootBehavior.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "newStroke", arguments: nil)
             rootBehavior.addMethod("stylusDownT", methodId:NSUUID().UUIDString, targetMethod: "startInterval", arguments: nil)
             
-            rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dx"], relativePropertyName: "dx", stateId: "default", type:"active")
+            rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus, referenceNames: ["dx"], relativePropertyName: "dx", stateId: "default", type:"active",relativePropertyItemName:"foo")
             
-            rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus,  referenceNames: ["dy"], relativePropertyName: "dy", stateId: "default", type:"active")
+            rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus,  referenceNames: ["dy"], relativePropertyName: "dy", stateId: "default", type:"active",relativePropertyItemName:"foo")
             
-            rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus,  referenceNames: ["force"], relativePropertyName: "weight", stateId: "default", type:"active")
+            rootBehavior.addMapping(NSUUID().UUIDString, referenceProperty:stylus,  referenceNames: ["force"], relativePropertyName: "weight", stateId: "default", type:"active",relativePropertyItemName:"foo")
             
             
             rootBehavior.addTransition(NSUUID().UUIDString, name: "spawnTransition", eventEmitter: nil, parentFlag: false, event: "TICK", fromStateId: rootBehavior.getStateByName("default")!, toStateId: rootBehavior.getStateByName("default")!, condition: "stylusANDIncrement", displayName: "foo")

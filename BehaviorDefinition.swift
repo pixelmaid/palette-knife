@@ -13,14 +13,14 @@ class BehaviorDefinition {
     
     var brushInstances = [Brush]();
     var states = [String:(String,Float,Float)]()
-    var expressions = [String:([String:(Any?,[String]?)],String)]();
+    var expressions = [String:([String:(Any?,[String]?,[String]?)],String)]();
     var conditions = [(String,Any?,[String]?,Any?,[String]?,String)]()
     var generators = [String:(String,[Any])]()
     var storedGenerators = [String:Generator]()
     var methods = [String:[(String,String,[Any]?)]]()
     var transitions = [String:(String,Emitter?,Bool,String?,String,String,String?,String)]()
     var behaviorMapper = BehaviorMapper()
-    var mappings = [String:(Any?,[String]?,String,String,String)]()
+    var mappings = [String:(Any?,[String]?,String,String,String,String)]()
     var storedExpressions = [String:TextExpression]()
     var storedConditions = [String:Condition]()
     var name:String;
@@ -80,6 +80,7 @@ class BehaviorDefinition {
             var mappingJSON:JSON = [:]
             
             let mappingId = key;
+            let relativePropertyItemName = data.5;
             let expressionId = data.1![0]
             let expression = expressions[expressionId];
             let expressionText = expression?.1;
@@ -88,6 +89,8 @@ class BehaviorDefinition {
             for(pId,pData) in expressionPropertyList!{
                 let emitter = pData.0;
                 let propertyList = pData.1;
+                let displayNameList = pData.2;
+
                 var propEmitter = [JSON]();
                 if (emitter as? Stylus) != nil{
                     propEmitter.append(JSON("stylus"));
@@ -96,6 +99,7 @@ class BehaviorDefinition {
                     propEmitter.append(JSON("null"));
                 }
                 propEmitter.append(JSON(propertyList!));
+                 propEmitter.append(JSON(displayNameList!));
                 expressionPropertyListJSON[pId] = JSON(propEmitter);
                 
             }
@@ -109,6 +113,7 @@ class BehaviorDefinition {
             mappingJSON["expressionText"] = JSON(expressionText!);
             mappingJSON["expressionPropertyList"] = expressionPropertyListJSON
             mappingJSON["constraintType"] = JSON(type)
+            mappingJSON["relativePropertyItemName"] = JSON(relativePropertyItemName);
             mappingsArray.append(mappingJSON);
             
         }
@@ -272,9 +277,9 @@ class BehaviorDefinition {
     }
     
     
-    func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String, type:String){
+    func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String, type:String,relativePropertyItemName:String){
         print("mapping type = \(type)");
-        mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId,type))
+        mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId,type,relativePropertyItemName))
         print("mappings:\(mappings)")
         
     }
@@ -323,7 +328,7 @@ class BehaviorDefinition {
         
     }
     
-    func addExpression(id:String, emitterOperandList:[String:(Any?,[String]?)], expressionText:String){
+    func addExpression(id:String, emitterOperandList:[String:(Any?,[String]?,[String]?)], expressionText:String){
         expressions[id]=(emitterOperandList,expressionText);
         print("adding expression\(expressions)");
     }
@@ -497,7 +502,7 @@ class BehaviorDefinition {
         
     }
     
-    func generateExpression(targetBrush:Brush, name:String, data:([String:(Any?,[String]?)],String)){
+    func generateExpression(targetBrush:Brush, name:String, data:([String:(Any?,[String]?,[String]?)],String)){
         var operands = [String:Observable<Float>]();
         print("expression operand data\(data.0)");
         for (key,value) in data.0 {
@@ -511,7 +516,7 @@ class BehaviorDefinition {
         self.storedExpressions[name] = expression;
     }
     
-    func generateMapping(targetBrush:Brush, id:String, data:(Any?,[String]?,String,String,String)){
+    func generateMapping(targetBrush:Brush, id:String, data:(Any?,[String]?,String,String,String,String)){
         
         var mappingRelativeList = [String]();
         mappingRelativeList.append(data.2);

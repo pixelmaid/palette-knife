@@ -10,7 +10,7 @@
 #define BluefruitConnect_Bridging_Header_h
 
 #import "DFUOperations.h"
-#import "MSWeakTimer/MSWeakTimer.h"
+//#import "MSWeakTimer/MSWeakTimer.h"
 #import "NSObject+ENHThrottledReloading.h"
 #import "DataDownloader.h"
 #import "DeviceInfoData.h"

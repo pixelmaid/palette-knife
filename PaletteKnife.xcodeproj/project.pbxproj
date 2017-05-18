@@ -11,6 +11,9 @@
 		5F10B7DD1DE910AB00CC3504 /* ToolManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F10B7DC1DE910AB00CC3504 /* ToolManager.swift */; };
 		5F16B0181DB0494E00756085 /* Fabricator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F16B0171DB0494B00756085 /* Fabricator.swift */; };
 		5F1896771D4A856F00AEF5F1 /* Generator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F1896761D4A856F00AEF5F1 /* Generator.swift */; };
+		5F33D5721E985997006462FD /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 5F33D56E1E985997006462FD /* LICENSE */; };
+		5F33D5731E985997006462FD /* MSWeakTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F33D5701E985997006462FD /* MSWeakTimer.m */; };
+		5F33D5741E985997006462FD /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 5F33D5711E985997006462FD /* README.md */; };
 		5F451BF31CF7928E0037EA88 /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F451BF21CF7928E0037EA88 /* Line.swift */; };
 		5F4D8CEC1DEE072A008042FE /* shopbot_position_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F4D8CEA1DEE072A008042FE /* shopbot_position_active.png */; };
 		5F4D8CED1DEE072A008042FE /* shopbot_position_inactive.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F4D8CEB1DEE072A008042FE /* shopbot_position_inactive.png */; };
@@ -125,6 +128,10 @@
 		5F16B0171DB0494B00756085 /* Fabricator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fabricator.swift; sourceTree = "<group>"; };
 		5F1896761D4A856F00AEF5F1 /* Generator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Generator.swift; sourceTree = "<group>"; };
 		5F1E15891F199E478AB56B38 /* Pods-PaletteKnife.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnife.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife.debug.xcconfig"; sourceTree = "<group>"; };
+		5F33D56E1E985997006462FD /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		5F33D56F1E985997006462FD /* MSWeakTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSWeakTimer.h; sourceTree = "<group>"; };
+		5F33D5701E985997006462FD /* MSWeakTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSWeakTimer.m; sourceTree = "<group>"; };
+		5F33D5711E985997006462FD /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5F451BF21CF7928E0037EA88 /* Line.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		5F4D8CEA1DEE072A008042FE /* shopbot_position_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shopbot_position_active.png; sourceTree = "<group>"; };
 		5F4D8CEB1DEE072A008042FE /* shopbot_position_inactive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shopbot_position_inactive.png; sourceTree = "<group>"; };
@@ -266,6 +273,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5F33D56D1E985997006462FD /* MSWeakTimer */ = {
+			isa = PBXGroup;
+			children = (
+				5F33D56E1E985997006462FD /* LICENSE */,
+				5F33D56F1E985997006462FD /* MSWeakTimer.h */,
+				5F33D5701E985997006462FD /* MSWeakTimer.m */,
+				5F33D5711E985997006462FD /* README.md */,
+			);
+			name = MSWeakTimer;
+			path = "../../Bluefruit_LE_Connect_v2-master/Pods/MSWeakTimer";
+			sourceTree = "<group>";
+		};
 		5F8FEFCA1CF5F4EE00D2CB0C /* sensors */ = {
 			isa = PBXGroup;
 			children = (
@@ -409,6 +428,7 @@
 		5FC56D231DDBC20600B91E7E /* Bluetooth */ = {
 			isa = PBXGroup;
 			children = (
+				5F33D56D1E985997006462FD /* MSWeakTimer */,
 				5FC56D811DDBD42300B91E7E /* BluefruitConnect-Bridging-Header.h */,
 				5FC56D771DDBD0A600B91E7E /* NSObject+ENHThrottledReloading */,
 				5FC56D5C1DDBC61800B91E7E /* DFU */,
@@ -739,6 +759,7 @@
 				5FA4C72E1CDA7B5B004A728C /* LaunchScreen.storyboard in Resources */,
 				5F9118D91DEE345100A6B247 /* select_icon.png in Resources */,
 				5F9F25AA1DEFE3A0005CB5D8 /* shopbot_position_active@2x.png in Resources */,
+				5F33D5721E985997006462FD /* LICENSE in Resources */,
 				5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */,
 				5F9F25AD1DEFE3A0005CB5D8 /* shopbot_position_inactive2x.png in Resources */,
 				5F9118D81DEE345100A6B247 /* draw_icon.png in Resources */,
@@ -921,6 +942,7 @@
 				5F62E4261DB53EAA00958BD2 /* FabricatorView.swift in Sources */,
 				5FC56D751DDBC74800B91E7E /* MqttManager.swift in Sources */,
 				5FC56D311DDBC22200B91E7E /* HexConversions.swift in Sources */,
+				5F33D5731E985997006462FD /* MSWeakTimer.m in Sources */,
 				5FC56D6D1DDBC61800B91E7E /* BLEOperations.m in Sources */,
 				5FA4C7601CDBC5F7004A728C /* Behavior.swift in Sources */,
 				5F8FEFC91CF5F4E600D2CB0C /* Stylus.swift in Sources */,
@@ -964,6 +986,7 @@
 				5FFDAB0B1D21B7EC00632A26 /* WebTransmitter.swift in Sources */,
 				5FCFDED51CF79B2400CE296B /* Numerical.swift in Sources */,
 				5FF5EFAB1D664F22001E1616 /* Observable.swift in Sources */,
+				5F33D5741E985997006462FD /* README.md in Sources */,
 				5F0C97231D6BD726001FC228 /* GCodeGenerator.swift in Sources */,
 				5FA4C7581CDB9EF8004A728C /* Brush.swift in Sources */,
 				5F8454F21D9C50880056C15E /* SwiftyJSON.swift in Sources */,

@@ -30,6 +30,7 @@ class BehaviorDefinition {
         self.name = name;
         self.id = id;
     }
+    
     func toJSON()->JSON{
         var json_obj:JSON = [:]
         json_obj["name"] = JSON(self.name);
